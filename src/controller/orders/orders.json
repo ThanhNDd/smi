@@ -1,0 +1,88 @@
+{
+    "data": [
+        {
+            "order_id": 2805,
+            "status": "completed",
+            "total": "225,000",
+            "first_name": "Nhi Nguy\u1ec7n",
+            "last_name": "",
+            "address": "S\u1ed1 42",
+            "city": "B\u1eafc Ninh",
+            "district": "Huy\u1ec7n Y\u00ean Phong",
+            "village": "Th\u1ecb tr\u1ea5n Ch\u1edd",
+            "email": "",
+            "phone": "0989303598",
+            "payment_method": "cod",
+            "payment_method_title": "Tr\u1ea3 ti\u1ec1n m\u1eb7t khi nh\u1eadn h\u00e0ng",
+            "products": [
+                {
+                    "product_id": 2281,
+                    "variation_id": 0,
+                    "name": "B\u1ed9 \u00e1o tr\u1eafng qu\u1ea7n voan \u1ed1ng r\u1ed9ng",
+                    "quantity": 1,
+                    "price": "195,000",
+                    "total": "195,000"
+                }
+            ],
+            "shipping": "30,000",
+            "date_created": "20\/08\/2019 21:15:36",
+            "fee": 0
+        },
+        {
+            "order_id": 2801,
+            "status": "completed",
+            "total": "200,000",
+            "first_name": "Dinh H\u1ed3ng Minh",
+            "last_name": "",
+            "address": "S\u1ed1 nh\u00e0 28 \u0111\u01b0\u1eddng \u0111\u1ec1n b\u1ea7u",
+            "city": "H\u00e0 N\u1ed9i",
+            "district": "Huy\u1ec7n \u0110\u00f4ng Anh",
+            "village": "X\u00e3 Kim Chung",
+            "email": "",
+            "phone": "0989110384",
+            "payment_method": "cod",
+            "payment_method_title": "Tr\u1ea3 ti\u1ec1n m\u1eb7t khi nh\u1eadn h\u00e0ng",
+            "products": [
+                {
+                    "product_id": 1921,
+                    "variation_id": 0,
+                    "name": "B\u1ed9 \u00e1o ren tay ng\u1eafn v\u00e1y hoa sen cho b\u00e9 g\u00e1i",
+                    "quantity": 1,
+                    "price": "180,000",
+                    "total": "180,000"
+                }
+            ],
+            "shipping": "20,000",
+            "date_created": "20\/08\/2019 13:16:01",
+            "fee": 0
+        },
+        {
+            "order_id": 2788,
+            "status": "completed",
+            "total": "160,000",
+            "first_name": "",
+            "last_name": "\u0110\u00e0o thanh h\u1eb1ng",
+            "address": "S\u1ed1 17 ph\u01b0\u1eddng tr\u01b0ng v\u01b0\u01a1ng",
+            "city": "Th\u00e1i Nguy\u00ean",
+            "district": "Th\u00e0nh ph\u1ed1 Th\u00e1i Nguy\u00ean",
+            "village": "Ph\u01b0\u1eddng Tr\u01b0ng V\u01b0\u01a1ng",
+            "email": "daothanhhang151190@gmail.con",
+            "phone": "0966992310",
+            "payment_method": "cod",
+            "payment_method_title": "Tr\u1ea3 ti\u1ec1n m\u1eb7t khi nh\u1eadn h\u00e0ng",
+            "products": [
+                {
+                    "product_id": 2208,
+                    "variation_id": 2218,
+                    "name": "S\u00e9t b\u1ed9 2 d\u00e2y si\u00eau d\u1ec5 th\u01b0\u01a1ng - H\u1ed3ng, 100 cm (14kg-16kg)",
+                    "quantity": 1,
+                    "price": "130,000",
+                    "total": "130,000"
+                }
+            ],
+            "shipping": "30,000",
+            "date_created": "14\/08\/2019 16:36:28",
+            "fee": 0
+        }
+    ]
+}

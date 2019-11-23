@@ -1,0 +1,203 @@
+<?php
+class OrderDetail {
+    private $table_name = 'smi_order_detail';
+    private $id;
+    private $order_id;
+    private $product_id;
+    private $variant_id;
+    private $sku;
+    private $price;
+    private $quantity;
+    private $reduce;
+    private $reduce_percent;
+
+    /**
+     * Get the value of id
+     */ 
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set the value of id
+     *
+     * @return  self
+     */ 
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of order_id
+     */ 
+    public function getOrder_id()
+    {
+        return $this->order_id;
+    }
+
+    /**
+     * Set the value of order_id
+     *
+     * @return  self
+     */ 
+    public function setOrder_id($order_id)
+    {
+        $this->order_id = $order_id;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of product_id
+     */ 
+    public function getProduct_id()
+    {
+        return $this->product_id;
+    }
+
+    /**
+     * Set the value of product_id
+     *
+     * @return  self
+     */ 
+    public function setProduct_id($product_id)
+    {
+        $this->product_id = $product_id;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of variant_id
+     */ 
+    public function getVariant_id()
+    {
+        return $this->variant_id;
+    }
+
+    /**
+     * Set the value of variant_id
+     *
+     * @return  self
+     */ 
+    public function setVariant_id($variant_id)
+    {
+        $this->variant_id = $variant_id;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of price
+     */ 
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
+    /**
+     * Set the value of price
+     *
+     * @return  self
+     */ 
+    public function setPrice($price)
+    {
+        $this->price = $price;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of quantity
+     */ 
+    public function getQuantity()
+    {
+        return $this->quantity;
+    }
+
+    /**
+     * Set the value of quantity
+     *
+     * @return  self
+     */ 
+    public function setQuantity($quantity)
+    {
+        $this->quantity = $quantity;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of reduce
+     */ 
+    public function getReduce()
+    {
+        if(empty($this->reduce))
+        {
+            return "NULL";
+        } else {
+            return $this->reduce;    
+        }
+    }
+
+    /**
+     * Set the value of reduce
+     *
+     * @return  self
+     */ 
+    public function setReduce($reduce)
+    {
+        $this->reduce = $reduce;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of reduce_percent
+     */ 
+    public function getReduce_percent()
+    {
+        if(empty($this->reduce_percent))
+        {
+            return "NULL";
+        } else {
+            return $this->reduce_percent;    
+        }
+    }
+
+    /**
+     * Set the value of reduce_percent
+     *
+     * @return  self
+     */ 
+    public function setReduce_percent($reduce_percent)
+    {
+        $this->reduce_percent = $reduce_percent;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of sku
+     */ 
+    public function getSku()
+    {
+        return $this->sku;
+    }
+
+    /**
+     * Set the value of sku
+     *
+     * @return  self
+     */ 
+    public function setSku($sku)
+    {
+        $this->sku = $sku;
+
+        return $this;
+    }
+}
