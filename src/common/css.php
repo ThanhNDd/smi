@@ -2,7 +2,7 @@
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link rel="stylesheet" href="<?php echo __PATH__?>plugins/common/common.css" type="text/css" />
+  <link rel="stylesheet" href="<?php echo __PATH__?>dist/css/common.css" type="text/css" />
 
   <link rel="stylesheet" href="<?php echo __PATH__?>plugins/bootstrap/bootstrap.css" type="text/css" />
   <!-- Font Awesome -->
