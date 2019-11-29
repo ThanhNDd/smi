@@ -28,7 +28,24 @@ class PrinterReceipt
             $mpdf->SetDisplayPreferences('/FitWindow/NoPrintScaling');
             $mpdf->WriteHTML($html);
             $mpdf->AddPage();
-            $mpdf->Output("receipt.pdf", 'F');
+            
+            
+            // $this->rrmdir("pdf");
+            $folder_path = "pdf"; 
+            $files = glob($folder_path.'/*');  
+            // Deleting all the files in the list 
+            foreach($files as $file) { 
+                if(is_file($file))  {
+                    // Delete the given file 
+                    unlink($file);  
+                }
+            } 
+            
+            mkdir("pdf", 0777, true);
+            $filename = "receipt".time().".pdf";
+            $mpdf->Output("pdf/".$filename, 'F');
+            chmod("pdf/".$filename, 0777);
+            return $filename;
         } catch (Exception $e) {
             echo "Couldn't print to this printer: " . $e -> getMessage() . "\n";
             throw new Exception($e);
@@ -40,9 +57,9 @@ class PrinterReceipt
         $header = '
             <!DOCTYPE>
             <html>
-            <head>
+            <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
                 <title>Receipt Template</title>
-                <meta charset="utf-8">
+                
                 <style type="text/css">
                     @page bigger { sheet-size: 58mm 100mm; }
                     #barcode {font-weight: normal; font-style: normal; line-height:normal; font-family: sans-serif; font-size: 12pt}
@@ -188,7 +205,23 @@ class PrinterReceipt
         </html>';
         return $footer;
     }
-
+    function rrmdir($src) {
+        if (file_exists($src)) {
+            $dir = opendir($src);
+            while (false !== ($file = readdir($dir))) {
+                if (($file != '.') && ($file != '..')) {
+                    $full = $src . '\\' . $file;
+                    if (is_dir($full)) {
+                        rrmdir($full);
+                    } else {
+                        unlink($full);
+                    }
+                }
+            }
+            closedir($dir);
+            rmdir($src);
+        }
+    }
     function vn_to_str($str){
         $unicode = array(
         'a'=>'á|à|ả|ã|ạ|ă|ắ|ặ|ằ|ẳ|ẵ|â|ấ|ầ|ẩ|ẫ|ậ',

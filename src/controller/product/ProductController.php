@@ -24,8 +24,8 @@ if(isset($_POST["method"]) && $_POST["method"]=="print_barcode")   {
     {
         $lists = $dao->get_data_print_barcode($skus);
         // echo json_encode($lists);
-        $print_barcode->print($lists);
-        $response_array['response'] = "successfully";
+        $filename = $print_barcode->print($lists);
+        $response_array['fileName'] = $filename;
         echo json_encode($response_array);
     } catch(Exception $ex)
     {

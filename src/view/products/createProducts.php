@@ -461,90 +461,67 @@
       return value.replace(/,/g, '');
     } 
 
+
     var size = [
           {
               id: '60',
-              text: '60'
+              text: '60 cm (3kg-6kg)'
           },
           {
               id: '73',
-              text: '73'
+              text: '73 cm (6kg-8kg)'
           },
           {
               id: '80',
-              text: '80'
+              text: '80 cm (8kg-10kg)'
           },
           {
               id: '90',
-              text: '90'
+              text: '90 cm (11kg-13kg)'
           },
           {
               id: '100',
-              text: '100'
+              text: '100 cm (14kg-16kg)'
           },
           {
               id: '110',
-              text: '110'
+              text: '110 cm (17kg-18kg)'
           },
           {
               id: '120',
-              text: '120'
+              text: '120 cm (19kg-20kg)'
           },
           {
               id: '130',
-              text: '130'
+              text: '130 cm (21kg-23kg)'
           },
           {
               id: '140',
-              text: '140'
+              text: '140 cm (24kg-27kg)'
           },
           {
               id: '150',
-              text: '150'
+              text: '150 cm (28kg-32kg)'
           },
           {
               id: '160',
-              text: '160'
+              text: '160 cm (33kg-40kg)'
           },
           {
-              id: '3m',
+              id: '3',
               text: '3m'
           },
           {
-              id: '6m',
+              id: '6',
               text: '6m'
           },
           {
-              id: '9m',
+              id: '9',
               text: '9m'
           },
           {
               id: 'Free Size',
               text: 'Free Size'
-          },
-          {
-              id: 'S',
-              text: 'S'
-          },
-          {
-              id: 'M',
-              text: 'M'
-          },
-          {
-              id: 'L',
-              text: 'L'
-          },
-          {
-              id: 'XL',
-              text: 'XL'
-          },
-          {
-              id: 'XXL',
-              text: 'XXL'
-          },
-          {
-              id: '3XL',
-              text: '3XL'
           }
       ];
       var colors = [

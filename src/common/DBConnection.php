@@ -1,9 +1,15 @@
 <?php
 class DBConnect {
+    // private $db = "cudwlevvhosting_admin";
+    // private $host = "localhost";
+    // private $user = "cudwlevvhosting_smi";
+    // private $pass = "xqjxERUWQ6F2S7r";
+    // private $conn;
+
     private $db = "smi_admin";
     private $host = "localhost";
     private $user = "root";
-    private $pass = "123456";
+    private $pass = "";
     private $conn;
 
     function DBConnect()

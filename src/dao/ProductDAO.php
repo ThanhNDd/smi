@@ -11,7 +11,7 @@ class ProductDAO {
                         B.sku,
                         A.retail,
                         B.quantity, 
-                        concat(B.size,'-',B.color) as size
+                        case when B.size ='Free Size' then B.color else concat(B.size,'-',B.color) end as size
                     from 
                         smi_products A left join smi_variations B on A.id = B.product_id 
                     where 
@@ -165,7 +165,23 @@ class ProductDAO {
                         A.fee_transport,
                         A.retail,
                         A.profit,
-                        B.size, 
+                        case 
+                            when B.size = '3' then concat(B.size, 'm')
+                            when B.size = '6' then concat(B.size, 'm')
+                            when B.size = '9' then concat(B.size, 'm')
+                            when B.size = '60' then concat(B.size, ' cm (3kg-6kg)')
+                            when B.size = '73' then concat(B.size, ' cm (6kg-8kg)')
+                            when B.size = '80' then concat(B.size, ' cm (8kg-10kg)')
+                            when B.size = '90' then concat(B.size, ' cm (11kg-13kg)')
+                            when B.size = '100' then concat(B.size, ' cm (14kg-16kg)')
+                            when B.size = '110' then concat(B.size, ' cm (17kg-18kg)')
+                            when B.size = '120' then concat(B.size, ' cm (19kg-20kg)')
+                            when B.size = '130' then concat(B.size, ' cm (21kg-23kg)')
+                            when B.size = '140' then concat(B.size, ' cm (24kg-27kg)')
+                            when B.size = '150' then concat(B.size, ' cm (28kg-32kg)')
+                            when B.size = '160' then concat(B.size, ' cm (33kg-40kg)')
+                            else concat(B.size)
+                        end as size, 
                         B.color, 
                         B.quantity, 
                         B.sku, 

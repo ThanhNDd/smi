@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/../../../vendor/autoload.php';
 date_default_timezone_set('Asia/Ho_Chi_Minh');
-define('__PATH__', (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://{$_SERVER['HTTP_HOST']}/admin/");
+require_once("../../common/constants.php");
 /**
  * 
  */
@@ -19,7 +19,8 @@ class PrinterBarcode
                 'margin_left' => 0,
                 'margin_right' => 0,
                 'margin_top' => 0,
-                'margin_bottom' => 0
+                'margin_bottom' => 0,
+                'tempDir' => __DIR__ . '/tmp'
             ]);
             $mpdf->SetDisplayMode('real');
             $mpdf->SetDisplayPreferences('/FitWindow/NoPrintScaling');
@@ -52,7 +53,7 @@ class PrinterBarcode
             {
                 $i = 0;
                 foreach ($data as $d) {
-                    if($i == 0)
+                    if($i % 2 == 0)
                     {
                         $content = "";
                         $content = $this->getHeader();
@@ -74,29 +75,31 @@ class PrinterBarcode
                                         <td class="right"><b>'.$d["price"].' đ</b></td>
                                     </tr>
                                 </table>';
-                    if($i==1)
+                    if($i % 2 != 0 || count($data)-1 == $i)
                     {
                         $content .= $this->getFooter();
                         $mpdf->AddPage();
                         $mpdf->WriteHTML($content);
-                        $i = 0;
-                    } else
-                    {
-                        $i++;
-                    }                    
+                        //$i = 0;
+                    } 
+                    $i++;                     
                 }
             }
-            try 
-            {
-                $this->rrmdir("C:\\xampp\\htdocs\\admin\\src\\controller\\product\\pdf");
-                mkdir("C:\\xampp\\htdocs\\admin\\src\\controller\\product\\pdf", 0755, true);
-            } catch(Exception $e)
-            {
-                
-            }
+            // $this->rrmdir("pdf");
+            $folder_path = "pdf"; 
+            $files = glob($folder_path.'/*');  
+            // Deleting all the files in the list 
+            foreach($files as $file) { 
+                if(is_file($file))  {
+                    // Delete the given file 
+                    unlink($file);  
+                }
+            } 
+            //mkdir("pdf", 0777, true);
             $filename = "barcode".time().".pdf";
-            $mpdf->Output("C:\\xampp\\htdocs\\admin\\src\\controller\\product\\pdf\\".$filename, 'F');
-            shell_exec('"C:\\Program Files (x86)\\Adobe\\Reader 11.0\\Reader\\AcroRd32.exe" /p "C:\\xampp\\htdocs\\admin\\src\\controller\\product\\pdf\\'.$filename.'"');
+            $mpdf->Output("pdf/".$filename, 'F');
+            chmod("pdf/".$filename, 0775);
+            return $filename;
         } catch (Exception $e) {
             echo "Couldn't print to this printer: " . $e -> getMessage() . "\n";
             throw new Exception($e);
@@ -107,9 +110,9 @@ class PrinterBarcode
     {
            $content = '<!DOCTYPE>
             <html>
-            <head>
+            <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
                 <title>Receipt Template</title>
-                <meta charset="utf-8">
+                
                 <style type="text/css">
                     .center {
                         text-align: center;

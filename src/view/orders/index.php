@@ -1,13 +1,13 @@
-<?php define('__PATH__', (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://{$_SERVER['HTTP_HOST']}/admin/"); ?>
+<?php require_once("../../common/constants.php") ?>
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
+<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="shortcut icon" type="image/x-icon" href="<?php echo __PATH__?>dist/img/icon.png"/>
   <title>Quản lý đơn hàng</title>
-  <?php include __PATH__.'src/common/css.php'; ?>
-  <?php include __PATH__.'src/common/js.php'; ?>
+  <?php require ('../../common/css.php'); ?>
+  <?php require ('../../common/js.php'); ?>
   <style>
   
     td.details-control {
@@ -32,8 +32,8 @@
     }
   </style>
 </head>  
-<?php include __PATH__.'src/common/header.php'; ?>
-<?php include __PATH__.'src/common/menu.php'; ?>
+<?php require ('../../common/header.php'); ?>
+<?php require ('../../common/menu.php'); ?>
 <section class="content">
   <div class="row">
     <div class="col-12">

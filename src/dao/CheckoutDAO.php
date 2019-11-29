@@ -74,7 +74,7 @@ class CheckoutDAO {
                             'shipping' => number_format($row["shipping"]),
                             'discount' => number_format($row["discount"]),
                             'total_checkout' => number_format($row["total_checkout"]),
-                            'created_date' => date_format(date_create($row["created_date"]),"d/m/Y h:i:s"),
+                            'created_date' => date_format(date_create($row["created_date"]),"d/m/Y H:i:s"),
                             'type' => $row["type"],
                             'status' => $row["status"],
                             'details' => array()

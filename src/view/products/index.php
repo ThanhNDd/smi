@@ -1,13 +1,13 @@
-<?php define('__PATH__', (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://{$_SERVER['HTTP_HOST']}/admin/"); ?>
+<?php require_once("../../common/constants.php") ?>
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
+<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Quản lý sản phẩm</title>
   <link rel="shortcut icon" type="image/x-icon" href="<?php echo __PATH__?>dist/img/icon.png"/>
-  <?php include __PATH__.'src/common/css.php'; ?>
-  <?php include __PATH__.'src/common/js.php'; ?>
+  <?php require ('../../common/css.php'); ?>
+  <?php require ('../../common/js.php'); ?>
   <style>
   
     td.details-control {
@@ -56,8 +56,8 @@
     }
   </style> 
 </head>  
-<?php include __PATH__.'src/common/header.php'; ?>
-<?php include __PATH__.'src/common/menu.php'; ?>
+<?php require ('../../common/header.php'); ?>
+<?php require ('../../common/menu.php'); ?>
 <section class="content">
   <div class="row">
     <div class="col-12">
@@ -71,7 +71,7 @@
               <i class="fa fa-plus-circle" aria-hidden="true"></i> Tạo mới
             </button>    
             <button type="button" class="btn btn-info btn-flat print-barcode">
-              <i class="fa fa-barcode" aria-hidden="true"></i> In tem
+              <i class="fa fa-barcode" aria-hidden="true"></i> In tem  <span class="badge badge-light number-checked">0</span>
             </button>    
           </section>
         </div>
@@ -110,7 +110,7 @@
     <!-- /.content -->
 <?php include 'createProducts.php'; ?>
 </div>
-<div class="iframeArea hidden">
+<div class="iframeArea hidden"></div>
 <?php include __PATH__.'src/common/footer.php'; ?>
   <script>
     $(document).ready(function () {
@@ -134,12 +134,27 @@
           clearAll();
         });
 
+        
+
     });
     function clearAll()
     {
       $.each($("#example tbody td input[type='checkbox']:checked"), function(){
         $(this).prop("checked",false);
       });
+      $(".number-checked").text(0);
+    }
+    function countAllChecked()
+    {
+      var count = 0;
+      $.each($("#example tbody td input[type='checkbox']:checked"), function(){
+        var id = $(this).attr("id");
+        if(id != "selectall")
+        {
+          count++;
+        }
+      });
+      $(".number-checked").text(count);
     }
     function printBarcode(data)
     {
@@ -153,7 +168,16 @@
 				data : JSON.stringify(data)
 			},
 			success : function(res){
-				console.log(res);
+				var filename = res.fileName;
+				$(".iframeArea").html("");
+				if(typeof filename !== "underfined" && filename !== "")
+				{
+    				$(".iframeArea").html('<iframe src="<?php echo __PATH__?>src/controller/product/pdf/'+filename+'" id="barcodeContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
+    				// var objFra = document.getElementById('barcodeContent');
+        //     		objFra.contentWindow.focus();
+        //     		objFra.contentWindow.print();
+                window.open("<?php echo __PATH__?>src/controller/product/pdf/"+filename, "_blank");
+				}
         // $(".iframeArea").html('<iframe src="<?php echo __PATH__?>src/controller/product/barcode.pdf" id="barcodeContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
         // var objFra = document.getElementById('barcodeContent');
         // objFra.contentWindow.focus();
@@ -407,9 +431,15 @@
             var sku = tr.attr("class");
             var color_text = $(td[2]).text();
             var size_text = $(td[3]).text();
+            var size_value = size_text;
+            if(size_text.indexOf(" ") >-1) {
+              size_value = size_text.split(" ")[0];
+            } else {
+              size_value = size_text.split("m")[0];
+            }
             var qty_text = $(td[4]).text();
             var input_color = '<select class="select-color-'+sku+' form-control w100" id="select_color_'+sku+'"></select>';
-            var input_size = '<select class="select-size-'+sku+' form-control w100" id="select_size_'+sku+'"></select>';
+            var input_size = '<select class="select-size-'+sku+' form-control w200" id="select_size_'+sku+'"></select>';
             var input_qty = '<select class="select-qty-'+sku+' form-control w100" id="select_qty_'+sku+'"></select>';
             var btn_gr = '<button type="button" class="btn bg-gradient-primary btn-sm update_variation"><i class="fas fa-save"></i> Lưu</button>&nbsp;'+
                           '<button type="button" class="btn bg-gradient-danger btn-sm cancel_variation" "><i class="fas fa-trash"></i> Hủy</button>';
@@ -421,9 +451,9 @@
             $(td[4]).html(input_qty);
             $(td[5]).html(btn_gr);
             $(tr).append(gr_input_hidden);
-            generate_select2(".select-qty-"+sku,qty, qty_text);
-            generate_select2(".select-color-"+sku,colors, color_text);
-            generate_select2(".select-size-"+sku,size, size_text);
+            generate_select2(".select-qty-"+sku, qty, qty_text);
+            generate_select2(".select-color-"+sku, colors, color_text);
+            generate_select2(".select-size-"+sku, size, size_value);
           });
 
           // Event click Save new variation
@@ -436,7 +466,6 @@
             var color = $(".select-color-"+sku).val();
             var size = $(".select-size-"+sku).val();
             var qty = $(".select-qty-"+sku).val();
-            console.log(product_id);
             $.ajax({
                 url : '<?php echo __PATH__.'src/controller/product/ProductController.php' ?>',
                 type : "POST",
@@ -479,6 +508,7 @@
             var sku = tr.attr("class");
             var color = $(".select-color-"+sku).val();
             var size = $(".select-size-"+sku).val();
+            var txtsize = $(".select-size-"+sku+' option:selected').text();
             var qty = $(".select-qty-"+sku).val();
             $.ajax({
                 url : '<?php echo __PATH__.'src/controller/product/ProductController.php' ?>',
@@ -494,12 +524,12 @@
                 success : function(res){
                   Swal.fire(
                       'Thành công!',
-                      'Các sản phẩm đã được tạo thành công.',
+                      'Cập nhật thành công!',
                       'success'
                     );
-                  var btn_gr = '<button type="button" class="btn bg-gradient-info btn-sm edit_product"><i class="fas fa-edit"></i> Sửa</button>&nbsp;';
+                  var btn_gr = '<button type="button" class="btn bg-gradient-info btn-sm edit_variation"><i class="fas fa-edit"></i> Sửa</button>&nbsp;';
                   $(td[2]).html(color);
-                  $(td[3]).html(size);
+                  $(td[3]).html(txtsize);
                   $(td[4]).html(qty);
                   $(td[5]).html(btn_gr);
                   hide_loading();
@@ -566,7 +596,7 @@
                     console.log(res);
                     Swal.fire(
                       'Thành công!',
-                      'Sản phẩm đã được xóa thành công.',
+                      'Xóa thành công.',
                       'success'
                     );
                     
@@ -604,6 +634,12 @@
                 $(tr).remove();
               }
             });
+          });
+
+          $('input.chk').on('change', function () {
+              alert('checkbox clicked'); // it is never shown
+              cb = $(this).prop('checked');
+              console.log(cb)
           });
     }
 
@@ -652,7 +688,7 @@
                 '<tbody>';
         for(var i=0; i<variations.length; i++) {
           table += '<tr class="'+variations[i].sku+'">' +
-            '<td class="center"><input type="checkbox" id="'+variations[i].sku+'"></td>' +
+            '<td class="center"><input type="checkbox" id="'+variations[i].sku+'" onclick="check(this)"></td>' +
                 '<input type="hidden" class="product-id-'+variations[i].sku+'" value="'+variations[i].product_id+'">' +
                 '<td>'+variations[i].sku+'</td>' +
                 '<td>'+variations[i].color+'</td>' +
@@ -683,6 +719,21 @@
         table += '</table>';  
       return table;         
     }
+
+    function check(e)
+    {
+      var isCheck = $(e).prop('checked');
+      if(isCheck)
+      {
+        $(e).prop("checked", "checked");
+      } 
+      else
+      {
+        $(e).prop("checked", "");
+      }
+      countAllChecked();
+    } 
+
     function checkAll(e)
     {
       var isCheck = $(e).prop('checked');
@@ -694,7 +745,7 @@
       {
         $(e).parent().parent().parent().parent().find('td input:checkbox').prop("checked", "");
       }
-      
+      countAllChecked();
     }
     function formatNumber(num) {
       return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')

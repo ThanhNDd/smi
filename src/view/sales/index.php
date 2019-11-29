@@ -1,19 +1,19 @@
-<?php define('__PATH__', (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://{$_SERVER['HTTP_HOST']}/admin/"); ?>
+<?php require_once("../../common/constants.php") ?>
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
+<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="shortcut icon" type="image/x-icon" href="<?php echo __PATH__?>dist/img/icon.png"/>
   <title>Bán hàng</title>
-  	<?php include __PATH__.'src/common/css.php'; ?>
-  	<?php include __PATH__.'src/common/js.php'; ?>
+  	<?php require_once ('../../common/css.php'); ?>
+  	<?php require_once ('../../common/js.php'); ?>
  	<link rel="stylesheet" href="<?php echo __PATH__?>plugins/typeahead/css/typeaheadjs.css">	
 	<script src="<?php echo __PATH__?>plugins/typeahead/js/typeahead.jquery.min.js"></script>
 	<script src="<?php echo __PATH__?>plugins/typeahead/js/bloodhound.min.js"></script>
 </head>  
-<?php include __PATH__.'src/common/header.php'; ?>
-<?php include __PATH__.'src/common/menu.php'; ?>
+<?php require_once ('../../common/header.php'); ?>
+<?php require_once ('../../common/menu.php'); ?>
 <section class="content">
 	<div class="row" style="margin-bottom: 10px;">
 		<div class="col-md-4">
@@ -246,7 +246,6 @@
 
 	function processDataCheckout()
 	{
-		$(".iframeArea").html("");
 		// order information
 		$total_amount = replaceComma($("#totalAmount").text());
 		$total_reduce = replaceComma($("#totalReduce").text());
@@ -313,15 +312,24 @@
 			success: function(data)
 			{
 				var orderId = data.orderId;
-				$(".iframeArea").html('<iframe src="<?php echo __PATH__?>src/controller/sales/receipt.pdf" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
-				printReceipt();
+				var filename = data.fileName;
+				console.log('filename: '+filename);
+				$(".iframeArea").html("");
+				if(typeof filename !== "underfined" && filename !== "")
+				{
+    				$(".iframeArea").html('<iframe src="<?php echo __PATH__?>src/controller/sales/pdf/'+filename+'" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
+				}
 				Swal.fire(
 					'Thành công!',
 					'Đơn hàng #'+orderId+' đã được tạo thành công.',
 					'success'
 				).then((result) => {
 			        if (result.value) {
-						resetData();
+			            resetData();
+			            if($flag_print_receipt === true && typeof filename !== "underfined" && filename !== "")
+        				{
+        				    printReceipt();
+        				}
 					}
 		        });    
 				

@@ -72,8 +72,9 @@ class PrintReceiptOnline
                         border-collapse: collapse;
                     }
                     td {
-                        border: 1px solid;
+                        //border: 1px solid;
                         padding: 4px 0;
+                        vertical-align: top;
                     }
                     table thead {
                         font-weight: bold;
@@ -99,7 +100,7 @@ class PrintReceiptOnline
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="left" style="200px">Người nhận</td>
+                                    <td class="left" style="width:50px">Họ tên</td>
                                     <td class="left"><b>Nguyễn Thanh Sang</b></td>
                                 </tr>
                                 <tr>
