@@ -1,4 +1,4 @@
-<?php require_once("../../common/constants.php") ?>
+<?php require_once("constants.php") ?>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
   <!-- Brand Logo -->
   <a href="index3.html" class="brand-link">

@@ -1,4 +1,4 @@
-<?php require_once("../../common/constants.php") ?>
+<?php require_once("constants.php") ?>
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
 

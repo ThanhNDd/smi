@@ -32,8 +32,8 @@ class CheckoutDAO {
                     from smi_orders A 
                         left join smi_order_detail B on A.id = B.order_id
                         left join smi_customers C on A.customer_id = C.id
-                        left join smi_products D on B.product_id = D.id
                         left join smi_variations E on B.variant_id = E.id
+                        left join smi_products D on E.product_id = D.id
                     order by A.created_date desc";
             $result = mysqli_query($this->conn,$sql);
             $data = array();        
@@ -42,30 +42,7 @@ class CheckoutDAO {
             foreach($result as $k => $row) {
                 if($order_id != $row["order_id"])
                 {
-                    $cityId = $row["city_id"];
-                    $cityName = $zone->get_name_city($cityId);
-                    $districtId = $row["district_id"];
-                    $districtName = $zone->get_name_district($districtId);
-                    $villageId = $row["village_id"];
-                    $villageName = $zone->get_name_village($villageId);
-                    $address = "";
-                    if(!empty($row["address"]))
-                    {
-                        $address = $row["address"];
-                        if(!empty($villageName))
-                        {
-                            $address .= ", ".$villageName;
-                            if(!empty($districtName))
-                            {
-                                $address .= ", ".$districtName;
-                                if(!empty($cityName))
-                                {
-                                    $address .= ", ".$cityName;
-                                }
-                            }
-                        }
-                    }
-                    
+                    $address = $this->get_address($row);
                     $order = array(
                             'order_id' => $row["order_id"],
                             'customer_name' => $row["customer_name"],
@@ -194,6 +171,69 @@ class CheckoutDAO {
         {
             throw new Exception($e);
         }   
+    }
+
+    function get_data_print_receipt($order_id)
+    {
+        try {
+            $sql = "select 
+                        A.bill_of_lading_no as bill,
+                        B.name,
+                        B.phone,
+                        B.address,
+                        B.city_id,
+                        B.district_id,
+                        B.village_id
+                    FROM 
+                    smi_orders A inner join smi_customers B on A.customer_id = B.id
+                    WHERE A.id = ".$order_id;
+            $result = mysqli_query($this->conn,$sql);
+            $data = array();    
+            foreach($result as $k => $row) {
+                $address = $this->get_address($row);
+                $order = array(
+                        'bill' => $row["bill"],
+                        'name' => $row["name"],
+                        'phone' => $row["phone"],
+                        'address' => $address,
+                        'phone' => $row["phone"]
+                    );
+                array_push($data, $order);
+            }
+            return $data;
+        } catch(Exception $e)
+        {
+            throw new Exception($e);
+        }
+    }
+
+    function get_address($row) {
+        $zone = new Zone();
+        $cityId = $row["city_id"];
+        $cityName = $zone->get_name_city($cityId);
+        $districtId = $row["district_id"];
+        $districtName = $zone->get_name_district($districtId);
+        $villageId = $row["village_id"];
+        $villageName = $zone->get_name_village($villageId);
+        $address = "";
+        if(!empty($row["address"]))
+        {
+            $address = $row["address"];
+            if(!empty($villageName))
+            {
+                $address .= ", ".$villageName;
+                if(!empty($districtName))
+                {
+                    $address .= ", ".$districtName;
+                    if(!empty($cityName))
+                    {
+                        $address .= ", ".$cityName;
+                        return $address;
+                    }
+                }
+            }
+        }
+        return "";
     }
 
      /**

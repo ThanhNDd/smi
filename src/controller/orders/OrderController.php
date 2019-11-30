@@ -8,6 +8,7 @@ include("../../common/cities/Zone.php");
 include("../../model/Order/Order.php");
 include("../../model/Order/OrderDetail.php");
 include("../../model/Customer/Customer.php");
+include("PrintReceiptOnline.php");
 
 /**
 * Construtor connect to API woocomerce
@@ -26,6 +27,24 @@ $customerDAO = new CustomerDAO();
 $customerDAO->setConn($db->getConn());
 
 $zone = new Zone();
+
+$print_receipt = new PrintReceiptOnline();
+if(isset($_POST["method"]) && $_POST["method"]=="print_receipt")   {
+    $order_id = $_POST["order_id"];
+    try 
+    {
+        $receipt = $checkoutDAO->get_data_print_receipt($order_id);
+		//echo json_encode($receipt);
+        $filename = $print_receipt->print($receipt);
+        $response_array['fileName'] = $filename;
+        echo json_encode($response_array);
+    } catch(Exception $ex)
+    {
+        throw new Exception($ex);
+    }
+    
+}
+
 
 /**
 *	get data to generate select2 combobox
@@ -138,7 +157,7 @@ if(isset($_POST["orders"]) && $_POST["orders"]=="new")   {
 				$detail->setProduct_id(empty($details[$i]->product_id) ? 0 : $details[$i]->product_id);
 				$detail->setVariant_id(empty($details[$i]->variant_id) ? 0 : $details[$i]->variant_id);
 				$detail->setSku(empty($details[$i]->sku) ? 0 : $details[$i]->sku);
-				$detail->setProduct_name(empty($details[$i]->product_name) ? "" : $details[$i]->product_name);
+				// $detail->setProduct_name(empty($details[$i]->product_name) ? "" : $details[$i]->product_name);
 				$detail->setPrice(empty($details[$i]->price) ? 0 : $details[$i]->price);
 				$detail->setQuantity(empty($details[$i]->quantity) ? 0 : $details[$i]->quantity);
 				$detail->setReduce(empty($details[$i]->reduce) ? 0 : $details[$i]->reduce);
@@ -150,7 +169,7 @@ if(isset($_POST["orders"]) && $_POST["orders"]=="new")   {
 		echo json_encode($repsonse);
 	} catch(Exception $e)
 	{
-		echo $e->getMessage();
+		throw new Exception($e);
 	}
 	
 	

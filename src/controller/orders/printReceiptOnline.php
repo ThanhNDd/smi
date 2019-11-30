@@ -11,33 +11,43 @@ class PrintReceiptOnline
         
     }  
 
-    function print()
+    function print(array $data)
     {
         try {  
             $mpdf = new \Mpdf\Mpdf([
                 'margin_left' => 0,
                 'margin_right' => 0,
                 'margin_top' => 5,
-                'margin_bottom' => 5
+                'margin_bottom' => 5,
+                'tempDir' => __DIR__ . '/tmp'
             ]);
-            $html = $this->getHeader();
-            // $html .= $this->getBody($details);    
-            // $html .= $this->getFooter($order);
+            $html = $this->getContent($data);
 
             $mpdf->SetDisplayMode('real');
             $mpdf->SetDisplayPreferences('/FitWindow/NoPrintScaling');
             $mpdf->WriteHTML($html);
             $mpdf->AddPage();
-            $mpdf->Output("receiptOnline.pdf", 'F');
+            $folder_path = "pdf"; 
+            $files = glob($folder_path.'/*');  
+            foreach($files as $file) { 
+                if(is_file($file))  {
+                    unlink($file);  
+                }
+            } 
+            //mkdir("pdf", 0777, true);
+            $filename = "receiptonline".time().".pdf";
+            $mpdf->Output("pdf/".$filename, 'F');
+            chmod("pdf/".$filename, 0775);
+            return $filename;
         } catch (Exception $e) {
             echo "Couldn't print to this printer: " . $e -> getMessage() . "\n";
             throw new Exception($e);
         }
     }
 
-    function getHeader()
+    function getContent($data)
     {
-        $header = '
+        $content = '
             <!DOCTYPE>
             <html>
             <head>
@@ -96,29 +106,27 @@ class PrintReceiptOnline
                                 </tr>
                                 <tr>
                                     <td colspan="2" class="center">
-                                        <h1>1591442421834</h1>
+                                        <h1>'.$data[0]['bill'].'</h1>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="left" style="width:50px">Họ tên</td>
-                                    <td class="left"><b>Nguyễn Thanh Sang</b></td>
+                                    <td class="left"><b>'.$data[0]['name'].'</b></td>
                                 </tr>
                                 <tr>
                                     <td class="left">SĐT</td>
-                                    <td class="left">0983051533</td>
+                                    <td class="left">'.$data[0]['phone'].'</td>
                                 </tr>
                                 <tr>
                                     <td class="left">Địa chỉ</td>
-                                    <td class="left">
-                                        Đội 9, Xóm giữa, Ngọc than, Ngọc mỹ, Quốc Oai, Hà nội
-                                    </td>
+                                    <td class="left">'.$data[0]['address'].'</td>
                                 </tr>
                         </table>
                     </div>
                 </div>
             </body>
         </html>';  
-        return $header;
+        return $content;
     }
 }
 

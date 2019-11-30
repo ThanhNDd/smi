@@ -408,7 +408,7 @@
           $("#create-order .overlay").removeClass("hidden");
           $.ajax({
             dataType : 'json',
-            url      : '<?php echo __PATH__.'src/controller/orders/processOrder.php' ?>',
+            url      : '<?php echo __PATH__.'src/controller/orders/OrderController.php' ?>',
             data : {
               orders : 'new',
               data : JSON.stringify(data)
@@ -422,11 +422,14 @@
                 'Thành công!',
                 'Đơn hàng đã được tạo thành công.',
                 'success'
-              )    
-              reset_data();
-              $("#create-order .close").click();
-              $("#create-order .overlay").addClass("hidden");
-              table.ajax.reload();
+              ).then((result) => {
+                  if (result.value) {
+                    reset_data();
+                    $("#create-order .close").click();
+                    $("#create-order .overlay").addClass("hidden");
+                    window.location.reload();
+                  }
+              });
             },
             error : function (data, errorThrown) {
               console.log(data.responseText);
@@ -566,7 +569,7 @@
       $(e).removeClass("is-invalid");
       $.ajax({
         dataType : "json",
-          url      : "<?php echo __PATH__.'src/controller/orders/processOrder.php' ?>",
+          url      : "<?php echo __PATH__.'src/controller/orders/OrderController.php' ?>",
           data : {
             method : 'find_product_by_sku',
             sku : val
@@ -665,7 +668,7 @@
       $("#create-order .overlay").removeClass("hidden");
       $.ajax({
           dataType : "json",
-          url      : "<?php echo __PATH__.'src/controller/orders/processOrder.php' ?>",
+          url      : "<?php echo __PATH__.'src/controller/orders/OrderController.php' ?>",
           data : {
             orders : 'loadDataCity'
           },
@@ -696,7 +699,7 @@
       $('.select-district').empty();
       $.ajax({
           dataType : "json",
-          url      : "<?php echo __PATH__.'src/controller/orders/processOrder.php' ?>",
+          url      : "<?php echo __PATH__.'src/controller/orders/OrderController.php' ?>",
           data : {
             orders : 'loadDataDistrict',
             cityId : cityId
@@ -728,7 +731,7 @@
       $('.select-village').empty();
       $.ajax({
           dataType : "json",
-          url      : "<?php echo __PATH__.'src/controller/orders/processOrder.php' ?>",
+          url      : "<?php echo __PATH__.'src/controller/orders/OrderController.php' ?>",
           data : {
             orders : 'loadDataVillage',
             districtId : districtId

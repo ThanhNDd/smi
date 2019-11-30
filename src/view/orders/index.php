@@ -67,6 +67,7 @@
                 <th class="center">Ngày mua hàng</th>
                 <th class="left">Loại đơn</th>
                 <th class="left">Trạng thái</th>
+                <th class="left">In hoá đơn</th>
               </tr>
             </thead>
           </table>
@@ -79,6 +80,7 @@
   </div>
   <!-- /.row -->
 </section>
+<div class="iframeArea hidden"></div>
     <!-- /.content -->
 <?php include 'createOrders.php'; ?>
 </div>
@@ -90,7 +92,7 @@
     
     function generate_datatable() {
         var table = $('#example').DataTable({
-            "ajax": "<?php echo __PATH__.'src/controller/orders/processOrder.php?method=find_all' ?>",
+            "ajax": "<?php echo __PATH__.'src/controller/orders/OrderController.php?method=find_all' ?>",
              select:"single",
              "columns": [
                  {
@@ -147,7 +149,11 @@
                 { 
                     "data": format_status,
                      width:"80px" 
-                }      
+                },
+                { 
+                    "data": format_print_receipt,
+                     width:"80px" 
+                }     
              ],
             "lengthMenu": [[50, 100, -1], [50, 100, "All"]]
          });
@@ -174,11 +180,44 @@
              }
          });
 
-         table.on("user-select", function (e, dt, type, cell, originalEvent) {
-             if ($(cell.node()).hasClass("details-control")) {
-                 e.preventDefault();
-             }
-         });
+         
+         $('#example tbody').on('click', '.print_receipt', function () {
+            show_loading();
+            var tr = $(this).closest('tr');
+            var row = table.row(tr);
+            var order_id = row.data().order_id;
+            $.ajax({
+                url : '<?php echo __PATH__.'src/controller/orders/OrderController.php' ?>',
+                type : "POST",
+                dataType : "json",
+                data : {
+                  method : "print_receipt",
+                  order_id : order_id
+                },
+                success : function(res){
+                  var filename = res.fileName;
+                  $(".iframeArea").html("");
+                  if(typeof filename !== "underfined" && filename !== "")
+                  {
+                      $(".iframeArea").html('<iframe src="<?php echo __PATH__?>src/controller/orders/pdf/'+filename+'" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
+                      var objFra = document.getElementById('receiptContent');
+                         objFra.contentWindow.focus();
+                         objFra.contentWindow.print();
+                          // window.open("<?php echo __PATH__?>src/controller/product/pdf/"+filename, "_blank");
+                  }
+                },
+                error : function(data, errorThrown) {
+                  console.log(data.responseText);
+                  console.log(errorThrown);
+                  Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                  })
+                  hide_loading();
+                }
+              });              
+          });
     }
 
     function format_order_detail(data){
@@ -219,16 +258,11 @@
          }
     }
 
-    // function format_total(data) {
-    //     return '<span class="woocommerce-Price-amount amount">'+data.total+'&nbsp;<span class="woocommerce-Price-currencySymbol">&#8363;</span></span>';
-    // }
-    // function format_shipping(data) {
-    //     return '<span class="woocommerce-Price-amount amount">'+data.shipping+'&nbsp;<span class="woocommerce-Price-currencySymbol">&#8363;</span></span>';
-    // }
-    // function format_fee(data) {
-    //     return '<span class="woocommerce-Price-amount amount">'+data.fee+'&nbsp;<span class="woocommerce-Price-currencySymbol">&#8363;</span></span>';
-    // }
-      function format_type(data) {
+    function format_print_receipt(data) {
+      return '<button class="btn btn-secondary"><i class="fa fa-print print_receipt"></i></button>';
+    }
+    
+    function format_type(data) {
         var type = data.type;
         switch(type) {
         case '0' :
@@ -272,6 +306,15 @@
       }
     }
 
+
+    function show_loading()
+    {
+      $("#create-product .overlay").removeClass("hidden");
+    }
+    function hide_loading()
+    {
+      $("#create-product .overlay").addClass("hidden");
+    }
     function update_data() {
         $(".loading").removeClass("hidden");
         $.ajax({

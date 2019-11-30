@@ -1,4 +1,4 @@
-<?php define('__PATH__', (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://{$_SERVER['HTTP_HOST']}/admin/"); ?>
+<?php require_once("constants.php") ?>
 	<!-- <footer class="main-footer">
 		<strong>Copyright &copy; 2014-2019 <a href="http://adminlte.io">AdminLTE.io</a>.</strong>
 			All rights reserved.

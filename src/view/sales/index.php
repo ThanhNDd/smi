@@ -729,30 +729,6 @@
 		$("#noRow").val(0);
 		disableCheckOutBtn();
 	}
-	 	//  var dataSource = new Bloodhound({
-		//     datumTokenizer: Bloodhound.tokenizers.obj.whitespace('id', 'text'),
-		//     queryTokenizer: Bloodhound.tokenizers.whitespace,
-		//     local: <?php //include __PATH__."src/view/sales/products.json."?>
-		    
-		// });
-		// dataSource.initialize();
-
-		// $('#prefetch .typeahead').typeahead({
-		//     minLength: 0,
-		//     highlight: true
-		// }, {
-		//     name: 'countries',
-		//     display: function(item){ 
-		//     	console.log(item);
-		//     	return item.id+'–'+item.text;
-		// },
-		//     source: dataSource.ttAdapter(),
-		//     suggestion: function (data) {
-		//     	console.log(data);
-	 	//          return '<div>' +data.id  + '–' + data.text + '</div>';
-	 	//     },
-		//     autoselect: true
-		// });
 
 
 </script>
