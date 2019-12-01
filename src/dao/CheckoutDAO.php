@@ -4,7 +4,57 @@
 class CheckoutDAO {
     private $conn;
 
-    function find_all()
+    // select 
+    //     A.type,
+    //     case when A.type = 0 then 'Khách lẻ' else C.name end as customer_name,
+    //     C.phone,
+    //     C.address,
+    //     C.city_id,
+    //     C.district_id,
+    //     C.village_id,
+    //     A.total_amount,
+    //     A.shipping
+    // from smi_orders A left join smi_customers C on A.customer_id = C.id
+    // left join smi_order_details B on A.id = B.order_id
+    // inner join smi_variations D on B.variant_id = D.id
+    // where DATE(A.created_date) = DATE('2019-11-30')
+    // order by 
+    //     A.type
+
+    function find_all_order_by_date()
+    {
+        try {
+            $sql = "select  
+                        DATE(A.created_date) as date,
+                        sum(A.total_amount) as total_amount,
+                        sum(C.profit) as total_profit
+                    from smi_orders A left join smi_order_detail B on A.id = B.order_id
+                    inner join smi_variations C on B.variant_id = C.id
+                    group by
+                        DATE(A.created_date)
+                    order by
+                        DATE(A.created_date) desc";
+            $result = mysqli_query($this->conn,$sql);
+            $data = array();        
+            foreach($result as $k => $row) {
+                $order = array(
+                        'date' => date_format(date_create($row["date"]),"d/m/Y"),
+                        'total_amount' => number_format($row["total_amount"]),
+                        'total_profit' => number_format($row["total_profit"])
+                    );
+                array_push($data, $order);
+            }
+            $arr = array();
+            $arr["data"] = $data;
+            return $arr;
+        } catch(Exception $e)
+        {
+            throw new Exception($e);
+        }
+    }
+
+    // find all order 
+    function find_all($start_date, $end_date)
     {
         $zone = new Zone();
         try {
@@ -34,6 +84,7 @@ class CheckoutDAO {
                         left join smi_customers C on A.customer_id = C.id
                         left join smi_variations E on B.variant_id = E.id
                         left join smi_products D on E.product_id = D.id
+                    where DATE(created_date) between DATE('".$start_date."') and DATE('".$end_date."')
                     order by A.created_date desc";
             $result = mysqli_query($this->conn,$sql);
             $data = array();        

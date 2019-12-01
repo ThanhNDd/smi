@@ -69,10 +69,21 @@ if(isset($_GET["orders"]) && $_GET["orders"]=="loadDataVillage") {
 		die();
 	}
 }
-if(isset($_GET["method"]) && $_GET["method"]=="find_all")   {
+if(isset($_GET["method"]) && $_GET["method"]=="find_all_order_by_date")   {
 	
 	try {
-		$orders = $checkoutDAO->find_all();
+		$orders = $checkoutDAO->find_all_order_by_date();
+		echo json_encode($orders);
+	} catch(Exception $e)
+	{
+		throw new Exception($e);
+	}
+}
+if(isset($_GET["method"]) && $_GET["method"]=="find_all")   {
+	$start_date = $_GET["start_date"];
+	$end_date = $_GET["end_date"];
+	try {
+		$orders = $checkoutDAO->find_all($start_date, $end_date);
 		echo json_encode($orders);
 	} catch(Exception $e)
 	{

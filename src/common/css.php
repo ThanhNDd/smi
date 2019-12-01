@@ -41,5 +41,3 @@
   <!-- Toastr -->
   <link rel="stylesheet" href="<?php echo __PATH__?>plugins/sweetalert2/sweetalert2.min.css">
   <link rel="stylesheet" href="<?php echo __PATH__?>plugins/toastr/toastr.min.css">
-
-  

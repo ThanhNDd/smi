@@ -71,7 +71,7 @@
               <i class="fa fa-plus-circle" aria-hidden="true"></i> Tạo mới
             </button>    
             <button type="button" class="btn btn-info btn-flat print-barcode">
-              <i class="fa fa-barcode" aria-hidden="true"></i> In tem  <span class="badge badge-light number-checked">0</span>
+              <i class="fa fa-barcode" aria-hidden="true"></i> In mã vạch  <span class="badge badge-light number-checked">0</span>
             </button>    
           </section>
         </div>

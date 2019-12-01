@@ -38,3 +38,14 @@
 
 <!-- iCheck js -->
 <!-- <script src="<?php echo __PATH__?>plugins/icheck/icheck.min.js"></script> -->
+
+<script src="<?php echo __PATH__?>plugins/moment/moment.min.js"></script>
+<!-- date-range-picker -->
+<script src="<?php echo __PATH__?>plugins/daterangepicker/daterangepicker.js"></script>
+
+<script type="text/javascript">
+	
+	function set_title(title) {
+		$(".title-page").text(title);
+	}
+</script>
