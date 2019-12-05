@@ -42,9 +42,34 @@ if(isset($_POST["method"]) && $_POST["method"]=="print_receipt")   {
     {
         throw new Exception($ex);
     }
-    
 }
 
+if(isset($_POST["method"]) && $_POST["method"]=="get_info_total_checkout")   {
+    $start_date = $_POST["start_date"];
+    $end_date = $_POST["end_date"];
+    try 
+    {
+        $info_total = $checkoutDAO->get_info_total_checkout($start_date, $end_date);
+        echo json_encode($info_total);
+    } catch(Exception $ex)
+    {
+        throw new Exception($ex);
+    }
+}
+
+if(isset($_POST["method"]) && $_POST["method"]=="delete_order")   {
+    $order_id = $_POST["order_id"];
+    try 
+    {
+        $checkoutDAO->delete_order($order_id);
+		$repsonse =  "success";
+		echo json_encode($repsonse);
+    } catch(Exception $ex)
+    {
+        throw new Exception($ex);
+    }
+    
+}
 
 /**
 *	get data to generate select2 combobox
@@ -69,21 +94,31 @@ if(isset($_GET["orders"]) && $_GET["orders"]=="loadDataVillage") {
 		die();
 	}
 }
-if(isset($_GET["method"]) && $_GET["method"]=="find_all_order_by_date")   {
+// if(isset($_GET["method"]) && $_GET["method"]=="find_all_order_by_date")   {
 	
+// 	try {
+// 		$orders = $checkoutDAO->find_all_order_by_date();
+// 		echo json_encode($orders);
+// 	} catch(Exception $e)
+// 	{
+// 		throw new Exception($e);
+// 	}
+// }
+if(isset($_GET["method"]) && $_GET["method"]=="find_all")   {
+	$start_date = $_GET["start_date"];
+	$end_date = $_GET["end_date"];
 	try {
-		$orders = $checkoutDAO->find_all_order_by_date();
+		$orders = $checkoutDAO->find_all($start_date, $end_date);
 		echo json_encode($orders);
 	} catch(Exception $e)
 	{
 		throw new Exception($e);
 	}
 }
-if(isset($_GET["method"]) && $_GET["method"]=="find_all")   {
-	$start_date = $_GET["start_date"];
-	$end_date = $_GET["end_date"];
+if(isset($_GET["method"]) && $_GET["method"]=="get_order_detail_by_order_id")   {
+	$order_id = $_GET["order_id"];
 	try {
-		$orders = $checkoutDAO->find_all($start_date, $end_date);
+		$orders = $checkoutDAO->get_order_detail_by_order_id($order_id);
 		echo json_encode($orders);
 	} catch(Exception $e)
 	{
@@ -130,6 +165,10 @@ if(isset($_POST["orders"]) && $_POST["orders"]=="new")   {
 		$customer->setDistrict_id($data->districtId);
 		$customer->setVillage_id($data->villageId);
 		$cusId = $customerDAO->save_customer($customer);
+		if(empty($cusId))
+		{
+			throw new Exception("Insert customer is failure", 1);
+		}
 
 		$order = new Order();
 		$order->setTotal_reduce(null);
@@ -146,34 +185,41 @@ if(isset($_POST["orders"]) && $_POST["orders"]=="new")   {
 		$order->setShipping($data->shipping);
 		$order->setShipping_unit($data->shipping_unit);
 		$order->setStatus(1); // processing
+		$order->setDeleted(0);
+		$order->setPayment_type(1);// transfer type
 		$orderId = $checkoutDAO->saveOrder($order);
+		if(empty($orderId))
+		{
+			throw new Exception("Insert order is failure", 1);
+		}
 		$order->setId($orderId);
-		
-		if(!empty($orderId)) {
-			$details = $data->products;
-			for($i=0; $i<count($details); $i++)
+		$details = $data->products;
+		for($i=0; $i<count($details); $i++)
+		{
+			$price = 0;
+			$qty = 0;
+			if(!empty($details[$i]->price))
 			{
-				$price = 0;
-				$qty = 0;
-				if(!empty($details[$i]->price))
-				{
-					$price = $details[$i]->price;
-				}
-				if(!empty($details[$i]->quantity))
-				{
-					$qty = $details[$i]->quantity;
-				}
-				$detail = new OrderDetail();
-				$detail->setOrder_id($orderId);
-				$detail->setProduct_id(empty($details[$i]->product_id) ? 0 : $details[$i]->product_id);
-				$detail->setVariant_id(empty($details[$i]->variant_id) ? 0 : $details[$i]->variant_id);
-				$detail->setSku(empty($details[$i]->sku) ? 0 : $details[$i]->sku);
-				// $detail->setProduct_name(empty($details[$i]->product_name) ? "" : $details[$i]->product_name);
-				$detail->setPrice(empty($details[$i]->price) ? 0 : $details[$i]->price);
-				$detail->setQuantity(empty($details[$i]->quantity) ? 0 : $details[$i]->quantity);
-				$detail->setReduce(empty($details[$i]->reduce) ? 0 : $details[$i]->reduce);
-				$detail->setReduce_percent(empty($details[$i]->reduce_percent) ? 0 : $details[$i]->reduce_percent);
-				$checkoutDAO->saveOrderDetail($detail);    
+				$price = $details[$i]->price;
+			}
+			if(!empty($details[$i]->quantity))
+			{
+				$qty = $details[$i]->quantity;
+			}
+			$detail = new OrderDetail();
+			$detail->setOrder_id($orderId);
+			$detail->setProduct_id(empty($details[$i]->product_id) ? 0 : $details[$i]->product_id);
+			$detail->setVariant_id(empty($details[$i]->variant_id) ? 0 : $details[$i]->variant_id);
+			$detail->setSku(empty($details[$i]->sku) ? 0 : $details[$i]->sku);
+			// $detail->setProduct_name(empty($details[$i]->product_name) ? "" : $details[$i]->product_name);
+			$detail->setPrice(empty($details[$i]->price) ? 0 : $details[$i]->price);
+			$detail->setQuantity(empty($details[$i]->quantity) ? 0 : $details[$i]->quantity);
+			$detail->setReduce(empty($details[$i]->reduce) ? 0 : $details[$i]->reduce);
+			$detail->setReduce_percent(empty($details[$i]->reduce_percent) ? 0 : $details[$i]->reduce_percent);
+			$lastId = $checkoutDAO->saveOrderDetail($detail);    
+			if(empty($lastId))
+			{
+				throw new Exception("Insert order detail is failure", 1);
 			}
 		}
 		$repsonse =  "success";

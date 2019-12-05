@@ -62,7 +62,7 @@
 	                <table class="table table-hover">
 	                  	<tbody>
 		                    <tr>
-								<td class="right w100">Tổng tiền</td>
+								<td class="right w90">Tổng tiền</td>
 								<td class="right"><b style="font-size: 20px;" id="totalAmount">0</b><b> đ</b></td>
 		                    </tr>
 		                    <tr>
@@ -71,7 +71,7 @@
 		                    </tr>
 		                    <tr>
 								<td class="right">Chiết khấu</td>
-								<td class="right w100"><input type="text" class="form-control" name="discount" id="discount" width="100px" style="text-align: right;"></td>
+								<td class="right w110"><input type="text" class="form-control" name="discount" id="discount" width="100px" style="text-align: right;"></td>
 		                    </tr>
 		                    <tr>
 								<td class="right">Tổng thanh toán</td>
@@ -79,7 +79,15 @@
 		                    </tr>
 		                    <tr>
 								<td class="right">Khách thanh toán</td>
-								<td class="right"><input type="text" class="form-control" name="payment" id="payment" width="100px" style="text-align: right;"></td>
+								<td class="right">
+									<select class="form-control" name="sel_payment" id="sel_payment">
+										<option value="0" selected="selected">Tiền mặt</option>
+										<option value="1">Chuyển khoản</option>
+										<option value="2">Nợ</option>
+									</select>
+									<input type="text" class="form-control mt-2" name="payment" id="payment" width="100px" style="text-align: right;">
+
+								</td>
 		                    </tr>
 		                    <tr>
 								<td class="right">Trả lại</td>
@@ -178,6 +186,19 @@
 		    });
 		});
 
+
+		$("#sel_payment").change(function(){
+			if($(this).val() == 0) {
+				$("#payment").show();
+				disableCheckOutBtn();
+			} else {
+				$("#payment").val("");
+				$("#payment").hide();
+				enableCheckOutBtn();
+			}
+			
+		});
+	// end document ready
     });
 
 	function onchange_discount(discount)
@@ -252,6 +273,7 @@
 		$discount = replaceComma($("#discount").val());
 		$total_checkout = replaceComma($("#totalCheckout").text());
 		$customer_payment = replaceComma($("#payment").val());
+		$payment_type = $("#sel_payment").val();
 		$repay = replaceComma($("#repay").text());
 		$flag_print_receipt = $("#flag_print_receipt").is(':checked');
 
@@ -261,6 +283,7 @@
 		data["discount"] = $discount;
 		data["total_checkout"] = $total_checkout;
 		data["customer_payment"] = $customer_payment;
+		data["payment_type"] = $payment_type;
 		data["repay"] = $repay;
 		data["customer_id"] = 0;
 		data["type"] = 0;// Sale on shop
@@ -315,7 +338,7 @@
 				var filename = data.fileName;
 				console.log('filename: '+filename);
 				$(".iframeArea").html("");
-				if(typeof filename !== "underfined" && filename !== "")
+				if(filename !== "underfined" && filename !== "")
 				{
     				$(".iframeArea").html('<iframe src="<?php echo __PATH__?>src/controller/sales/pdf/'+filename+'" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
 				}

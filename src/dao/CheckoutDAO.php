@@ -4,22 +4,83 @@
 class CheckoutDAO {
     private $conn;
 
-    // select 
-    //     A.type,
-    //     case when A.type = 0 then 'Khách lẻ' else C.name end as customer_name,
-    //     C.phone,
-    //     C.address,
-    //     C.city_id,
-    //     C.district_id,
-    //     C.village_id,
-    //     A.total_amount,
-    //     A.shipping
-    // from smi_orders A left join smi_customers C on A.customer_id = C.id
-    // left join smi_order_details B on A.id = B.order_id
-    // inner join smi_variations D on B.variant_id = D.id
-    // where DATE(A.created_date) = DATE('2019-11-30')
-    // order by 
-    //     A.type
+    function get_info_total_checkout($start_date, $end_date) {
+        try {
+            $sql = "select 
+                        sum(tmp.total_checkout) as total_checkout, count(tmp.type) as count_type, tmp.type,
+                        tmp.payment_type
+                    from (
+                        SELECT distinct A.id, A.total_checkout AS total_checkout,
+                              A.type,  A.payment_type
+                        FROM smi_orders A
+                            LEFT JOIN smi_order_detail B ON A.id = B.order_id
+                            LEFT JOIN smi_customers C ON A.customer_id = C.id
+                            LEFT JOIN smi_variations E ON B.variant_id = E.id
+                            LEFT JOIN smi_products D ON E.product_id = D.id
+                        where DATE(created_date) between DATE('".$start_date."') and DATE('".$end_date."')
+                        and A.deleted = 0
+                        ) tmp
+                    group by
+                        tmp.type,
+                        tmp.payment_type
+                    order by 
+                        tmp.type";
+            $result = mysqli_query($this->conn,$sql);
+            $data = array();        
+            $total_checkout = 0;
+            $count_total = 0;
+            $total_on_shop = 0;
+            $total_online = 0;
+            $count_on_shop = 0;
+            $count_online = 0;
+            $total_cash = 0;
+            $total_transfer = 0;
+            foreach($result as $k => $row) {
+                $total_checkout += $row["total_checkout"];
+                if($row["type"] == 0) {
+                    $total_on_shop += $row["total_checkout"];
+                    $count_on_shop += $row["count_type"];
+                } else if($row["type"] == 1) {
+                    $total_online += $row["total_checkout"];
+                    $count_online += $row["count_type"];
+                }
+                if($row["payment_type"] == 0) {
+                    $total_cash += $row["total_checkout"];
+                } else if($row["payment_type"] == 1) {
+                    $total_transfer += $row["total_checkout"];
+                } 
+            }
+            $count_total = $count_on_shop + $count_online;
+            $arr = array();
+            $arr["total_checkout"] = number_format($total_checkout);
+            $arr["count_total"] = $count_total;
+            $arr["total_on_shop"] = number_format($total_on_shop);
+            $arr["count_on_shop"] = $count_on_shop;
+            $arr["total_online"] = number_format($total_online);
+            $arr["count_online"] = $count_online;
+            $arr["total_cash"] = number_format($total_cash);
+            $arr["total_transfer"] = number_format($total_transfer);
+            return $arr;
+
+        } catch(Exception $e)
+        {
+            throw new Exception($e);
+        }
+    }
+
+    function delete_order($order_id)
+    {
+        try {
+            $sql = "update smi_orders set deleted = 1, updated_date = NOW() WHERE id = ".$order_id;
+            $result = mysqli_query($this->conn,$sql); 
+            if(!$result){
+                throw new Exception(mysql_error());
+            }
+        } catch(Exception $e)
+        {
+            throw new Exception($e);
+        }
+    }
 
     function find_all_order_by_date()
     {
@@ -53,6 +114,92 @@ class CheckoutDAO {
         }
     }
 
+    // function find_all_2($start_date, $end_date)
+    // {
+    //     $sql = "select 
+    //                 A.id as order_id,
+    //                 A.total_checkout,
+    //                 A.created_date,
+    //                 A.type,
+    //                 A.payment_type
+    //             from smi_orders A 
+    //             where 
+    //                 DATE(created_date) between DATE('".$start_date."') and DATE('".$end_date."')
+    //                 and A.deleted = 0
+    //             order by A.created_date desc";
+    //     $result = mysqli_query($this->conn,$sql);
+    //     $data = array();     
+    //     foreach($result as $k => $row) {
+    //         $order = array(
+    //                 'order_id' => $row["order_id"],
+    //                 'total_checkout' => number_format($row["total_checkout"]),
+    //                 'created_date' => date_format(date_create($row["created_date"]),"d/m/Y H:i:s"),
+    //                 'type' => $row["type"],
+    //                 'payment_type' => $row["payment_type"]
+    //             );
+    //         array_push($data, $order);
+    //     }
+    //     $arr = array();
+    //     $arr["data"] = $data;
+    //     return $arr;
+    // }
+
+    // function get_order_detail_by_order_id($order_id)
+    // {
+    //     $sql = "select 
+    //                 A.sku, B.name, A.quantity, A.price, A.reduce, A.quantity*A.price as 'total'
+    //             from smi_order_detail A
+    //             inner join smi_products B on A.product_id = B.id
+    //             where order_id = ".$order_id;
+    //     $result = mysqli_query($this->conn,$sql);
+    //     $data = array();     
+    //     foreach($result as $k => $row) {
+    //         $detail = array(
+    //                 'sku' => $row["sku"],
+    //                 'name' => $row["name"],
+    //                 'quantity' => $row["quantity"],
+    //                 'price' => number_format($row["price"]),
+    //                 'reduce' => number_format($row["reduce"]),
+    //                 'total' => number_format($row["total"])
+    //             );
+    //         array_push($data, $detail);
+    //     }
+    //     $arr = array();
+    //     $arr["data"] = $data;
+    //     return $arr;
+    // }
+
+    // function get_customer_by_order_id()
+    // {
+    //     $zone = new Zone();
+    //     $sql = "select 
+    //                 C.id as customer_id,
+    //                 C.name as customer_name,
+    //                 C.phone,
+    //                 C.address,
+    //                 C.city_id,
+    //                 C.district_id,
+    //                 C.village_id
+    //             from smi_order_detail A
+    //             inner join smi_products B on A.product_id = B.id
+    //             where order_id = ".$order_id;
+    //     $result = mysqli_query($this->conn,$sql);
+    //     $data = array();     
+    //     foreach($result as $k => $row) {
+    //         $address = $this->get_address($row);
+    //         $customer = array(
+    //                         'customer_id' => $row["customer_id"],
+    //                         'customer_name' => $row["customer_name"],
+    //                         'phone' => $row["phone"],
+    //                         'address' => $address
+    //                     );
+    //         array_push($data, $customer);
+    //     }
+    //     $arr = array();
+    //     $arr["data"] = $data;
+    //     return $arr;
+    // }
+
     // find all order 
     function find_all($start_date, $end_date)
     {
@@ -78,13 +225,16 @@ class CheckoutDAO {
                         E.id as variant_id,
                         B.quantity,
                         B.price,
-                        B.reduce
+                        B.reduce,
+                        A.payment_type
                     from smi_orders A 
                         left join smi_order_detail B on A.id = B.order_id
                         left join smi_customers C on A.customer_id = C.id
                         left join smi_variations E on B.variant_id = E.id
                         left join smi_products D on E.product_id = D.id
-                    where DATE(created_date) between DATE('".$start_date."') and DATE('".$end_date."')
+                    where 
+                        DATE(created_date) between DATE('".$start_date."') and DATE('".$end_date."')
+                        and A.deleted = 0
                     order by A.created_date desc";
             $result = mysqli_query($this->conn,$sql);
             $data = array();        
@@ -105,6 +255,7 @@ class CheckoutDAO {
                             'created_date' => date_format(date_create($row["created_date"]),"d/m/Y H:i:s"),
                             'type' => $row["type"],
                             'status' => $row["status"],
+                            'payment_type' => $row["payment_type"],
                             'details' => array()
                         );
                     $intoMoney = 0;
@@ -164,6 +315,7 @@ class CheckoutDAO {
                     `total_amount`,
                     `total_checkout`,
                     `customer_payment`,
+                    `payment_type`,
                     `repay`,
                     `customer_id`,
                     `type`,
@@ -180,6 +332,7 @@ class CheckoutDAO {
                     $order->getTotal_amount().",".
                     $order->getTotal_checkout().",".
                     $order->getCustomer_payment().",".
+                    $order->getPayment_type().",".
                     $order->getRepay().",".
                     $order->getCustomer_id().",".
                     $order->getType().",".
@@ -189,7 +342,10 @@ class CheckoutDAO {
                     $order->getShipping_unit().",".
                     $order->getStatus().",".
                     "NOW())";
-                mysqli_query($this->conn,$sql); 
+                $result = mysqli_query($this->conn,$sql); 
+                if(!$result){
+                    throw new Exception(mysql_error());
+                }
                 $lastid = mysqli_insert_id($this->conn); 
                 return $lastid;
         } catch(Exception $e)
@@ -217,7 +373,13 @@ class CheckoutDAO {
                     $detail->getPrice().",".
                     $detail->getQuantity().",".
                     $detail->getReduce().")";
-            mysqli_query($this->conn,$sql); 
+                    // echo $sql;
+                $result = mysqli_query($this->conn,$sql); 
+                if(!$result){
+                    throw new Exception(mysql_error());
+                }
+                $lastid = mysqli_insert_id($this->conn); 
+                return $lastid;
         } catch(Exception $e)
         {
             throw new Exception($e);

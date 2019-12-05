@@ -8,6 +8,7 @@ class Order {
     private $total_amount;
     private $total_checkout;
     private $customer_payment;
+    private $payment_type;
     private $repay;
     private $customer_id;
     private $type;
@@ -16,6 +17,7 @@ class Order {
     private $shipping;
     private $shipping_unit;
     private $status;
+    private $deleted;
     private $created_date;
     private $updated_date;  
    
@@ -188,7 +190,30 @@ class Order {
 
         return $this;
     }
+    /**
+     * Get the value of customer_payment
+     */ 
+    public function getPayment_type()
+    {
+        if(empty($this->payment_type))
+        {
+            return "NULL";
+        } else {
+            return $this->payment_type;
+        }
+    }
 
+    /**
+     * Set the value of Payment_type
+     *
+     * @return  self
+     */ 
+    public function setPayment_type($payment_type)
+    {
+        $this->payment_type = $payment_type;
+
+        return $this;
+    }
     /**
      * Get the value of repay
      */ 
@@ -416,13 +441,33 @@ class Order {
     }
 
     /**
-     * Set the value of status
+     * Set the value of deleted
      *
      * @return  self
      */ 
     public function setStatus($status)
     {
         $this->status = $status;
+
+        return $this;
+    }
+    /**
+     * 0: none delete
+     * 1: deleted
+     */ 
+    public function getDeleted()
+    {
+        return $this->deleted;
+    }
+
+    /**
+     * Set the value of deleted
+     *
+     * @return  self
+     */ 
+    public function setDeleted($deleted)
+    {
+        $this->deleted = $deleted;
 
         return $this;
     }

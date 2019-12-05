@@ -47,6 +47,7 @@ if(isset($_POST["type"]) && $_POST["type"]=="checkout")   {
         $order->setDiscount(empty($data->discount) ? 0 : $data->discount);
         $order->setTotal_checkout($total_checkout);
         $order->setCustomer_payment(empty($data->customer_payment) ? 0 : $data->customer_payment);
+        $order->setPayment_type(empty($data->payment_type) ? 0 : $data->payment_type);
         $order->setRepay(empty($data->repay) ? 0 : $data->repay);
         $order->setCustomer_id(empty($data->customer_id) ? 0 : $data->customer_id);
         $order->setType(0); // Sale on shop

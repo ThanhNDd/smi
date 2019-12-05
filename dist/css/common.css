@@ -6,7 +6,7 @@
 	font-family: "Roboto-Light";
 	src: url("../fonts/Roboto/Roboto-Light.ttf");
 }
-section.content {
+body, section.content {
     font-family: Roboto-Regular !important;
 }
 .center {

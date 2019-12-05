@@ -25,7 +25,7 @@
               <div class="col-4">
                 <label>Đơn vị vận chuyển</label>
                 <select class="select-shipping-unit form-control">
-                  <option value="Viettel Post">Viettel Post</option>
+                  <option value="Viettel Post" selected="selected">Viettel Post</option>
                 </select>
               </div>
               <div class="col-4">
@@ -316,33 +316,33 @@
         
       }
       
-      var rowProductNumber = $(".count-row").val();
-      for(var i=1; i<=rowProductNumber.length; i++)
-      {
-        var sku = $("#sku_"+i).val();
-        if(sku !== "") {
-          var prodId = $("#prod_"+i).val();
-          if(prodId === "-1") {
-            $("#prod_"+i).addClass("is-invalid");
-            // return false;
-            count_error++;
-          } else {
-            $("#prod_"+i).removeClass("is-invalid");
-            var qty = $("#prodQty_"+i).val();
-            if(qty === "")
-            {
-              $("#prodQty_"+i).addClass("is-invalid");
-              // return false;
-              count_error++;
-            } else {
-              $("#prodQty_"+i).removeClass("is-invalid");
-            }  
-          }
-        } else {
-          $("#sku_"+i).addClass("is-invalid");
-          return;
-        }
-      }
+      // var rowProductNumber = $(".count-row").val();
+      // for(var i=1; i<=rowProductNumber.length; i++)
+      // {
+      //   var sku = $("#sku_"+i).val();
+      //   if(sku !== "") {
+      //     var prodId = $("#prod_"+i).val();
+      //     if(prodId === "-1") {
+      //       $("#prod_"+i).addClass("is-invalid");
+      //       // return false;
+      //       count_error++;
+      //     } else {
+      //       $("#prod_"+i).removeClass("is-invalid");
+      //       var qty = $("#prodQty_"+i).val();
+      //       if(qty === "")
+      //       {
+      //         $("#prodQty_"+i).addClass("is-invalid");
+      //         // return false;
+      //         count_error++;
+      //       } else {
+      //         $("#prodQty_"+i).removeClass("is-invalid");
+      //       }  
+      //     }
+      //   } else {
+      //     $("#sku_"+i).addClass("is-invalid");
+      //     return;
+      //   }
+      // }
       if(count_error > 0)
       {
         return false;
@@ -378,7 +378,7 @@
       {
         var product = {};
         var prodId = $("#prod_"+i).val();
-        if(prodId != "-1") {
+        if(prodId !== "") {
           product["product_id"] = $("#prod_"+i).val();  
         }
         var variantId = $("#variantId_"+i).val();
@@ -386,10 +386,20 @@
         {
           product["variant_id"] = $("#variantId_"+i).val();   
         }
+        var sku = $("#sku_"+i).val();
+        if(sku !== "")
+        {
+          product["sku"] = $("#sku_"+i).val();   
+        }
         var qty = $("#prodQty_"+i).val();
         if(qty !== "")
         {
           product["quantity"] = $("#prodQty_"+i).val();  
+        }
+        var price = $("#prodPrice_"+i).val();
+        if(price !== "")
+        {
+          product["price"] = replaceComma($("#prodPrice_"+i).val());  
         }
         products.push(product);
       }
@@ -472,6 +482,7 @@
       var content = '<div class="row" id="product-'+noRow+'" style="padding-top: 10px;">' +
                     '<div class="col-2">' +
                     // '<select class="select-product-'+noRow+' form-control" id="prod_'+noRow+'" onchange="on_change_product(\'prod_'+noRow+'\')"></select>' +
+                    '<input type="hidden" class="form-control" id="prod_'+noRow+'">' +
                     '<input type="text" class="form-control" id="sku_'+noRow+'" placeholder="Nhập mã sản phẩm" onchange="on_change_product_2(this, '+noRow+')">' +
                     '</div>' +
                     '<div class="col-4">' +
@@ -581,6 +592,8 @@
             if(data.length > 0) {
               $.each(data, function(k, v){
                 var name = v.name +" - "+ v.size + " - " + v.color;
+                $("[id=prod_"+rowIndex+"]").val(v.product_id);
+                $("[id=sku_"+rowIndex+"]").val(v.sku);
                 $("[id="+productName+"]").val(name);
                 $("[id="+priceId+"]").val(v.retail);
                 $("[id="+variantId+"]").val(v.variant_id);
