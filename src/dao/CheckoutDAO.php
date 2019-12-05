@@ -324,6 +324,7 @@ class CheckoutDAO {
                     `shipping`,
                     `shipping_unit`,
                     `status`,
+                    `order_date`,
                     `created_date`) 
                 VALUES (".
                     $order->getTotal_reduce().",".
@@ -341,6 +342,7 @@ class CheckoutDAO {
                     $order->getShipping().",".
                     $order->getShipping_unit().",".
                     $order->getStatus().",".
+                    "NOW(),".
                     "NOW())";
                 $result = mysqli_query($this->conn,$sql); 
                 if(!$result){

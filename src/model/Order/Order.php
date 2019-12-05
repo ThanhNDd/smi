@@ -18,6 +18,7 @@ class Order {
     private $shipping_unit;
     private $status;
     private $deleted;
+    private $order_date;
     private $created_date;
     private $updated_date;  
    
@@ -468,6 +469,25 @@ class Order {
     public function setDeleted($deleted)
     {
         $this->deleted = $deleted;
+
+        return $this;
+    }
+    /**
+     * Get the value of order_date
+     */ 
+    public function getOrder_date()
+    {
+        return $this->order_date;
+    }
+
+    /**
+     * Set the value of order_date
+     *
+     * @return  self
+     */ 
+    public function setOrder_date($order_date)
+    {
+        $this->order_date = $order_date;
 
         return $this;
     }
