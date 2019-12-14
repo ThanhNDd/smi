@@ -13,6 +13,9 @@ class Zone
 			include 'tinh_thanhpho.php';
 		}
 		$id_tinh = sprintf("%02d", intval($id));
+		if($id <10) {
+			$id_tinh = sprintf("%01d", intval($id));
+		}
 		$tinh_thanhpho = (isset($tinh_thanhpho[$id_tinh]))?$tinh_thanhpho[$id_tinh]:'';
 		return $tinh_thanhpho;
 	}

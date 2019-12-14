@@ -49,7 +49,7 @@ class Order {
     {
         if(empty($this->total_reduce))
         {
-            return "NULL";
+            return 0;
         } else {
             return $this->total_reduce;    
         }
@@ -74,7 +74,7 @@ class Order {
     {
         if(empty($this->total_reduce_percent))
         {
-            return "NULL";
+            return 0;
         } else {
             return $this->total_reduce_percent;    
         }
@@ -99,7 +99,7 @@ class Order {
     {
         if(empty($this->discount))
         {
-            return "NULL";
+            return 0;
         } else {
             return $this->discount; 
         }        
@@ -124,7 +124,7 @@ class Order {
     {
         if(empty($this->total_amount))
         {
-            return "NULL";
+            return 0;
         } else {
             return $this->total_amount;
         }
@@ -149,7 +149,7 @@ class Order {
     {
         if(empty($this->total_checkout))
         {
-            return "NULL";
+            return 0;
         } else {
             return $this->total_checkout;
         }
@@ -174,7 +174,7 @@ class Order {
     {
         if(empty($this->customer_payment))
         {
-            return "NULL";
+            return 0;
         } else {
             return $this->customer_payment;
         }
@@ -196,7 +196,7 @@ class Order {
      */ 
     public function getPayment_type()
     {
-        if(empty($this->payment_type))
+        if(empty($this->payment_type) && $this->payment_type != 0)
         {
             return "NULL";
         } else {
@@ -222,7 +222,7 @@ class Order {
     {
         if(empty($this->repay))
         {
-            return "NULL";
+            return 0;
         } else {
             return $this->repay;
         }
@@ -336,7 +336,7 @@ class Order {
         {
             return "NULL";
         } else {
-            return "\"".$this->bill_of_lading_no."\"";
+            return $this->bill_of_lading_no;
         }
     }
 
@@ -359,7 +359,7 @@ class Order {
     {
         if(empty($this->shipping))
         {
-            return "NULL";
+            return 0;
         } else {
             return $this->shipping;
         }
@@ -386,7 +386,7 @@ class Order {
         {
             return "NULL";
         } else {
-            return "\"".$this->shipping_unit."\"";
+            return $this->shipping_unit;
         }
     }
 
@@ -409,7 +409,7 @@ class Order {
     {
         if(empty($this->shipping_fee))
         {
-            return "NULL";
+            return 0;
         } else {
             return $this->shipping_fee;
         }

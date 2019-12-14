@@ -1,11 +1,11 @@
 <?php
 $tinh_thanhpho = array(
 	""	 =>	"Lựa chọn",
-	"01" => "Hà Nội",
-	"02" => "Hà Giang",
-	"04" => "Cao Bằng",
-	"06" => "Bắc Kạn",
-	"08" => "Tuyên Quang",
+	"1" => "Hà Nội",
+	"2" => "Hà Giang",
+	"4" => "Cao Bằng",
+	"6" => "Bắc Kạn",
+	"8" => "Tuyên Quang",
 	"10" => "Lào Cai",
 	"11" => "Điện Biên",
 	"12" => "Lai Châu",

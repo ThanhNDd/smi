@@ -36,7 +36,7 @@
 <?php require ('../../common/menu.php'); ?>
 <section class="content">
   <div class="row pt-2">
-    <div class="col-8">
+    <div class="col-md-8 col-sm-12">
       <div class="card">
         <div class="card-header border-transparent pb-0">
           <div class="form-group col-md-4 float-left mb-0">
@@ -65,8 +65,8 @@
                   <!-- <th>Khách hàng</th> -->
                   <!-- <th>Số điện thoại</th>
                   <th>Địa chỉ</th> -->
-                  <!-- <th class="right">Phí ship</th>
-                  <th class="right">Chiết khấu</th> -->
+                 <!--  <th class="right">Phí ship</th> -->
+                  <!-- <th class="right">Chiết khấu</th> -->
                   <th class="right">Tổng tiền</th>
                   <th class="center">Ngày mua hàng</th>
                   <th class="left">Loại đơn</th>
@@ -81,10 +81,10 @@
         <!-- /.card-body -->
       </div>
     </div>
-    <div class="col-4">
+    <div class="col-md-4 col-sm-12">
       <div class="card">
         <div class="card-body">
-          <div class="col-12 col-sm-6 col-md-12">
+          <div class="col-12 col-sm-12 col-md-12">
             <div class="info-box">
               <span class="info-box-icon bg-info elevation-1"><i class="fas fa-dollar-sign"></i></span>
               <div class="info-box-content col-12 row">
@@ -104,7 +104,7 @@
             <!-- /.info-box -->
           </div>
           <!-- /.col -->
-          <div class="col-12 col-sm-6 col-md-12">
+          <div class="col-12 col-sm-12 col-md-12">
             <div class="info-box mb-3">
               <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-store"></i></span>
               <div class="info-box-content col-12 row">
@@ -128,7 +128,7 @@
           <!-- /.col -->
           <!-- fix for small devices only -->
           <div class="clearfix hidden-md-up"></div>
-          <div class="col-12 col-sm-6 col-md-12">
+          <div class="col-12 col-sm-12 col-md-12">
             <div class="info-box mb-3">
               <span class="info-box-icon bg-success elevation-1"><i class="fas fa-globe"></i></span>
               <div class="info-box-content col-12 row">
@@ -152,7 +152,7 @@
       </div>
       <div class="card">
         <div class="card-body">
-          <div class="col-12 col-sm-6 col-md-12">
+          <div class="col-12 col-sm-12 col-md-12">
             <div class="info-box">
               <span class="info-box-icon bg-primary elevation-1"><i class="far fa-money-bill-alt"></i></span>
               <div class="info-box-content">
@@ -167,13 +167,29 @@
             <!-- /.info-box -->
           </div>
           <!-- /.col -->
-          <div class="col-12 col-sm-6 col-md-12">
+          <div class="col-12 col-sm-12 col-md-12">
             <div class="info-box mb-3">
               <span class="info-box-icon bg-success elevation-1"><i class="fas fa-credit-card"></i></span>
               <div class="info-box-content">
                   <span class="info-box-text">Chuyển khoản</span>
                   <span class="info-box-number">
                     <h5 class="total_transfer">
+                      <small>đ</small>
+                    </h5>
+                    
+                  </span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+          <div class="col-12 col-sm-12 col-md-12">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-wallet"></i></span>
+              <div class="info-box-content">
+                  <span class="info-box-text">Profit</span>
+                  <span class="info-box-number">
+                    <h5 class="total_profit">
                       <small>đ</small>
                     </h5>
                     
@@ -212,7 +228,9 @@
 
         //Date range picker
       $('#reservation').daterangepicker({
-          dateFormat: 'dd/MM/yyyy'
+        locale: {
+            format: 'DD/MM/YYYY',
+            }
       }, function(start, end, label) {
         var start_date = start.format('YYYY-MM-DD');
         var end_date = end.format('YYYY-MM-DD');
@@ -239,6 +257,7 @@
                 d.end_date = $("#endDate").val();
               }
             },
+            ordering: false,
             scrollY:        '50vh',
             scrollCollapse: true,
             "language": {
@@ -293,7 +312,7 @@
                      class: 'right'
                 },
                 { 
-                    "data": "created_date",
+                    "data": "order_date",
                      width:"70px"  ,
                      class: 'center'
                 },
@@ -399,14 +418,9 @@
                       order_id : order_id
                     },
                     success : function(res){
-                      Swal.fire(
-                        'Thành công!',
-                        'Đơn hàng đã được xoá thành công. Nếu cần khôi phục lại, hãy liên hệ quản trị hệ thống.',
-                        'success'
-                      ).then((result) => {
-                          table.ajax.reload();
-                          get_info_total_checkout($("#startDate").val(), $("#endDate").val());
-                      });
+                      table.ajax.reload();
+                      get_info_total_checkout($("#startDate").val(), $("#endDate").val());
+                      toastr.success('Đơn hàng đã được xoá thành công.');
                     },
                     error : function(data, errorThrown) {
                       console.log(data.responseText);
@@ -423,37 +437,190 @@
             });      
           });
 
+         $('#example tbody').on('click', '.edit_order', function () {
+            show_loading();
+            var tr = $(this).closest('tr');
+            var row = table.row(tr);
+            var order_id = row.data().order_id;
+            var order_type = row.data().type;
+            $.ajax({
+                url : '<?php echo __PATH__.'src/controller/orders/OrderController.php' ?>',
+                type : "POST",
+                dataType : "json",
+                data : {
+                  method : "edit_order",
+                  order_id : order_id,
+                  order_type : order_type
+                },
+                success : function(res){
+                  console.log(res);
+                  set_data_edit_order(order_id, res, order_type);
+                  
+                },
+                error : function(data, errorThrown) {
+                  console.log(data.responseText);
+                  console.log(errorThrown);
+                  Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                  })
+                  hide_loading();
+                }
+              });              
+          });
           
     }
 
+    function set_data_edit_order(order_id, data, order_type) {
+      reset_data();
+      $(".modal-title").text("Cập nhật đơn hàng #"+order_id);
+      $(".create-new").text("Cập nhật");
+      enable_btn_add_new();
+      $(".order_type").val(order_type);
+      $.each(data, function(key, value){
+        console.log(order_type);
+        if(value.length != 0) {
+          $("#order_id").val(value[0].order_id);
+          // online
+          if(order_type == 1) {
+            $("#customer_id").val(value[0].customer_id);
+            $("#bill_of_lading_no").val(value[0].bill_of_lading_no);
+            $("#shipping_fee").val(value[0].shipping_fee);
+            $("#customerName").val(value[0].customerName);
+            $("#phoneNumber").val(value[0].phone);
+            $("#email").val(value[0].email);
+            generate_select2_city(value[0].city_id);
+            generate_select2_district(value[0].city_id);
+            $(".select-district").val(value[0].district_id).trigger("change");
+            generate_select2_village(value[0].district_id);
+            $(".select-village").val(value[0].village_id).trigger("change");
+            $("#address").val(value[0].address);
+            $("#shipping").val(value[0].shipping).trigger("change");
+            $("#bill_of_lading_no").prop("disabled", false);
+            $("#shipping_fee").prop("disabled", false);
+            $("#customerName").prop("disabled", false);
+            $("#phoneNumber").prop("disabled", false);
+            $("#email").prop("disabled", false);
+            $(".select-shipping-unit").prop("disabled", false);
+            $(".select-city").prop("disabled", false);
+            $(".select-district").prop("disabled", false);
+            $(".select-village").prop("disabled", false);
+            $("#address").prop("disabled", false);
+            $("#shipping").prop("disabled", false);
+          } else if(order_type == 0) {
+            generate_select2_city();
+            // on shop
+            $("#bill_of_lading_no").prop("disabled", true);
+            $("#shipping_fee").prop("disabled", true);
+            $("#customerName").prop("disabled", true);
+            $("#phoneNumber").prop("disabled", true);
+            $("#email").prop("disabled", true);
+            $(".select-shipping-unit").prop("disabled", true);
+            $(".select-city").prop("disabled", true);
+            $(".select-district").prop("disabled", true);
+            $(".select-village").prop("disabled", true);
+            $("#address").prop("disabled", true);
+            $("#shipping").prop("disabled", true);
+          }
+          $("#payment_type").val(value[0].payment_type);
+          $("#total_amount").text(value[0].total_amount);
+          $("#discount").val(value[0].discount).trigger("change");
+          $("#total_checkout").text(value[0].total_checkout);
+          $(".product-area").html("");
+          var details = value[0].details;
+          for(var i = 0; i < details.length; i++) {
+            $('.count-row').val(i);
+            add_new_product();
+            $("#detailId_"+(i+1)).val(details[i].order_detail_id)
+            $("#sku_"+(i+1)).val(details[i].sku).trigger("change");
+            $("#prodQty_"+(i+1)).val(details[i].quantity).trigger("change");
+            $("#prodReduce_"+(i+1)).val(details[i].reduce);
+            if(order_type == 1) {
+              $("#prodReduce_"+(i+1)).prop("disabled", true);
+            } else if(order_type == 0) {
+              $("#prodReduce_"+(i+1)).prop("disabled", false);
+            }
+          }
+          open_modal();
+        } else {
+          toastr.error('Đã xảy ra lỗi.');
+        }
+      });
+    }
 
     function format_order_detail(data){
+      console.log(data);
+      var order_type = data.type;
+      var d = '<div class="card">' +
+              '<div class="card-body">';
+      if(order_type == 1) {
+        // online
+        d +=  '<div class="row">' +
+              '<div class="col-3 col-sm-3 col-md-3"><small>Mã khách hàng</small> <h5>'+data.customer_id+'</h5></div>' +
+              '<div class="col-6 col-sm-6 col-md-6"><small>Tên khách hàng</small> <h5>'+data.customer_name+'</h5></div>' +
+              '<div class="col-3 col-sm-3 col-md-3"><small>Số điện thoại</small> <h5>'+data.phone+'</h5></div>' +
+              '</div>' +
+              '<div class="row col-12"><small>Địa chỉ</small> <h5 class="col-12 pl-0">'+data.address+'</h5></div>';
+      } else {
+        d +=  '<div class="row">' +
+              '<div class="col-3 col-sm-3 col-md-3"><small>Khách hàng</small> <h5>Khách lẻ</h5></div>' +
+              '</div>';
+      }
+                    
+        
         var details = data.details;
-        var table = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
+        var table = '<div class="card-body">';
+        table += '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
         table += '<thead>' +
                     '<tr>' +
                         '<th>Mã</th>' +
                         '<th>Tên</th>' +
+                        '<th>Size</th>' +
+                        '<th>Màu</th>' +
                         '<th>Số lượng</th>' +
                         '<th class="right">Giá</th>' +
                         '<th class="right">Giảm trừ</th>' +
                         '<th class="right">Thành tiền</th>' +
+                        '<th class="right">Profit</th>' +
                   '</tr>' +
                 '</thead>';
+        var total_reduce = 0;
+        var profit = 0;
         for(var i=0; i<details.length; i++) {
+          total_reduce += Number(replaceComma(details[i].reduce));
+          profit += Number(replaceComma(details[i].profit));
+          console.log("profit"+i+": "+profit);
           table += '<tr>' +
                 '<input type="hidden" id="product_id_'+i+'" value="'+details[i].product_id+'"/>' +
                 '<input type="hidden" id="variant_id_'+i+'" value="'+details[i].variant_id+'"/>' +
                 '<td>'+details[i].sku+'</td>' +
                 '<td>'+details[i].product_name+'</td>' +
+                '<td>'+details[i].size+'</td>' +
+                '<td>'+details[i].color+'</td>' +
                 '<td>'+details[i].quantity+'</td>' +
-                '<td class="right">'+details[i].price+'&nbsp;</td>' +
-                '<td class="right">'+details[i].reduce+'&nbsp;</td>' +
-                '<td class="right">'+details[i].intoMoney+'&nbsp;</td>' +
+                '<td class="right">'+details[i].price+' <small>đ</small></td>' +
+                '<td class="right">'+details[i].reduce+' <small>đ</small></td>' +
+                '<td class="right">'+details[i].intoMoney+' <small>đ</small></td>' +
+                '<td class="right">'+formatNumber(replaceComma(details[i].profit) - replaceComma(details[i].reduce))+' <small>đ</small></td>' +
               '</tr>';
         }
         table += '</table>';  
-      return table;         
+        table += '</div>';
+        table += '</div>';
+
+        total_reduce += Number(replaceComma(data.discount));
+        profit = profit - total_reduce;
+        d +=  '<div class="row">' +
+          '<div class="col-3 col-sm-3 col-md-3"><small>Chiết khấu trên tổng đơn hàng</small> <h5>'+data.discount+' <small>đ</small></h5></div>' +
+          '<div class="col-3 col-sm-3 col-md-3"><small>Tổng giảm trừ</small> <h5>'+formatNumber(total_reduce)+' <small>đ</small></h5></div>' +
+          '<div class="col-3 col-sm-3 col-md-3"><small>Tổng tiền thanh toán</small> <h5>'+data.total_checkout+' <small>đ</small></h5></div>' +
+          '<div class="col-3 col-sm-3 col-md-3"><small>Profit</small> <h5>'+formatNumber(profit)+' <small>đ</small></h5></div>' +
+          '</div>' +
+          '</div>' +
+          '</div>' +
+          '</div>';
+      return d + table;         
     }
     
     function format_customer_name(data){
@@ -467,10 +634,12 @@
 
     function format_action(data) {
       var content = '';
+      // online
       if(data.type == 1) {
         content += '<a href="javascript:void(0);" class="print_receipt mr-1 text-info" title="In hoá đơn"><i class="fa fa-print"></i></a>';
+        
       }
-      // content += '<a href="javascript:void(0);" class="edit_order mr-1 text-primary" title="Sửa đơn hàng"><i class="fa fa-edit"></i></a>';
+      content += '<a href="javascript:void(0);" class="edit_order mr-1 text-primary" title="Sửa đơn hàng"><i class="fa fa-edit"></i></a>';
       content += '<a href="javascript:void(0);" class="delete_order mr-1 text-danger" title="Xoá đơn hàng"><i class="fa fa-trash"></i></a>';
       return content;
     }
@@ -585,6 +754,7 @@
               $(".count_online").html(res.count_online);
               $(".total_cash").html(res.total_cash + " <small>đ</small>");
               $(".total_transfer").html(res.total_transfer + " <small>đ</small>");
+              $(".total_profit").html(res.total_profit + " <small>đ</small>");
           },
           error : function(data, errorThrown) {
             console.log(data.responseText);

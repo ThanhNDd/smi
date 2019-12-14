@@ -44,7 +44,21 @@ if(isset($_POST["method"]) && $_POST["method"]=="print_receipt")   {
     }
 }
 
-if(isset($_POST["method"]) && $_POST["method"]=="get_info_total_checkout")   {
+if(isset($_POST["method"]) && $_POST["method"]=="edit_order")   {
+    $order_id = $_POST["order_id"];
+    $order_type = $_POST["order_type"];
+    try 
+    {
+        $order = $checkoutDAO->find_by_id($order_id, $order_type);
+        echo json_encode($order);
+    } catch(Exception $ex)
+    {
+        throw new Exception($ex);
+    }
+}
+
+
+if(isset($_POST["method"]) && $_POST["method"]=="get_info_total_checkout") {
     $start_date = $_POST["start_date"];
     $end_date = $_POST["end_date"];
     try 
@@ -61,7 +75,10 @@ if(isset($_POST["method"]) && $_POST["method"]=="delete_order")   {
     $order_id = $_POST["order_id"];
     try 
     {
-        $checkoutDAO->delete_order($order_id);
+		// update quantity of product will be deleted
+		$rowUpdated = $checkoutDAO->update_qty_by_order_id($order_id);
+		// detele status order. Status Deleted = 1
+		$checkoutDAO->delete_order($order_id);
 		$repsonse =  "success";
 		echo json_encode($repsonse);
     } catch(Exception $ex)
@@ -115,16 +132,16 @@ if(isset($_GET["method"]) && $_GET["method"]=="find_all")   {
 		throw new Exception($e);
 	}
 }
-if(isset($_GET["method"]) && $_GET["method"]=="get_order_detail_by_order_id")   {
-	$order_id = $_GET["order_id"];
-	try {
-		$orders = $checkoutDAO->get_order_detail_by_order_id($order_id);
-		echo json_encode($orders);
-	} catch(Exception $e)
-	{
-		throw new Exception($e);
-	}
-}
+// if(isset($_GET["method"]) && $_GET["method"]=="get_order_detail_by_order_id")   {
+// 	$order_id = $_GET["order_id"];
+// 	try {
+// 		$orders = $checkoutDAO->get_order_detail_by_order_id($order_id);
+// 		echo json_encode($orders);
+// 	} catch(Exception $e)
+// 	{
+// 		throw new Exception($e);
+// 	}
+// }
 
 if(isset($_POST["method"]) && $_POST["method"]=="find_product_by_sku")   {
 	
@@ -156,18 +173,32 @@ if(isset($_POST["orders"]) && $_POST["orders"]=="new")   {
 		$data = $_POST["data"];
 		$data = json_decode($data);
 
-		$customer = new Customer();
-		$customer->setName($data->customerName);
-		$customer->setPhone($data->phoneNumber);
-		$customer->setEmail($data->email);
-		$customer->setAddress($data->address);
-		$customer->setCity_id($data->cityId);
-		$customer->setDistrict_id($data->districtId);
-		$customer->setVillage_id($data->villageId);
-		$cusId = $customerDAO->save_customer($customer);
-		if(empty($cusId))
-		{
-			throw new Exception("Insert customer is failure", 1);
+		$order_type = $data->order_type;
+		$cusId = 0;
+		if($order_type == 1) {
+			//online
+			$customer = new Customer();
+			$customer->setName($data->customerName);
+			$customer->setPhone($data->phoneNumber);
+			$customer->setEmail($data->email);
+			$customer->setAddress($data->address);
+			$customer->setCity_id($data->cityId);
+			$customer->setDistrict_id($data->districtId);
+			$customer->setVillage_id($data->villageId);
+			if($data->customer_id > 0) {
+				$customer->setId($data->customer_id);
+				$cusId = $customerDAO->update_customer($customer);
+				if(empty($cusId))
+				{
+					throw new Exception("update customer is failure", 1);
+				}
+			} else {
+				$cusId = $customerDAO->save_customer($customer);
+				if(empty($cusId))
+				{
+					throw new Exception("Insert customer is failure", 1);
+				}
+			}
 		}
 
 		$order = new Order();
@@ -179,15 +210,26 @@ if(isset($_POST["orders"]) && $_POST["orders"]=="new")   {
 		$order->setCustomer_payment(null);
 		$order->setRepay(null);
 		$order->setCustomer_id($cusId);
-		$order->setType(1); // online order
+		$order->setType($order_type); // online order
 		$order->setBill_of_lading_no($data->bill_of_lading_no);
 		$order->setShipping_fee($data->shipping_fee);
 		$order->setShipping($data->shipping);
 		$order->setShipping_unit($data->shipping_unit);
 		$order->setStatus(1); // processing
 		$order->setDeleted(0);
-		$order->setPayment_type(1);// transfer type
-		$orderId = $checkoutDAO->saveOrder($order);
+		$order->setPayment_type($data->payment_type);// transfer type
+
+		$orderId;
+		if($data->order_id > 0) {
+			$order->setId($data->order_id);
+			$orderId = $checkoutDAO->updateOrder($order);
+			if(!empty($orderId))
+			{
+				$checkoutDAO->delete_order_detail_by_order_id($orderId);
+			}
+		} else {
+			$orderId = $checkoutDAO->saveOrder($order);
+		}
 		if(empty($orderId))
 		{
 			throw new Exception("Insert order is failure", 1);
@@ -222,7 +264,7 @@ if(isset($_POST["orders"]) && $_POST["orders"]=="new")   {
 				throw new Exception("Insert order detail is failure", 1);
 			}
 		}
-		$repsonse =  "success";
+		$repsonse["order_id"] =  $orderId;
 		echo json_encode($repsonse);
 	} catch(Exception $e)
 	{

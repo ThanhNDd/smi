@@ -37,11 +37,7 @@ class Customer {
      */ 
     public function getName()
     {
-        if(empty($this->name)) {
-            return NULL;
-        } else {
-            return "'".$this->name."'";
-        }
+        return $this->name;
     }
 
     /**
@@ -61,11 +57,7 @@ class Customer {
      */ 
     public function getPhone()
     {
-        if(empty($this->phone)) {
-            return NULL;
-        } else {
-            return "'".$this->phone."'";
-        }
+        return $this->phone;
     }
 
     /**
@@ -85,11 +77,7 @@ class Customer {
      */ 
     public function getEmail()
     {
-        if(empty($this->email)) {
-            return NULL;
-        } else {
-            return "'".$this->email."'";
-        }
+        return $this->email;
     }
 
     /**
@@ -109,11 +97,7 @@ class Customer {
      */ 
     public function getAddress()
     {
-        if(empty($this->address)) {
-            return NULL;
-        } else {
-            return "'".$this->address."'";
-        }
+        return $this->address;
     }
 
     /**
@@ -133,11 +117,7 @@ class Customer {
      */ 
     public function getVillage_id()
     {
-        if(empty($this->village_id)) {
-            return NULL;
-        } else {
-            return $this->village_id;
-        }
+        return $this->village_id;
     }
 
     /**
@@ -157,11 +137,7 @@ class Customer {
      */ 
     public function getDistrict_id()
     {
-        if(empty($this->district_id)) {
-            return NULL;
-        } else {
-            return $this->district_id;
-        }
+        return $this->district_id;
     }
 
     /**
@@ -181,11 +157,7 @@ class Customer {
      */ 
     public function getCity_id()
     {
-        if(empty($this->city_id)) {
-            return NULL;
-        } else {
-            return $this->city_id;
-        }
+        return $this->city_id;
     }
 
     /**
