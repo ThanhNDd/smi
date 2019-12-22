@@ -131,19 +131,23 @@
 			$(this).val("");
 		});  
 
-		$("#discount").change(function(){
+		$("#discount").change(function(event){
 			var discount = $(this).val();
 			onchange_discount(discount);
+			event.preventDefault();
 		});
-		$("#discount").blur(function(){
-			var discount = $(this).val();
-			onchange_discount(discount);
-		});
+		// $("#discount").blur(function(event){
+		// 	console.log('blur');
+		// 	var discount = $(this).val();
+		// 	onchange_discount(discount);
+		// 	event.preventDefault();
+		// });
 		$('#discount').keypress(function(event){
 			var keycode = (event.keyCode ? event.keyCode : event.which);
 			if(keycode == '13'){
 				var discount = $(this).val();
 				onchange_discount(discount);
+				event.preventDefault();
 			}
 		});
 
@@ -221,15 +225,15 @@
 
 	function onchange_discount(discount)
 	{
-		if(discount.indexOf("VC") > -1) {
+		var c = discount.substring(0, 2);
+		c = c.toUpperCase();
+		if(c == 'VC') {
 			// voucher
-			
-		} else if(discount.indexOf("QT") > -1) {
+			console.log('VC');
+			ues_voucher(discount);
+		} else if(c == 'QT') {
 			// gift
-			discount = discount.replace("QT");
-			console.log(discount);
-			// validateProdId(discount, calculateTotal, find_product);
-			// $("#discount").val("");
+			console.log('QT');
 		} else {
 			// diccount
 			if(!validate_discount(discount)) {
@@ -237,6 +241,34 @@
 			}
 			calculateTotal();
 		}
+	}
+
+	function ues_voucher(voucher_code) {
+		$.ajax({
+			dataType : 'json',
+			url      : '<?php echo __PATH__.'src/controller/voucher/VoucherController.php' ?>',
+			data : {
+				method : "find_by_code",
+				code: voucher_code
+			},
+			type : 'POST',
+			success: function(data)
+			{
+				console.log(data);
+				
+				$("#create-order .overlay").addClass("hidden");
+			},
+			error : function (data, errorThrown) {
+				console.log(data.responseText);
+				console.log(errorThrown);
+				Swal.fire({
+					type: 'error',
+					title: 'Đã xảy ra lỗi',
+					text: ""
+				})
+				$("#create-order .overlay").addClass("hidden");
+			}
+		});
 	}
 
 	function validate_discount(discount) {

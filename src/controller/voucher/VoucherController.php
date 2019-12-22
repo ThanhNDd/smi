@@ -91,4 +91,13 @@ if(isset($_GET["method"]) && $_GET["method"]=="findall")   {
     }
 }
 
-
+if(isset($_POST["method"]) && $_POST["method"]=="find_by_code")   {
+    try {
+        $code = $_POST['code'];
+        $data = $dao->find_by_code($code);
+        echo json_encode($data);
+    } catch(Exception $e)
+    {
+        echo $e -> getMessage();
+    }
+}

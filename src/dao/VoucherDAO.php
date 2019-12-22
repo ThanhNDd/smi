@@ -95,6 +95,7 @@ class VoucherDAO
                         code, 
                         value, 
                         type, 
+                        status,
                         case when DATE(NOW()) between DATE(start_date) and DATE(expired_date) then 'success' else 'expired' end as valid_date
                     FROM smi_voucher 
                     where code = '" . $voucher_code . "'";
@@ -105,6 +106,7 @@ class VoucherDAO
                     'code' => $row["code"],
                     'value' => $row['value'],
                     'type' => $row['type'],
+                    'status' => $row['status'],
                     'valid_date' => $row['valid_date']
                 );
                 array_push($data, $voucher);
