@@ -13,7 +13,6 @@ class CustomerDAO {
                 $village_id = $customer->getVillage_id();
                 $district_id = $customer->getDistrict_id();
                 $city_id = $customer->getCity_id();
-                $id = $customer->getId();
                 $stmt = $this->getConn()->prepare("insert into `smi_customers`
                     (`name`, `phone`, `email`, `address`, `village_id`, `district_id`, `city_id`, `created_at`)
                     VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");

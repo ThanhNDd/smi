@@ -66,15 +66,15 @@
 								<td class="right"><b style="font-size: 20px;" id="totalAmount">0</b><b> đ</b></td>
 		                    </tr>
 		                    <tr>
-								<td class="right">Tổng Giảm trừ</td>
-								<td class="right"><span style="font-size: 20px;" id="totalReduce">0</span><span> đ</span></td>
-		                    </tr>
-		                    <tr>
 								<td class="right">Khuyến mãi</td>
 								<td class="right w110">
 									<input type="text" class="form-control" name="discount" id="discount" width="100px">
 								</td>
 		                    </tr>
+                            <tr>
+                                <td class="right">Tổng Giảm trừ</td>
+                                <td class="right"><span style="font-size: 20px;" id="totalReduce">0</span><span> đ</span></td>
+                            </tr>
 		                    <tr>
 								<td class="right">Tổng thanh toán</td>
 								<td class="right" style="color:red;"><h2><b id="totalCheckout">0</b><b> đ</b></h2></td>
@@ -290,10 +290,10 @@
  		}
  		var totalCheckout = replaceComma($("#totalCheckout").text());
  		payment = replaceComma(payment);
- 		if(payment !== "" && payment < 1000)
- 		{
- 			payment += "000";
- 		}
+ 		// if(payment !== "" && payment < 1000)
+ 		// {
+ 		// 	payment += "000";
+ 		// }
  		$("#payment").val(formatNumber(payment));
  		if(payment != "" && Number(totalCheckout) > 0 && Number(payment) < Number(totalCheckout)) {
  			$("#payment").addClass("is-invalid");
@@ -374,7 +374,6 @@
 		}
 		data["details"] = details;
 		console.log(JSON.stringify(data));
-
 		$.ajax({
 			dataType : 'json',
 			url      : '<?php echo __PATH__.'src/controller/sales/processCheckout.php' ?>',
@@ -393,20 +392,6 @@
 				{
     				$(".iframeArea").html('<iframe src="<?php echo __PATH__?>src/controller/sales/pdf/'+filename+'" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
 				}
-				// Swal.fire(
-				// 	'Thành công!',
-				// 	'Đơn hàng #'+orderId+' đã được tạo thành công.',
-				// 	'success'
-				// ).then((result) => {
-			 //        if (result.value) {
-			 //            resetData();
-			 //            if($flag_print_receipt === true && typeof filename !== "undefined" && filename !== "")
-    //     				{
-    //     				    printReceipt();
-    //     				}
-				// 	}
-		  //       });    
-
 		        toastr.success('Đơn hàng #'+orderId+' đã được tạo thành công.');
 		        resetData();
 	            if($flag_print_receipt === true && typeof filename !== "undefined" && filename !== "")
@@ -495,8 +480,6 @@
 			totalReduce += Number(reduce);
 		}
 		$("#totalAmount").text(formatNumber(totalAmount));
-		$("#totalReduce").text(formatNumber(totalReduce));
-
 
 		var totalCheckout = totalAmount - totalReduce;
 
@@ -510,7 +493,8 @@
 			discount = replaceComma(discount);
 			discount = discount == "" ? 0 : Number(discount);
 		}
-		
+		totalReduce += discount;
+        $("#totalReduce").text(formatNumber(totalReduce));
 		var totalCheckout = totalCheckout - discount;
 		$("#totalCheckout").text(formatNumber(totalCheckout));
 
@@ -697,10 +681,10 @@
 				//  validate_form();
 	 			return;
 	 		}
-	 		if(reduce !== "" && reduce < 1000)
-	 		{
-	 			reduce = reduce+"000";
-	 		}
+	 		// if(reduce !== "" && reduce < 1000)
+	 		// {
+	 		// 	reduce = reduce+"000";
+	 		// }
 	 		$("[id="+reduceId+"]").val(formatNumber(reduce));
 	 		if(reduce !== "" && (reduce < 1000 || reduce > (price*qty) /2)) {
 	 			$("[id="+reduceId+"]").addClass("is-invalid");

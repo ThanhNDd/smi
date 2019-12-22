@@ -19,6 +19,7 @@ class Order {
     private $status;
     private $deleted;
     private $order_date;
+    private $voucher_code;
     private $created_date;
     private $updated_date;  
    
@@ -47,12 +48,7 @@ class Order {
      */ 
     public function getTotal_reduce()
     {
-        if(empty($this->total_reduce))
-        {
-            return 0;
-        } else {
-            return $this->total_reduce;    
-        }
+        return $this->total_reduce;
     }
 
     /**
@@ -72,12 +68,7 @@ class Order {
      */ 
     public function getTotal_reduce_percent()
     {
-        if(empty($this->total_reduce_percent))
-        {
-            return 0;
-        } else {
-            return $this->total_reduce_percent;    
-        }
+        return $this->total_reduce_percent;
     }
 
     /**
@@ -97,12 +88,7 @@ class Order {
      */ 
     public function getDiscount()
     {
-        if(empty($this->discount))
-        {
-            return 0;
-        } else {
-            return $this->discount; 
-        }        
+        return $this->discount;
     }
 
     /**
@@ -122,12 +108,7 @@ class Order {
      */ 
     public function getTotal_amount()
     {
-        if(empty($this->total_amount))
-        {
-            return 0;
-        } else {
-            return $this->total_amount;
-        }
+        return $this->total_amount;
     }
 
     /**
@@ -147,12 +128,7 @@ class Order {
      */ 
     public function getTotal_checkout()
     {
-        if(empty($this->total_checkout))
-        {
-            return 0;
-        } else {
-            return $this->total_checkout;
-        }
+        return $this->total_checkout;
     }
 
     /**
@@ -172,12 +148,7 @@ class Order {
      */ 
     public function getCustomer_payment()
     {
-        if(empty($this->customer_payment))
-        {
-            return 0;
-        } else {
-            return $this->customer_payment;
-        }
+        return $this->customer_payment;
     }
 
     /**
@@ -196,12 +167,7 @@ class Order {
      */ 
     public function getPayment_type()
     {
-        if(empty($this->payment_type) && $this->payment_type != 0)
-        {
-            return "NULL";
-        } else {
-            return $this->payment_type;
-        }
+        return $this->payment_type;
     }
 
     /**
@@ -220,12 +186,7 @@ class Order {
      */ 
     public function getRepay()
     {
-        if(empty($this->repay))
-        {
-            return 0;
-        } else {
-            return $this->repay;
-        }
+        return $this->repay;
     }
 
     /**
@@ -245,12 +206,7 @@ class Order {
      */ 
     public function getCustomer_id()
     {
-        if(empty($this->customer_id))
-        {
-            return "NULL";
-        } else {
-            return $this->customer_id;
-        }
+        return $this->customer_id;
     }
 
     /**
@@ -332,12 +288,7 @@ class Order {
      */ 
     public function getBill_of_lading_no()
     {
-        if(empty($this->bill_of_lading_no))
-        {
-            return "NULL";
-        } else {
-            return $this->bill_of_lading_no;
-        }
+        return $this->bill_of_lading_no;
     }
 
     /**
@@ -357,12 +308,7 @@ class Order {
      */ 
     public function getShipping()
     {
-        if(empty($this->shipping))
-        {
-            return 0;
-        } else {
-            return $this->shipping;
-        }
+        return $this->shipping;
     }
 
     /**
@@ -382,12 +328,7 @@ class Order {
      */ 
     public function getShipping_unit()
     {
-        if(empty($this->shipping_unit))
-        {
-            return "NULL";
-        } else {
-            return $this->shipping_unit;
-        }
+        return $this->shipping_unit;
     }
 
     /**
@@ -491,4 +432,21 @@ class Order {
 
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getVoucherCode()
+    {
+        return $this->voucher_code;
+    }
+
+    /**
+     * @param mixed $voucher_code
+     */
+    public function setVoucherCode($voucher_code)
+    {
+        $this->voucher_code = $voucher_code;
+    }
+
 }

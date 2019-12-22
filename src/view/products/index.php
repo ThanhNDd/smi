@@ -62,9 +62,9 @@
   <div class="row">
     <div class="col-12">
       <div class="card">
-        <div class="card-header">
+        <!--<div class="card-header">
           <h3 class="card-title">Danh sách sản phẩm</h3>
-        </div>
+        </div>-->
         <div class="row col-12" style="display: inline-block;float: right;">
           <section style="display: inline-block;float: right;padding-top: 1.25rem;">
             <button type="button" class="btn btn-success btn-flat product-create">
@@ -114,6 +114,7 @@
 <?php include __PATH__.'src/common/footer.php'; ?>
   <script>
     $(document).ready(function () {
+        set_title("Danh sách sản phẩm");
         generate_datatable();
 
         $(".print-barcode").on("click",function(){

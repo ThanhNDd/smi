@@ -190,16 +190,16 @@
         } else {
           $(e).removeClass("is-invalid");
           check_products_list();
-          if(val < 1000)
-          {
-            if(val.indexOf(".") > 0)
-            {
-              val = val.replace(".","");
-              val = val+"00";
-            } else {
-              val = val+"000";  
-            }
-          }
+          // if(val < 1000)
+          // {
+          //   if(val.indexOf(".") > 0)
+          //   {
+          //     val = val.replace(".","");
+          //     val = val+"00";
+          //   } else {
+          //     val = val+"000";
+          //   }
+          // }
           val = Number(val);
           $(e).val(formatNumber(val));  
           on_change_total();
@@ -215,16 +215,16 @@
         } else {
           $(e).removeClass("is-invalid");
           check_products_list();
-          if(val < 1000)
-          {
-            if(val.indexOf(".") > 0)
-            {
-              val = val.replace(".","");
-              val = val+"00";
-            } else {
-              val = val+"000";  
-            }
-          }
+          // if(val < 1000)
+          // {
+          //   if(val.indexOf(".") > 0)
+          //   {
+          //     val = val.replace(".","");
+          //     val = val+"00";
+          //   } else {
+          //     val = val+"000";
+          //   }
+          // }
           val = Number(val);
           $(e).val(formatNumber(val));  
           on_change_total();
@@ -252,16 +252,16 @@
         } else {
           $(e).removeClass("is-invalid");
           check_products_list();
-          if(val < 1000)
-          {
-            if(val.indexOf(".") > 0)
-            {
-              val = val.replace(".","");
-              val = val+"00";
-            } else {
-              val = val+"000";  
-            }
-          }
+          // if(val < 1000)
+          // {
+          //   if(val.indexOf(".") > 0)
+          //   {
+          //     val = val.replace(".","");
+          //     val = val+"00";
+          //   } else {
+          //     val = val+"000";
+          //   }
+          // }
           val = Number(val);
           $(e).val(formatNumber(val));  
         }
@@ -675,16 +675,16 @@
         } else {
           $(e).removeClass("is-invalid");
           check_products_list();
-          if(val < 1000)
-          {
-            if(val.indexOf(".") > 0)
-            {
-              val = val.replace(".","");
-              val = val+"00";
-            } else {
-              val = val+"000";  
-            }
-          }
+          // if(val < 1000)
+          // {
+          //   if(val.indexOf(".") > 0)
+          //   {
+          //     val = val.replace(".","");
+          //     val = val+"00";
+          //   } else {
+          //     val = val+"000";
+          //   }
+          // }
           val = Number(val);
           $(e).val(formatNumber(val));  
           var qty = $("[id="+qtyId+"]").val();

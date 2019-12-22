@@ -161,7 +161,7 @@ class CheckoutDAO {
                         tmp.payment_type
                     from (
                         SELECT A.id, 
-                            sum(D.profit - B.reduce) - A.discount as profit,
+                            sum(D.profit * B.quantity - B.reduce) - A.discount as profit,
                             A.total_amount - A.total_reduce - A.discount as 'total_checkout',
                             A.type,  A.payment_type
                         FROM smi_orders A
@@ -478,7 +478,7 @@ class CheckoutDAO {
                         'price' => number_format($price),
                         'reduce' => number_format($reduce),
                         'intoMoney' => number_format($intoMoney),
-                        'profit' => number_format($row["profit"])
+                        'profit' => number_format($row["profit"] * $qty)
                     );
                     array_push($order['details'], $detail);
                     array_push($data, $order);
@@ -533,8 +533,6 @@ class CheckoutDAO {
             $shipping_unit = $order->getShipping_unit();
             $status = $order->getStatus();
             $payment_type = $order->getPayment_type();
-            $id = $order->getId();
-
             $stmt = $this->getConn()->prepare("insert into smi_orders (
                     `total_reduce`,
                     `total_reduce_percent`,
