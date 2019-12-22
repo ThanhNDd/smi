@@ -41,7 +41,7 @@ class PrinterReceipt
                 }
             } 
             
-            mkdir("pdf", 0777, true);
+            // mkdir("pdf", 0777, true);
             $filename = "receipt".time().".pdf";
             $mpdf->Output("pdf/".$filename, 'F');
             chmod("pdf/".$filename, 0777);

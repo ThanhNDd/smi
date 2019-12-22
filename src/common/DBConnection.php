@@ -25,12 +25,29 @@ class DBConnect {
         try {
             $conn = new mysqli($this->host, $this->user, $this->pass, $this->db);
             mysqli_set_charset($conn, 'UTF8');
+            $conn->autocommit(FALSE);
         } catch(Exception $ex) {
             die("connection failure: ".$this->conn->connect_error);
         }
         return $this->conn = $conn;
     }
 
+    function commit() {
+        try {
+            $this->conn->commit();
+            print_r($this->conn->error);
+        } catch(Exception $ex) {
+            die("commit failure: ".$this->conn->connect_error);
+        }
+    }
+    function rollback() {
+        try {
+            $this->conn->rollback();
+            print_r($this->conn->error);
+        } catch(Exception $ex) {
+            die("rollback failure: ".$this->conn->connect_error);
+        }
+    }
     /**
      * Close connection to database
      */

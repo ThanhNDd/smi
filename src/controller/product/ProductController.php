@@ -48,8 +48,10 @@ if(isset($_POST["type"]) && $_POST["type"]=="del_product")   {
             echo json_encode($response_array);
         }
     } catch(Exception $e) {
+        $db->rollback();
         throw new Exception("Delete product error exception: ".$e);
     }
+    $db->commit();
 }
 
 if(isset($_POST["type"]) && $_POST["type"]=="edit_product")   {
@@ -83,8 +85,10 @@ if(isset($_POST["type"]) && $_POST["type"]=="save_variation")   {
         echo json_encode($response_array);
     } catch(Exception $e)
     {
+        $db->rollback();
         echo $e->getMessage();
     }    
+    $db->commit();
 }
 
 if(isset($_POST["type"]) && $_POST["type"]=="update_variation")   {
@@ -103,8 +107,10 @@ if(isset($_POST["type"]) && $_POST["type"]=="update_variation")   {
         echo json_encode($response_array);
     } catch(Exception $e)
     {
+        $db->rollback();
         echo $e->getMessage();
     }    
+    $db->commit();
 }
 
 if(isset($_POST["type"]) && $_POST["type"]=="delete_variation")   {
@@ -119,8 +125,10 @@ if(isset($_POST["type"]) && $_POST["type"]=="delete_variation")   {
         echo json_encode($response_array);
     } catch(Exception $e)
     {
+        $db->rollback();
         echo $e->getMessage();
     }    
+    $db->commit();
 }
 
 if(isset($_GET["type"]) && $_GET["type"]=="findall")   {
@@ -201,7 +209,9 @@ if(isset($_POST["type"]) && $_POST["type"]=="addNew")   {
         }
     } catch(Exception $e)
     {
+        $db->rollback();
         echo 'Caught exception: ',  $e->getMessage(), "\n";
     }   
+    $db->commit();
 }
 

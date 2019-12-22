@@ -95,6 +95,7 @@ if(isset($_POST["type"]) && $_POST["type"]=="checkout")   {
                 $checkout_dao->saveOrderDetail($detail);
                 if(!empty($details[$i]->sku)) {
                     $dao->update_quantity_by_sku($details[$i]->sku, $details[$i]->quantity);
+                    
                 } else
                 {
                     throw new Exception("Cannot update quantity by SKU");
@@ -114,6 +115,10 @@ if(isset($_POST["type"]) && $_POST["type"]=="checkout")   {
         }
     } catch(Exception $e)
     {
+        $db->rollback();
         throw new Exception("Error Processing Request: ". $e -> getMessage());
     }
+
+    // all Ok
+    $db->commit();
 }

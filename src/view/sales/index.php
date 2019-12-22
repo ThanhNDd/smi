@@ -65,18 +65,12 @@
 								<td class="right w90">Tổng tiền</td>
 								<td class="right"><b style="font-size: 20px;" id="totalAmount">0</b><b> đ</b></td>
 		                    </tr>
-		                    <!-- <tr>
+		                    <tr>
 								<td class="right">Tổng Giảm trừ</td>
 								<td class="right"><span style="font-size: 20px;" id="totalReduce">0</span><span> đ</span></td>
-		                    </tr> -->
+		                    </tr>
 		                    <tr>
-								<td class="right">
-									<select class="form-control" name="sel_discount" id="sel_discount">
-										<option value="1" selected="selected">Chiết khấu</option>
-										<option value="2">Quà tặng</option>
-										<option value="3">Mã giảm giá</option>
-									</select>
-								</td>
+								<td class="right">Khuyến mãi</td>
 								<td class="right w110">
 									<input type="text" class="form-control" name="discount" id="discount" width="100px">
 								</td>
@@ -137,23 +131,17 @@
 			$(this).val("");
 		});  
 
-		// $("#discount").change(function(){
-		// 	console.log("vào day");
-		// 	var discount = $(this).val();
-		// 	onchange_discount(discount);
-		// });
+		$("#discount").change(function(){
+			var discount = $(this).val();
+			onchange_discount(discount);
+		});
 		$("#discount").blur(function(){
-			var select_discount = $("#sel_discount").val();
-			if(select_discount == 1) {
-				console.log("vào day 2");
-				var discount = $(this).val();
-				onchange_discount(discount);
-			}
+			var discount = $(this).val();
+			onchange_discount(discount);
 		});
 		$('#discount').keypress(function(event){
 			var keycode = (event.keyCode ? event.keyCode : event.which);
 			if(keycode == '13'){
-				console.log("vào day 3");
 				var discount = $(this).val();
 				onchange_discount(discount);
 			}
@@ -233,20 +221,21 @@
 
 	function onchange_discount(discount)
 	{
-		var select_discount = $("#sel_discount").val();
-		console.log(select_discount);
-		if(select_discount == 1) {
-			// discount
+		if(discount.indexOf("VC") > -1) {
+			// voucher
+			
+		} else if(discount.indexOf("QT") > -1) {
+			// gift
+			discount = discount.replace("QT");
+			console.log(discount);
+			// validateProdId(discount, calculateTotal, find_product);
+			// $("#discount").val("");
+		} else {
+			// diccount
 			if(!validate_discount(discount)) {
 				return;
 			}
 			calculateTotal();
-		} else if(select_discount == 2) {
-			// gift
-			validateProdId(discount, calculateTotal, find_product, select_discount);
-			$("#discount").val("");
-		} else if(select_discount == 3) {
-			// voucher
 		}
 	}
 
@@ -274,12 +263,12 @@
 				return false;
 			}	
 			var totalCheckout = replaceComma($("#totalCheckout").text());
-			if(discount !== "" && discount < 1000)
-			{
-				discount += "000";
-			} 
+			// if(discount !== "" && discount < 1000)
+			// {
+			// 	discount += "000";
+			// } 
 			$("#discount").val(formatNumber(discount));
-			if(discount != "" && (discount < 1000 || discount > totalCheckout/2)) {
+			if(discount != "" && (discount > totalCheckout/2)) {
 				$("#discount").addClass("is-invalid");
 				disableCheckOutBtn();
 				// validate_form();
@@ -353,6 +342,14 @@
 			$price = replaceComma($(value).find("span.price").text());
 			$quantity = $(value).find("input[name=qty]").val();
 			$reduce = replaceComma($(value).find("input[name=reduce]").val());
+			$reduce_percent = "";
+			if($reduce.indexOf("%") > -1) {
+				$reduce = $reduce.replace("%", "");
+				$reduce_percent = $reduce;
+				$reduce = ($reduce * $price) / 100;
+			} else {
+				$reduce_percent = Math.round($reduce*100/($price*$quantity));
+			}
 
 			var product = {};
 			product["product_id"] = $product_id;
@@ -362,7 +359,7 @@
 			product["price"] = $price;
 			product["quantity"] = $quantity;
 			product["reduce"] = $reduce;
-			product["reduce_percent"] = Math.round($reduce*100/($price*$quantity));
+			product["reduce_percent"] = $reduce_percent;
 			details.push(product);
 		});
 		
@@ -392,7 +389,7 @@
 				var filename = data.fileName;
 				console.log('filename: '+filename);
 				$(".iframeArea").html("");
-				if(filename !== "undefined" && filename !== "")
+				if(typeof filename !== "undefined" && filename !== "")
 				{
     				$(".iframeArea").html('<iframe src="<?php echo __PATH__?>src/controller/sales/pdf/'+filename+'" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
 				}
@@ -436,7 +433,7 @@
 		objFra.contentWindow.focus();
 		objFra.contentWindow.print();
 	}
-    function validateProdId(prodId, calculateTotal, find_product, select_discount)
+    function validateProdId(prodId, calculateTotal, find_product)
     {
     	var count = 0;
     	$.each($("#tableProd tbody").find("input[name=sku]"), function(k, v) {
@@ -448,7 +445,7 @@
       			qty++;
       			$("[id=qty_"+noId+"]").val(qty);
       			$("[id=qty_"+noId+"]").trigger("change");
-      			if(select_discount == 1 && typeof calculateTotal  === 'function')
+      			if(typeof calculateTotal  === 'function')
       			{
       				calculateTotal();	
       			}
@@ -459,10 +456,10 @@
       	{
       		if(typeof find_product  === 'function')
 	      	{
-				find_product(prodId, 1, select_discount);
+				find_product(prodId, 1);
 		      	
 	      	}
-	      	if(select_discount == 1 && typeof calculateTotal  === 'function')
+	      	if(typeof calculateTotal  === 'function')
 	      	{
 	      		calculateTotal();	
 	      	}
@@ -539,7 +536,7 @@
       return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
     }
 
-	function find_product(sku, qty, select_discount)
+	function find_product(sku, qty)
  	{
 		$.ajax({
 			url : '<?php echo __PATH__.'src/controller/sales/processCheckout.php' ?>',

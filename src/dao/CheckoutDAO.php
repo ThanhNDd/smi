@@ -624,10 +624,10 @@ class CheckoutDAO {
                     `price`,
                     `quantity`,
                     `reduce`) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                VALUES (?, ?, ?, ?, ?, ?, ?)");
                 $stmt->bind_param("iiisdid", $order_id, $product_id, $variant_id, $sku, $price, $qty, $reduce);
                 $stmt->execute();
-                // var_dump($this->getConn()->error);
+                print_r($this->getConn()->error);
                 $nrows = $stmt->affected_rows;
                 if (!$nrows) {
                     throw new Exception("saveOrderDetail  has failure!!!");

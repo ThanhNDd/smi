@@ -83,9 +83,10 @@ if(isset($_POST["method"]) && $_POST["method"]=="delete_order")   {
 		echo json_encode($repsonse);
     } catch(Exception $ex)
     {
+		$db->rollback();
         throw new Exception($ex);
     }
-    
+    $db->commit();
 }
 
 /**
@@ -268,10 +269,13 @@ if(isset($_POST["orders"]) && $_POST["orders"]=="new")   {
 		echo json_encode($repsonse);
 	} catch(Exception $e)
 	{
+		$db->rollback();
 		throw new Exception($e);
 	}
-	
-	
+	// all Ok
+    $db->commit();
+}	
+
 
 	//	create array to store order information
 	// $arr = array();
@@ -335,5 +339,5 @@ if(isset($_POST["orders"]) && $_POST["orders"]=="new")   {
 	// $repsonse = $woocommerce->post('orders', $arr);
 	// $repsonse =  "success";
 	// echo json_encode($repsonse);
-}
+// }
 
