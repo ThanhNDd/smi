@@ -111,9 +111,9 @@ class VoucherDAO
                 );
                 array_push($data, $voucher);
             }
-            $arr = array();
-            $arr['data'] = $data;
-            return $arr;
+            // $arr = array();
+            // $arr['data'] = $data;
+            return $data;
         } catch (Exception $e) {
             throw new Exception($e);
         }
@@ -196,7 +196,38 @@ class VoucherDAO
             throw new Exception($e);
         }
     }
+    function inactive_voucher($id)
+    {
+        try {
+            $stmt = $this->getConn()->prepare("UPDATE `smi_voucher` SET `status` = 1 WHERE `id` = ?");
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+            // print_r($this->getConn()->error);
+            $nrows = $stmt->affected_rows;
+            if (!$nrows) {
+                throw new Exception("InActive voucher has failure!!!");
+            }
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
 
+
+    function active_voucher($id)
+    {
+        try {
+            $stmt = $this->getConn()->prepare("UPDATE `smi_voucher` SET `status` = 2 WHERE `id` = ?");
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+            // print_r($this->getConn()->error);
+            $nrows = $stmt->affected_rows;
+            if (!$nrows) {
+                throw new Exception("Active voucher has failure!!!");
+            }
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
 
     /**
      * Get the value of conn

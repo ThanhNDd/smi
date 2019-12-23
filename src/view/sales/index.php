@@ -71,6 +71,13 @@
 									<input type="text" class="form-control" name="discount" id="discount" width="100px">
 								</td>
 		                    </tr>
+							<tr>
+								<td class="left" colspan="2">
+									<input type="hidden" id="vcFlag" value="0">
+									<input type="hidden" id="vcCode" value="">
+									<span class="msg"></span>
+								</td>
+		                    </tr>
                             <tr>
                                 <td class="right">Tổng Giảm trừ</td>
                                 <td class="right"><span style="font-size: 20px;" id="totalReduce">0</span><span> đ</span></td>
@@ -252,10 +259,101 @@
 				code: voucher_code
 			},
 			type : 'POST',
-			success: function(data)
+			success: function(res)
 			{
-				console.log(data);
-				
+				console.log(res);
+				if(res.length > 0) {
+					var status = res[0].status;
+					if(status !== "undefined") {
+						switch(status) {
+							case '1':
+								Swal.fire({
+									type: 'error',
+									title: 'Đã xảy ra lỗi',
+									text: "Mã khuyến mãi chưa được kích hoạt"
+								}).then((result) => {
+									if (result.value) {
+										$("#discount").val("");
+									}
+								});
+							break;
+							case '2':
+								if(res[0].valid_date === "expired") {
+									Swal.fire({
+										type: 'error',
+										title: 'Đã xảy ra lỗi',
+										text: "Mã khuyến mãi đã hết hạn"
+									}).then((result) => {
+										if (result.value) {
+											$("#discount").val("");
+										}
+									});
+									
+								} else {
+									let value;
+									if(res[0].type == 0) {
+										// cash
+										value = formatNumber(res[0].value);
+									} else if(res[0].type == 1) {
+										// percent
+										value = res[0].value+"%";
+									}
+									let msg = '<div class="alert alert-success alert-dismissible">' +
+										'<button type="button" class="close" aria-hidden="true" onclick="removeVC()">×</button>' +
+											'Mã '+voucher_code+' có giá trị giảm '+value+' trên tổng đơn hàng!' +
+										'</div>'
+									$(".msg").html(msg);
+									$("#vcFlag").val(1);
+									$("#vcCode").val(voucher_code);
+									$("#discount").val(value).trigger("change");
+									$("#discount").prop("disabled", true);
+								}
+							break;
+							case '3':
+								Swal.fire({
+									type: 'error',
+									title: 'Đã xảy ra lỗi',
+									text: "Mã khuyến mãi đã được sử dụng"
+								}).then((result) => {
+									if (result.value) {
+										$("#discount").val("");
+									}
+								});
+							break;
+							case '4':
+								Swal.fire({
+									type: 'error',
+									title: 'Đã xảy ra lỗi',
+									text: "Mã khuyến mãi đã bị khoá"
+								}).then((result) => {
+									if (result.value) {
+										$("#discount").val("");
+									}
+								});
+							break;
+						}
+					} else {
+						Swal.fire({
+							type: 'error',
+							title: 'Đã xảy ra lỗi',
+							text: "Mã khuyến mãi không tồn tại"
+						}).then((result) => {
+							if (result.value) {
+								$("#discount").val("");
+							}
+						});
+					}
+				} else {
+					Swal.fire({
+						type: 'error',
+						title: 'Đã xảy ra lỗi',
+						text: "Mã khuyến mãi không tồn tại"
+					}).then((result) => {
+						if (result.value) {
+							$("#discount").val("");
+						}
+					});
+				}
 				$("#create-order .overlay").addClass("hidden");
 			},
 			error : function (data, errorThrown) {
@@ -270,8 +368,27 @@
 			}
 		});
 	}
+	function removeVC() {
+		Swal.fire({
+			title: 'Bạn có chắc chắn muốn xoá?',
+			text: "",
+			type: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Ok'
+		}).then((result) => {
+			if (result.value) {
+				$(".msg").html("");
+				$("#vcFlag").val(0);
+				$("#discount").val("").trigger("change");
+				$("#discount").prop("disabled", "");
+			}
+		});
+	}
 
 	function validate_discount(discount) {
+		let vcFlag = $("#vcFlag").val();
 		discount = replaceComma(discount);
 		if(discount.indexOf("%") > -1)
 		{
@@ -300,14 +417,14 @@
 			// 	discount += "000";
 			// } 
 			$("#discount").val(formatNumber(discount));
-			if(discount != "" && (discount > totalCheckout/2)) {
-				$("#discount").addClass("is-invalid");
-				disableCheckOutBtn();
-				// validate_form();
-				return false;
-			} else {
-				$("#discount").removeClass("is-invalid");
-			}
+			// if(vcFlag == 0 && discount != "" && (discount > totalCheckout/2)) {
+			// 	$("#discount").addClass("is-invalid");
+			// 	disableCheckOutBtn();
+			// 	// validate_form();
+			// 	return false;
+			// } else {
+			// 	$("#discount").removeClass("is-invalid");
+			// }
 		}
 		return true;
 	}
@@ -351,6 +468,7 @@
 		$payment_type = $("#sel_payment").val();
 		$repay = replaceComma($("#repay").text());
 		$flag_print_receipt = $("#flag_print_receipt").is(':checked');
+		$voucher_code = $("#vcCode").val();
 
 		var data = {};
 		data["total_amount"] = $total_amount;
@@ -363,6 +481,7 @@
 		data["customer_id"] = 0;
 		data["type"] = 0;// Sale on shop
 		data["flag_print_receipt"] = $flag_print_receipt;
+		data["voucher_code"] = $voucher_code;
 
 		//order detail information
 		var details = [];

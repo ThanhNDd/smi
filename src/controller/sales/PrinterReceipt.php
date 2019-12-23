@@ -18,7 +18,8 @@ class PrinterReceipt
                 'margin_left' => 0,
                 'margin_right' => 0,
                 'margin_top' => 5,
-                'margin_bottom' => 5
+                'margin_bottom' => 5,
+                'tempDir' => __DIR__ . '/tmp'
             ]);
             $html = $this->getHeader($order);
             $html .= $this->getBody($details);    

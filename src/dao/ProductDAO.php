@@ -383,18 +383,21 @@ class ProductDAO {
                         order by A.id, B.id, B.color, B.size";
             $result = mysqli_query($this->conn,$sql);    
             $data = array();
-            foreach($result as $k => $row) {
-                $product = array(
-                    'product_id' => $row["product_id"],
-                    'variant_id' => $row["variant_id"],
-                    'retail' => number_format($row["retail"]),
-                    'name' => $row["name"],
-                    'size' => $row["size"],
-                    'color' => $row["color"],
-                    'sku' => $row["sku"]
-                );
-                array_push($data, $product);
+            if(!empty($result)) {
+                foreach($result as $k => $row) {
+                    $product = array(
+                        'product_id' => $row["product_id"],
+                        'variant_id' => $row["variant_id"],
+                        'retail' => number_format($row["retail"]),
+                        'name' => $row["name"],
+                        'size' => $row["size"],
+                        'color' => $row["color"],
+                        'sku' => $row["sku"]
+                    );
+                    array_push($data, $product);
+                }
             }
+            
             return $data;
         } catch(Exception $e)
         {

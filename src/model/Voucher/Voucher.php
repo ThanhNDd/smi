@@ -7,7 +7,7 @@ class Voucher {
     private $type; //COMMENT '0: cash, 1: percent',
     private $start_date;
     private $expired_date;
-    private $status; // 1: inactive, 2: active, 3: used, 4: deleted, 5: canceled
+    private $status; // 1: inactive, 2: active, 3: used, 4: canceled
     private $created_date;
     private $updated_date;
 

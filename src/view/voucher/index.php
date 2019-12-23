@@ -146,6 +146,69 @@
             "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]]
         });
 
+        $('#example tbody').on('click', '.active_voucher', function () {
+            let tr = $(this).closest('tr');
+            let td = tr.find("td");
+            let voucher_id = $(td[1]).text();
+            let voucher_code = $(td[2]).text();
+            $.ajax({
+                url : '<?php echo __PATH__.'src/controller/voucher/VoucherController.php' ?>',
+                type : "POST",
+                dataType : "json",
+                data : {
+                    method : "active_voucher",
+                    voucher_id : voucher_id
+                },
+                success : function(res){
+                    console.log(res);
+                    toastr.success('Mã voucher '+voucher_code+' đã được kích hoạt thành công.');
+                    hide_loading();
+                    table.ajax.reload();
+                },
+                error : function(data, errorThrown) {
+                    console.log(data.responseText);
+                    console.log(errorThrown);
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Đã xảy ra lỗi',
+                        text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                    })
+                    hide_loading();
+                }
+            });
+        });
+
+        $('#example tbody').on('click', '.inactive_voucher', function () {
+            let tr = $(this).closest('tr');
+            let td = tr.find("td");
+            let voucher_id = $(td[1]).text();
+            let voucher_code = $(td[2]).text();
+            $.ajax({
+                url : '<?php echo __PATH__.'src/controller/voucher/VoucherController.php' ?>',
+                type : "POST",
+                dataType : "json",
+                data : {
+                    method : "inactive_voucher",
+                    voucher_id : voucher_id
+                },
+                success : function(res){
+                    console.log(res);
+                    toastr.success('Mã voucher '+voucher_code+' đã ngừng kích hoạt.');
+                    hide_loading();
+                    table.ajax.reload();
+                },
+                error : function(data, errorThrown) {
+                    console.log(data.responseText);
+                    console.log(errorThrown);
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Đã xảy ra lỗi',
+                        text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                    })
+                    hide_loading();
+                }
+            });
+        });
 
         $('#example tbody').on('click', '.del_voucher', function () {
             let tr = $(this).closest('tr');
@@ -172,7 +235,7 @@
                         success : function(res){
                             var response = res.response;
                             console.log(response);
-                            toastr.success('Mã voucher đã được xóa thành công.');
+                            toastr.success('Mã voucher '+voucher_id+' đã được xóa thành công.');
                             hide_loading();
                             table.ajax.reload();
                         },
@@ -190,113 +253,20 @@
                 }
             });
         });
-
-        $('#example tbody').on('click', '.edit_voucher', function () {
-            var tr = $(this).closest('tr');
-            var td = tr.find("td");
-            var id = $(td[1]).text();
-            var code = $(td[2]).text();
-            var value = $(td[3]).text();
-            var startDate = $(td[4]).text();
-            var expiredDate = $(td[5]).text();
-
-            var input_code = '<input type="text" id="code_'+id+'" value="'+code+'">';
-            var input_value = '<input type="text" id="value_'+id+'" value="'+value+'">';
-            var input_startDate = '<input type="text" id="startDate_'+id+'" value="'+startDate+'">';
-            var input_expiredDate = '<input type="text" id="expiredDate_'+id+'" value="'+expiredDate+'">';
-            var btn_gr = '<button type="button" class="btn bg-gradient-primary btn-sm update_voucher"><i class="fas fa-save"></i> Lưu</button>&nbsp;'+
-                '<button type="button" class="btn bg-gradient-danger btn-sm cancel_edit" "><i class="fas fa-trash"></i> Hủy</button>';
-            var gr_input_hidden = '<input type="hidden" id="curr_code_'+id+'" value="'+code+'">' +
-                '<input type="hidden" id="curr_value_'+id+'" value="'+value+'">' +
-                '<input type="hidden" id="curr_startDate_'+id+'" value="'+startDate+'">' +
-                '<input type="hidden" id="curr_expiredDate_'+id+'" value="'+expiredDate+'">';
-            $(td[2]).html(input_code);
-            $(td[3]).html(input_value);
-            $(td[4]).html(input_startDate);
-            $(td[5]).html(input_expiredDate);
-            $(td[7]).html(btn_gr);
-            $(tr).append(gr_input_hidden);
-        });
-
-        $('#example tbody').on('click', '.update_voucher', function () {
-            show_loading();
-            var tr = $(this).closest('tr');
-            var td = tr.find("td");
-            var id = $(td[1]).text();
-            var code = $("#code_"+id).val();
-            var value = $("#value_"+id).val();
-            var startDate = $("#startDate_"+id).val();
-            var expiredDate = $("#expiredDate_"+id).val();
-            var canceled = $(td[6]).text();
-            if(canceled === "") {
-                canceled = "0";
-            } else {
-                canceled = "1";
-            }
-            $.ajax({
-                url : '<?php echo __PATH__.'src/controller/voucher/VoucherController.php' ?>',
-                type : "POST",
-                dataType : "json",
-                data : {
-                    method : "update_voucher",
-                    id : id,
-                    code : code,
-                    value : value,
-                    startDate : startDate,
-                    expiredDate : expiredDate,
-                    canceled : canceled
-                },
-                success : function(){
-                    toastr.success('Cập nhật thành công!');
-                    $(td[2]).html(code);
-                    $(td[3]).html(value);
-                    $(td[4]).html(startDate);
-                    $(td[5]).html(expiredDate);
-                    $(td[6]).html(format_action());
-                    hide_loading();
-                },
-                error : function(data, errorThrown) {
-                    console.log(data.responseText);
-                    console.log(errorThrown);
-                    Swal.fire({
-                        type: 'error',
-                        title: 'Đã xảy ra lỗi',
-                        text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-                    })
-                    hide_loading();
-                }
-            });
-        });
-
-        // Event click cancel edit variation
-        $('#example tbody').on('click', '.cancel_variation', function () {
-            var tr = $(this).closest('tr');
-            var td = tr.find("td");
-            var sku = tr.attr("class");
-            var color = $("#curr_color_"+sku).val();
-            var size = $("#curr_size_"+sku).val();
-            var qty = $("#curr_qty_"+sku).val();
-            var btn_gr = '<button type="button" class="btn bg-gradient-info btn-sm edit_variation"><i class="fas fa-edit"></i> Sửa</button>&nbsp;';
-            // '<button type="button" class="btn bg-gradient-danger btn-sm delete_variation"><i class="fas fa-trash"></i> Xóa</button>';
-
-            $(td[2]).html(color);
-            $(td[3]).html(size);
-            $(td[4]).html(qty);
-            $(td[5]).html(btn_gr);
-
-            $("#curr_color_"+sku).remove();
-            $("#curr_size_"+sku).remove();
-            $("#curr_qty_"+sku).remove();
-        });
-
+        
     }
 
-    function format_action()
+    function format_action(data)
     {
         // return '<button type="button" class="btn bg-gradient-info btn-sm edit_voucher"><i class="fas fa-edit"></i> Sửa</button>&nbsp;' +
         //     '<button type="button" class="btn bg-gradient-danger btn-sm del_voucher" "><i class="fas fa-trash"></i> Xóa</button>&nbsp;' +
         //     '<button type="button" class="btn bg-gradient-danger btn-sm cancel_voucher" "><i class="far fa-window-close"></i> Hủy</button>';
-        return '<button type="button" class="btn bg-gradient-success btn-sm active_voucher"><i class="fas fa-check"></i> Kích hoạt</button>';
+        if(data.status == 2) {
+            return '<button type="button" class="btn bg-gradient-danger btn-sm inactive_voucher"><i class="fas fa-check"></i> Ngừng Kích hoạt</button>';
+        } else {
+            return '<button type="button" class="btn bg-gradient-success btn-sm active_voucher"><i class="fas fa-check"></i> Kích hoạt</button>';
+        }
+        
     }
 
     function format_value(data)
@@ -322,6 +292,9 @@
                 break;
             case '3':
                 return '<span class="badge badge-warning">Đã sử dụng</span>';
+                break;
+            case '4':
+                return '<span class="badge badge-secondary">Đã khoá</span>';
                 break;
             default:
                 return '';

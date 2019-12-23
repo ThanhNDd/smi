@@ -53,6 +53,7 @@ if(isset($_POST["type"]) && $_POST["type"]=="checkout")   {
         $order->setType(0); // Sale on shop
         $order->setCustomer_id(0); // retail customer
         $order->setStatus(3);// order completed
+        $order->setVoucherCode($data->voucher_code);
         $orderId = $checkout_dao->saveOrder($order);
         $order->setId($orderId);     
         if(empty($orderId)) {

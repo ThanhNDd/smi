@@ -7,6 +7,29 @@ $db = new DBConnect();
 $dao = new VoucherDAO();
 $dao->setConn($db->getConn());
 
+if(isset($_POST["method"]) && $_POST["method"]=="inactive_voucher")   {
+    try {
+        $voucher_id = $_POST["voucher_id"];
+        $voucher = $dao->inactive_voucher((int)$voucher_id);
+        echo json_encode($voucher);
+    } catch(Exception $e) {
+        $db->rollback();
+        throw new Exception("inactive voucher error exception: ".$e);
+    }
+    $db->commit();
+}
+
+if(isset($_POST["method"]) && $_POST["method"]=="active_voucher")   {
+    try {
+        $voucher_id = $_POST["voucher_id"];
+        $voucher = $dao->active_voucher((int)$voucher_id);
+        echo json_encode($voucher);
+    } catch(Exception $e) {
+        $db->rollback();
+        throw new Exception("Active voucher error exception: ".$e);
+    }
+    $db->commit();
+}
 
 if(isset($_POST["type"]) && $_POST["type"]=="del_voucher")   {
     try {
