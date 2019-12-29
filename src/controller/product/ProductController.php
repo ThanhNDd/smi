@@ -54,6 +54,20 @@ if(isset($_POST["type"]) && $_POST["type"]=="del_product")   {
     $db->commit();
 }
 
+if(isset($_POST["method"]) && $_POST["method"]=="update_discount")   {
+    try {
+        $product_id = $_POST["product_id"];
+        $discount = $_POST["discount"];
+        $dao->update_discount((int)$discount, (int)$product_id);
+        $response_array['response'] = "success";
+        echo json_encode($response_array);
+    } catch(Exception $e) {
+        $db->rollback();
+        throw new Exception("Update discount error exception: ".$e);
+    }
+    $db->commit();
+}
+
 if(isset($_POST["type"]) && $_POST["type"]=="edit_product")   {
     $product_id = $_POST["product_id"];
     $lists = $dao->find_by_id($product_id);

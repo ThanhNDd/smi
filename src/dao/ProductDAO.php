@@ -185,7 +185,8 @@ class ProductDAO {
                         B.color, 
                         B.quantity, 
                         B.sku, 
-                        A.created_at
+                        A.created_at,
+                        A.discount
                     from 
                         smi_products A left join smi_variations B on A.id = B.product_id     
                     order by A.created_at desc, A.id, B.id, B.color, B.size";
@@ -205,6 +206,7 @@ class ProductDAO {
                         'fee_transport' => number_format($row["fee_transport"]),
                         'retail' => number_format($row["retail"]),
                         'profit' => number_format($row["profit"]),
+                        'discount' => $row["discount"],
                         'created_at' => date_format(date_create($row["created_at"]),"d/m/Y"),
                         'variations' => array()
                     );
@@ -274,6 +276,22 @@ class ProductDAO {
         {
             echo $e->getMessage();
         }   
+    }
+
+    function update_discount($discount, $product_id)
+    {
+        try {
+            $stmt = $this->getConn()->prepare("update smi_products SET discount = ? where id = ?");
+            $stmt->bind_param("ii", $discount, $product_id);
+            $stmt->execute();
+            $nrows = $stmt->affected_rows;
+            if (!$nrows) {
+                throw new Exception("Update discount has failure!!!");
+            }
+        } catch(Exception $e)
+        {
+            throw new Exception($e);
+        }
     }
 
     function update_variation($sku, $color, $size, $qty)
@@ -376,7 +394,8 @@ class ProductDAO {
                         B.size, 
                         B.color, 
                         B.quantity, 
-                        B.sku
+                        B.sku,
+                        A.discount
                     from 
                         smi_products A left join smi_variations B on A.id = B.product_id 
                         where B.sku = ".$sku."
@@ -392,7 +411,8 @@ class ProductDAO {
                         'name' => $row["name"],
                         'size' => $row["size"],
                         'color' => $row["color"],
-                        'sku' => $row["sku"]
+                        'sku' => $row["sku"],
+                        'discount' => $row["discount"]
                     );
                     array_push($data, $product);
                 }

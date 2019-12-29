@@ -196,16 +196,27 @@ class VoucherDAO
             throw new Exception($e);
         }
     }
-    function inactive_voucher($id)
+    function update_status($value, $status, $type = 0)
     {
         try {
-            $stmt = $this->getConn()->prepare("UPDATE `smi_voucher` SET `status` = 1 WHERE `id` = ?");
-            $stmt->bind_param("i", $id);
+            if($type == 1) {
+                // update by code
+                $sql = "UPDATE `smi_voucher` SET `status` = ? WHERE `code` = ?";
+            } else {
+                $sql = "UPDATE `smi_voucher` SET `status` = ? WHERE `id` = ?";
+            }
+            $stmt = $this->getConn()->prepare($sql);
+            if($type == 1) {
+                // update by code
+                $stmt->bind_param("is", $status, $value);
+            } else {
+                $stmt->bind_param("ii", $status, $value);
+            }
             $stmt->execute();
             // print_r($this->getConn()->error);
             $nrows = $stmt->affected_rows;
             if (!$nrows) {
-                throw new Exception("InActive voucher has failure!!!");
+                throw new Exception("update status voucher has failure!!!");
             }
         } catch (Exception $e) {
             throw new Exception($e);
@@ -213,21 +224,21 @@ class VoucherDAO
     }
 
 
-    function active_voucher($id)
-    {
-        try {
-            $stmt = $this->getConn()->prepare("UPDATE `smi_voucher` SET `status` = 2 WHERE `id` = ?");
-            $stmt->bind_param("i", $id);
-            $stmt->execute();
-            // print_r($this->getConn()->error);
-            $nrows = $stmt->affected_rows;
-            if (!$nrows) {
-                throw new Exception("Active voucher has failure!!!");
-            }
-        } catch (Exception $e) {
-            throw new Exception($e);
-        }
-    }
+    // function active_voucher($id)
+    // {
+    //     try {
+    //         $stmt = $this->getConn()->prepare("UPDATE `smi_voucher` SET `status` = 2 WHERE `id` = ?");
+    //         $stmt->bind_param("i", $id);
+    //         $stmt->execute();
+    //         // print_r($this->getConn()->error);
+    //         $nrows = $stmt->affected_rows;
+    //         if (!$nrows) {
+    //             throw new Exception("Active voucher has failure!!!");
+    //         }
+    //     } catch (Exception $e) {
+    //         throw new Exception($e);
+    //     }
+    // }
 
     /**
      * Get the value of conn

@@ -25,6 +25,8 @@ class PrinterReceipt
             $html .= $this->getBody($details);    
             $html .= $this->getFooter($order);
 
+            echo $html;
+
             $mpdf->SetDisplayMode('real');
             $mpdf->SetDisplayPreferences('/FitWindow/NoPrintScaling');
             $mpdf->WriteHTML($html);
@@ -169,19 +171,23 @@ class PrinterReceipt
         {
            $reduce = $order->getTotal_reduce(); 
         }
-        $discount = 0;
-        if(!empty($order->getDiscount()) && $order->getDiscount() != 'NULL')
-        {
-           $discount = $order->getDiscount(); 
-        }
-        $reduce = $reduce + $discount;
+        // $discount = 0;
+        // if(!empty($order->getDiscount()) && $order->getDiscount() != 'NULL')
+        // {
+        //    $discount = $order->getDiscount(); 
+        // }
+        // $reduce = $reduce + $discount;
         $footer =   '<tfoot>
                             <tr>
                                 <td colspan="4" class="left">Tổng tiền:</td>
                                 <td class="right">'.number_format(empty($order->getTotal_amount()) || $order->getTotal_amount() == 'NULL' ? 0 : $order->getTotal_amount()).'</td>
                             </tr>
                             <tr>
-                                <td colspan="4" class="left">Giảm trừ:</td>
+                                <td colspan="4" class="left">Giảm trên tổng đơn:</td>
+                                <td class="right">'.($order->getDiscount() < 100 ? $order->getDiscount()."%" : number_format($order->getDiscount())).'</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" class="left">Tổng Giảm trừ:</td>
                                 <td class="right">'.number_format($reduce).'</td>
                             </tr>
                             <tr>

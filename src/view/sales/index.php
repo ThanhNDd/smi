@@ -72,7 +72,7 @@
 								</td>
 		                    </tr>
 							<tr>
-								<td class="left" colspan="2">
+								<td colspan="2" class="left voucher_info hidden">
 									<input type="hidden" id="vcFlag" value="0">
 									<input type="hidden" id="vcCode" value="">
 									<span class="msg"></span>
@@ -306,7 +306,9 @@
 									$("#vcFlag").val(1);
 									$("#vcCode").val(voucher_code);
 									$("#discount").val(value).trigger("change");
-									$("#discount").prop("disabled", true);
+									$("#discount").val("");
+									// $("#discount").prop("disabled", true);
+									$(".voucher_info").removeClass("hidden");
 								}
 							break;
 							case '3':
@@ -381,8 +383,11 @@
 			if (result.value) {
 				$(".msg").html("");
 				$("#vcFlag").val(0);
+				$("#vcCode").val("");
 				$("#discount").val("").trigger("change");
 				$("#discount").prop("disabled", "");
+				toastr.warning('Mã giảm giá đã được xoá.');
+				$(".voucher_info").addClass("hidden");
 			}
 		});
 	}
@@ -558,8 +563,12 @@
 				Swal.fire({
 					type: 'error',
 					title: 'Đã xảy ra lỗi',
-					text: ""
-				})
+					text: "Bạn hãy thử tạo lại đơn hàng hoặc liên hệ quản trị viên hệ thống!"
+				}).then((result) => {
+					if (result.value) {
+						resetData();
+					}
+				});
 				$("#create-order .overlay").addClass("hidden");
 			}
 		});
@@ -646,7 +655,7 @@
 		}
 		totalReduce += discount;
         $("#totalReduce").text(formatNumber(totalReduce));
-		var totalCheckout = totalCheckout - discount;
+		var totalCheckout = totalCheckout - totalReduce;
 		$("#totalCheckout").text(formatNumber(totalCheckout));
 
 		var payment = replaceComma($("#payment").val());
@@ -685,6 +694,12 @@
 				console.log(JSON.stringify(products));
 				if(products.length > 0)
 				{
+					var discount = products[0].discount;
+					if(discount == 0) {
+						discount = "";
+					} else if(discount > 0 && discount < 100) {
+						discount = discount + "%";
+					}
 					var noRow = $("#noRow").val();
 					noRow = Number(noRow);
 					noRow++;
@@ -700,7 +715,7 @@
 							+ '<td><span class="color" id="color_'+noRow+'">'+products[0].color+'</span></td>'
 							+ '<td><span class="price" id="price_'+noRow+'">'+products[0].retail+'</span><span> đ</span></td>'
 							+ '<td><input type="number" name="qty" id="qty_'+noRow+'" class="form-control" min="1" value="'+qty+'" onchange="on_change_qty(\'price_'+noRow+'\', \'qty_'+noRow+'\', \'intoMoney_'+noRow+'\', \'reduce_'+noRow+'\')"></td>'
-							+ '<td><input type="text" name="reduce" id="reduce_'+noRow+'" class="form-control" onchange="on_change_reduce(\'price_'+noRow+'\',\'qty_'+noRow+'\', \'intoMoney_'+noRow+'\', \'reduce_'+noRow+'\')"></td>'
+							+ '<td><input type="text" name="reduce" id="reduce_'+noRow+'" class="form-control" value="'+discount+'" onchange="on_change_reduce(\'price_'+noRow+'\',\'qty_'+noRow+'\', \'intoMoney_'+noRow+'\', \'reduce_'+noRow+'\')"></td>'
 							+ '<td><span class="intoMoney" id="intoMoney_'+noRow+'">'+products[0].retail+'</span><span> đ</span></td>'
 							+ '<td><button type="button" class="btn btn-danger form-control add-new-prod" title="Xóa"  onclick="del_product(this, \'product-'+noRow+'\')"><i class="fa fa-trash" aria-hidden="true"></i> Xóa</button></td>'
 							+ '</tr>');
@@ -718,34 +733,6 @@
 			}
 		});  
  	}
-
- 	// function findInJSON(prodId, qty)
- 	// {
- 	// 	var products = <?php //include __PATH__."src/view/sales/products.json"?>;
- 	// 	for(var i=0; i<products.length; i++)
- 	// 	{
- 	// 		if(products[i].variant_id === Number(prodId))
- 	// 		{
- 	// 			var noRow = $("#noRow").val();
- 	// 			noRow = Number(noRow);
- 	// 			noRow++;
- 	// 			$("#noRow").val(noRow);
- 	// 			$("#tableProd tbody").append('<tr id="product-'+noRow+'">'
-    //                   	+ '<td>'+noRow+'</td>'
-    //                   	+ '<td class="hidden"><input type="hidden" name="prodId" id="prodId_'+noRow+'" class="form-control" value="'+products[i].id+'"></td>'
-    //                   	+ '<td class="hidden"><input type="hidden" name="variantId" id="variantId_'+noRow+'" class="form-control" value="'+products[i].variant_id+'"></td>'
-    //                   	+ '<td>'+products[i].variant_id+'</td>'
-    //                   	+ '<td><span class="product-name" id="name_'+noRow+'">'+products[i].text+'</span></td>'
-    //                   	+ '<td><span class="price" id="price_'+noRow+'">'+products[i].price+'</span><span> đ</span></td>'
-    //                   	+ '<td><input type="number" name="qty" id="qty_'+noRow+'" class="form-control" min="1" value="'+qty+'" onchange="on_change_qty(\'price_'+noRow+'\', \'qty_'+noRow+'\', \'intoMoney_'+noRow+'\', \'reduce_'+noRow+'\')"></td>'
-    //                   	+ '<td><input type="text" name="reduce" id="reduce_'+noRow+'" class="form-control" onchange="on_change_reduce(\'price_'+noRow+'\',\'qty_'+noRow+'\', \'intoMoney_'+noRow+'\', \'reduce_'+noRow+'\')"></td>'
-    //                   	+ '<td><span class="intoMoney" id="intoMoney_'+noRow+'">'+products[i].price+'</span><span> đ</span></td>'
-    //                   	+ '<td><button type="button" class="btn btn-danger form-control add-new-prod" title="Xóa"  onclick="del_product(this, \'product-'+noRow+'\')"><i class="fa fa-minus-circle" aria-hidden="true"></i></button></td>'
-    //                 	+ '</tr>');
- 	// 			$('[id=qty_'+noRow+']').trigger("change");
- 	// 		}
- 	// 	}
- 	// }
 
  	function del_product(e, p)
     {
@@ -950,6 +937,9 @@
 		$("#payment").val("");
 		$("#repay").text(0);
 		$("#noRow").val(0);
+		$(".msg").html("");
+		$("#flag_print_receipt").prop("checked", false);
+		$(".voucher_info").addClass("hidden");
 		disableCheckOutBtn();
 	}
 

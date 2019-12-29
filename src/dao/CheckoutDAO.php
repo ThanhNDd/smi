@@ -162,7 +162,7 @@ class CheckoutDAO {
                     from (
                         SELECT A.id, 
                             sum(D.profit * B.quantity - B.reduce) - A.discount as profit,
-                            A.total_amount - A.total_reduce - A.discount as 'total_checkout',
+                            A.total_amount - A.total_reduce  as 'total_checkout',
                             A.type,  A.payment_type
                         FROM smi_orders A
                             LEFT JOIN smi_order_detail B ON A.id = B.order_id
@@ -312,92 +312,6 @@ class CheckoutDAO {
         }
     }
 
-    // function find_all_2($start_date, $end_date)
-    // {
-    //     $sql = "select 
-    //                 A.id as order_id,
-    //                 A.total_checkout,
-    //                 A.created_date,
-    //                 A.type,
-    //                 A.payment_type
-    //             from smi_orders A 
-    //             where 
-    //                 DATE(created_date) between DATE('".$start_date."') and DATE('".$end_date."')
-    //                 and A.deleted = 0
-    //             order by A.created_date desc";
-    //     $result = mysqli_query($this->conn,$sql);
-    //     $data = array();     
-    //     foreach($result as $k => $row) {
-    //         $order = array(
-    //                 'order_id' => $row["order_id"],
-    //                 'total_checkout' => number_format($row["total_checkout"]),
-    //                 'created_date' => date_format(date_create($row["created_date"]),"d/m/Y H:i:s"),
-    //                 'type' => $row["type"],
-    //                 'payment_type' => $row["payment_type"]
-    //             );
-    //         array_push($data, $order);
-    //     }
-    //     $arr = array();
-    //     $arr["data"] = $data;
-    //     return $arr;
-    // }
-
-    // function get_order_detail_by_order_id($order_id)
-    // {
-    //     $sql = "select 
-    //                 A.sku, B.name, A.quantity, A.price, A.reduce, A.quantity*A.price as 'total'
-    //             from smi_order_detail A
-    //             inner join smi_products B on A.product_id = B.id
-    //             where order_id = ".$order_id;
-    //     $result = mysqli_query($this->conn,$sql);
-    //     $data = array();     
-    //     foreach($result as $k => $row) {
-    //         $detail = array(
-    //                 'sku' => $row["sku"],
-    //                 'name' => $row["name"],
-    //                 'quantity' => $row["quantity"],
-    //                 'price' => number_format($row["price"]),
-    //                 'reduce' => number_format($row["reduce"]),
-    //                 'total' => number_format($row["total"])
-    //             );
-    //         array_push($data, $detail);
-    //     }
-    //     $arr = array();
-    //     $arr["data"] = $data;
-    //     return $arr;
-    // }
-
-    // function get_customer_by_order_id()
-    // {
-    //     $zone = new Zone();
-    //     $sql = "select 
-    //                 C.id as customer_id,
-    //                 C.name as customer_name,
-    //                 C.phone,
-    //                 C.address,
-    //                 C.city_id,
-    //                 C.district_id,
-    //                 C.village_id
-    //             from smi_order_detail A
-    //             inner join smi_products B on A.product_id = B.id
-    //             where order_id = ".$order_id;
-    //     $result = mysqli_query($this->conn,$sql);
-    //     $data = array();     
-    //     foreach($result as $k => $row) {
-    //         $address = $this->get_address($row);
-    //         $customer = array(
-    //                         'customer_id' => $row["customer_id"],
-    //                         'customer_name' => $row["customer_name"],
-    //                         'phone' => $row["phone"],
-    //                         'address' => $address
-    //                     );
-    //         array_push($data, $customer);
-    //     }
-    //     $arr = array();
-    //     $arr["data"] = $data;
-    //     return $arr;
-    // }
-
     // find all order 
     function find_all($start_date, $end_date)
     {
@@ -415,7 +329,7 @@ class CheckoutDAO {
                         C.village_id,
                         A.shipping,
                         A.discount,
-                        case when A.total_reduce is not null then A.total_amount - A.total_reduce - A.discount else A.total_amount end as 'total_checkout',
+                        case when A.total_reduce is not null then A.total_amount - A.total_reduce else A.total_amount end as 'total_checkout',
                         A.order_date,
                         A.type,
                         A.status,
@@ -533,6 +447,7 @@ class CheckoutDAO {
             $shipping_unit = $order->getShipping_unit();
             $status = $order->getStatus();
             $payment_type = $order->getPayment_type();
+            $voucher_code = $order->getVoucherCode();
             $stmt = $this->getConn()->prepare("insert into smi_orders (
                     `total_reduce`,
                     `total_reduce_percent`,
@@ -549,10 +464,11 @@ class CheckoutDAO {
                     `shipping`,
                     `shipping_unit`,
                     `status`,
+                    `voucher_code`,
                     `order_date`,
                     `created_date`) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(),NOW())");
-            $stmt->bind_param("ddddddidiisddsi", $total_reduce, $total_reduce_percent, $discount, $total_amount, $total_checkout, $customer_payment, $payment_type, $repay, $customer_id, $type, $bill, $shipping_fee, $shipping, $shipping_unit, $status);
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(),NOW())");
+            $stmt->bind_param("ddddddidiisddsis", $total_reduce, $total_reduce_percent, $discount, $total_amount, $total_checkout, $customer_payment, $payment_type, $repay, $customer_id, $type, $bill, $shipping_fee, $shipping, $shipping_unit, $status, $voucher_code);
             $stmt->execute();
             // var_dump($this->getConn()->error);
             //You can get the number of rows affected by your query

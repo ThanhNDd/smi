@@ -2,6 +2,7 @@
 include("../../common/DBConnection.php");
 include("../../dao/ProductDAO.php");
 include("../../dao/CheckoutDAO.php");
+include("../../dao/VoucherDAO.php");
 include("../../model/Order/Order.php");
 include("../../model/Order/OrderDetail.php");
 include("PrinterReceipt.php");
@@ -13,6 +14,9 @@ $dao->setConn($db->getConn());
 
 $checkout_dao = new CheckoutDAO();
 $checkout_dao->setConn($db->getConn());
+
+$voucherDAO = new VoucherDAO();
+$voucherDAO->setConn($db->getConn());
 
 if(isset($_POST["type"]) && $_POST["type"]=="find_product")   {
     try {   
@@ -96,12 +100,16 @@ if(isset($_POST["type"]) && $_POST["type"]=="checkout")   {
                 $checkout_dao->saveOrderDetail($detail);
                 if(!empty($details[$i]->sku)) {
                     $dao->update_quantity_by_sku($details[$i]->sku, $details[$i]->quantity);
-                    
                 } else
                 {
                     throw new Exception("Cannot update quantity by SKU");
                 }
             }  
+            if(!empty($data->voucher_code)) {
+                $type_code = 1;
+                $used_status = 3;
+                $voucherDAO->update_status($data->voucher_code, $used_status, $type_code); // type = 1 is inactive by code
+            }
             // printer receipt
             if($data->flag_print_receipt) {        
                 $printer = new PrinterReceipt();

@@ -90,7 +90,8 @@
                 <th>Phí vận chuyển</th>
                 <th>Thành tiền</th> -->
                 <th>Giá bán lẻ</th>
-                <th class="center">*</th>
+                <th>Giảm giá</th>
+                <th class="center">Profit</th>
                 <th>Hành động</th>
               </tr>
             </thead>
@@ -239,6 +240,10 @@
                 // },
                 { 
                     "data": "retail",
+                     width:"50px" 
+                },
+                { 
+                    "data": format_discount,
                      width:"50px" 
                 },
                 { 
@@ -643,6 +648,86 @@
               console.log(cb)
           });
     }
+    function format_discount(data) {
+      var discount = data.discount;
+      if(typeof discount == "undefined" || discount == 0) {
+        discount = "";
+      } else {
+        if(discount < 100) {
+          discount = discount + "%";
+        } else {
+          discount = formatNumber(discount);
+        }
+      } 
+      var profit = data.profit;
+      var product_id = data.product_id;
+      return  '<input type="text" onchange="onchange_discount(this, \''+profit+'\')" onload="onchange_discount(this, \''+profit+'\')" class="form-control col-md-6 float-left" value="'+discount+'"/>&nbsp;'+
+             '<button type="button" class="btn bg-gradient-info btn-sm mt-1" onclick="update_discount(this, '+product_id+')"><i class="fas fa-save"></i> Lưu</button>';
+    }
+    
+    function onchange_discount(e, profit) {
+      $(e).removeClass("is-invalid");
+      $("#update_discount").prop("disabled", true);
+      var val = $(e).val();
+      val = replaceComma(val);
+      console.log(val);
+      // var profit;
+      if(val == "") {
+
+      } else if(val.indexOf("%") == -1) {
+        if(!isNaN(val) && val >= 0) {
+          profit = replaceComma(profit);
+          profit = profit - val;
+          val = formatNumber(val);
+          $(e).val(val);
+          $("#update_discount").prop("disabled", "");
+        } else {
+          $(e).addClass("is-invalid");
+          $("#update_discount").prop("disabled", true);
+        }
+      } else {
+        val = replacePercent(val);
+        profit = replaceComma(profit);
+        profit = profit - profit*val/100;
+        $("#update_discount").prop("disabled", "");
+      }
+      $(e).parent().next("td").text(formatNumber(profit));
+    }
+
+    function update_discount(e, product_id) {
+      var discount = $(e).parent().find("input").val();
+      discount = replaceComma(discount);
+      discount = replacePercent(discount);
+      console.log(discount);
+      console.log(product_id);
+      if(discount == "undefined" || discount == "" || discount < 0) {
+        toastr.error('Nhập chưa đúng!');
+        return;
+      }
+      $.ajax({
+        url : '<?php echo __PATH__.'src/controller/product/productController.php' ?>',
+        type : "POST",
+        dataType : "json",
+        data : {
+          method : "update_discount",
+          product_id: product_id,
+          discount : discount
+        },
+        success : function(res){
+          console.log(res);
+          toastr.success('Cập nhật thành công!');
+        },
+        error : function(data, errorThrown) {
+          console.log(data.responseText);
+          console.log(errorThrown);
+          Swal.fire({
+          type: 'error',
+          title: 'Đã xảy ra lỗi',
+          text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+          })
+        }
+      });  
+    }
 
     function format_action()
     {
@@ -748,13 +833,22 @@
       }
       countAllChecked();
     }
+
     function formatNumber(num) {
       return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
     }
+
     function replaceComma(value)
     {
+      value = value.trim();
       return value.replace(/,/g, '');
     }
+
+    function replacePercent(value)
+    {
+      return value.replace(/%/g, '');
+    }
+
     function generate_select2(el, data, value)
     {
       $(el).select2({
@@ -765,51 +859,6 @@
         $(el).val(value).trigger('change');
       }
     } 
-    // function delete_variation(variation_id, table)
-    // {
-    //   Swal.fire({
-    //     title: 'Bạn có chắc chắn muốn xóa sản phẩm này?',
-    //     text: "",
-    //     type: 'warning',
-    //     showCancelButton: true,
-    //     confirmButtonColor: '#3085d6',
-    //     cancelButtonColor: '#d33',
-    //     confirmButtonText: 'Ok'
-    //   }).then((result) => {
-    //     if (result.value) {
-    //       show_loading();
-    //       $.ajax({
-    //         url : '<?php echo __PATH__.'src/controller/product/ProductController.php' ?>',
-    //         type : "POST",
-    //         dataType : "json",
-    //         data : {
-    //           type : "delete_variation",
-    //           variation_id : $variation_id
-    //         },
-    //         success : function(res){
-    //           console.log(res);
-    //           Swal.fire(
-    //             'Thành công!',
-    //             'Sản phẩm đã được xóa thành công.',
-    //             'success'
-    //           );
-              
-    //         },
-    //         error : function(data, errorThrown) {
-    //           console.log(data.responseText);
-    //           console.log(errorThrown);
-    //           Swal.fire({
-    //             type: 'error',
-    //             title: 'Đã xảy ra lỗi',
-    //             text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-    //           })
-    //           hide_loading();
-    //         }
-    //       });
-    //     }
-    //   })
-    // }
-   
   </script>
 </body>
 </html>

@@ -278,34 +278,7 @@
                 { 
                     "data": "order_id",
                      width:"30px",
-                }
-                ,
-                // { 
-                //     "data": format_customer_name,
-                //      width:"150px" 
-                // }
-                // ,
-                // { 
-                //     "data": "phone",
-                //      width:"70px" 
-                // },
-                // { 
-                //     "data": "address",
-                //      width:"100px",
-                //      class: 'right'
-                // }
-                // ,
-                // { 
-                //     "data": "shipping",
-                //      width:"50px",
-                //      class: 'right'
-                // }
-                // ,
-                // { 
-                //     "data": "discount",
-                //      width:"50px"  ,
-                //      class: 'right'
-                // },
+                },
                 { 
                     "data": "total_checkout",
                      width:"50px"  ,
@@ -567,24 +540,22 @@
               '<div class="col-3 col-sm-3 col-md-3"><small>Khách hàng</small> <h5>Khách lẻ</h5></div>' +
               '</div>';
       }
-                    
-        
-        var details = data.details;
-        var table = '<div class="card-body">';
-        table += '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
-        table += '<thead>' +
-                    '<tr>' +
-                        '<th>Mã</th>' +
-                        '<th>Tên</th>' +
-                        '<th>Size</th>' +
-                        '<th>Màu</th>' +
-                        '<th>Số lượng</th>' +
-                        '<th class="right">Giá</th>' +
-                        '<th class="right">Giảm trừ</th>' +
-                        '<th class="right">Thành tiền</th>' +
-                        '<th class="right">Profit</th>' +
-                  '</tr>' +
-                '</thead>';
+      var details = data.details;
+      var table = '<div class="card-body">';
+      table += '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
+      table += '<thead>' +
+                  '<tr>' +
+                      '<th>Mã</th>' +
+                      '<th>Tên</th>' +
+                      '<th>Size</th>' +
+                      '<th>Màu</th>' +
+                      '<th>Số lượng</th>' +
+                      '<th class="right">Giá</th>' +
+                      '<th class="right">Giảm trừ</th>' +
+                      '<th class="right">Thành tiền</th>' +
+                      '<th class="right">Profit</th>' +
+                '</tr>' +
+              '</thead>';
         var total_reduce = 0;
         var profit = 0;
         for(var i=0; i<details.length; i++) {
@@ -705,35 +676,6 @@
       }
     }
 
-    // function order_search(start_date, end_date)
-    // {
-    //   show_loading();
-      
-    //   $.ajax({
-    //       url : '<?php //echo __PATH__.'src/controller/orders/OrderController.php' ?>',
-    //       type : "POST",
-    //       dataType : "json",
-    //       data : {
-    //         method : "find_all",
-    //         start_date : start_date,
-    //         end_date : end_date
-    //       },
-    //       success : function(res){
-            
-    //       },
-    //       error : function(data, errorThrown) {
-    //         console.log(data.responseText);
-    //         console.log(errorThrown);
-    //         Swal.fire({
-    //           type: 'error',
-    //           title: 'Đã xảy ra lỗi',
-    //           text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-    //         })
-    //         hide_loading();
-    //       }
-    //     }); 
-    // }
-
     function get_info_total_checkout(start_date, end_date)
     { 
       $.ajax({
@@ -769,56 +711,6 @@
         }); 
     }
 
-    // function get_order_detail_by_order_id(order_id)
-    // { 
-    //   $.ajax({
-    //       url : '<?php echo __PATH__.'src/controller/orders/OrderController.php' ?>',
-    //       type : "POST",
-    //       dataType : "json",
-    //       data : {
-    //         method : "get_order_detail_by_order_id",
-    //         order_id : order_id
-    //       },
-    //       success : function(res){
-    //           var table = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
-    //           table += '<thead>' +
-    //                       '<tr>' +
-    //                           '<th>Mã</th>' +
-    //                           '<th>Tên</th>' +
-    //                           '<th>Số lượng</th>' +
-    //                           '<th class="right">Giá</th>' +
-    //                           '<th class="right">Giảm trừ</th>' +
-    //                           '<th class="right">Thành tiền</th>' +
-    //                     '</tr>' +
-    //                   '</thead>';
-    //                   $.each(res, function(key, value){
-    //                     table += '<tr>' +
-    //                         '<input type="hidden" id="product_id_'+i+'" value="'+details[i].product_id+'"/>' +
-    //                         '<input type="hidden" id="variant_id_'+i+'" value="'+details[i].variant_id+'"/>' +
-    //                         '<td>'+details[i].sku+'</td>' +
-    //                         '<td>'+details[i].product_name+'</td>' +
-    //                         '<td>'+details[i].quantity+'</td>' +
-    //                         '<td class="right">'+details[i].price+'&nbsp;</td>' +
-    //                         '<td class="right">'+details[i].reduce+'&nbsp;</td>' +
-    //                         '<td class="right">'+details[i].intoMoney+'&nbsp;</td>' +
-    //                       '</tr>';
-    //                   }); 
-    //           table += '</table>';  
-    //           return table;   
-    //       },
-    //       error : function(data, errorThrown) {
-    //         console.log(data.responseText);
-    //         console.log(errorThrown);
-    //         Swal.fire({
-    //           type: 'error',
-    //           title: 'Đã xảy ra lỗi',
-    //           text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-    //         })
-    //         hide_loading();
-    //       }
-    //     }); 
-    // }
-
     function show_loading()
     {
       $("#create-product .overlay").removeClass("hidden");
@@ -826,26 +718,6 @@
     function hide_loading()
     {
       $("#create-product .overlay").addClass("hidden");
-    }
-    function update_data() {
-        $(".loading").removeClass("hidden");
-        $.ajax({
-            url : '<?php echo __PATH__."src/controller/orders/data.php" ?>',
-            dataType : "json",
-            data : {
-              orders: 'update'
-            },
-            type : 'GET',
-            success : function (res) {
-                alert("Cập nhật dữ liệu thành công!");
-                // window.location.reload();
-            },
-            error : function (data, errorThrown) {
-              console.log(data.responseText);
-              alert("Đã có lỗi xảy ra");
-              $(".loading").addClass("hidden");
-            }
-        });
     }
    
   </script>

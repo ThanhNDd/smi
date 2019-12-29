@@ -156,8 +156,9 @@
                 type : "POST",
                 dataType : "json",
                 data : {
-                    method : "active_voucher",
-                    voucher_id : voucher_id
+                    method : "update_status",
+                    voucher_id : voucher_id,
+                    status: 2 // active
                 },
                 success : function(res){
                     console.log(res);
@@ -188,8 +189,9 @@
                 type : "POST",
                 dataType : "json",
                 data : {
-                    method : "inactive_voucher",
-                    voucher_id : voucher_id
+                    method : "update_status",
+                    voucher_id : voucher_id,
+                    status: 1
                 },
                 success : function(res){
                     console.log(res);
@@ -263,8 +265,10 @@
         //     '<button type="button" class="btn bg-gradient-danger btn-sm cancel_voucher" "><i class="far fa-window-close"></i> Hủy</button>';
         if(data.status == 2) {
             return '<button type="button" class="btn bg-gradient-danger btn-sm inactive_voucher"><i class="fas fa-check"></i> Ngừng Kích hoạt</button>';
-        } else {
+        } else if(data.status == 1) {
             return '<button type="button" class="btn bg-gradient-success btn-sm active_voucher"><i class="fas fa-check"></i> Kích hoạt</button>';
+        } else {
+            return '';
         }
         
     }
