@@ -201,9 +201,9 @@ class VoucherDAO
         try {
             if($type == 1) {
                 // update by code
-                $sql = "UPDATE `smi_voucher` SET `status` = ? WHERE `code` = ?";
+                $sql = "UPDATE `smi_voucher` SET `status` = ?, updated_date = NOW() WHERE `code` = ?";
             } else {
-                $sql = "UPDATE `smi_voucher` SET `status` = ? WHERE `id` = ?";
+                $sql = "UPDATE `smi_voucher` SET `status` = ?, updated_date = NOW() WHERE `id` = ?";
             }
             $stmt = $this->getConn()->prepare($sql);
             if($type == 1) {

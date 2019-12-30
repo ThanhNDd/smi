@@ -11,7 +11,7 @@ if(isset($_POST["method"]) && $_POST["method"]=="update_status")   {
     try {
         $voucher_id = $_POST["voucher_id"];
         $status = $_POST["status"];
-        $voucher = $dao->update_status((int)$voucher_id, $status);
+        $voucher = $dao->update_status((int)$voucher_id, (int)$status, 0);
         echo json_encode($voucher);
     } catch(Exception $e) {
         $db->rollback();

@@ -705,7 +705,7 @@
         return;
       }
       $.ajax({
-        url : '<?php echo __PATH__.'src/controller/product/productController.php' ?>',
+        url : '<?php echo __PATH__.'src/controller/product/ProductController.php' ?>',
         type : "POST",
         dataType : "json",
         data : {

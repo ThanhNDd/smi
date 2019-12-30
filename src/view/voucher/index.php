@@ -6,8 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Danh sách mã giảm giá</title>
     <link rel="shortcut icon" type="image/x-icon" href="<?php echo __PATH__?>dist/img/icon.png"/>
-    <?php require ('../../common/css.php'); ?>
-    <?php require ('../../common/js.php'); ?>
+    <?php require_once ('../../common/css.php'); ?>
+    <?php require_once ('../../common/js.php'); ?>
     <style>
 
         td.details-control {
@@ -47,8 +47,8 @@
         }
     </style>
 </head>
-<?php require ('../../common/header.php'); ?>
-<?php require ('../../common/menu.php'); ?>
+<?php require_once ('../../common/header.php'); ?>
+<?php require_once ('../../common/menu.php'); ?>
 <section class="content">
     <div class="row">
         <div class="col-12">
@@ -146,7 +146,9 @@
             "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]]
         });
 
-        $('#example tbody').on('click', '.active_voucher', function () {
+        $('#example tbody').on('click', '.update_voucher', function () {
+            let status = $(this).attr("data-status");
+            console.log(status);
             let tr = $(this).closest('tr');
             let td = tr.find("td");
             let voucher_id = $(td[1]).text();
@@ -157,12 +159,19 @@
                 dataType : "json",
                 data : {
                     method : "update_status",
-                    voucher_id : voucher_id,
-                    status: 2 // active
+                    voucher_id : parseInt(voucher_id),
+                    status: parseInt(status)
                 },
                 success : function(res){
                     console.log(res);
-                    toastr.success('Mã voucher '+voucher_code+' đã được kích hoạt thành công.');
+                    if(status == 1) {
+                        toastr.success('Mã voucher '+voucher_code+' đã ngừng kích hoạt.');
+                    } else if(status == 2) {
+                        toastr.success('Mã voucher '+voucher_code+' đã được kích hoạt thành công.');
+                    } else if(status == 3) {
+                        toastr.success('Mã voucher '+voucher_code+' đã được sử dụng.');
+                    }
+
                     hide_loading();
                     table.ajax.reload();
                 },
@@ -179,82 +188,116 @@
             });
         });
 
-        $('#example tbody').on('click', '.inactive_voucher', function () {
-            let tr = $(this).closest('tr');
-            let td = tr.find("td");
-            let voucher_id = $(td[1]).text();
-            let voucher_code = $(td[2]).text();
-            $.ajax({
-                url : '<?php echo __PATH__.'src/controller/voucher/VoucherController.php' ?>',
-                type : "POST",
-                dataType : "json",
-                data : {
-                    method : "update_status",
-                    voucher_id : voucher_id,
-                    status: 1
-                },
-                success : function(res){
-                    console.log(res);
-                    toastr.success('Mã voucher '+voucher_code+' đã ngừng kích hoạt.');
-                    hide_loading();
-                    table.ajax.reload();
-                },
-                error : function(data, errorThrown) {
-                    console.log(data.responseText);
-                    console.log(errorThrown);
-                    Swal.fire({
-                        type: 'error',
-                        title: 'Đã xảy ra lỗi',
-                        text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-                    })
-                    hide_loading();
-                }
-            });
-        });
 
-        $('#example tbody').on('click', '.del_voucher', function () {
-            let tr = $(this).closest('tr');
-            let td = tr.find("td");
-            let voucher_id = $(td[1]).text();
-            Swal.fire({
-                title: 'Bạn có chắc chắn muốn xóa mã này?',
-                text: "",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ok'
-            }).then((result) => {
-                if (result.value) {
-                    $.ajax({
-                        url : '<?php echo __PATH__.'src/controller/voucher/VoucherController.php' ?>',
-                        type : "POST",
-                        dataType : "json",
-                        data : {
-                            type : "del_voucher",
-                            voucher_id : voucher_id
-                        },
-                        success : function(res){
-                            var response = res.response;
-                            console.log(response);
-                            toastr.success('Mã voucher '+voucher_id+' đã được xóa thành công.');
-                            hide_loading();
-                            table.ajax.reload();
-                        },
-                        error : function(data, errorThrown) {
-                            console.log(data.responseText);
-                            console.log(errorThrown);
-                            Swal.fire({
-                                type: 'error',
-                                title: 'Đã xảy ra lỗi',
-                                text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-                            })
-                            hide_loading();
-                        }
-                    });
-                }
-            });
-        });
+        //$('#example tbody').on('click', '.active_voucher', function () {
+        //    let tr = $(this).closest('tr');
+        //    let td = tr.find("td");
+        //    let voucher_id = $(td[1]).text();
+        //    let voucher_code = $(td[2]).text();
+        //    $.ajax({
+        //        url : '<?php //echo __PATH__.'src/controller/voucher/VoucherController.php' ?>//',
+        //        type : "POST",
+        //        dataType : "json",
+        //        data : {
+        //            method : "update_status",
+        //            voucher_id : voucher_id,
+        //            status: 2 // active
+        //        },
+        //        success : function(res){
+        //            console.log(res);
+        //            toastr.success('Mã voucher '+voucher_code+' đã được kích hoạt thành công.');
+        //            hide_loading();
+        //            table.ajax.reload();
+        //        },
+        //        error : function(data, errorThrown) {
+        //            console.log(data.responseText);
+        //            console.log(errorThrown);
+        //            Swal.fire({
+        //                type: 'error',
+        //                title: 'Đã xảy ra lỗi',
+        //                text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+        //            })
+        //            hide_loading();
+        //        }
+        //    });
+        //});
+
+        //$('#example tbody').on('click', '.inactive_voucher', function () {
+        //    let tr = $(this).closest('tr');
+        //    let td = tr.find("td");
+        //    let voucher_id = $(td[1]).text();
+        //    let voucher_code = $(td[2]).text();
+        //    $.ajax({
+        //        url : '<?php //echo __PATH__.'src/controller/voucher/VoucherController.php' ?>//',
+        //        type : "POST",
+        //        dataType : "json",
+        //        data : {
+        //            method : "update_status",
+        //            voucher_id : voucher_id,
+        //            status: 1
+        //        },
+        //        success : function(res){
+        //            console.log(res);
+        //            toastr.success('Mã voucher '+voucher_code+' đã ngừng kích hoạt.');
+        //            hide_loading();
+        //            table.ajax.reload();
+        //        },
+        //        error : function(data, errorThrown) {
+        //            console.log(data.responseText);
+        //            console.log(errorThrown);
+        //            Swal.fire({
+        //                type: 'error',
+        //                title: 'Đã xảy ra lỗi',
+        //                text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+        //            })
+        //            hide_loading();
+        //        }
+        //    });
+        //});
+
+        //$('#example tbody').on('click', '.del_voucher', function () {
+        //    let tr = $(this).closest('tr');
+        //    let td = tr.find("td");
+        //    let voucher_id = $(td[1]).text();
+        //    Swal.fire({
+        //        title: 'Bạn có chắc chắn muốn xóa mã này?',
+        //        text: "",
+        //        type: 'warning',
+        //        showCancelButton: true,
+        //        confirmButtonColor: '#3085d6',
+        //        cancelButtonColor: '#d33',
+        //        confirmButtonText: 'Ok'
+        //    }).then((result) => {
+        //        if (result.value) {
+        //            $.ajax({
+        //                url : '<?php //echo __PATH__.'src/controller/voucher/VoucherController.php' ?>//',
+        //                type : "POST",
+        //                dataType : "json",
+        //                data : {
+        //                    type : "del_voucher",
+        //                    voucher_id : voucher_id
+        //                },
+        //                success : function(res){
+        //                    var response = res.response;
+        //                    console.log(response);
+        //                    toastr.success('Mã voucher '+voucher_id+' đã được xóa thành công.');
+        //                    hide_loading();
+        //                    table.ajax.reload();
+        //                },
+        //                error : function(data, errorThrown) {
+        //                    console.log(data.responseText);
+        //                    console.log(errorThrown);
+        //                    Swal.fire({
+        //                        type: 'error',
+        //                        title: 'Đã xảy ra lỗi',
+        //                        text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+        //                    })
+        //                    hide_loading();
+        //                }
+        //            });
+        //        }
+        //    });
+        //});
         
     }
 
@@ -264,9 +307,12 @@
         //     '<button type="button" class="btn bg-gradient-danger btn-sm del_voucher" "><i class="fas fa-trash"></i> Xóa</button>&nbsp;' +
         //     '<button type="button" class="btn bg-gradient-danger btn-sm cancel_voucher" "><i class="far fa-window-close"></i> Hủy</button>';
         if(data.status == 2) {
-            return '<button type="button" class="btn bg-gradient-danger btn-sm inactive_voucher"><i class="fas fa-check"></i> Ngừng Kích hoạt</button>';
+            return '<button type="button" class="btn bg-gradient-danger btn-sm update_voucher" data-status="1"><i class="fas fa-check"></i> Ngừng Kích hoạt</button>';
         } else if(data.status == 1) {
-            return '<button type="button" class="btn bg-gradient-success btn-sm active_voucher"><i class="fas fa-check"></i> Kích hoạt</button>';
+            return '<button type="button" class="btn bg-gradient-success btn-sm update_voucher" data-status="2"><i class="fas fa-check"></i> Kích hoạt</button> &nbsp;&nbsp;' +
+                '<a class="btn bg-gradient-info btn-sm update_voucher" data-status="2" href="<?php echo __PATH__?>src/view/voucher/image/'+data.code+'.png" download>' +
+                '<i class="fa fa-download" aria-hidden="true"></i> Sử dụng mã này' +
+                '</a>';
         } else {
             return '';
         }

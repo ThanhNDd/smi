@@ -124,7 +124,7 @@
 </section>
 <div class="iframeArea hidden">
 </div>
-<?php include __PATH__.'src/common/footer.php'; ?>
+<?php require_once ('../../common/footer.php'); ?>
 <script type="text/javascript">
 	$(document).ready(function(){
 		$("#productId").change(function(){
@@ -274,6 +274,7 @@
 								}).then((result) => {
 									if (result.value) {
 										$("#discount").val("");
+                                        $("#discount").trigger("change");
 									}
 								});
 							break;
@@ -286,6 +287,7 @@
 									}).then((result) => {
 										if (result.value) {
 											$("#discount").val("");
+                                            $("#discount").trigger("change");
 										}
 									});
 									
@@ -319,6 +321,7 @@
 								}).then((result) => {
 									if (result.value) {
 										$("#discount").val("");
+                                        $("#discount").trigger("change");
 									}
 								});
 							break;
@@ -330,6 +333,7 @@
 								}).then((result) => {
 									if (result.value) {
 										$("#discount").val("");
+                                        $("#discount").trigger("change");
 									}
 								});
 							break;
@@ -342,6 +346,7 @@
 						}).then((result) => {
 							if (result.value) {
 								$("#discount").val("");
+                                $("#discount").trigger("change");
 							}
 						});
 					}
@@ -353,6 +358,7 @@
 					}).then((result) => {
 						if (result.value) {
 							$("#discount").val("");
+                            $("#discount").trigger("change");
 						}
 					});
 				}
