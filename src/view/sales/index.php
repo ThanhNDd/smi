@@ -68,7 +68,9 @@
 		                    <tr>
 								<td class="right">Khuyến mãi</td>
 								<td class="right w110">
-									<input type="text" class="form-control" name="discount" id="discount" width="100px">
+									<input type="text" class="form-control" name="discount" id="discount" placeholder="Số tiền" width="100px">
+                                    <input type="text" class="form-control mt-2" name="voucher" id="voucher" placeholder="Mã giảm giá" width="100px">
+                                    <input type="hidden" class="form-control" name="voucher_value" id="voucher_value">
 								</td>
 		                    </tr>
 							<tr>
@@ -80,7 +82,8 @@
 		                    </tr>
                             <tr>
                                 <td class="right">Tổng Giảm trừ</td>
-                                <td class="right"><span style="font-size: 20px;" id="totalReduce">0</span><span> đ</span></td>
+                                <td class="right">
+                                    <span style="font-size: 20px;" id="totalReduce">0</span><span> đ</span></td>
                             </tr>
 		                    <tr>
 								<td class="right">Tổng thanh toán</td>
@@ -139,8 +142,8 @@
 		});  
 
 		$("#discount").change(function(event){
-			var discount = $(this).val();
-			onchange_discount(discount);
+			let discount = $(this).val();
+			onchange_discount(discount, event);
 			event.preventDefault();
 		});
 		// $("#discount").blur(function(event){
@@ -153,10 +156,24 @@
 			var keycode = (event.keyCode ? event.keyCode : event.which);
 			if(keycode == '13'){
 				var discount = $(this).val();
-				onchange_discount(discount);
+				onchange_discount(discount, event);
 				event.preventDefault();
 			}
 		});
+
+        $("#voucher").change(function(event){
+            let voucher = $(this).val();
+            onchange_voucher(voucher, event);
+            event.preventDefault();
+        });
+        $('#voucher').keypress(function(event){
+            let keycode = (event.keyCode ? event.keyCode : event.which);
+            if(keycode == '13'){
+                let voucher = $(this).val();
+                onchange_voucher(voucher, event);
+                event.preventDefault();
+            }
+        });
 
 		$("#payment").change(function(){
 			var payment = $(this).val();
@@ -230,24 +247,48 @@
 		enableCheckOutBtn();
 	}
 
-	function onchange_discount(discount)
+    function onchange_voucher(voucher, event)
+    {
+        $("#voucher").removeClass("is-invalid");
+        let c = voucher.substring(0, 2);
+        c = c.toUpperCase();
+        if(c == 'VC') {
+            // voucher
+            ues_voucher(voucher);
+            event.preventDefault();
+        } else {
+            disableCheckOutBtn();
+            $("#voucher").addClass("is-invalid");
+        }
+    }
+
+	function onchange_discount(discount, event)
 	{
-		var c = discount.substring(0, 2);
-		c = c.toUpperCase();
-		if(c == 'VC') {
-			// voucher
-			console.log('VC');
-			ues_voucher(discount);
-		} else if(c == 'QT') {
-			// gift
-			console.log('QT');
-		} else {
+		// let c = discount.substring(0, 2);
+		// c = c.toUpperCase();
+		// if(c == 'VC') {
+		// 	// voucher
+		// 	console.log('VC');
+		// 	$("#flag_discount").val("VC");
+		// 	$("#voucher_value").val(discount);
+        //     $("#discount").val("");
+		// 	ues_voucher();
+        //     event.preventDefault();
+		// } else if(c == 'QT') {
+		// 	// gift
+		// 	console.log('QT');
+        //     $("#flag_discount").val("QT");
+        //     event.preventDefault();
+		// } else {
 			// diccount
 			if(!validate_discount(discount)) {
+                event.preventDefault();
 				return;
 			}
+			$("#discount").val(formatNumber(discount));
 			calculateTotal();
-		}
+            event.preventDefault();
+		// }
 	}
 
 	function ues_voucher(voucher_code) {
@@ -273,8 +314,8 @@
 									text: "Mã khuyến mãi chưa được kích hoạt"
 								}).then((result) => {
 									if (result.value) {
-										$("#discount").val("");
-                                        $("#discount").trigger("change");
+										$("#voucher").val("");
+                                        $("#voucher").trigger("change");
 									}
 								});
 							break;
@@ -286,8 +327,8 @@
 										text: "Mã khuyến mãi đã hết hạn"
 									}).then((result) => {
 										if (result.value) {
-											$("#discount").val("");
-                                            $("#discount").trigger("change");
+											$("#voucher").val("");
+                                            $("#voucher").trigger("change");
 										}
 									});
 									
@@ -300,6 +341,7 @@
 										// percent
 										value = res[0].value+"%";
 									}
+									$("#voucher_value").val(value);
 									let msg = '<div class="alert alert-success alert-dismissible">' +
 										'<button type="button" class="close" aria-hidden="true" onclick="removeVC()">×</button>' +
 											'Mã '+voucher_code+' có giá trị giảm '+value+' trên tổng đơn hàng!' +
@@ -307,10 +349,11 @@
 									$(".msg").html(msg);
 									$("#vcFlag").val(1);
 									$("#vcCode").val(voucher_code);
-									$("#discount").val(value).trigger("change");
-									$("#discount").val("");
-									// $("#discount").prop("disabled", true);
+									// $("#voucher").val(value).trigger("change");
 									$(".voucher_info").removeClass("hidden");
+                                    calculateTotal();
+                                    $("#voucher").val(voucher_code);
+                                    $("#voucher").prop("disabled", true);
 								}
 							break;
 							case '3':
@@ -320,8 +363,8 @@
 									text: "Mã khuyến mãi đã được sử dụng"
 								}).then((result) => {
 									if (result.value) {
-										$("#discount").val("");
-                                        $("#discount").trigger("change");
+										$("#voucher").val("");
+                                        $("#voucher").trigger("change");
 									}
 								});
 							break;
@@ -332,8 +375,8 @@
 									text: "Mã khuyến mãi đã bị khoá"
 								}).then((result) => {
 									if (result.value) {
-										$("#discount").val("");
-                                        $("#discount").trigger("change");
+										$("#voucher").val("");
+                                        $("#voucher").trigger("change");
 									}
 								});
 							break;
@@ -345,8 +388,8 @@
 							text: "Mã khuyến mãi không tồn tại"
 						}).then((result) => {
 							if (result.value) {
-								$("#discount").val("");
-                                $("#discount").trigger("change");
+								$("#voucher").val("");
+                                $("#voucher").trigger("change");
 							}
 						});
 					}
@@ -357,8 +400,8 @@
 						text: "Mã khuyến mãi không tồn tại"
 					}).then((result) => {
 						if (result.value) {
-							$("#discount").val("");
-                            $("#discount").trigger("change");
+							$("#voucher").val("");
+                            $("#voucher").trigger("change");
 						}
 					});
 				}
@@ -390,8 +433,10 @@
 				$(".msg").html("");
 				$("#vcFlag").val(0);
 				$("#vcCode").val("");
-				$("#discount").val("").trigger("change");
-				$("#discount").prop("disabled", "");
+				$("#voucher").val("");
+                $("#voucher_value").val("");
+				$("#voucher").prop("disabled", "");
+				calculateTotal();
 				toastr.warning('Mã giảm giá đã được xoá.');
 				$(".voucher_info").addClass("hidden");
 			}
@@ -399,12 +444,11 @@
 	}
 
 	function validate_discount(discount) {
-		let vcFlag = $("#vcFlag").val();
-		discount = replaceComma(discount);
-		if(discount.indexOf("%") > -1)
+		let discount1 = replaceComma(discount);
+		if(discount1.indexOf("%") > -1)
 		{
-			discount = replacePercent(discount);
-			if(discount < 1 || discount > 50)
+            discount1 = replacePercent(discount1);
+			if(discount1 < 1 || discount1 > 50)
 			{
 				$("#discount").addClass("is-invalid");
 				disableCheckOutBtn();
@@ -413,21 +457,23 @@
 			} else 
 			{
 				$("#discount").removeClass("is-invalid");
+                // $("#cash_value").val(discount);
 			}
 		} else 
 		{
-			if(!validateNumber(discount, 'discount'))
+			if(!validateNumber(discount1, 'discount'))
 			{
 				disableCheckOutBtn();
 				// validate_form();
 				return false;
-			}	
-			var totalCheckout = replaceComma($("#totalCheckout").text());
+			}
+            // $("#cash_value").val(discount);
+			// var totalCheckout = replaceComma($("#totalCheckout").text());
 			// if(discount !== "" && discount < 1000)
 			// {
 			// 	discount += "000";
 			// } 
-			$("#discount").val(formatNumber(discount));
+			// $("#discount").val(formatNumber(discount));
 			// if(vcFlag == 0 && discount != "" && (discount > totalCheckout/2)) {
 			// 	$("#discount").addClass("is-invalid");
 			// 	disableCheckOutBtn();
@@ -624,7 +670,7 @@
 		var totalAmount = 0;
 		var totalReduce = 0;
 		for(var i=1; i<=noRow; i++)
-		{			
+		{
 			var price = get_price("price_"+i);
  			var qty = get_qty("qty_"+i);
 
@@ -642,42 +688,51 @@
 					reduce = replaceComma(val);				
 				}
 			}
-			totalAmount += intoMoney;
+			totalAmount += Number(intoMoney);
 			totalReduce += Number(reduce);
 		}
-		$("#totalAmount").text(formatNumber(totalAmount));
+		var totalCheckout = Number(totalAmount) - Number(totalReduce);
 
-		var totalCheckout = totalAmount - totalReduce;
+        // use voucher
+        var voucherValue = $("#voucher_value").val();
+        if(voucherValue.indexOf("%") > -1)
+        {
+            voucherValue = replacePercent(voucherValue);
+            voucherValue = Number(totalCheckout*voucherValue/100);
+        } else
+        {
+            voucherValue = replaceComma(voucherValue);
+            voucherValue = voucherValue == "" ? 0 : Number(voucherValue);
+        }
+        totalReduce += Number(voucherValue);
+        totalCheckout = Number(totalAmount) - Number(totalReduce);
+        // $("#voucher").val("");
 
-		var discount = $("#discount").val();
-		if(discount.indexOf("%") > -1)
-		{
-			discount = replacePercent(discount);
-			discount = totalCheckout*discount/100;
-		} else 
-		{
-			discount = replaceComma(discount);
-			discount = discount == "" ? 0 : Number(discount);
-		}
-		totalReduce += discount;
-        $("#totalReduce").text(formatNumber(totalReduce));
-		var totalCheckout = totalCheckout - totalReduce;
-		$("#totalCheckout").text(formatNumber(totalCheckout));
+        // use cash
+        var discount = $("#discount").val();
+        if(discount.indexOf("%") > -1)
+        {
+            discount = replacePercent(discount);
+            discount = Number(totalCheckout*discount/100);
+        } else
+        {
+            discount = replaceComma(discount);
+            discount = discount == "" ? 0 : Number(discount);
+        }
+        totalReduce += Number(discount);
+        totalCheckout = Number(totalAmount) - Number(totalReduce);
 
 		var payment = replaceComma($("#payment").val());
 		var repay = 0;
 		if(payment != 0 && totalCheckout > 0)
 		{
-			repay = payment - totalCheckout;	
+			repay = Number(payment) - Number(totalCheckout);
 		}
-		$("#repay").text(formatNumber(repay));
-		// if(payment == "" || payment == 0)
-		// {
-		// 	disableCheckOutBtn();
-		// } else 
-		// {
-		// 	enableCheckOutBtn();
-		// }
+
+        $("#totalAmount").text(formatNumber(totalAmount));
+        $("#totalReduce").text(formatNumber(totalReduce));
+        $("#totalCheckout").text(formatNumber(totalCheckout));
+        $("#repay").text(formatNumber(repay));
 		validate_form();
 	}
 	
