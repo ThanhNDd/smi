@@ -20,6 +20,7 @@ class Order {
     private $deleted;
     private $order_date;
     private $voucher_code;
+    private $voucher_value;
     private $created_date;
     private $updated_date;  
    
@@ -447,6 +448,22 @@ class Order {
     public function setVoucherCode($voucher_code)
     {
         $this->voucher_code = $voucher_code;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getVoucherValue()
+    {
+        return $this->voucher_value;
+    }
+
+    /**
+     * @param mixed $voucher_code
+     */
+    public function setVoucherValue($voucher_value)
+    {
+        $this->voucher_value = $voucher_value;
     }
 
 }

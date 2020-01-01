@@ -91,7 +91,7 @@
 <!-- /.content -->
 <?php require_once ('createVoucher.php'); ?>
 </div>
-<?php require_once (__PATH__.'src/common/footer.php'); ?>
+<?php require_once ('../../common/footer.php'); ?>
 <script>
     $(document).ready(function () {
         set_title("Danh sách mã giảm giá");

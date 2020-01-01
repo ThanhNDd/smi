@@ -524,22 +524,7 @@
 
     function format_order_detail(data){
       console.log(data);
-      var order_type = data.type;
-      var d = '<div class="card">' +
-              '<div class="card-body">';
-      if(order_type == 1) {
-        // online
-        d +=  '<div class="row">' +
-              '<div class="col-3 col-sm-3 col-md-3"><small>Mã khách hàng</small> <h5>'+data.customer_id+'</h5></div>' +
-              '<div class="col-6 col-sm-6 col-md-6"><small>Tên khách hàng</small> <h5>'+data.customer_name+'</h5></div>' +
-              '<div class="col-3 col-sm-3 col-md-3"><small>Số điện thoại</small> <h5>'+data.phone+'</h5></div>' +
-              '</div>' +
-              '<div class="row col-12"><small>Địa chỉ</small> <h5 class="col-12 pl-0">'+data.address+'</h5></div>';
-      } else {
-        d +=  '<div class="row">' +
-              '<div class="col-3 col-sm-3 col-md-3"><small>Khách hàng</small> <h5>Khách lẻ</h5></div>' +
-              '</div>';
-      }
+      
       var details = data.details;
       var table = '<div class="card-body">';
       table += '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
@@ -558,9 +543,11 @@
               '</thead>';
         var total_reduce = 0;
         var profit = 0;
+        var intoMoney = 0;
         for(var i=0; i<details.length; i++) {
           total_reduce += Number(replaceComma(details[i].reduce));
           profit += Number(replaceComma(details[i].profit));
+          intoMoney += Number(replaceComma(details[i].intoMoney));
           console.log("profit"+i+": "+profit);
           table += '<tr>' +
                 '<input type="hidden" id="product_id_'+i+'" value="'+details[i].product_id+'"/>' +
@@ -580,11 +567,34 @@
         table += '</div>';
         table += '</div>';
 
+        var voucher_value = 0;
+        var order_type = data.type;
+        var d = '<div class="card">' +
+                '<div class="card-body">';
+        if(order_type == 1) {
+          // online
+          d +=  '<div class="row">' +
+                '<div class="col-3 col-sm-3 col-md-3"><small>Mã khách hàng</small> <h5>'+data.customer_id+'</h5></div>' +
+                '<div class="col-6 col-sm-6 col-md-6"><small>Tên khách hàng</small> <h5>'+data.customer_name+'</h5></div>' +
+                '<div class="col-3 col-sm-3 col-md-3"><small>Số điện thoại</small> <h5>'+data.phone+'</h5></div>' +
+                '</div>' +
+                '<div class="row col-12"><small>Địa chỉ</small> <h5 class="col-12 pl-0">'+data.address+'</h5></div>';
+        } else {
+          d +=  '<div class="row">' +
+                '<div class="col-3 col-sm-3 col-md-3"><small>Khách hàng</small> <h5>Khách lẻ</h5></div>';
+                if(data.voucher_code != "") {
+                  voucher_value = Number((intoMoney * 10 )/100);
+                  d += '<div class="col-3 col-sm-3 col-md-3"><small>Mã giảm giá</small> <h5>'+data.voucher_code+' <small>(-10%)('+formatNumber(voucher_value)+' đ)</small></h5></div>';
+                }
+                d += '</div>';
+        }
+
         total_reduce += Number(replaceComma(data.discount));
-        profit = profit - total_reduce;
+
+        profit = profit - total_reduce - voucher_value;
         d +=  '<div class="row">' +
           '<div class="col-3 col-sm-3 col-md-3"><small>Chiết khấu trên tổng đơn hàng</small> <h5>'+data.discount+' <small>đ</small></h5></div>' +
-          '<div class="col-3 col-sm-3 col-md-3"><small>Tổng giảm trừ</small> <h5>'+formatNumber(total_reduce)+' <small>đ</small></h5></div>' +
+          '<div class="col-3 col-sm-3 col-md-3"><small>Tổng giảm trừ</small> <h5>'+data.total_reduce+' <small>đ</small></h5></div>' +
           '<div class="col-3 col-sm-3 col-md-3"><small>Tổng tiền thanh toán</small> <h5>'+data.total_checkout+' <small>đ</small></h5></div>' +
           '<div class="col-3 col-sm-3 col-md-3"><small>Profit</small> <h5>'+formatNumber(profit)+' <small>đ</small></h5></div>' +
           '</div>' +

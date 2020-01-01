@@ -520,12 +520,19 @@
 		$total_amount = replaceComma($("#totalAmount").text());
 		$total_reduce = replaceComma($("#totalReduce").text());
 		$discount = replaceComma($("#discount").val());
+		
 		$total_checkout = replaceComma($("#totalCheckout").text());
 		$customer_payment = replaceComma($("#payment").val());
 		$payment_type = $("#sel_payment").val();
 		$repay = replaceComma($("#repay").text());
 		$flag_print_receipt = $("#flag_print_receipt").is(':checked');
 		$voucher_code = $("#vcCode").val();
+		$voucher_value = $("#voucher_value").val();
+
+		if($discount.indexOf("%") > -1) {
+			$discount = $discount.replace("%", "");
+			$discount = ($discount * $total_checkout) / 100;
+		}
 
 		var data = {};
 		data["total_amount"] = $total_amount;
@@ -539,6 +546,7 @@
 		data["type"] = 0;// Sale on shop
 		data["flag_print_receipt"] = $flag_print_receipt;
 		data["voucher_code"] = $voucher_code;
+		data["voucher_value"] = $voucher_value;
 
 		//order detail information
 		var details = [];
@@ -618,7 +626,7 @@
 					text: "Bạn hãy thử tạo lại đơn hàng hoặc liên hệ quản trị viên hệ thống!"
 				}).then((result) => {
 					if (result.value) {
-						resetData();
+						//resetData();
 					}
 				});
 				$("#create-order .overlay").addClass("hidden");
@@ -1001,6 +1009,9 @@
 		$(".msg").html("");
 		$("#flag_print_receipt").prop("checked", false);
 		$(".voucher_info").addClass("hidden");
+		$("#voucher").val("");
+		$("#voucher_value").val("");
+		$("#voucher").prop("disabled", "");
 		disableCheckOutBtn();
 	}
 

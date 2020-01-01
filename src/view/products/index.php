@@ -661,7 +661,7 @@
       } 
       var profit = data.profit;
       var product_id = data.product_id;
-      return  '<input type="text" onchange="onchange_discount(this, \''+profit+'\')" onload="onchange_discount(this, \''+profit+'\')" class="form-control col-md-6 float-left" value="'+discount+'"/>&nbsp;'+
+      return  '<input type="text" onchange="onchange_discount(this, \''+profit+'\')" onblur="onchange_discount(this, \''+profit+'\')" class="form-control col-md-6 float-left" value="'+discount+'"/>&nbsp;'+
              '<button type="button" class="btn bg-gradient-info btn-sm mt-1" onclick="update_discount(this, '+product_id+')"><i class="fas fa-save"></i> Lưu</button>';
     }
     

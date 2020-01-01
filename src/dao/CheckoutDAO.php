@@ -160,8 +160,8 @@ class CheckoutDAO {
                         tmp.type,
                         tmp.payment_type
                     from (
-                        SELECT A.id, 
-                            sum(D.profit * B.quantity - B.reduce) - A.discount as profit,
+                        SELECT A.id, A.discount,
+                            sum(D.profit * B.quantity - B.reduce) as profit,
                             A.total_amount - A.total_reduce  as 'total_checkout',
                             A.type,  A.payment_type
                         FROM smi_orders A
@@ -333,6 +333,8 @@ class CheckoutDAO {
                         A.order_date,
                         A.type,
                         A.status,
+                        A.total_reduce,
+                        A.voucher_code,
                         D.id as product_id,
                         D.name as product_name,
                         E.sku,
@@ -370,17 +372,19 @@ class CheckoutDAO {
                             'shipping' => number_format($row["shipping"]),
                             'discount' => number_format($row["discount"]),
                             'total_checkout' => number_format($row["total_checkout"]),
+                            'total_reduce' => number_format($row["total_reduce"]),
                             'order_date' => date_format(date_create($row["order_date"]),"d/m/Y H:i:s"),
                             'type' => $row["type"],
                             'status' => $row["status"],
                             'payment_type' => $row["payment_type"],
+                            'voucher_code' => $row["voucher_code"],
                             'details' => array()
                         );
                     $intoMoney = 0;
                     $qty = $row["quantity"];
                     $price = $row["price"];
                     $reduce = $row["reduce"];
-                    $intoMoney = $qty*$price-$reduce;
+                    $intoMoney = $qty*($price-$reduce);
                     $detail = array(
                         'product_id' => $row["product_id"],
                         'product_name' => $row["product_name"],
@@ -390,7 +394,7 @@ class CheckoutDAO {
                         'color' => $row["color"],
                         'quantity' => $qty,
                         'price' => number_format($price),
-                        'reduce' => number_format($reduce),
+                        'reduce' => number_format($qty*$reduce),
                         'intoMoney' => number_format($intoMoney),
                         'profit' => number_format($row["profit"] * $qty)
                     );
@@ -448,6 +452,7 @@ class CheckoutDAO {
             $status = $order->getStatus();
             $payment_type = $order->getPayment_type();
             $voucher_code = $order->getVoucherCode();
+            $voucher_value = $order->getVoucherValue();
             $stmt = $this->getConn()->prepare("insert into smi_orders (
                     `total_reduce`,
                     `total_reduce_percent`,
@@ -465,10 +470,11 @@ class CheckoutDAO {
                     `shipping_unit`,
                     `status`,
                     `voucher_code`,
+                    `voucher_value`,
                     `order_date`,
                     `created_date`) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(),NOW())");
-            $stmt->bind_param("ddddddidiisddsis", $total_reduce, $total_reduce_percent, $discount, $total_amount, $total_checkout, $customer_payment, $payment_type, $repay, $customer_id, $type, $bill, $shipping_fee, $shipping, $shipping_unit, $status, $voucher_code);
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,NOW(),NOW())");
+            $stmt->bind_param("ddddddidiisddsisd", $total_reduce, $total_reduce_percent, $discount, $total_amount, $total_checkout, $customer_payment, $payment_type, $repay, $customer_id, $type, $bill, $shipping_fee, $shipping, $shipping_unit, $status, $voucher_code, $voucher_value);
             $stmt->execute();
             // var_dump($this->getConn()->error);
             //You can get the number of rows affected by your query

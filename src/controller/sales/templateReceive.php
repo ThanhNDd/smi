@@ -8,9 +8,6 @@
   <title>Bán hàng</title>
   	<?php require_once ('../../common/css.php'); ?>
   	<?php require_once ('../../common/js.php'); ?>
- 	<link rel="stylesheet" href="<?php echo __PATH__?>plugins/typeahead/css/typeaheadjs.css">	
-	<script src="<?php echo __PATH__?>plugins/typeahead/js/typeahead.jquery.min.js"></script>
-	<script src="<?php echo __PATH__?>plugins/typeahead/js/bloodhound.min.js"></script>
         
         <style type="text/css">
             @page bigger { sheet-size: 58mm 100mm; }
@@ -59,15 +56,14 @@
         <div class="container p-0 float-left">
             <div class="header row">
                 <div class="center col-12 p-0 m-0">
-                    <img src="<?php echo __PATH__?>dist/img/icon.png" width="50px"/>
                     <h4>SHOP MẸ ỈN</h4>
                     <p>Thời trang trẻ em cao cấp</p>
-                    <span>* * *</span>
-                    <p style="margin: 5px 0;">Đ/c: 88 Đồng Hương - Quốc Oai - HN</p>
+                    <span>* * * * * * * * * * * *</span>
+                    <p style="margin: 5px 0;">Đ/c: 227 Phố Huyện - Thị Trấn Quốc Oai - Hà Nội</p>
                     <p>Hotline: 0962.926.302</p>
                     <p>Website: www.shopmein.net</p>
                     <p>Facebook: Shop Mẹ Ỉn</p>
-                    <span>* * *</span>
+                    <span>* * * * * * * * * * * *</span>
                     <h4>HÓA ĐƠN THANH TOÁN</h4>
                     <barcode code="0000000000168" type="C128A" class="barcode" />
                     <p>0000000000168</p>

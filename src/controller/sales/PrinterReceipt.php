@@ -25,7 +25,7 @@ class PrinterReceipt
             $html .= $this->getBody($details);    
             $html .= $this->getFooter($order);
 
-            echo $html;
+            // echo $html;
 
             $mpdf->SetDisplayMode('real');
             $mpdf->SetDisplayPreferences('/FitWindow/NoPrintScaling');
@@ -62,7 +62,6 @@ class PrinterReceipt
             <html>
             <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
                 <title>Receipt Template</title>
-                
                 <style type="text/css">
                     @page bigger { sheet-size: 58mm 100mm; }
                     #barcode {font-weight: normal; font-style: normal; line-height:normal; font-family: sans-serif; font-size: 12pt}
@@ -81,7 +80,7 @@ class PrinterReceipt
                         margin: 5px;
                     }
                     .container, table {
-                        width: 219px;
+                        width: 300px;
                         font-size: 13px;
                         font-family: sans-serif;
                     }
@@ -107,22 +106,25 @@ class PrinterReceipt
                 </style>
             </head>
             <body>
-                <div class="container">
-                    <div class="header center">
-                        <h3>SHOP MẸ ỈN</h3>
-                        <p>Thời trang trẻ em cao cấp</p>
-                        <p style="margin: 5px 0;">Đ/c: 88 Đồng Hương - Quốc Oai - HN</p>
-                        <p>Hotline: 0962.926.302</p>
-                        <p>Website: www.shopmein.net</p>
-                        <p>Facebook: Shop Mẹ Ỉn</p>
-                        <span>* * *</span>
-                        <h3>HÓA ĐƠN BÁN HÀNG</h3>
-                        <barcode code="'.$this->generate_barcode_value($order->getId()).'" type="C128A" class="barcode" />
-                        <p>'.$this->generate_barcode_value($order->getId()).'</p>
-                        <span style="padding:0 0 3 0;">
-                            <span style="float: left;margin: 0;">Ngày tháng:</span>
-                            <span  style="float: right;margin: 0;">'.date('d/m/Y - H:i:s').'</span>
-                        </span>
+                <div class="container p-0 float-left">
+                    <div class="header row">
+                        <div class="center col-12 p-0 m-0">
+                            <h4>SHOP MẸ ỈN</h4>
+                            <p>Thời trang trẻ em cao cấp</p>
+                            <span>* * * * * * * * * * * *</span>
+                            <p style="margin: 5px 0;">Đ/c: 227 Phố Huyện - Thị Trấn Quốc Oai - Hà Nội</p>
+                            <p>Hotline: 0962.926.302</p>
+                            <p>Website: www.shopmein.net</p>
+                            <p>Facebook: Shop Mẹ Ỉn</p>
+                            <span>* * * * * * * * * * * *</span>
+                            <h4>HÓA ĐƠN THANH TOÁN</h4>
+                            <barcode code="'.$this->generate_barcode_value($order->getId()).'" type="C128A" class="barcode" />
+                            <p>'.$this->generate_barcode_value($order->getId()).'</p>
+                            <span>
+                                <span class="float-left">Ngày tháng:</span>
+                                <span class="float-right mr-2">'.date('d/m/Y - H:i:s').'</span>
+                            </span>
+                        </div>
                     </div>
                     <div class="body center">
                         <table class="center">
@@ -179,27 +181,27 @@ class PrinterReceipt
         // $reduce = $reduce + $discount;
         $footer =   '<tfoot>
                             <tr>
-                                <td colspan="4" class="left">Tổng tiền:</td>
+                                <td colspan="4" class="right">Tổng tiền:</td>
                                 <td class="right">'.number_format(empty($order->getTotal_amount()) || $order->getTotal_amount() == 'NULL' ? 0 : $order->getTotal_amount()).'</td>
                             </tr>
                             <tr>
-                                <td colspan="4" class="left">Giảm trên tổng đơn:</td>
+                                <td colspan="4" class="right">Giảm trên tổng đơn:</td>
                                 <td class="right">'.($order->getDiscount() < 100 ? $order->getDiscount()."%" : number_format($order->getDiscount())).'</td>
                             </tr>
                             <tr>
-                                <td colspan="4" class="left">Tổng Giảm trừ:</td>
+                                <td colspan="4" class="right">Tổng Giảm trừ:</td>
                                 <td class="right">'.number_format($reduce).'</td>
                             </tr>
                             <tr>
-                                <td colspan="4" class="left">Tổng thanh toán:</td>
+                                <td colspan="4" class="right">Tổng thanh toán:</td>
                                 <td class="right">'.number_format(empty($order->getTotal_checkout()) || $order->getTotal_checkout() == 'NULL' ? 0 : $order->getTotal_checkout()).'</td>
                             </tr>
                             <tr>
-                                <td colspan="4" class="left">Khách thanh toán:</td>
+                                <td colspan="4" class="right">Khách thanh toán:</td>
                                 <td class="right">'.number_format(empty($order->getCustomer_payment()) || $order->getCustomer_payment() == 'NULL' ? 0 : $order->getCustomer_payment()).'</td>
                             </tr>
                             <tr>
-                                <td colspan="4" class="left">Trả lại:</td>
+                                <td colspan="4" class="right">Trả lại:</td>
                                 <td class="right">'.number_format(empty($order->getRepay()) || $order->getRepay() == 'NULL' ? 0 : $order->getRepay()).'</td>
                             </tr>
                         </tfoot>

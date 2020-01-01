@@ -58,6 +58,7 @@ if(isset($_POST["type"]) && $_POST["type"]=="checkout")   {
         $order->setCustomer_id(0); // retail customer
         $order->setStatus(3);// order completed
         $order->setVoucherCode($data->voucher_code);
+        $order->setVoucherValue($data->voucher_value);
         $orderId = $checkout_dao->saveOrder($order);
         $order->setId($orderId);     
         if(empty($orderId)) {
@@ -108,7 +109,9 @@ if(isset($_POST["type"]) && $_POST["type"]=="checkout")   {
             if(!empty($data->voucher_code)) {
                 $type_code = 1;
                 $used_status = 3;
-                $voucherDAO->update_status($data->voucher_code, $used_status, $type_code); // type = 1 is inactive by code
+                if($data->voucher_code != "VCKTOS0") {
+                    $voucherDAO->update_status($data->voucher_code, $used_status, $type_code); // type = 1 is inactive by code
+                }
             }
             // printer receipt
             if($data->flag_print_receipt) {        
