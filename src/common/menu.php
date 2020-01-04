@@ -56,6 +56,12 @@
                                 <p>Vouchers</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="<?php echo __PATH__ ?>src/view/check/" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Kiểm hàng</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
             </ul>

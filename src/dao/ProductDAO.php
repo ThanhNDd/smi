@@ -395,7 +395,8 @@ class ProductDAO {
                         B.color, 
                         B.quantity, 
                         B.sku,
-                        A.discount
+                        A.discount,
+                        A.price 
                     from 
                         smi_products A left join smi_variations B on A.id = B.product_id 
                         where B.sku = ".$sku."
@@ -412,7 +413,8 @@ class ProductDAO {
                         'size' => $row["size"],
                         'color' => $row["color"],
                         'sku' => $row["sku"],
-                        'discount' => $row["discount"]
+                        'discount' => $row["discount"],
+                        'price' => number_format($row["price"])
                     );
                     array_push($data, $product);
                 }

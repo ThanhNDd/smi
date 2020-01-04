@@ -658,14 +658,15 @@
         } else {
           discount = formatNumber(discount);
         }
-      } 
+      }
+        var retail = data.retail;
       var profit = data.profit;
       var product_id = data.product_id;
-      return  '<input type="text" onchange="onchange_discount(this, \''+profit+'\')" onblur="onchange_discount(this, \''+profit+'\')" class="form-control col-md-6 float-left" value="'+discount+'"/>&nbsp;'+
+      return  '<input type="text" onchange="onchange_discount(this, \''+profit+'\')" onblur="onchange_discount(this, \''+profit+'\', \''+retail+'\')" class="form-control col-md-6 float-left" value="'+discount+'"/>&nbsp;'+
              '<button type="button" class="btn bg-gradient-info btn-sm mt-1" onclick="update_discount(this, '+product_id+')"><i class="fas fa-save"></i> Lưu</button>';
     }
     
-    function onchange_discount(e, profit) {
+    function onchange_discount(e, profit, retail) {
       $(e).removeClass("is-invalid");
       $("#update_discount").prop("disabled", true);
       var val = $(e).val();
@@ -688,7 +689,8 @@
       } else {
         val = replacePercent(val);
         profit = replaceComma(profit);
-        profit = profit - profit*val/100;
+          retail = replaceComma(retail);
+        profit = profit - retail*val/100;
         $("#update_discount").prop("disabled", "");
       }
       $(e).parent().next("td").text(formatNumber(profit));
