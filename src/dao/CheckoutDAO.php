@@ -155,7 +155,7 @@ class CheckoutDAO {
         try {
             $sql = "select 
                         sum(tmp.total_checkout) as total_checkout, 
-                        sum(tmp.profit) as total_profit,
+                        sum(tmp.profit - tmp.discount) as total_profit,
                         count(tmp.type) as count_type, 
                         tmp.type,
                         tmp.payment_type

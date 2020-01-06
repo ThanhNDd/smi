@@ -1,4 +1,4 @@
-<?php require_once("constants.php") ?>
+<?php require_once("common.php") ?>
 <!-- REQUIRED SCRIPTS -->
 <!-- jQuery -->
 <script src="<?php echo __PATH__?>plugins/jquery/jquery.min.js"></script>

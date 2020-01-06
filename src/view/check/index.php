@@ -1,11 +1,11 @@
-<?php require_once("../../common/constants.php") ?>
+<?php require_once("../../common/common.php") ?>
 <!DOCTYPE html>
 <html>
 <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="shortcut icon" type="image/x-icon" href="<?php echo __PATH__?>dist/img/icon.png"/>
-    <title>Bán hàng</title>
+    <title>Kiểm hàng</title>
     <?php require_once ('../../common/css.php'); ?>
     <?php require_once ('../../common/js.php'); ?>
 </head>
@@ -58,16 +58,16 @@
                         <tbody>
                             <tr>
                                 <td class="right w110">Tổng số lượng</td>
-                                <td class="right"><b style="font-size: 20px;color: red;" id="totalQty">0</b></td>
+                                <td class="right"><h2 id="totalQty" style="color: red;">0</h2></td>
                             </tr>
                             <tr>
                                 <td class="right w110">Tổng tiền</td>
-                                <td class="right"><b style="font-size: 20px;color: red;" id="totalMoney">0</b><b style="color: red;"> đ</b></td>
+                                <td class="right"><h2 id="totalMoney" style="color: red;">0<small> đ</small></h2></td>
                             </tr>
                         </tbody>
                     </table>
                     <div class="row">
-                        <button type="button" class="btn btn-success form-control" id="update" title="Cập nhật" disabled="disabled">
+                        <button type="button" class="btn btn-success form-control" id="update" title="Cập nhật">
                             <i class="fas fa-shopping-basket"></i> Cập nhật
                         </button>
                     </div>
@@ -83,6 +83,9 @@
 <?php require_once ('../../common/footer.php'); ?>
 <script type="text/javascript">
     $(document).ready(function(){
+
+        set_title("Kiểm hàng");
+
         $("#productId").change(function(){
             var prodId = $(this).val();
             if(prodId.indexOf('SP') > -1)
@@ -105,13 +108,13 @@
                 var noId = v["id"];
                 noId = noId.split("_")[1];
                 var qty = $("[id=qty_"+noId+"]").val();
-                // qty = Number(replaceComma(qty));
                 qty = Number(qty);
                 qty++;
                 $("[id=qty_"+noId+"]").val(qty);
-                console.log("qty: "+qty);
-                console.log("vao day 1 calculate total");
                 calculateTotal();
+                let product = {};
+                product["sku"] = $("[id=sku_"+noId+"]").val();
+                save(product);
                 return;
             }
         });
@@ -119,13 +122,10 @@
         {
             if(typeof find_product  === 'function')
             {
-                console.log("vao day 2 find_product");
                 find_product(prodId, 1);
-
             }
             if(typeof calculateTotal  === 'function')
             {
-                console.log("vao day 2 calculate total");
                 calculateTotal();
             }
         }
@@ -145,7 +145,7 @@
                 // console.log(JSON.stringify(products));
                 if(products.length > 0)
                 {
-                    var noRow = $("#noRow").val();
+                    let noRow = $("#noRow").val();
                     noRow = Number(noRow);
                     noRow++;
                     $("#noRow").val(noRow);
@@ -163,6 +163,16 @@
                         + '<td></td>'
                         + '</tr>');
                     calculateTotal();
+                    let product = {};
+                    product["product_id"] = products[0].product_id;
+                    product["variant_id"] = products[0].variant_id;
+                    product["sku"] = products[0].sku;
+                    product["name"] = products[0].name;
+                    product["price"] = replaceComma(products[0].price);
+                    product["quantity"] = 1;
+                    product["size"] = products[0].size;
+                    product["color"] = products[0].color;
+                    save(product);
                 }
             },
             error : function(data, errorThrown) {
@@ -188,24 +198,83 @@
         for(var i=1; i<=noRow; i++)
         {
             let qty =  $("[id=qty_"+i+"]").val();
-            // qty = Number(replaceComma(qty));
             totalQty += Number(qty);
-
-            console.log("qty: "+qty);
 
             let price =  $("[id=price_"+i+"]").text();
             price = Number(replaceComma(price));
-
-            console.log("price: "+price);
-
             price = price*qty;
             totalMoney += price;
-
-            console.log("totalMoney: "+totalMoney);
         }
         $("#totalQty").text(formatNumber(totalQty));
         $("#totalMoney").text(formatNumber(totalMoney));
     }
+
+    function save(product)
+    {
+        console.log(JSON.stringify(product));
+        $.ajax({
+            dataType : 'json',
+            url      : '<?php echo __PATH__.'src/controller/check/CheckController.php' ?>',
+            data : {
+                method : "save_check",
+                data: JSON.stringify(product)
+            },
+            type : 'POST',
+            success: function()
+            {
+                console.log("save success");
+            },
+            error : function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                }).then((result) => {
+                    if (result.value) {
+
+                    }
+                });
+            }
+        });
+    }
+
+    function save_result_check()
+    {
+        let $total_qty = replaceComma($("#totalQty").text());
+        let $total_money = replaceComma($("#totalMoney").text());
+        let data = {};
+        data["total_qty"] = $total_qty;
+        data["total_money"] = $total_money;
+        $.ajax({
+            dataType : 'json',
+            url      : '<?php echo __PATH__.'src/controller/check/CheckController.php' ?>',
+            data : {
+                method : "save_result_check",
+                data: JSON.stringify(data)
+            },
+            type : 'POST',
+            success: function()
+            {
+                toastr.success('Kết quả kiểm hàng đã được lưu thành công.');
+            },
+            error : function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                }).then((result) => {
+                    if (result.value) {
+
+                    }
+                });
+            }
+        });
+    }
+
     function formatNumber(num) {
         return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
     }

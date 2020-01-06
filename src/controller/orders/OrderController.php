@@ -220,7 +220,7 @@ if(isset($_POST["orders"]) && $_POST["orders"]=="new")   {
 		$order->setDeleted(0);
 		$order->setPayment_type($data->payment_type);// transfer type
 
-		$orderId;
+		$orderId = 0;
 		if($data->order_id > 0) {
 			$order->setId($data->order_id);
 			$orderId = $checkoutDAO->updateOrder($order);

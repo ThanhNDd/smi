@@ -1,4 +1,4 @@
-<?php require_once("../../common/constants.php") ?>
+<?php require_once("../../common/common.php") ?>
 <!DOCTYPE html>
 <html>
 <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">

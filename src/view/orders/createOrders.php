@@ -1,4 +1,4 @@
-<?php require_once("../../common/constants.php") ?>
+<?php require_once("../../common/common.php") ?>
 <div class="modal fade" id="create-order">
   <div class="modal-dialog modal-xl modal-dialog-scrollable">
     <div class="modal-content">
@@ -668,23 +668,17 @@
 
     function on_change_reduce(e, qtyId, priceId, totalId, rowIndex) {
         var val = $(e).val();
-        val = replaceComma(val);
+        if(val.indexOf("%") > -1) {
+            val = replacePercent(val);
+        } else {
+            val = replaceComma(val);
+        }
         if(isNaN(val)) {
           $(e).addClass("is-invalid");  
           disable_btn_add_new();
         } else {
           $(e).removeClass("is-invalid");
           check_products_list();
-          // if(val < 1000)
-          // {
-          //   if(val.indexOf(".") > 0)
-          //   {
-          //     val = val.replace(".","");
-          //     val = val+"00";
-          //   } else {
-          //     val = val+"000";
-          //   }
-          // }
           val = Number(val);
           $(e).val(formatNumber(val));  
           var qty = $("[id="+qtyId+"]").val();
@@ -712,7 +706,11 @@
     function replaceComma(value)
     {
       return value.replace(/,/g, '');
-    } 
+    }
+    function replacePercent(value)
+    {
+        return value.replace(/%/g, '');
+    }
 
     function onfocus_check(e) {
       $(e).removeClass("is-invalid");

@@ -1,4 +1,4 @@
-<?php require_once("constants.php") ?>
+<?php require_once("common.php") ?>
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed sidebar-collapse">
   <div class="loading hidden">
     <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div> 

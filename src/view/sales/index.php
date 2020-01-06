@@ -1,4 +1,4 @@
-<?php require_once("../../common/constants.php") ?>
+<?php require_once("../../common/common.php") ?>
 <!DOCTYPE html>
 <html>
 <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -130,6 +130,9 @@
 <?php require_once ('../../common/footer.php'); ?>
 <script type="text/javascript">
 	$(document).ready(function(){
+
+        set_title("Bán hàng");
+
 		$("#productId").change(function(){
 			var prodId = $(this).val();
 			if(prodId.indexOf('SP') > -1)

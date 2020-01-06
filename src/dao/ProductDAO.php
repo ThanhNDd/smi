@@ -451,6 +451,32 @@ class ProductDAO {
         }   
     }
 
+    function find_variation_by_sku($sku)
+    {
+        try {
+            $sql = "select `id`, `product_id`, `size`, `color`, `quantity`, `sku`, `created_at`, `updated_at` from smi_variations where sku = ".$sku;
+            $result = mysqli_query($this->conn,$sql);
+            return $result;
+        } catch(Exception $e)
+        {
+            throw new Exception("find_variation_by_sku >> ".$e);
+        }
+    }
+
+    function update_qty_variation_by_sku($sku) {
+        try {
+            $stmt = $this->getConn()->prepare("update smi_variations set quantity = quantity + 1 where sku = ?");
+            $stmt->bind_param("s", $sku);
+            $stmt->execute();
+            $nrows = $stmt->affected_rows;
+            if(!$nrows) {
+                throw new Exception("Update Qty for variations has failure");
+            }
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
     /**
      * Get the value of conn
      */ 
