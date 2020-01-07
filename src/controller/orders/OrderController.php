@@ -9,6 +9,7 @@ include("../../model/Order/Order.php");
 include("../../model/Order/OrderDetail.php");
 include("../../model/Customer/Customer.php");
 include("PrintReceiptOnline.php");
+include("../sales/PrinterReceipt.php");
 
 /**
 * Construtor connect to API woocomerce
@@ -28,14 +29,25 @@ $customerDAO->setConn($db->getConn());
 
 $zone = new Zone();
 
-$print_receipt = new PrintReceiptOnline();
+
 if(isset($_POST["method"]) && $_POST["method"]=="print_receipt")   {
     $order_id = $_POST["order_id"];
+    $type = $_POST["type"];
     try 
     {
-        $receipt = $checkoutDAO->get_data_print_receipt($order_id);
+        if($type == 1) {
+            // print receipt online
+            $print_receipt = new PrintReceiptOnline();
+            $receipt = $checkoutDAO->get_data_print_receipt($order_id);
+            $filename = $print_receipt->print($receipt);
+        } else {
+            $order = $checkoutDAO->find_order_by_order_id($order_id);
+            $details = $checkoutDAO->find_order_detail_by_order_id($order_id);
+            $printer = new PrinterReceipt();
+            $filename = $printer->print($order, $details);
+            $response_array['fileName'] = $filename;
+        }
 		//echo json_encode($receipt);
-        $filename = $print_receipt->print($receipt);
         $response_array['fileName'] = $filename;
         echo json_encode($response_array);
     } catch(Exception $ex)

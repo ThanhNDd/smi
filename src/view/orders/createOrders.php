@@ -66,6 +66,10 @@
                 <label>Địa chỉ</label>
                 <input type="text" class="form-control" id="address" placeholder="Nhập số nhà, thôn xóm ... " autocomplete="off">
               </div>
+                <div class="col-2">
+                    <label>Ngày đặt hàng</label>
+                    <input class="form-control datepicker" id="orderDate" data-date-format="dd/mm/yyyy" value="<?php echo date('d/m/Y');?>">
+                </div>
             </div>
           </div>
            <div class="form-group">
@@ -153,6 +157,14 @@
         timer: 3000
       });
     $(document).ready(function () {
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy',
+            language: 'vi',
+            todayBtn: true,
+            todayHighlight: true,
+            autoclose: true
+        });
+
       $('.order-create').click(function(){
         reset_data();
         $(".order_type").val(1);//order online
@@ -252,16 +264,6 @@
         } else {
           $(e).removeClass("is-invalid");
           check_products_list();
-          // if(val < 1000)
-          // {
-          //   if(val.indexOf(".") > 0)
-          //   {
-          //     val = val.replace(".","");
-          //     val = val+"00";
-          //   } else {
-          //     val = val+"000";
-          //   }
-          // }
           val = Number(val);
           $(e).val(formatNumber(val));  
         }
@@ -345,34 +347,6 @@
           }
         }
       }
-      
-      // var rowProductNumber = $(".count-row").val();
-      // for(var i=1; i<=rowProductNumber.length; i++)
-      // {
-      //   var sku = $("#sku_"+i).val();
-      //   if(sku !== "") {
-      //     var prodId = $("#prod_"+i).val();
-      //     if(prodId === "-1") {
-      //       $("#prod_"+i).addClass("is-invalid");
-      //       // return false;
-      //       count_error++;
-      //     } else {
-      //       $("#prod_"+i).removeClass("is-invalid");
-      //       var qty = $("#prodQty_"+i).val();
-      //       if(qty === "")
-      //       {
-      //         $("#prodQty_"+i).addClass("is-invalid");
-      //         // return false;
-      //         count_error++;
-      //       } else {
-      //         $("#prodQty_"+i).removeClass("is-invalid");
-      //       }  
-      //     }
-      //   } else {
-      //     $("#sku_"+i).addClass("is-invalid");
-      //     return;
-      //   }
-      // }
       if(count_error > 0)
       {
         return false;
@@ -622,7 +596,7 @@
       // generate_select2_products('.select-product-'+noRow);
     }
 
-    function on_change_total(rowIndex)
+    function on_change_total()
     {
       var total_amount = 0;
       var rowProductNumber = $(".count-row").val();

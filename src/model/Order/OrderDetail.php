@@ -1,6 +1,5 @@
 <?php
 class OrderDetail {
-    private $table_name = 'smi_order_detail';
     private $id;
     private $order_id;
     private $product_id;
@@ -12,192 +11,155 @@ class OrderDetail {
     private $reduce_percent;
 
     /**
-     * Get the value of id
-     */ 
+     * OrderDetail constructor.
+     */
+    public function __construct()
+    {
+    }
+
+    /**
+     * @return mixed
+     */
     public function getId()
     {
         return $this->id;
     }
 
     /**
-     * Set the value of id
-     *
-     * @return  self
-     */ 
-    public function setId($id)
+     * @param mixed $id
+     */
+    public function setId($id): void
     {
         $this->id = $id;
-
-        return $this;
     }
 
     /**
-     * Get the value of order_id
-     */ 
-    public function getOrder_id()
+     * @return mixed
+     */
+    public function getOrderId()
     {
         return $this->order_id;
     }
 
     /**
-     * Set the value of order_id
-     *
-     * @return  self
-     */ 
-    public function setOrder_id($order_id)
+     * @param mixed $order_id
+     */
+    public function setOrderId($order_id): void
     {
         $this->order_id = $order_id;
-
-        return $this;
     }
 
     /**
-     * Get the value of product_id
-     */ 
-    public function getProduct_id()
+     * @return mixed
+     */
+    public function getProductId()
     {
         return $this->product_id;
     }
 
     /**
-     * Set the value of product_id
-     *
-     * @return  self
-     */ 
-    public function setProduct_id($product_id)
+     * @param mixed $product_id
+     */
+    public function setProductId($product_id): void
     {
         $this->product_id = $product_id;
-
-        return $this;
     }
 
     /**
-     * Get the value of variant_id
-     */ 
-    public function getVariant_id()
+     * @return mixed
+     */
+    public function getVariantId()
     {
         return $this->variant_id;
     }
 
     /**
-     * Set the value of variant_id
-     *
-     * @return  self
-     */ 
-    public function setVariant_id($variant_id)
+     * @param mixed $variant_id
+     */
+    public function setVariantId($variant_id): void
     {
         $this->variant_id = $variant_id;
-
-        return $this;
     }
 
     /**
-     * Get the value of price
-     */ 
-    public function getPrice()
-    {
-        return $this->price;
-    }
-
-    /**
-     * Set the value of price
-     *
-     * @return  self
-     */ 
-    public function setPrice($price)
-    {
-        $this->price = $price;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of quantity
-     */ 
-    public function getQuantity()
-    {
-        return $this->quantity;
-    }
-
-    /**
-     * Set the value of quantity
-     *
-     * @return  self
-     */ 
-    public function setQuantity($quantity)
-    {
-        $this->quantity = $quantity;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of reduce
-     */ 
-    public function getReduce()
-    {
-        if(empty($this->reduce))
-        {
-            return "NULL";
-        } else {
-            return $this->reduce;    
-        }
-    }
-
-    /**
-     * Set the value of reduce
-     *
-     * @return  self
-     */ 
-    public function setReduce($reduce)
-    {
-        $this->reduce = $reduce;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of reduce_percent
-     */ 
-    public function getReduce_percent()
-    {
-        if(empty($this->reduce_percent))
-        {
-            return "NULL";
-        } else {
-            return $this->reduce_percent;    
-        }
-    }
-
-    /**
-     * Set the value of reduce_percent
-     *
-     * @return  self
-     */ 
-    public function setReduce_percent($reduce_percent)
-    {
-        $this->reduce_percent = $reduce_percent;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of sku
-     */ 
+     * @return mixed
+     */
     public function getSku()
     {
         return $this->sku;
     }
 
     /**
-     * Set the value of sku
-     *
-     * @return  self
-     */ 
-    public function setSku($sku)
+     * @param mixed $sku
+     */
+    public function setSku($sku): void
     {
         $this->sku = $sku;
-
-        return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
+    /**
+     * @param mixed $price
+     */
+    public function setPrice($price): void
+    {
+        $this->price = $price;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getQuantity()
+    {
+        return $this->quantity;
+    }
+
+    /**
+     * @param mixed $quantity
+     */
+    public function setQuantity($quantity): void
+    {
+        $this->quantity = $quantity;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getReduce()
+    {
+        return $this->reduce;
+    }
+
+    /**
+     * @param mixed $reduce
+     */
+    public function setReduce($reduce): void
+    {
+        $this->reduce = $reduce;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getReducePercent()
+    {
+        return $this->reduce_percent;
+    }
+
+    /**
+     * @param mixed $reduce_percent
+     */
+    public function setReducePercent($reduce_percent): void
+    {
+        $this->reduce_percent = $reduce_percent;
+    }
+
+
 }

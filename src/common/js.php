@@ -43,6 +43,9 @@
 <!-- date-range-picker -->
 <script src="<?php echo __PATH__?>plugins/daterangepicker/daterangepicker.js"></script>
 
+<script src="<?php echo __PATH__?>plugins/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+<script src="<?php echo __PATH__?>plugins/bootstrap-datepicker/bootstrap-datepicker.vi.min.js"></script>
+
 <script type="text/javascript">
 	
 	function set_title(title) {

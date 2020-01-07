@@ -22,7 +22,7 @@ class PrinterReceipt
                 'tempDir' => __DIR__ . '/tmp'
             ]);
             $html = $this->getHeader($order);
-            $html .= $this->getBody($details);    
+            $html .= $this->getBody($details);
             $html .= $this->getFooter($order);
 
             // echo $html;
@@ -149,17 +149,17 @@ class PrinterReceipt
         $c = 0;
         foreach($details as $key => $value)
         {
-            $intoMoney = $value->price*$value->quantity - (empty($value->reduce) ? 0 : $value->reduce);
+            $intoMoney = $value->getPrice()*$value->getQuantity() - (empty($value->getReduce()) ? 0 : $value->getReduce());
             $c++;
             $body .= '<tr>
                         <td class="center">'.$c.'</td>
-                        <td colspan="4" class="left">'.$value->product_name.'</td>
+                        <td colspan="4" class="left">'.$value->getProductId().'</td>
                     </tr>
                     <tr>
                         <td class="left"></td>
-                        <td class="center">'.$value->quantity.'</td>
-                        <td class="right">'.number_format($value->price).'</td>
-                        <td class="right">'.((!empty($value->reduce_percent) && $value->reduce_percent != 0) ? ("-".$value->reduce_percent."%") : "").'</td>
+                        <td class="center">'.$value->getQuantity().'</td>
+                        <td class="right">'.number_format($value->getPrice()).'</td>
+                        <td class="right">'.((!empty($value->getReducePercent()) && $value->getReducePercent() != 0) ? ("-".$value->getReducePercent()."%") : "").'</td>
                         <td class="right">'.number_format($intoMoney).'</td>
                     </tr>';
         }

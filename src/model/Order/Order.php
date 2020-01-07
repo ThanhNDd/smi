@@ -22,8 +22,16 @@ class Order {
     private $voucher_code;
     private $voucher_value;
     private $created_date;
-    private $updated_date;  
-   
+    private $updated_date;
+
+    /**
+     * Order constructor.
+     */
+    public function __construct()
+    {
+    }
+
+
     /**
      * Get the value of id
      */ 
