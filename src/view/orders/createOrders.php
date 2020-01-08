@@ -15,7 +15,7 @@
           <div class="form-group">
             <input type="hidden" class="form-control" id="order_id" value="">
             <input type="hidden" class="form-control" id="customer_id" value="">
-            <input type="hidden" class="form-control" id="payment_type" value="">
+            <!--<input type="hidden" class="form-control" id="payment_type" value="">-->
             <input type="hidden" class="order_type" value="-1" />
             <div class="row">
               <div class="col-4">
@@ -69,6 +69,15 @@
                 <div class="col-2">
                     <label>Ngày đặt hàng</label>
                     <input class="form-control datepicker" id="orderDate" data-date-format="dd/mm/yyyy" value="<?php echo date('d/m/Y');?>">
+                </div>
+                <div class="col-2">
+                    <label>Thanh toán</label>
+                    <select class="form-control" name="payment_type" id="payment_type">
+                        <option value="0">Tiền mặt</option>
+                        <option value="1" selected="selected">Chuyển khoản</option>
+                        <option value="2">Nợ</option>
+                    </select>
+                    <input type="text" class="form-control mt-2 hidden" name="payment" id="payment" width="100px" style="text-align: right;">
                 </div>
             </div>
           </div>
@@ -165,10 +174,20 @@
             autoclose: true
         });
 
+        $("#payment_type").change(function(){
+            if($(this).val() == 0) {
+                $("#payment").removeClass("hidden");
+                $("#payment").focus();
+            } else {
+                $("#payment").val("");
+                $("#payment").addClass("hidden");
+            }
+        });
+
       $('.order-create').click(function(){
         reset_data();
         $(".order_type").val(1);//order online
-        $("#payment_type").val(1);//transfer
+        // $("#payment_type").val(1);//transfer
         add_new_product();
         generate_select2_city();
         open_modal();
@@ -276,68 +295,68 @@
     });
     
     function validate() {
-      var count_error = 0;
-      var order_type = $('.order_type').val();
+      // var count_error = 0;
+      let order_type = $('.order_type').val();
       if(order_type == 1) {
-        var customerName = $("#customerName").val();
+          let customerName = $("#customerName").val();
         if(customerName === "")
         {
           $("#customerName").addClass("is-invalid");
           disable_btn_add_new();
-          // return false;
-          count_error++;
+          return false;
+          // count_error++;
         } else {
           $("#customerName").removeClass("is-invalid");
           check_products_list();
         }
-        var phoneNumber = $("#phoneNumber").val();
+          let phoneNumber = $("#phoneNumber").val();
         if(phoneNumber === "")
         {
           $("#phoneNumber").addClass("is-invalid");
           disable_btn_add_new();
-          // return false;
-          count_error++;
+          return false;
+          // count_error++;
         } else {
           $("#phoneNumber").removeClass("is-invalid");
           check_products_list();
         }
-        var cityId = $(".select-city").val();
+          let cityId = $(".select-city").val();
         if(cityId === "")
         {
           $(".select-city").addClass("is-invalid");
           disable_btn_add_new();
-          // return false;
-          count_error++;
+          return false;
+          // count_error++;
         } else {
           $(".select-city").removeClass("is-invalid");
           check_products_list();
-          var districtId = $(".select-district").val();
+            let districtId = $(".select-district").val();
           if(districtId === "")
           {
             $(".select-district").addClass("is-invalid");
             disable_btn_add_new();
-            // return false;
-            count_error++;
+            return false;
+            // count_error++;
           } else {
             $(".select-district").removeClass("is-invalid");
             check_products_list();
-            var villageId = $(".select-village").val();
+              let villageId = $(".select-village").val();
             if(villageId === "")
             {
               $(".select-village").addClass("is-invalid");
               disable_btn_add_new();
-              // return false;
-              count_error++;
+              return false;
+              // count_error++;
             } else {
               $(".select-village").removeClass("is-invalid");
               check_products_list();
-              var add = $("#address").val();
+                let add = $("#address").val();
               if(add === "")
               {
                 $("#address").addClass("is-invalid");
                 disable_btn_add_new();
-                // return false;
-                count_error++;
+                return false;
+                // count_error++;
               } else {
                 $("#address").removeClass("is-invalid");
                 check_products_list();
@@ -347,10 +366,10 @@
           }
         }
       }
-      if(count_error > 0)
-      {
-        return false;
-      }
+      // if(count_error > 0)
+      // {
+      //   return false;
+      // }
       return true; 
     }
 
