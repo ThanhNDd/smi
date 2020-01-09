@@ -91,9 +91,15 @@ class CheckoutDAO
                             a.total_amount,
                             a.discount,
                             a.total_checkout,
-                            a.payment_type
+                            a.payment_type,
+                            a.total_reduce,
+                            a.customer_payment,
+                            a.repay,
+                            e.size,
+                            e.color
                         from smi_orders a left join smi_order_detail b on a.id = b.order_id
                         inner join smi_products d on b.product_id = d.id
+                        inner join smi_variations e on b.variant_id = e.id
                         where a.id = " . $order_id;
             } else {
                 throw new Exception("Order Type is null");
@@ -133,6 +139,9 @@ class CheckoutDAO
                             'discount' => number_format($row["discount"]),
                             'total_checkout' => number_format($row["total_checkout"]),
                             'payment_type' => $row["payment_type"],
+                            'total_reduce' => $row["total_reduce"],
+                            'customer_payment' => number_format($row["customer_payment"]),
+                            'repay' => number_format($row["repay"]),
                             'details' => array()
                         );
                     }
@@ -149,7 +158,9 @@ class CheckoutDAO
                         'quantity' => $qty,
                         'price' => number_format($price),
                         'intoMoney' => number_format($intoMoney),
-                        'reduce' => number_format($row["reduce"])
+                        'reduce' => number_format($row["reduce"]),
+                        'size' => $row["size"],
+                        'color' => $row["color"]
                     );
                     array_push($order['details'], $detail);
                     array_push($data, $order);
@@ -168,7 +179,9 @@ class CheckoutDAO
                         'quantity' => $qty,
                         'price' => number_format($price),
                         'intoMoney' => number_format($intoMoney),
-                        'reduce' => number_format($row["reduce"])
+                        'reduce' => number_format($row["reduce"]),
+                        'size' => $row["size"],
+                        'color' => $row["color"]
                     );
                     array_push($data[$i - 1]['details'], $detail);
                 }

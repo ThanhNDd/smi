@@ -15,7 +15,7 @@
 <?php require_once ('../../common/header.php'); ?>
 <?php require_once ('../../common/menu.php'); ?>
 <section class="content">
-	<div class="row" style="margin-bottom: 10px;">
+	<div class="row" style="margin-bottom: 10px;padding-top: 10px;">
 		<div class="col-md-4">
 			<input class="form-control" id="productId" type="text" autofocus="autofocus" style="border-color: #28a745" autocomplete="off">
 		</div>
