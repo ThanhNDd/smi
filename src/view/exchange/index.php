@@ -301,10 +301,10 @@
                                 + '<td><span class="product-name" id="name_' + noRow + '">' + details[i].product_name + '</span></td>'
                                 + '<td><span class="size" id="size_' + noRow + '">' + details[i].size + '</span></td>'
                                 + '<td><span class="color" id="color_' + noRow + '">' + details[i].color + '</span></td>'
-                                + '<td><span class="price" id="price_' + noRow + '">' + details[i].price + '</span><span> đ</span></td>'
+                                + '<td><span class="price" id="price_' + noRow + '">' + details[i].price + ' <small> đ</small></span></td>'
                                 + '<td><span name="qty" id="qty_' + noRow + '">' + details[i].quantity + '</span></td>'
                                 + '<td><span name="reduce" id="reduce_' + noRow + '">' + reduce + '</span></td>'
-                                + '<td><span class="intoMoney" id="intoMoney_' + noRow + '">' + details[i].intoMoney + '</span><span> đ</span></td>'
+                                + '<td><span class="intoMoney" id="intoMoney_' + noRow + '">' + details[i].intoMoney + ' <small> đ</small></span></td>'
                                 + '<td><button type="button" id="exchange_' + noRow + '" class="btn btn-info form-control" onclick="exchangeBtn(this, ' + noRow + ')" title="Đổi hàng"><i class="fas fa-sync"></i> Đổi hàng</button>'
                                 + '<button type="button" id="cancelExchange_' + noRow + '" class="btn btn-danger form-control hidden" onclick="cancelExchangeBtn(this, ' + noRow + ')" title="Hủy"><i class="fas fa-ban"></i> Hủy</button>'
                                 + '<input type="text" value="" placeholder="Nhập mã sản phẩm" id="productName_'+noRow+'" onchange="find_product(this, 1)" class="hidden form-control mt-2 mb-2">'
@@ -857,22 +857,28 @@
             success: function (products) {
                 var noRow = 0;
                 console.log(JSON.stringify(products));
-                $(e).parent().parent().find("td:eq(5)").first().addClass("old");
-                $(e).parent().parent().find("td:eq(5)").append('<br/><br/><span class="product-sku-new" id="sku_new_1">' + products[0].sku + '</span>');
-                $(e).parent().parent().find("td:eq(6)").first().addClass("old");
-                $(e).parent().parent().find("td:eq(6)").append('<br/><br/><span class="product-name" id="name_">' + products[0].name + '</span>');
-                $(e).parent().parent().find("td:eq(7)").first().addClass("old");
-                $(e).parent().parent().find("td:eq(7)").append('<br/><br/><span class="size" id="size">' + products[0].size + '</span>');
-                $(e).parent().parent().find("td:eq(8)").first().addClass("old");
-                $(e).parent().parent().find("td:eq(8)").append('<br/><br/><span class="color" id="color">' + products[0].color + '</span>');
-                $(e).parent().parent().find("td:eq(9)").first().addClass("old");
-                $(e).parent().parent().find("td:eq(9)").append('<br/><br/><span class="color" id="color">' + products[0].retail + '</span>');
-                $(e).parent().parent().find("td:eq(10)").first().addClass("old");
-                $(e).parent().parent().find("td:eq(10)").append('<br/><br/><input type="number" name="qty" id="qty_' + noRow + '" class="form-control" min="1" value="' + qty + '" onchange="on_change_qty(\'price_' + noRow + '\', \'qty_' + noRow + '\', \'intoMoney_' + noRow + '\', \'reduce_' + noRow + '\')">');
-                $(e).parent().parent().find("td:eq(11)").first().addClass("old");
-                $(e).parent().parent().find("td:eq(11)").append('<br/><br/><input type="text" name="reduce" id="reduce_' + noRow + '" class="form-control" value="' + products[0].discount + '" onchange="on_change_reduce(\'price_' + noRow + '\',\'qty_' + noRow + '\', \'intoMoney_' + noRow + '\', \'reduce_' + noRow + '\')">');
-                $(e).parent().parent().find("td:eq(12)").first().addClass("old");
-                $(e).parent().parent().find("td:eq(12)").append('<br/><br/><span class="intoMoney" id="intoMoney_' + noRow + '">' + products[0].retail + '</span><span> đ</span>');
+                var discount = products[0].discount;
+                if (discount == 0) {
+                    discount = "";
+                } else if (discount > 0 && discount < 100) {
+                    discount = discount + "%";
+                }
+                $(e).parent().parent().find("td:eq(5)").children(":first").addClass("old");
+                $(e).parent().parent().find("td:eq(5)").append('<br/><br/><span class="product-sku-new new" id="sku_new_1">' + products[0].sku + '</span>');
+                $(e).parent().parent().find("td:eq(6)").children(":first").addClass("old");
+                $(e).parent().parent().find("td:eq(6)").append('<br/><br/><span class="product-name new" id="name_">' + products[0].name + '</span>');
+                $(e).parent().parent().find("td:eq(7)").children(":first").addClass("old");
+                $(e).parent().parent().find("td:eq(7)").append('<br/><br/><span class="size new" id="size">' + products[0].size + '</span>');
+                $(e).parent().parent().find("td:eq(8)").children(":first").addClass("old");
+                $(e).parent().parent().find("td:eq(8)").append('<br/><br/><span class="color new" id="color">' + products[0].color + '</span>');
+                $(e).parent().parent().find("td:eq(9)").children(":first").addClass("old");
+                $(e).parent().parent().find("td:eq(9)").append('<br/><br/><span class="retail new" id="retail">' + products[0].retail + ' <small> đ</small></span>');
+                $(e).parent().parent().find("td:eq(10)").children(":first").addClass("old");
+                $(e).parent().parent().find("td:eq(10)").append('<br/><br/><input type="number" class="new" name="qty" id="qty_' + noRow + '" class="form-control" min="1" value="' + qty + '" onchange="on_change_qty(\'price_' + noRow + '\', \'qty_' + noRow + '\', \'intoMoney_' + noRow + '\', \'reduce_' + noRow + '\')">');
+                $(e).parent().parent().find("td:eq(11)").children(":first").addClass("old");
+                $(e).parent().parent().find("td:eq(11)").append('<br/><br/><input type="text" class="new" name="reduce" id="reduce_' + noRow + '" class="form-control" value="' + discount + '" onchange="on_change_reduce(\'price_' + noRow + '\',\'qty_' + noRow + '\', \'intoMoney_' + noRow + '\', \'reduce_' + noRow + '\')">');
+                $(e).parent().parent().find("td:eq(12)").children(":first").addClass("old");
+                $(e).parent().parent().find("td:eq(12)").append('<br/><br/><span class="intoMoney" id="intoMoney_' + noRow + '">' + products[0].retail + ' <small> đ</small></span>');
 
                 // if (products.length > 0) {
                 //     var discount = products[0].discount;

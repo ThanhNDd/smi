@@ -139,7 +139,7 @@ class CheckoutDAO
                             'discount' => number_format($row["discount"]),
                             'total_checkout' => number_format($row["total_checkout"]),
                             'payment_type' => $row["payment_type"],
-                            'total_reduce' => $row["total_reduce"],
+                            'total_reduce' => number_format($row["total_reduce"]),
                             'customer_payment' => number_format($row["customer_payment"]),
                             'repay' => number_format($row["repay"]),
                             'details' => array()
