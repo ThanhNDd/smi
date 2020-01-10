@@ -3,7 +3,6 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="shortcut icon" type="image/x-icon" href="<?php echo __PATH__ ?>dist/img/icon.png"/>
     <title>Đổi sản phẩm</title>
@@ -13,27 +12,31 @@
 
         .old {
             color: gray;
-            text-decoration: line-through;
+            /*text-decoration: line-through;*/
             font-size: small;
+            display: inline-block;
+            width: 100%;
+        }
+        .new {
+            font-size: x-large;
         }
     </style>
 </head>
 <?php require_once('../../common/header.php'); ?>
 <?php require_once('../../common/menu.php'); ?>
 <section class="content">
-    <div class="row" style="margin-bottom: 10px;padding-top: 10px;">
-        <div class="col-md-2">
-            <input class="form-control" id="orderId" type="text" autofocus="autofocus" style="border-color: #28a745"
-                   autocomplete="off">
-        </div>
-    </div>
     <div class="row">
         <div class="col-md-9">
             <div class="card card-outline card-danger">
                 <div class="card-header">
                     <h3 class="card-title">Danh sách sản phẩm</h3>
                 </div>
-                <div class="card-body" style="min-height: 615px;">
+                <div class="card-body" style="min-height: 760px;">
+                    <div class="row" style="margin-bottom: 10px;">
+                        <div class="col-md-2">
+                            <input class="form-control" id="orderId" type="text" autofocus="autofocus" autocomplete="off" placeholder="Nhập mã đơn hàng">
+                        </div>
+                    </div>
                     <input type="hidden" id="noRow" value="0">
                     <table class="table table-bordered table-head-fixed" id="tableProd">
                         <thead>
@@ -70,16 +73,12 @@
                         <tbody>
                         <tr>
                             <td class="right w90">Tổng tiền</td>
-                            <td class="right"><b style="font-size: 20px;" id="totalAmount">0</b><b> đ</b></td>
+                            <td class="right"><h4><span id="totalAmount">0</span> <small> đ</small></h4></td>
                         </tr>
                         <tr>
                             <td class="right">Khuyến mãi</td>
                             <td class="right w110">
-                                <input type="text" class="form-control" name="discount" id="discount"
-                                       placeholder="Số tiền" width="100px" disabled>
-                                <input type="text" class="form-control mt-2" name="voucher" id="voucher"
-                                       placeholder="Mã giảm giá" width="100px" disabled>
-                                <input type="hidden" class="form-control" name="voucher_value" id="voucher_value">
+                                <h4><span id="discount">0</span> <small> đ</small></h4>
                             </td>
                         </tr>
                         <tr>
@@ -92,34 +91,37 @@
                         <tr>
                             <td class="right">Tổng Giảm trừ</td>
                             <td class="right">
-                                <span style="font-size: 20px;" id="totalReduce">0</span><span> đ</span></td>
+                                <h4><span id="totalReduce">0</span> <small> đ</small></h4></td>
                         </tr>
                         <tr>
                             <td class="right">Tổng thanh toán</td>
-                            <td class="right" style="color:red;"><h2><b id="totalCheckout">0</b><b> đ</b></h2></td>
+                            <td class="right" style="color:red;"><h2><strong id="totalCheckout">0</strong> <small> đ</small></h2></td>
                         </tr>
                         <tr>
                             <td class="right">Khách thanh toán</td>
                             <td class="right">
-                                <select class="form-control" name="sel_payment" id="sel_payment" disabled>
-                                    <option value="0" selected="selected">Tiền mặt</option>
-                                    <option value="1">Chuyển khoản</option>
-                                    <option value="2">Nợ</option>
-                                </select>
-                                <input type="text" class="form-control mt-2" name="payment" id="payment" width="100px"
-                                       style="text-align: right;" disabled>
-
+                                <h4><span id="payment">0</span> <small> đ</small></h4>
+                                <span id="sel_payment"></span>
                             </td>
                         </tr>
                         <tr>
                             <td class="right">Trả lại</td>
-                            <td class="right"><span style="font-size: 20px;" id="repay">0</span><span> đ</span></td>
+                            <td class="right"><h4><span id="repay">0</span><small> đ</small></h4></td>
                         </tr>
                         </tbody>
                     </table>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+            <div class="card card-outline card-warning">
+                <div class="card-header">
+                    <h3 class="card-title">Thông tin thanh toán</h3>
+                </div>
+                <div class="card-body" style="min-height: 615px;">
                     <div class="row">
                         <div class="left skin-line">
-                            <input type="checkbox" id="flag_print_receipt" disabled>
+                            <input type="checkbox" id="flag_print_receipt" checked>
                             <label for="flat-checkbox-1">In hóa đơn</label>
                         </div>
                     </div>
@@ -132,7 +134,6 @@
                 </div>
                 <!-- /.card-body -->
             </div>
-            <!-- /.card -->
         </div>
     </div>
 </section>
@@ -141,10 +142,8 @@
 <?php require_once('../../common/footer.php'); ?>
 <script type="text/javascript">
     $(document).ready(function () {
-
         set_title("Đổi sản phẩm");
-
-        $("#orderId").change(function () {
+        $("#search").change(function () {
             var orderId = $(this).val();
             console.log(orderId);
             find_order(orderId);
@@ -251,18 +250,18 @@
     });
 
     function exchangeBtn(e, noRow) {
-        $(e).parent().children("#productName_"+noRow).val("");
-        $(e).parent().children("#productName_"+noRow).removeClass("hidden");
-        $(e).parent().children("#productName_"+noRow).focus();
+        $(e).parent().children("#productName_" + noRow).val("");
+        $(e).parent().children("#productName_" + noRow).removeClass("hidden");
+        $(e).parent().children("#productName_" + noRow).focus();
         $(e).addClass("hidden");
-        $(e).parent().children("#cancelExchange_"+noRow).removeClass("hidden");
+        $(e).parent().children("#cancelExchange_" + noRow).removeClass("hidden");
     }
 
     function cancelExchangeBtn(e, noRow) {
-        $(e).parent().children("#productName_"+noRow).addClass("hidden");
-        $(e).parent().children("#productName_"+noRow).val("");
+        $(e).parent().children("#productName_" + noRow).addClass("hidden");
+        $(e).parent().children("#productName_" + noRow).val("");
         $(e).addClass("hidden");
-        $(e).parent().children("#exchange_"+noRow).removeClass("hidden");
+        $(e).parent().children("#exchange_" + noRow).removeClass("hidden");
     }
 
     function find_order(orderId) {
@@ -276,9 +275,9 @@
             },
             success: function (order) {
                 console.log(JSON.stringify(order));
-                $.each(order, function(key, value) {
+                $.each(order, function (key, value) {
                     console.log(value);
-                    if(value.length > 0) {
+                    if (value.length > 0) {
                         let details = value[0].details;
                         for (let i = 0; i < details.length; i++) {
                             let reduce = details[i].reduce;
@@ -306,28 +305,44 @@
                                 + '<td><span name="reduce" id="reduce_' + noRow + '">' + reduce + '</span></td>'
                                 + '<td><span class="intoMoney" id="intoMoney_' + noRow + '">' + details[i].intoMoney + ' <small> đ</small></span></td>'
                                 + '<td><button type="button" id="exchange_' + noRow + '" class="btn btn-info form-control" onclick="exchangeBtn(this, ' + noRow + ')" title="Đổi hàng"><i class="fas fa-sync"></i> Đổi hàng</button>'
-                                + '<button type="button" id="cancelExchange_' + noRow + '" class="btn btn-danger form-control hidden" onclick="cancelExchangeBtn(this, ' + noRow + ')" title="Hủy"><i class="fas fa-ban"></i> Hủy</button>'
-                                + '<input type="text" value="" placeholder="Nhập mã sản phẩm" id="productName_'+noRow+'" onchange="find_product(this, 1)" class="hidden form-control mt-2 mb-2">'
+                                + '<button type="button" id="cancelExchange_' + noRow + '" class="btn btn-danger form-control hidden" onclick="cancelExchangeBtn(this, ' + noRow + ')" title="Hủy đổi hàng"><i class="fas fa-ban"></i> Hủy</button>'
+                                + '<input type="text" value="" placeholder="Nhập mã sản phẩm" id="productName_' + noRow + '" onchange="find_product(this, 1, '+noRow+')" class="hidden form-control mt-2 mb-2">'
+                                + '<button type="button" id="del_' + noRow + '" onclick="del_product(this, '+noRow+')" class="btn btn-danger hidden form-control mt-2 mb-2" title="Xóa sản phẩm đổi"><i class="fas fa-trash"></i> Xóa</button>'
                                 + '</td>'
                                 + '</tr>');
                         }
-                        $("#productId").prop("disabled","");
-                        $("#discount").prop("disabled","");
-                        $("#voucher").prop("disabled","");
-                        $("#sel_payment").prop("disabled","");
-                        $("#payment").prop("disabled","");
+                        $("#productId").prop("disabled", "");
+                        $("#discount").prop("disabled", "");
+                        $("#voucher").prop("disabled", "");
+                        $("#sel_payment").prop("disabled", "");
+                        $("#payment").prop("disabled", "");
 
-                        $("#discount").val(value[0].discount);
+                        $("#discount").text(value[0].discount);
                         $("#totalReduce").text(value[0].total_reduce);
                         $("#totalCheckout").text(value[0].total_checkout);
-                        $("#sel_payment").val(value[0].payment_type);
-                        $("#payment").val(value[0].customer_payment);
                         $("#repay").text(value[0].repay);
+                        $("#payment").text(value[0].customer_payment);
+                        if(value[0].customer_payment != "" && value[0].customer_payment != 0) {
+                            switch (value[0].payment_type) {
+                                case 0:
+                                    $("#sel_payment").text("Tiền mặt");
+                                    break;
+                                case 1:
+                                    $("#sel_payment").text("Chuyển khoản");
+                                    break;
+                                case 2:
+                                    $("#sel_payment").text("Nợ");
+                                    break;
+                                default:
+                                    $("#sel_payment").text("Tiền mặt");
+                                    break;
+                            }
+                        }
                     } else {
                         Swal.fire({
                             type: 'error',
                             title: 'Đã xảy ra lỗi',
-                            text: "Không tìm thấy đơn hàng #"+orderId
+                            text: "Không tìm thấy đơn hàng #" + orderId
                         });
                         return;
                     }
@@ -347,6 +362,75 @@
         });
     }
 
+    function find_product(e, qty, noRow) {
+        let sku = $(e).val();
+        if (sku == "") {
+            return;
+        }
+        $.ajax({
+            url: '<?php echo __PATH__ . 'src/controller/sales/processCheckout.php' ?>',
+            type: "POST",
+            dataType: "json",
+            data: {
+                type: "find_product",
+                sku: sku
+            },
+            success: function (products) {
+                console.log(JSON.stringify(products));
+                var discount = products[0].discount;
+                if (discount == 0) {
+                    discount = "";
+                } else if (discount > 0 && discount < 100) {
+                    discount = discount + "%";
+                }
+                $(e).parent().parent().find("td:eq(1)").children(":first").addClass("old");
+                $(e).parent().parent().find("td:eq(1)").append('<input type="hidden" name="prodIdNew" id="prodId_new_' + noRow + '" class="form-control new" value="' + products[0].product_id + '">');
+                $(e).parent().parent().find("td:eq(2)").children(":first").addClass("old");
+                $(e).parent().parent().find("td:eq(2)").append('<input type="hidden" name="variantIdNew" id="variantId_new_' + noRow + '" class="form-control new" value="' + products[0].variant_id + '">');
+                $(e).parent().parent().find("td:eq(3)").children(":first").addClass("old");
+                $(e).parent().parent().find("td:eq(3)").append('<input type="hidden" name="skuNew" id="sku_new_' + noRow + '" class="form-control new" value="' + products[0].sku + '">');
+                $(e).parent().parent().find("td:eq(4)").children(":first").addClass("old");
+                $(e).parent().parent().find("td:eq(4)").append('<input type="hidden" name="orderDetailIdNew" id="orderDetailId_new_' + noRow + '" class="form-control new" value="' + products[0].order_detail_id + '">');
+                $(e).parent().parent().find("td:eq(5)").children(":first").addClass("old");
+                $(e).parent().parent().find("td:eq(5)").append('<span class="product-sku-new new" id="sku_new_' + noRow + '">' + products[0].sku + '</span>');
+                $(e).parent().parent().find("td:eq(6)").children(":first").addClass("old");
+                $(e).parent().parent().find("td:eq(6)").append('<span class="product-name new" id="name_new_' + noRow + '">' + products[0].name + '</span>');
+                $(e).parent().parent().find("td:eq(7)").children(":first").addClass("old");
+                $(e).parent().parent().find("td:eq(7)").append('<span class="size new" id="size_new_' + noRow + '">' + products[0].size + '</span>');
+                $(e).parent().parent().find("td:eq(8)").children(":first").addClass("old");
+                $(e).parent().parent().find("td:eq(8)").append('<span class="color new" id="color_new_' + noRow + '">' + products[0].color + '</span>');
+                $(e).parent().parent().find("td:eq(9)").children(":first").addClass("old");
+                $(e).parent().parent().find("td:eq(9)").append('<span class="retail new" id="price_new_' + noRow + '">' + products[0].retail + '</span> <small class="new"> đ</small>');
+                $(e).parent().parent().find("td:eq(10)").children(":first").addClass("old");
+                $(e).parent().parent().find("td:eq(10)").append('<input type="number" name="qtyNew" id="qty_new_' + noRow + '" class="new form-control" min="1" value="' + qty + '" onblur="on_change_qty(\'price_new_' + noRow + '\', \'qty_new_' + noRow + '\', \'intoMoney_new_' + noRow + '\', \'reduce_new_' + noRow + '\')">');
+                $(e).parent().parent().find("td:eq(11)").children(":first").addClass("old");
+                $(e).parent().parent().find("td:eq(11)").append('<input type="text" name="reduceNew" id="reduce_new_' + noRow + '" class="new form-control" value="' + discount + '" onblur="on_change_reduce(\'price_new_' + noRow + '\',\'qty_new_' + noRow + '\', \'intoMoney_new_' + noRow + '\', \'reduce_new_' + noRow + '\')">');
+                $(e).parent().parent().find("td:eq(12)").children(":first").addClass("old");
+                $(e).parent().parent().find("td:eq(12)").append('<span class="intoMoney new" id="intoMoney_new_' + noRow + '">' + products[0].retail + '</span> <small class="new"> đ</small>');
+                $(e).parent().find("[id=del_" + noRow + "]").removeClass("hidden");
+                $(e).addClass("hidden");
+                $(e).val("");
+                $(e).parent().find("[id=reduce_new_" + noRow + "]").trigger("change");
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                })
+            }
+        });
+    }
+
+    function del_product(e, noRow) {
+        $(e).parent().parent().find(".new").remove();
+        $(e).parent().parent().find(".old").removeClass();
+        $(e).addClass("hidden");
+        $(e).parent().find("[id=productName_" + noRow + "]").removeClass("hidden");
+        $(e).parent().find("[id=productName_" + noRow + "]").focus();
+    }
 
     function validate_form() {
         var noRow = $("#noRow").val();
@@ -841,104 +925,25 @@
         return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
     }
 
-    function find_product(e, qty) {
-        let sku = $(e).val();
-        if(sku == "") {
-            return;
-        }
-        $.ajax({
-            url: '<?php echo __PATH__ . 'src/controller/sales/processCheckout.php' ?>',
-            type: "POST",
-            dataType: "json",
-            data: {
-                type: "find_product",
-                sku: sku
-            },
-            success: function (products) {
-                var noRow = 0;
-                console.log(JSON.stringify(products));
-                var discount = products[0].discount;
-                if (discount == 0) {
-                    discount = "";
-                } else if (discount > 0 && discount < 100) {
-                    discount = discount + "%";
-                }
-                $(e).parent().parent().find("td:eq(5)").children(":first").addClass("old");
-                $(e).parent().parent().find("td:eq(5)").append('<br/><br/><span class="product-sku-new new" id="sku_new_1">' + products[0].sku + '</span>');
-                $(e).parent().parent().find("td:eq(6)").children(":first").addClass("old");
-                $(e).parent().parent().find("td:eq(6)").append('<br/><br/><span class="product-name new" id="name_">' + products[0].name + '</span>');
-                $(e).parent().parent().find("td:eq(7)").children(":first").addClass("old");
-                $(e).parent().parent().find("td:eq(7)").append('<br/><br/><span class="size new" id="size">' + products[0].size + '</span>');
-                $(e).parent().parent().find("td:eq(8)").children(":first").addClass("old");
-                $(e).parent().parent().find("td:eq(8)").append('<br/><br/><span class="color new" id="color">' + products[0].color + '</span>');
-                $(e).parent().parent().find("td:eq(9)").children(":first").addClass("old");
-                $(e).parent().parent().find("td:eq(9)").append('<br/><br/><span class="retail new" id="retail">' + products[0].retail + ' <small> đ</small></span>');
-                $(e).parent().parent().find("td:eq(10)").children(":first").addClass("old");
-                $(e).parent().parent().find("td:eq(10)").append('<br/><br/><input type="number" class="new" name="qty" id="qty_' + noRow + '" class="form-control" min="1" value="' + qty + '" onchange="on_change_qty(\'price_' + noRow + '\', \'qty_' + noRow + '\', \'intoMoney_' + noRow + '\', \'reduce_' + noRow + '\')">');
-                $(e).parent().parent().find("td:eq(11)").children(":first").addClass("old");
-                $(e).parent().parent().find("td:eq(11)").append('<br/><br/><input type="text" class="new" name="reduce" id="reduce_' + noRow + '" class="form-control" value="' + discount + '" onchange="on_change_reduce(\'price_' + noRow + '\',\'qty_' + noRow + '\', \'intoMoney_' + noRow + '\', \'reduce_' + noRow + '\')">');
-                $(e).parent().parent().find("td:eq(12)").children(":first").addClass("old");
-                $(e).parent().parent().find("td:eq(12)").append('<br/><br/><span class="intoMoney" id="intoMoney_' + noRow + '">' + products[0].retail + ' <small> đ</small></span>');
 
-                // if (products.length > 0) {
-                //     var discount = products[0].discount;
-                //     if (discount == 0) {
-                //         discount = "";
-                //     } else if (discount > 0 && discount < 100) {
-                //         discount = discount + "%";
-                //     }
-                //     var noRow = $("#noRow").val();
-                //     noRow = Number(noRow);
-                //     noRow++;
-                //     $("#noRow").val(noRow);
-                //     $("#tableProd tbody").append('<tr id="product-' + noRow + '">'
-                //         + '<td>' + noRow + '</td>'
-                //         + '<td class="hidden"><input type="hidden" name="prodId" id="prodId_' + noRow + '" class="form-control" value="' + products[0].product_id + '"></td>'
-                //         + '<td class="hidden"><input type="hidden" name="variantId" id="variantId_' + noRow + '" class="form-control" value="' + products[0].variant_id + '"></td>'
-                //         + '<td class="hidden"><input type="hidden" name="sku" id="sku_' + noRow + '" class="form-control" value="' + products[0].sku + '"></td>'
-                //         + '<td>' + products[0].sku + '</td>'
-                //         + '<td><span class="product-name" id="name_' + noRow + '">' + products[0].name + '</span></td>'
-                //         + '<td><span class="size" id="size_' + noRow + '">' + products[0].size + '</span></td>'
-                //         + '<td><span class="color" id="color_' + noRow + '">' + products[0].color + '</span></td>'
-                //         + '<td><span class="price" id="price_' + noRow + '">' + products[0].retail + '</span><span> đ</span></td>'
-                //         + '<td><input type="number" name="qty" id="qty_' + noRow + '" class="form-control" min="1" value="' + qty + '" onchange="on_change_qty(\'price_' + noRow + '\', \'qty_' + noRow + '\', \'intoMoney_' + noRow + '\', \'reduce_' + noRow + '\')"></td>'
-                //         + '<td><input type="text" name="reduce" id="reduce_' + noRow + '" class="form-control" value="' + discount + '" onchange="on_change_reduce(\'price_' + noRow + '\',\'qty_' + noRow + '\', \'intoMoney_' + noRow + '\', \'reduce_' + noRow + '\')"></td>'
-                //         + '<td><span class="intoMoney" id="intoMoney_' + noRow + '">' + products[0].retail + '</span><span> đ</span></td>'
-                //         + '<td><button type="button" class="btn btn-danger form-control add-new-prod" title="Xóa"  onclick="del_product(this, \'product-' + noRow + '\')"><i class="fa fa-trash" aria-hidden="true"></i> Xóa</button></td>'
-                //         + '</tr>');
-                //     $('[id=qty_' + noRow + ']').trigger("change");
-                // }
-            },
-            error: function (data, errorThrown) {
-                console.log(data.responseText);
-                console.log(errorThrown);
-                Swal.fire({
-                    type: 'error',
-                    title: 'Đã xảy ra lỗi',
-                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-                })
-            }
-        });
-    }
 
-    function del_product(e, p) {
-        Swal.fire({
-            title: 'Bạn có chắc chắn muốn xóa sản phẩm này?',
-            text: "",
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ok'
-        }).then((result) => {
-            if (result.value) {
-                $(e).closest("[id='" + p + "']").remove();
-                toastr.success('Sản phẩm đã được xóa.');
-                reloadData(calculateTotal, find_product);
-            }
-        })
-
-    }
+    // function del_product(e, p) {
+    //     Swal.fire({
+    //         title: 'Bạn có chắc chắn muốn xóa sản phẩm này?',
+    //         text: "",
+    //         type: 'warning',
+    //         showCancelButton: true,
+    //         confirmButtonColor: '#3085d6',
+    //         cancelButtonColor: '#d33',
+    //         confirmButtonText: 'Ok'
+    //     }).then((result) => {
+    //         if (result.value) {
+    //             $(e).closest("[id='" + p + "']").remove();
+    //             toastr.success('Sản phẩm đã được xóa.');
+    //             reloadData(calculateTotal, find_product);
+    //         }
+    //     })
+    // }
 
     function reloadData(calculateTotal, find_product) {
         $("#noRow").val(0);
@@ -971,14 +976,14 @@
     }
 
     function on_change_reduce(priceId, qtyId, intoMoneyId, reduceId) {
-        var price = get_price(priceId);
-        var qty = get_qty(qtyId);
+        let price = get_price(priceId);
+        let qty = get_qty(qtyId);
         if (!validateQty(qty, qtyId)) {
             disableCheckOutBtn();
             // validate_form();
             return;
         }
-        var reduce = $("[id=" + reduceId + "]").val();
+        let reduce = $("[id=" + reduceId + "]").val();
         reduce = replaceComma(reduce);
         if (reduce.indexOf("%") > -1) {
             reduce = replacePercent(reduce);
@@ -1012,11 +1017,9 @@
 
         }
 
-        // enableCheckOutBtn();
-        //  validate_form();
-        var intoMoney = price * qty - reduce;
+        let intoMoney = price * qty - reduce;
         $("[id=" + intoMoneyId + "]").text(formatNumber(intoMoney));
-        calculateTotal();
+        //calculateTotal();
     }
 
     function validateNumber(value, id) {
@@ -1047,7 +1050,7 @@
         var intoMoney = price * qty;
         $("[id=" + intoMoneyId + "]").text(formatNumber(intoMoney));
         $("[id=" + reduceId + "]").trigger("change");
-        calculateTotal();
+        // calculateTotal();
     }
 
 
@@ -1058,7 +1061,7 @@
     }
 
     function get_price(priceId) {
-        var price = replaceComma($("[id=" + priceId + "]").text());
+        let price = replaceComma($("[id=" + priceId + "]").text());
         price = price == "" ? 0 : Number(price);
         return price;
     }
@@ -1067,12 +1070,12 @@
         if (qty <= 0 || !Number.isInteger(qty)) {
             $("[id=" + qtyId + "]").addClass("is-invalid");
             // disableCheckOutBtn();
-            validate_form();
+            // validate_form();
             return false;
         } else {
             $("[id=" + qtyId + "]").removeClass("is-invalid");
             // enableCheckOutBtn();
-            validate_form();
+            // validate_form();
             return true;
         }
     }
