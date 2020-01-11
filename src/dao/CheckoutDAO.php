@@ -96,7 +96,8 @@ class CheckoutDAO
                             a.customer_payment,
                             a.repay,
                             e.size,
-                            e.color
+                            e.color,
+                            a.order_date
                         from smi_orders a left join smi_order_detail b on a.id = b.order_id
                         inner join smi_products d on b.product_id = d.id
                         inner join smi_variations e on b.variant_id = e.id
@@ -142,6 +143,7 @@ class CheckoutDAO
                             'total_reduce' => number_format($row["total_reduce"]),
                             'customer_payment' => number_format($row["customer_payment"]),
                             'repay' => number_format($row["repay"]),
+                            'order_date' => date_format(date_create($row["order_date"]), "d/m/Y - H:i:s"),
                             'details' => array()
                         );
                     }

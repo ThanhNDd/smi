@@ -62,6 +62,12 @@
                                 <p>Kiểm hàng</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="<?php echo __PATH__ ?>src/view/exchange/" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Đổi hàng</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
             </ul>

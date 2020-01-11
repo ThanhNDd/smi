@@ -18,7 +18,22 @@
             width: 100%;
         }
         .new {
-            font-size: x-large;
+            font-size: large;
+        }
+        .checkout .h4, h4 {
+            font-size: 1.5rem;
+            vertical-align: middle;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .checkout .table th, .table td {
+            /* padding: 0 !important; */
+            vertical-align: middle !important;
+            border-bottom: 1px solid #dee2e6 !important;
+            border-top: none !important;
+        }
+        .gray {
+            color: gray;
         }
     </style>
 </head>
@@ -33,8 +48,17 @@
                 </div>
                 <div class="card-body" style="min-height: 760px;">
                     <div class="row" style="margin-bottom: 10px;">
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <input class="form-control" id="orderId" type="text" autofocus="autofocus" autocomplete="off" placeholder="Nhập mã đơn hàng">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <h3 id="orderInfo" class="hidden"></h3>
+                            <span id="orderDate" class="hidden"></span>
+                        </div>
+                        <div class="col-md-3 mt-2 mb-2">
+                            <input class="form-control" id="productId" type="text" autocomplete="off" placeholder="Nhập mã sản phẩm">
                         </div>
                     </div>
                     <input type="hidden" id="noRow" value="0">
@@ -48,10 +72,10 @@
                             <th class="w200">Tên sản phẩm</th>
                             <th class="w30">Size</th>
                             <th class="w50">Màu</th>
-                            <th class="w100">Đơn giá</th>
-                            <th class="w80">Số lượng</th>
+                            <th class="w110">Đơn giá</th>
+                            <th class="w80">SL</th>
                             <th class="w100">Giảm trừ</th>
-                            <th class="w100">Thành tiền</th>
+                            <th class="w110">Thành tiền</th>
                             <th class="w100">Hành động</th>
                         </tr>
                         </thead>
@@ -63,62 +87,67 @@
             </div>
             <!-- /.card -->
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 checkout">
             <div class="card card-outline card-warning">
                 <div class="card-header">
                     <h3 class="card-title">Thông tin thanh toán</h3>
                 </div>
-                <div class="card-body" style="min-height: 615px;">
+                <div class="card-body" style="min-height: 580px;padding: 0 20px;">
                     <table class="table table-hover">
                         <tbody>
                         <tr>
-                            <td class="right w90">Tổng tiền</td>
-                            <td class="right"><h4><span id="totalAmount">0</span> <small> đ</small></h4></td>
+                            <td class="right w90 p-0 gray">Tổng tiền</td>
+                            <td class="right p-0 gray"><h4><span id="totalAmount">0</span> <small> đ</small></h4></td>
                         </tr>
                         <tr>
-                            <td class="right">Khuyến mãi</td>
-                            <td class="right w110">
+                            <td class="right p0 gray">Khuyến mãi</td>
+                            <td class="right w110 p-0 gray">
                                 <h4><span id="discount">0</span> <small> đ</small></h4>
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="2" class="left voucher_info hidden">
+                            <td colspan="2" class="left voucher_info hidden p0">
                                 <input type="hidden" id="vcFlag" value="0">
                                 <input type="hidden" id="vcCode" value="">
                                 <span class="msg"></span>
                             </td>
                         </tr>
                         <tr>
-                            <td class="right">Tổng Giảm trừ</td>
-                            <td class="right">
+                            <td class="right p-0 gray">Tổng Giảm trừ</td>
+                            <td class="right p-0 gray">
                                 <h4><span id="totalReduce">0</span> <small> đ</small></h4></td>
                         </tr>
                         <tr>
-                            <td class="right">Tổng thanh toán</td>
-                            <td class="right" style="color:red;"><h2><strong id="totalCheckout">0</strong> <small> đ</small></h2></td>
+                            <td class="right p-0 gray">Tổng thanh toán</td>
+                            <td class="right p-0 gray"><h4><strong id="totalCheckout">0</strong> <small> đ</small></h4></td>
                         </tr>
                         <tr>
-                            <td class="right">Khách thanh toán</td>
-                            <td class="right">
+                            <td class="right p-0 gray">Khách thanh toán</td>
+                            <td class="right p-0 gray">
                                 <h4><span id="payment">0</span> <small> đ</small></h4>
                                 <span id="sel_payment"></span>
                             </td>
                         </tr>
                         <tr>
-                            <td class="right">Trả lại</td>
-                            <td class="right"><h4><span id="repay">0</span><small> đ</small></h4></td>
+                            <td class="right p-0 gray">Trả lại</td>
+                            <td class="right p-0 gray"><h4><span id="repay">0</span><small> đ</small></h4></td>
+                        </tr>
+                        <tr>
+                            <td class="left p-0">Khách trả thêm</td>
+                            <td class="right p-0"><h4><span id="repay">100,000</span><small> đ</small></h4></td>
+                        </tr>
+                        <tr>
+                            <td class="left p-0">Giảm trừ</td>
+                            <td class="right pt-2 pr-0">
+                                <input type="text" class="form-control" name="discountNew" id="discountNew" placeholder="Số tiền" width="100px">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="left p-0">Tổng</td>
+                            <td class="right p-0"><h4><span id="repay">104,580</span><small> đ</small></h4></td>
                         </tr>
                         </tbody>
                     </table>
-                </div>
-                <!-- /.card-body -->
-            </div>
-            <!-- /.card -->
-            <div class="card card-outline card-warning">
-                <div class="card-header">
-                    <h3 class="card-title">Thông tin thanh toán</h3>
-                </div>
-                <div class="card-body" style="min-height: 615px;">
                     <div class="row">
                         <div class="left skin-line">
                             <input type="checkbox" id="flag_print_receipt" checked>
@@ -143,11 +172,12 @@
 <script type="text/javascript">
     $(document).ready(function () {
         set_title("Đổi sản phẩm");
-        $("#search").change(function () {
+        $("#orderId").change(function () {
             var orderId = $(this).val();
             console.log(orderId);
             find_order(orderId);
             $(this).val("");
+            $(this).addClass("hidden");
         });
 
         $("#productId").change(function () {
@@ -317,6 +347,10 @@
                         $("#sel_payment").prop("disabled", "");
                         $("#payment").prop("disabled", "");
 
+                        $("#orderInfo").text("Thông tin hoá đơn #"+orderId);
+                        $("#orderInfo").removeClass("hidden");
+                        $("#orderDate").text("Ngày mua hàng: "+value[0].order_date);
+                        $("#orderDate").removeClass("hidden");
                         $("#discount").text(value[0].discount);
                         $("#totalReduce").text(value[0].total_reduce);
                         $("#totalCheckout").text(value[0].total_checkout);
