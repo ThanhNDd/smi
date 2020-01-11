@@ -150,7 +150,8 @@ class CheckoutDAO
 
                     $qty = $row["quantity"];
                     $price = $row["price"];
-                    $intoMoney = $qty * $price;
+                    $reduce = $row["reduce"];
+                    $intoMoney = $qty * ($price - $reduce);
                     $detail = array(
                         'order_detail_id' => $row["order_detail_id"],
                         'product_id' => $row["product_id"],
@@ -171,7 +172,8 @@ class CheckoutDAO
                 } else {
                     $qty = $row["quantity"];
                     $price = $row["price"];
-                    $intoMoney = $qty * $price;
+                    $reduce = $row["reduce"];
+                    $intoMoney = $qty * ($price - $reduce);
                     $detail = array(
                         'order_detail_id' => $row["order_detail_id"],
                         'product_id' => $row["product_id"],
