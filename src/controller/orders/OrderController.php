@@ -145,6 +145,18 @@ if(isset($_GET["method"]) && $_GET["method"]=="find_all")   {
 		throw new Exception($e);
 	}
 }
+if(isset($_POST["method"]) && $_POST["method"]=="find_detail")   {
+	$start_date = $_POST["start_date"];
+	$end_date = $_POST["end_date"];
+	$order_id = $_POST["order_id"];
+	try {
+		$orders = $checkoutDAO->find_detail($start_date, $end_date, $order_id);
+		echo json_encode($orders);
+	} catch(Exception $e)
+	{
+		throw new Exception($e);
+	}
+}
 // if(isset($_GET["method"]) && $_GET["method"]=="get_order_detail_by_order_id")   {
 // 	$order_id = $_GET["order_id"];
 // 	try {

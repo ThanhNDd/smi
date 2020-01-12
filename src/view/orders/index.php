@@ -316,6 +316,9 @@
             var tr = $(this).closest('tr');
             var tdi = tr.find("i.fa");
             var row = table.row(tr);
+            let order_id = row.data().order_id;
+            let start_date = $("#startDate").val();
+            let end_date = $("#endDate").val();
             if (row.child.isShown()) {
                 // This row is already open - close it
                 row.child.hide();
@@ -324,10 +327,41 @@
                 tdi.first().addClass('fa-plus-square');
             } else {
                 // Open this row
-                row.child(format_order_detail(row.data())).show();
-                tr.addClass('shown');
-                tdi.first().removeClass('fa-plus-square');
-                tdi.first().addClass('fa-minus-square');
+                // row.child(format_order_detail(row.data())).show();
+                $.ajax({
+                    url: '<?php echo __PATH__ . 'src/controller/orders/OrderController.php' ?>',
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        method: "find_detail",
+                        order_id: order_id,
+                        start_date: start_date,
+                        end_date: end_date
+                    },
+                    success: function (res) {
+                        console.log(res);
+                        let data = res.data;
+                        // let details = res[0].details;
+                        if(data.length > 0) {
+                            row.child(format_order_detail(data[0])).show();
+                            tr.addClass('shown');
+                            tdi.first().removeClass('fa-plus-square');
+                            tdi.first().addClass('fa-minus-square');
+                        }
+                        
+                    },
+                    error: function (data, errorThrown) {
+                        console.log(data.responseText);
+                        console.log(errorThrown);
+                        Swal.fire({
+                            type: 'error',
+                            title: 'Đã xảy ra lỗi',
+                            text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                        })
+                        hide_loading();
+                    }
+                });
+                
             }
             event.preventDefault();
         });
@@ -526,6 +560,10 @@
                 toastr.error('Đã xảy ra lỗi.');
             }
         });
+    }
+
+    function find_detail() {
+
     }
 
     function format_order_detail(data) {

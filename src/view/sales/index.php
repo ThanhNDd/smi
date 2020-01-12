@@ -499,10 +499,10 @@
  		}
  		var totalCheckout = replaceComma($("#totalCheckout").text());
  		payment = replaceComma(payment);
- 		// if(payment !== "" && payment < 1000)
- 		// {
- 		// 	payment += "000";
- 		// }
+ 		if(payment !== "" && payment < 1000)
+ 		{
+ 			payment += "000";
+ 		}
  		$("#payment").val(formatNumber(payment));
  		if(payment != "" && Number(totalCheckout) > 0 && Number(payment) < Number(totalCheckout)) {
  			$("#payment").addClass("is-invalid");

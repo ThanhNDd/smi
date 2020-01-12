@@ -67,6 +67,7 @@ if(isset($_POST["type"]) && $_POST["type"]=="checkout")   {
         if(empty($orderId)) {
             throw new Exception("Cannot insert order");
         } else {
+            $detailsObj = array();
             $details = $data->details;
             for($i=0; $i<count($details); $i++)
             {
@@ -102,6 +103,8 @@ if(isset($_POST["type"]) && $_POST["type"]=="checkout")   {
                 $detail->setReduce(empty($details[$i]->reduce) ? 0 : $details[$i]->reduce);
                 $detail->setReduce_percent($reduce_percent);
                 $checkout_dao->saveOrderDetail($detail);
+                $detail->setProductName($details[$i]->product_name);
+                array_push($detailsObj, $detail);
                 if(!empty($details[$i]->sku)) {
                     $dao->update_quantity_by_sku((int) $details[$i]->sku, (int) $details[$i]->quantity);
                 } else
@@ -124,7 +127,8 @@ if(isset($_POST["type"]) && $_POST["type"]=="checkout")   {
                 } else {
                     $printer = new PrinterReceiptExchange();
                 }
-                $filename = $printer->print($order, $details);
+                
+                $filename = $printer->print($order, $detailsObj);
                 $response_array['fileName'] = $filename;
             }  
             $response_array['orderId'] = $orderId;  

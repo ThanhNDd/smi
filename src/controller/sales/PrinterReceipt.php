@@ -152,17 +152,22 @@ class PrinterReceipt
         $c = 0;
         foreach($details as $key => $value)
         {
-            $intoMoney = $value->getPrice()*$value->getQuantity() - (empty($value->getReduce()) ? 0 : $value->getReduce());
+            $reduce = $value->getReduce();
+            $reduce_percent = 0;
+            if(!empty($reduce)) {
+                $reduce_percent = round($reduce*100/$value->getPrice());
+            }
+            $intoMoney = $value->getPrice() * $value->getQuantity() - $reduce;
             $c++;
             $body .= '<tr>
                         <td class="center">'.$c.'</td>
-                        <td colspan="4" class="left">'.$value->getProductId().'</td>
+                        <td colspan="4" class="left">'.$value->getProductName().'</td>
                     </tr>
                     <tr>
                         <td class="left"></td>
                         <td class="center">'.$value->getQuantity().'</td>
                         <td class="right">'.number_format($value->getPrice()).'</td>
-                        <td class="right">'.((!empty($value->getReducePercent()) && $value->getReducePercent() != 0) ? ("-".$value->getReducePercent()."%") : "").'</td>
+                        <td class="right">'."-".$reduce_percent."%".'</td>
                         <td class="right">'.number_format($intoMoney).'</td>
                     </tr>';
         }
@@ -189,7 +194,7 @@ class PrinterReceipt
                             </tr>
                             <tr>
                                 <td colspan="4" class="right">Giảm trên tổng đơn:</td>
-                                <td class="right">'.($order->getDiscount() < 100 ? $order->getDiscount()."%" : number_format($order->getDiscount())).'</td>
+                                <td class="right">'.($order->getDiscount() > 0 && $order->getDiscount() < 100 ? $order->getDiscount()."%" : number_format($order->getDiscount())).'</td>
                             </tr>
                             <tr>
                                 <td colspan="4" class="right">Tổng Giảm trừ:</td>

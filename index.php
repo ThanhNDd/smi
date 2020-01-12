@@ -1,5 +1,4 @@
 <?php
-require_once("common.php");
 
-header("Location: /src/sales/");
+header("Location: /smi/src/view/sales/");
 die();

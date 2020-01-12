@@ -9,6 +9,7 @@ class OrderDetail {
     private $quantity;
     private $reduce;
     private $reduce_percent;
+    private $product_name;
 
     /**
      * Get the value of id
@@ -186,6 +187,26 @@ class OrderDetail {
     public function setSku($sku)
     {
         $this->sku = $sku;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of product_name
+     */
+    public function getProductName()
+    {
+        return $this->product_name;
+    }
+
+    /**
+     * Set the value of product_name
+     *
+     * @return  self
+     */
+    public function setProductName($product_name)
+    {
+        $this->product_name = $product_name;
 
         return $this;
     }
