@@ -6,6 +6,7 @@ include("../../dao/VoucherDAO.php");
 include("../../model/Order/Order.php");
 include("../../model/Order/OrderDetail.php");
 include("PrinterReceipt.php");
+include("../exchange/PrinterReceiptExchange.php");
 
 $db = new DBConnect();
 
@@ -59,8 +60,10 @@ if(isset($_POST["type"]) && $_POST["type"]=="checkout")   {
         $order->setStatus(3);// order completed
         $order->setVoucherCode($data->voucher_code);
         $order->setVoucherValue($data->voucher_value);
+        $order->setOrderRefer($data->current_order_id);
+        $order->setPaymentExchangeType($data->payment_exchange_type);
         $orderId = $checkout_dao->saveOrder($order);
-        $order->setId($orderId);     
+        $order->setId($orderId);
         if(empty($orderId)) {
             throw new Exception("Cannot insert order");
         } else {
@@ -100,10 +103,10 @@ if(isset($_POST["type"]) && $_POST["type"]=="checkout")   {
                 $detail->setReduce_percent($reduce_percent);
                 $checkout_dao->saveOrderDetail($detail);
                 if(!empty($details[$i]->sku)) {
-                    $dao->update_quantity_by_sku($details[$i]->sku, $details[$i]->quantity);
+                    $dao->update_quantity_by_sku((int) $details[$i]->sku, (int) $details[$i]->quantity);
                 } else
                 {
-                    throw new Exception("Cannot update quantity by SKU");
+                    throw new Exception("SKU is empty");
                 }
             }  
             if(!empty($data->voucher_code)) {
@@ -114,10 +117,15 @@ if(isset($_POST["type"]) && $_POST["type"]=="checkout")   {
                 }
             }
             // printer receipt
-            if($data->flag_print_receipt) {        
-                $printer = new PrinterReceipt();
-                $filename = $printer->print($order, $details);         
-                $response_array['fileName'] = $filename; 
+            if($data->flag_print_receipt) {
+                $order_type = $order->getType();
+                if($order_type == 1) {
+                    $printer = new PrinterReceipt();
+                } else {
+                    $printer = new PrinterReceiptExchange();
+                }
+                $filename = $printer->print($order, $details);
+                $response_array['fileName'] = $filename;
             }  
             $response_array['orderId'] = $orderId;  
             echo json_encode($response_array);

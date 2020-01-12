@@ -4,7 +4,7 @@ date_default_timezone_set('Asia/Ho_Chi_Minh');
 /**
  * 
  */
-class PrinterReceipt
+class PrinterReceiptExchange
 {   
     function __construct()
     {
@@ -25,7 +25,7 @@ class PrinterReceipt
             $html .= $this->getBody($details);
             $html .= $this->getFooter($order);
 
-            // echo $html;
+            echo $html;
 
             $mpdf->SetDisplayMode('real');
             $mpdf->SetDisplayPreferences('/FitWindow/NoPrintScaling');

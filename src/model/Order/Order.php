@@ -21,6 +21,8 @@ class Order {
     private $order_date;
     private $voucher_code;
     private $voucher_value;
+    private $order_refer;
+    private $payment_exchange_type;
     private $created_date;
     private $updated_date;
 
@@ -472,6 +474,38 @@ class Order {
     public function setVoucherValue($voucher_value)
     {
         $this->voucher_value = $voucher_value;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOrderRefer()
+    {
+        return $this->order_refer;
+    }
+
+    /**
+     * @param mixed $order_refer
+     */
+    public function setOrderRefer($order_refer): void
+    {
+        $this->order_refer = $order_refer;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPaymentExchangeType()
+    {
+        return $this->payment_exchange_type;
+    }
+
+    /**
+     * @param mixed $payment_exchange_type
+     */
+    public function setPaymentExchangeType($payment_exchange_type): void
+    {
+        $this->payment_exchange_type = $payment_exchange_type;
     }
 
 }

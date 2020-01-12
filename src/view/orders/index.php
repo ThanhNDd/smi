@@ -619,7 +619,7 @@
     }
 
     function format_action(data) {
-        var content = '';
+        let content = '';
         // online
         // if (data.type == 1) {
             content += '<a href="javascript:void(0);" class="print_receipt mr-1 text-info" title="In hoá đơn"><i class="fa fa-print"></i></a>';
@@ -631,13 +631,16 @@
     }
 
     function format_type(data) {
-        var type = data.type;
+        let type = data.type;
         switch (type) {
             case '0' :
                 return '<span class="badge badge-warning">Shop</span>';
                 break;
             case '1':
                 return '<span class="badge badge-success">Online</span>';
+                break;
+            case '2':
+                return '<span class="badge badge-secondary">Đổi hàng</span>';
                 break;
             default:
                 return '';

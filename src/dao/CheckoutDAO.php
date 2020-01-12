@@ -434,7 +434,7 @@ class CheckoutDAO
                         'price' => number_format($price),
                         'reduce' => number_format($qty * $reduce),
                         'intoMoney' => number_format($intoMoney),
-                        'profit' => number_format($row["profit"] * $qty)
+                        'profit' => number_format($row["profit"] * $qty - $reduce)
                     );
                     array_push($order['details'], $detail);
                     array_push($data, $order);
@@ -454,9 +454,9 @@ class CheckoutDAO
                         'color' => $row["color"],
                         'quantity' => $qty,
                         'price' => number_format($price),
-                        'reduce' => number_format($reduce),
+                        'reduce' => number_format($qty * $reduce),
                         'intoMoney' => number_format($intoMoney),
-                        'profit' => number_format($row["profit"])
+                        'profit' => number_format($row["profit"] * $qty - $reduce)
                     );
                     array_push($data[$i - 1]['details'], $detail);
                 }
@@ -489,6 +489,8 @@ class CheckoutDAO
             $payment_type = $order->getPayment_type();
             $voucher_code = $order->getVoucherCode();
             $voucher_value = $order->getVoucherValue();
+            $orderRefer = $order->getOrderRefer();
+            $paymentExchangeType = $order->getPaymentExchangeType();
             $stmt = $this->getConn()->prepare("insert into smi_orders (
                     `total_reduce`,
                     `total_reduce_percent`,
@@ -508,15 +510,17 @@ class CheckoutDAO
                     `voucher_code`,
                     `voucher_value`,
                     `order_date`,
-                    `created_date`) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,NOW(),NOW())");
-            $stmt->bind_param("ddddddidiisddsisd", $total_reduce, $total_reduce_percent, $discount, $total_amount, $total_checkout, $customer_payment, $payment_type, $repay, $customer_id, $type, $bill, $shipping_fee, $shipping, $shipping_unit, $status, $voucher_code, $voucher_value);
+                    `created_date`,
+                    `order_refer`,
+                    `payment_exchange_type`) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(),NOW())");
+            $stmt->bind_param("ddddddidiisddsisdii", $total_reduce, $total_reduce_percent, $discount, $total_amount, $total_checkout, $customer_payment, $payment_type, $repay, $customer_id, $type, $bill, $shipping_fee, $shipping, $shipping_unit, $status, $voucher_code, $voucher_value, $orderRefer, $paymentExchangeType);
             $stmt->execute();
             // var_dump($this->getConn()->error);
             //You can get the number of rows affected by your query
             $nrows = $stmt->affected_rows;
             if (!$nrows) {
-                throw new Exception("Update  has failure!!!");
+                throw new Exception("saveOrder has failure!!!");
             }
             $lastid = mysqli_insert_id($this->conn);
             return $lastid;

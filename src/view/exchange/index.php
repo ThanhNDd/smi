@@ -55,6 +55,7 @@
                         <div class="col-md-3">
                             <input class="form-control" id="orderId" type="text" autofocus="autofocus"
                                    autocomplete="off" placeholder="Nhập mã đơn hàng">
+                            <input type="hidden" id="currentOrderId">
                         </div>
                     </div>
                     <div class="row">
@@ -101,7 +102,7 @@
                 <div class="card-header">
                     <h3 class="card-title">Thông tin thanh toán</h3>
                 </div>
-                <div class="card-body" style="min-height: 580px;padding: 0 20px;">
+                <div class="card-body" style="height: 760px;padding: 0 20px;">
                     <table class="table table-hover">
                         <tbody>
                         <tr>
@@ -172,7 +173,7 @@
                             <td class="left p-0">Giảm trừ</td>
                             <td class="right pt-2 pr-0">
                                 <input type="text" class="form-control" name="discount_new" id="discount_new"
-                                       placeholder="Số tiền" width="100px">
+                                       placeholder="Số tiền" width="100px" disabled>
                             </td>
                         </tr>
                         <tr>
@@ -186,12 +187,12 @@
                         <tr>
                             <td class="right">Khách thanh toán</td>
                             <td class="right">
-                                <select class="form-control" name="sel_payment_new" id="sel_payment_new">
+                                <select class="form-control" name="sel_payment_new" id="sel_payment_new" disabled>
                                     <option value="0" selected="selected">Tiền mặt</option>
                                     <option value="1">Chuyển khoản</option>
                                     <option value="2">Nợ</option>
                                 </select>
-                                <input type="text" class="form-control mt-2" name="payment_new" id="payment_new" width="100px"
+                                <input type="text" class="form-control mt-2" name="payment_new" id="payment_new" width="100px" disabled
                                        style="text-align: right;">
 
                             </td>
@@ -227,11 +228,13 @@
     $(document).ready(function () {
         set_title("Đổi sản phẩm");
         $("#orderId").change(function () {
-            var orderId = $(this).val();
+            let orderId = $(this).val();
             console.log(orderId);
+            if(orderId == "") {
+                return;
+            }
+            $("#currentOrderId").val(orderId);
             find_order(orderId);
-            $(this).val("");
-            $(this).addClass("hidden");
         });
 
         $("#cancel_exchange").on("click", function () {
@@ -380,6 +383,8 @@
                 $.each(order, function (key, value) {
                     console.log(value);
                     if (value.length > 0) {
+                        $("#orderId").val("");
+                        $("#orderId").addClass("hidden");
                         let details = value[0].details;
                         for (let i = 0; i < details.length; i++) {
                             let price = replaceComma(details[i].price);
@@ -490,58 +495,63 @@
             },
             success: function (products) {
                 console.log(JSON.stringify(products));
-                let retail = products[0].retail;
-                retail = replaceComma(retail);
-                let into_money = 0;
-                let discount = products[0].discount;
-                if (discount == 0) {
-                    discount = "";
-                } else if (discount > 0 && discount < 100) {
-                    into_money = Number(retail) - Number(retail)*Number(discount)/100;
-                    discount = discount + "%";
+                if(products.length > 0) {
+                    let retail = products[0].retail;
+                    retail = replaceComma(retail);
+                    let into_money = 0;
+                    let discount = products[0].discount;
+                    if (discount == 0) {
+                        discount = "";
+                    } else if (discount > 0 && discount < 100) {
+                        into_money = Number(retail) - Number(retail)*Number(discount)/100;
+                        discount = discount + "%";
+                    } else {
+                        discount = replaceComma(discount);
+                        into_money = retail - discount;
+                    }
+                    $(e).parent().parent().find("td:eq(1)").children(":first").addClass("old");
+                    $(e).parent().parent().find("td:eq(1)").append('<input type="hidden" name="prodIdNew" id="prodId_new_' + noRow + '" class="form-control new" value="' + products[0].product_id + '">');
+                    $(e).parent().parent().find("td:eq(2)").children(":first").addClass("old");
+                    $(e).parent().parent().find("td:eq(2)").append('<input type="hidden" name="variantIdNew" id="variantId_new_' + noRow + '" class="form-control new" value="' + products[0].variant_id + '">');
+                    $(e).parent().parent().find("td:eq(3)").children(":first").addClass("old");
+                    $(e).parent().parent().find("td:eq(3)").append('<input type="hidden" name="skuNew" id="sku_new_' + noRow + '" class="form-control new" value="' + products[0].sku + '">');
+                    $(e).parent().parent().find("td:eq(4)").children(":first").addClass("old");
+                    $(e).parent().parent().find("td:eq(4)").append('<input type="hidden" name="orderDetailIdNew" id="orderDetailId_new_' + noRow + '" class="form-control new" value="' + products[0].order_detail_id + '">');
+                    $(e).parent().parent().find("td:eq(5)").children(":first").addClass("old");
+                    $(e).parent().parent().find("td:eq(5)").append('<span class="product-sku-new new" id="sku_new_' + noRow + '">' + products[0].sku + '</span>');
+                    $(e).parent().parent().find("td:eq(6)").children(":first").addClass("old");
+                    $(e).parent().parent().find("td:eq(6)").append('<span class="product-name-new new" id="name_new_' + noRow + '">' + products[0].name + '</span>');
+                    $(e).parent().parent().find("td:eq(7)").children(":first").addClass("old");
+                    $(e).parent().parent().find("td:eq(7)").append('<span class="size-new new" id="size_new_' + noRow + '">' + products[0].size + '</span>');
+                    $(e).parent().parent().find("td:eq(8)").children(":first").addClass("old");
+                    $(e).parent().parent().find("td:eq(8)").append('<span class="color-new new" id="color_new_' + noRow + '">' + products[0].color + '</span>');
+                    $(e).parent().parent().find("td:eq(9)").children(":first").addClass("old");
+                    $(e).parent().parent().find("td:eq(9)").append('<span class="price-new new" id="price_new_' + noRow + '">' + products[0].retail + '</span> <small class="new"> đ</small>');
+                    $(e).parent().parent().find("td:eq(10)").children(":first").addClass("old");
+                    $(e).parent().parent().find("td:eq(10)").append('<input type="number" name="qtyNew" id="qty_new_' + noRow + '" class="new form-control" min="1" value="' + qty + '" onblur="on_change_qty(\'price_new_' + noRow + '\', \'qty_new_' + noRow + '\', \'intoMoney_new_' + noRow + '\', \'reduce_new_' + noRow + '\')">');
+                    $(e).parent().parent().find("td:eq(11)").children(":first").addClass("old");
+                    $(e).parent().parent().find("td:eq(11)").append('<input type="text" name="reduceNew" id="reduce_new_' + noRow + '" class="new form-control" value="' + discount + '" onblur="on_change_reduce(\'price_new_' + noRow + '\',\'qty_new_' + noRow + '\', \'intoMoney_new_' + noRow + '\', \'reduce_new_' + noRow + '\')">');
+                    $(e).parent().parent().find("td:eq(12)").children(":first").addClass("old");
+                    let into_money_old = $(e).parent().parent().find("td:eq(12)").children(":first").text();
+                    into_money_old = replaceComma(into_money_old);
+                    into_money_old = into_money_old.replace("đ","");
+                    let diff_money = into_money - into_money_old;
+                    let style = "color: gray;";
+                    if(diff_money > 0 ) {
+                        style = "color: green;";
+                    } else if(diff_money < 0 ) {
+                        style = "color: red;";
+                    }
+                    $(e).parent().parent().find("td:eq(12)").append('<div><span class="intoMoney new" id="intoMoney_new_' + noRow + '">' + formatNumber(into_money) + '</span> <small class="new"> đ</small></div>');
+                    $(e).parent().parent().find("td:eq(12)").append('<div class="old diff_money" style="'+style+'"><span id="diff_money_new_' + noRow + '">' + formatNumber(diff_money) + '</span> <small> đ</small></div>');
+                    $(e).parent().find("[id=del_" + noRow + "]").removeClass("hidden");
+                    $(e).addClass("hidden");
+                    $(e).val("");
+                    calculateTotal();
+                    $("#checkout").prop("disabled", "");
                 } else {
-                    discount = replaceComma(discount);
-                    into_money = retail - discount;
+                    $("#checkout").prop("disabled", true);
                 }
-                $(e).parent().parent().find("td:eq(1)").children(":first").addClass("old");
-                $(e).parent().parent().find("td:eq(1)").append('<input type="hidden" name="prodIdNew" id="prodId_new_' + noRow + '" class="form-control new" value="' + products[0].product_id + '">');
-                $(e).parent().parent().find("td:eq(2)").children(":first").addClass("old");
-                $(e).parent().parent().find("td:eq(2)").append('<input type="hidden" name="variantIdNew" id="variantId_new_' + noRow + '" class="form-control new" value="' + products[0].variant_id + '">');
-                $(e).parent().parent().find("td:eq(3)").children(":first").addClass("old");
-                $(e).parent().parent().find("td:eq(3)").append('<input type="hidden" name="skuNew" id="sku_new_' + noRow + '" class="form-control new" value="' + products[0].sku + '">');
-                $(e).parent().parent().find("td:eq(4)").children(":first").addClass("old");
-                $(e).parent().parent().find("td:eq(4)").append('<input type="hidden" name="orderDetailIdNew" id="orderDetailId_new_' + noRow + '" class="form-control new" value="' + products[0].order_detail_id + '">');
-                $(e).parent().parent().find("td:eq(5)").children(":first").addClass("old");
-                $(e).parent().parent().find("td:eq(5)").append('<span class="product-sku-new new" id="sku_new_' + noRow + '">' + products[0].sku + '</span>');
-                $(e).parent().parent().find("td:eq(6)").children(":first").addClass("old");
-                $(e).parent().parent().find("td:eq(6)").append('<span class="product-name new" id="name_new_' + noRow + '">' + products[0].name + '</span>');
-                $(e).parent().parent().find("td:eq(7)").children(":first").addClass("old");
-                $(e).parent().parent().find("td:eq(7)").append('<span class="size new" id="size_new_' + noRow + '">' + products[0].size + '</span>');
-                $(e).parent().parent().find("td:eq(8)").children(":first").addClass("old");
-                $(e).parent().parent().find("td:eq(8)").append('<span class="color new" id="color_new_' + noRow + '">' + products[0].color + '</span>');
-                $(e).parent().parent().find("td:eq(9)").children(":first").addClass("old");
-                $(e).parent().parent().find("td:eq(9)").append('<span class="retail new" id="price_new_' + noRow + '">' + products[0].retail + '</span> <small class="new"> đ</small>');
-                $(e).parent().parent().find("td:eq(10)").children(":first").addClass("old");
-                $(e).parent().parent().find("td:eq(10)").append('<input type="number" name="qtyNew" id="qty_new_' + noRow + '" class="new form-control" min="1" value="' + qty + '" onblur="on_change_qty(\'price_new_' + noRow + '\', \'qty_new_' + noRow + '\', \'intoMoney_new_' + noRow + '\', \'reduce_new_' + noRow + '\')">');
-                $(e).parent().parent().find("td:eq(11)").children(":first").addClass("old");
-                $(e).parent().parent().find("td:eq(11)").append('<input type="text" name="reduceNew" id="reduce_new_' + noRow + '" class="new form-control" value="' + discount + '" onblur="on_change_reduce(\'price_new_' + noRow + '\',\'qty_new_' + noRow + '\', \'intoMoney_new_' + noRow + '\', \'reduce_new_' + noRow + '\')">');
-                $(e).parent().parent().find("td:eq(12)").children(":first").addClass("old");
-                let into_money_old = $(e).parent().parent().find("td:eq(12)").children(":first").text();
-                into_money_old = replaceComma(into_money_old);
-                into_money_old = into_money_old.replace("đ","");
-                let diff_money = into_money - into_money_old;
-                let style = "color: gray;";
-                if(diff_money > 0 ) {
-                    style = "color: green;";
-                } else if(diff_money < 0 ) {
-                    style = "color: red;";
-                }
-                $(e).parent().parent().find("td:eq(12)").append('<div><span class="intoMoney new" id="intoMoney_new_' + noRow + '">' + formatNumber(into_money) + '</span> <small class="new"> đ</small></div>');
-                $(e).parent().parent().find("td:eq(12)").append('<div class="old" style="'+style+'"><span class="diff_money" id="diff_money_new_' + noRow + '">' + formatNumber(diff_money) + '</span> <small> đ</small></div>');
-                $(e).parent().find("[id=del_" + noRow + "]").removeClass("hidden");
-                $(e).addClass("hidden");
-                $(e).val("");
-                calculateTotal();
             },
             error: function (data, errorThrown) {
                 console.log(data.responseText);
@@ -569,33 +579,38 @@
             },
             success: function (products) {
                 console.log(JSON.stringify(products));
-                let discount = products[0].discount;
-                if (discount == 0) {
-                    discount = "";
-                } else if (discount > 0 && discount < 100) {
-                    discount = discount + "%";
+                if(products.length > 0) {
+                    let discount = products[0].discount;
+                    if (discount == 0) {
+                        discount = "";
+                    } else if (discount > 0 && discount < 100) {
+                        discount = discount + "%";
+                    }
+                    let noRow = $("#noRow").val();
+                    noRow = Number(noRow);
+                    noRow++;
+                    $("#noRow").val(noRow);
+                    $("#tableProd tbody").append('<tr id="product-' + noRow + '">'
+                        + '<td>' + noRow + '</td>'
+                        + '<td class="hidden"><input type="hidden" name="prodIdNew" id="prodId_new_' + noRow + '" class="form-control" value="' + products[0].product_id + '"></td>'
+                        + '<td class="hidden"><input type="hidden" name="variantIdNew" id="variantId_new_' + noRow + '" class="form-control" value="' + products[0].variant_id + '"></td>'
+                        + '<td class="hidden"><input type="hidden" name="skuNew" id="sku_new_' + noRow + '" class="form-control" value="' + products[0].sku + '"></td>'
+                        + '<td>' + products[0].sku + '</td>'
+                        + '<td><span class="product-name" id="name_new_' + noRow + '">' + products[0].name + '</span></td>'
+                        + '<td><span class="size" id="size_new_' + noRow + '">' + products[0].size + '</span></td>'
+                        + '<td><span class="color" id="color_new_' + noRow + '">' + products[0].color + '</span></td>'
+                        + '<td><span class="price" id="price_new_' + noRow + '">' + products[0].retail + '</span><span> đ</span></td>'
+                        + '<td><input type="number" name="qty" id="qty_new_' + noRow + '" class="form-control" min="1" value="'+qty+'" onchange="on_change_qty(\'price_' + noRow + '\', \'qty_' + noRow + '\', \'intoMoney_' + noRow + '\', \'reduce_' + noRow + '\')"></td>'
+                        + '<td><input type="text" name="reduce" id="reduce_new_' + noRow + '" class="form-control" value="' + discount + '" onchange="on_change_reduce(\'price_' + noRow + '\',\'qty_' + noRow + '\', \'intoMoney_' + noRow + '\', \'reduce_' + noRow + '\')"></td>'
+                        + '<td><span class="intoMoney" id="diff_money_new_' + noRow + '">' + products[0].retail + '</span><span> đ</span></td>'
+                        + '<td><button type="button" class="btn btn-danger form-control add-new-prod" title="Xóa"  onclick="del_product(this, \'product-' + noRow + '\')"><i class="fa fa-trash" aria-hidden="true"></i> Xóa</button></td>'
+                        + '</tr>');
+                    $('[id=qty_' + noRow + ']').trigger("change");
+                    calculateTotal();
+                    $("#checkout").prop("disabled", "");
+                } else {
+                    $("#checkout").prop("disabled", true);
                 }
-                let noRow = $("#noRow").val();
-                noRow = Number(noRow);
-                noRow++;
-                $("#noRow").val(noRow);
-                $("#tableProd tbody").append('<tr id="product-' + noRow + '">'
-                    + '<td>' + noRow + '</td>'
-                    + '<td class="hidden"><input type="hidden" name="prodIdNew" id="prodId_new_' + noRow + '" class="form-control" value="' + products[0].product_id + '"></td>'
-                    + '<td class="hidden"><input type="hidden" name="variantIdNew" id="variantId_new_' + noRow + '" class="form-control" value="' + products[0].variant_id + '"></td>'
-                    + '<td class="hidden"><input type="hidden" name="skuNew" id="sku_new_' + noRow + '" class="form-control" value="' + products[0].sku + '"></td>'
-                    + '<td>' + products[0].sku + '</td>'
-                    + '<td><span class="product-name" id="name_new_' + noRow + '">' + products[0].name + '</span></td>'
-                    + '<td><span class="size" id="size_new_' + noRow + '">' + products[0].size + '</span></td>'
-                    + '<td><span class="color" id="color_new_' + noRow + '">' + products[0].color + '</span></td>'
-                    + '<td><span class="price" id="price_new_' + noRow + '">' + products[0].retail + '</span><span> đ</span></td>'
-                    + '<td><input type="number" name="qty" id="qty_new_' + noRow + '" class="form-control" min="1" value="'+qty+'" onchange="on_change_qty(\'price_' + noRow + '\', \'qty_' + noRow + '\', \'intoMoney_' + noRow + '\', \'reduce_' + noRow + '\')"></td>'
-                    + '<td><input type="text" name="reduce" id="reduce_new_' + noRow + '" class="form-control" value="' + discount + '" onchange="on_change_reduce(\'price_' + noRow + '\',\'qty_' + noRow + '\', \'intoMoney_' + noRow + '\', \'reduce_' + noRow + '\')"></td>'
-                    + '<td><span class="intoMoney" id="diff_money_new_' + noRow + '">' + products[0].retail + '</span><span> đ</span></td>'
-                    + '<td><button type="button" class="btn btn-danger form-control add-new-prod" title="Xóa"  onclick="del_product(this, \'product-' + noRow + '\')"><i class="fa fa-trash" aria-hidden="true"></i> Xóa</button></td>'
-                    + '</tr>');
-                $('[id=qty_' + noRow + ']').trigger("change");
-                calculateTotal();
             },
             error: function (data, errorThrown) {
                 console.log(data.responseText);
@@ -672,10 +687,11 @@
         }).then((result) => {
             if (result.value) {
                 $(e).parent().parent().find(".new").remove();
-                $(e).parent().parent().find(".old").removeClass();
+                $(e).parent().parent().find(".old").removeClass("old");
                 $(e).addClass("hidden");
                 $(e).parent().find("[id=productName_" + noRow + "]").removeClass("hidden");
                 $(e).parent().find("[id=productName_" + noRow + "]").focus();
+                $(e).parent().parent().find(".diff_money").remove();
                 toastr.success('Sản phẩm đã được xóa.');
                 calculateTotal();
             }
@@ -701,57 +717,57 @@
         })
     }
 
-    function reloadData(calculateTotal, find_product) {
-        $("#noRow").val(0);
-        let arr = [];
-        let qty = [];
-        $.each($("#tableProd tbody").find("input[name=sku_new]"), function (k, v) {
-            arr.push(v["value"]);
-        });
-        $.each($("#tableProd tbody").find("input[name=qty_new]"), function (k, v) {
-            qty.push(v["value"]);
-        });
-        validate_form();
-        $("#tableProd tbody").html("");
-        if (typeof find_product === 'function') {
-            for (let i = 0; i < arr.length; i++) {
-                find_new_product(arr[i], qty[i]);
-            }
-        }
-        if (typeof calculateTotal === 'function') {
-            calculateTotal();
-        }
-    }
-    function validate_form() {
-        var noRow = $("#noRow").val();
-        if (noRow == 0) {
-            disableCheckOutBtn();
-            return;
-        }
-        var select_payment = $("#sel_payment").val();
-        if (select_payment == 0) {
-            var payment = $("#payment").val();
-            if (payment == "") {
-                disableCheckOutBtn();
-                return;
-            }
-        }
-        enableCheckOutBtn();
-    }
-
-    function onchange_voucher(voucher, event) {
-        $("#voucher").removeClass("is-invalid");
-        let c = voucher.substring(0, 2);
-        c = c.toUpperCase();
-        if (c == 'VC') {
-            // voucher
-            ues_voucher(voucher);
-            event.preventDefault();
-        } else {
-            disableCheckOutBtn();
-            $("#voucher").addClass("is-invalid");
-        }
-    }
+    // function reloadData(calculateTotal, find_product) {
+    //     $("#noRow").val(0);
+    //     let arr = [];
+    //     let qty = [];
+    //     $.each($("#tableProd tbody").find("input[name=sku_new]"), function (k, v) {
+    //         arr.push(v["value"]);
+    //     });
+    //     $.each($("#tableProd tbody").find("input[name=qty_new]"), function (k, v) {
+    //         qty.push(v["value"]);
+    //     });
+    //     validate_form();
+    //     $("#tableProd tbody").html("");
+    //     if (typeof find_product === 'function') {
+    //         for (let i = 0; i < arr.length; i++) {
+    //             find_new_product(arr[i], qty[i]);
+    //         }
+    //     }
+    //     if (typeof calculateTotal === 'function') {
+    //         calculateTotal();
+    //     }
+    // }
+    // function validate_form() {
+    //     var noRow = $("#noRow").val();
+    //     if (noRow == 0) {
+    //         disableCheckOutBtn();
+    //         return;
+    //     }
+    //     var select_payment = $("#sel_payment").val();
+    //     if (select_payment == 0) {
+    //         var payment = $("#payment").val();
+    //         if (payment == "") {
+    //             disableCheckOutBtn();
+    //             return;
+    //         }
+    //     }
+    //     enableCheckOutBtn();
+    // }
+    //
+    // function onchange_voucher(voucher, event) {
+    //     $("#voucher").removeClass("is-invalid");
+    //     let c = voucher.substring(0, 2);
+    //     c = c.toUpperCase();
+    //     if (c == 'VC') {
+    //         // voucher
+    //         ues_voucher(voucher);
+    //         event.preventDefault();
+    //     } else {
+    //         disableCheckOutBtn();
+    //         $("#voucher").addClass("is-invalid");
+    //     }
+    // }
 
     function onchange_discount(discount, event) {
         // let c = discount.substring(0, 2);
@@ -781,157 +797,157 @@
         // }
     }
 
-    function ues_voucher(voucher_code) {
-        $.ajax({
-            dataType: 'json',
-            url: '<?php echo __PATH__ . 'src/controller/voucher/VoucherController.php' ?>',
-            data: {
-                method: "find_by_code",
-                code: voucher_code
-            },
-            type: 'POST',
-            success: function (res) {
-                console.log(res);
-                if (res.length > 0) {
-                    var status = res[0].status;
-                    if (status !== "undefined") {
-                        switch (status) {
-                            case '1':
-                                Swal.fire({
-                                    type: 'error',
-                                    title: 'Đã xảy ra lỗi',
-                                    text: "Mã khuyến mãi chưa được kích hoạt"
-                                }).then((result) => {
-                                    if (result.value) {
-                                        $("#voucher").val("");
-                                        $("#voucher").trigger("change");
-                                    }
-                                });
-                                break;
-                            case '2':
-                                if (res[0].valid_date === "expired") {
-                                    Swal.fire({
-                                        type: 'error',
-                                        title: 'Đã xảy ra lỗi',
-                                        text: "Mã khuyến mãi đã hết hạn"
-                                    }).then((result) => {
-                                        if (result.value) {
-                                            $("#voucher").val("");
-                                            $("#voucher").trigger("change");
-                                        }
-                                    });
+    //function ues_voucher(voucher_code) {
+    //    $.ajax({
+    //        dataType: 'json',
+    //        url: '<?php //echo __PATH__ . 'src/controller/voucher/VoucherController.php' ?>//',
+    //        data: {
+    //            method: "find_by_code",
+    //            code: voucher_code
+    //        },
+    //        type: 'POST',
+    //        success: function (res) {
+    //            console.log(res);
+    //            if (res.length > 0) {
+    //                var status = res[0].status;
+    //                if (status !== "undefined") {
+    //                    switch (status) {
+    //                        case '1':
+    //                            Swal.fire({
+    //                                type: 'error',
+    //                                title: 'Đã xảy ra lỗi',
+    //                                text: "Mã khuyến mãi chưa được kích hoạt"
+    //                            }).then((result) => {
+    //                                if (result.value) {
+    //                                    $("#voucher").val("");
+    //                                    $("#voucher").trigger("change");
+    //                                }
+    //                            });
+    //                            break;
+    //                        case '2':
+    //                            if (res[0].valid_date === "expired") {
+    //                                Swal.fire({
+    //                                    type: 'error',
+    //                                    title: 'Đã xảy ra lỗi',
+    //                                    text: "Mã khuyến mãi đã hết hạn"
+    //                                }).then((result) => {
+    //                                    if (result.value) {
+    //                                        $("#voucher").val("");
+    //                                        $("#voucher").trigger("change");
+    //                                    }
+    //                                });
+    //
+    //                            } else {
+    //                                let value;
+    //                                if (res[0].type == 0) {
+    //                                    // cash
+    //                                    value = formatNumber(res[0].value);
+    //                                } else if (res[0].type == 1) {
+    //                                    // percent
+    //                                    value = res[0].value + "%";
+    //                                }
+    //                                $("#voucher_value").val(value);
+    //                                let msg = '<div class="alert alert-success alert-dismissible">' +
+    //                                    '<button type="button" class="close" aria-hidden="true" onclick="removeVC()">×</button>' +
+    //                                    'Mã ' + voucher_code + ' có giá trị giảm ' + value + ' trên tổng đơn hàng!' +
+    //                                    '</div>'
+    //                                $(".msg").html(msg);
+    //                                $("#vcFlag").val(1);
+    //                                $("#vcCode").val(voucher_code);
+    //                                // $("#voucher").val(value).trigger("change");
+    //                                $(".voucher_info").removeClass("hidden");
+    //                                calculateTotal();
+    //                                $("#voucher").val(voucher_code);
+    //                                $("#voucher").prop("disabled", true);
+    //                            }
+    //                            break;
+    //                        case '3':
+    //                            Swal.fire({
+    //                                type: 'error',
+    //                                title: 'Đã xảy ra lỗi',
+    //                                text: "Mã khuyến mãi đã được sử dụng"
+    //                            }).then((result) => {
+    //                                if (result.value) {
+    //                                    $("#voucher").val("");
+    //                                    $("#voucher").trigger("change");
+    //                                }
+    //                            });
+    //                            break;
+    //                        case '4':
+    //                            Swal.fire({
+    //                                type: 'error',
+    //                                title: 'Đã xảy ra lỗi',
+    //                                text: "Mã khuyến mãi đã bị khoá"
+    //                            }).then((result) => {
+    //                                if (result.value) {
+    //                                    $("#voucher").val("");
+    //                                    $("#voucher").trigger("change");
+    //                                }
+    //                            });
+    //                            break;
+    //                    }
+    //                } else {
+    //                    Swal.fire({
+    //                        type: 'error',
+    //                        title: 'Đã xảy ra lỗi',
+    //                        text: "Mã khuyến mãi không tồn tại"
+    //                    }).then((result) => {
+    //                        if (result.value) {
+    //                            $("#voucher").val("");
+    //                            $("#voucher").trigger("change");
+    //                        }
+    //                    });
+    //                }
+    //            } else {
+    //                Swal.fire({
+    //                    type: 'error',
+    //                    title: 'Đã xảy ra lỗi',
+    //                    text: "Mã khuyến mãi không tồn tại"
+    //                }).then((result) => {
+    //                    if (result.value) {
+    //                        $("#voucher").val("");
+    //                        $("#voucher").trigger("change");
+    //                    }
+    //                });
+    //            }
+    //            $("#create-order .overlay").addClass("hidden");
+    //        },
+    //        error: function (data, errorThrown) {
+    //            console.log(data.responseText);
+    //            console.log(errorThrown);
+    //            Swal.fire({
+    //                type: 'error',
+    //                title: 'Đã xảy ra lỗi',
+    //                text: ""
+    //            })
+    //            $("#create-order .overlay").addClass("hidden");
+    //        }
+    //    });
+    //}
 
-                                } else {
-                                    let value;
-                                    if (res[0].type == 0) {
-                                        // cash
-                                        value = formatNumber(res[0].value);
-                                    } else if (res[0].type == 1) {
-                                        // percent
-                                        value = res[0].value + "%";
-                                    }
-                                    $("#voucher_value").val(value);
-                                    let msg = '<div class="alert alert-success alert-dismissible">' +
-                                        '<button type="button" class="close" aria-hidden="true" onclick="removeVC()">×</button>' +
-                                        'Mã ' + voucher_code + ' có giá trị giảm ' + value + ' trên tổng đơn hàng!' +
-                                        '</div>'
-                                    $(".msg").html(msg);
-                                    $("#vcFlag").val(1);
-                                    $("#vcCode").val(voucher_code);
-                                    // $("#voucher").val(value).trigger("change");
-                                    $(".voucher_info").removeClass("hidden");
-                                    calculateTotal();
-                                    $("#voucher").val(voucher_code);
-                                    $("#voucher").prop("disabled", true);
-                                }
-                                break;
-                            case '3':
-                                Swal.fire({
-                                    type: 'error',
-                                    title: 'Đã xảy ra lỗi',
-                                    text: "Mã khuyến mãi đã được sử dụng"
-                                }).then((result) => {
-                                    if (result.value) {
-                                        $("#voucher").val("");
-                                        $("#voucher").trigger("change");
-                                    }
-                                });
-                                break;
-                            case '4':
-                                Swal.fire({
-                                    type: 'error',
-                                    title: 'Đã xảy ra lỗi',
-                                    text: "Mã khuyến mãi đã bị khoá"
-                                }).then((result) => {
-                                    if (result.value) {
-                                        $("#voucher").val("");
-                                        $("#voucher").trigger("change");
-                                    }
-                                });
-                                break;
-                        }
-                    } else {
-                        Swal.fire({
-                            type: 'error',
-                            title: 'Đã xảy ra lỗi',
-                            text: "Mã khuyến mãi không tồn tại"
-                        }).then((result) => {
-                            if (result.value) {
-                                $("#voucher").val("");
-                                $("#voucher").trigger("change");
-                            }
-                        });
-                    }
-                } else {
-                    Swal.fire({
-                        type: 'error',
-                        title: 'Đã xảy ra lỗi',
-                        text: "Mã khuyến mãi không tồn tại"
-                    }).then((result) => {
-                        if (result.value) {
-                            $("#voucher").val("");
-                            $("#voucher").trigger("change");
-                        }
-                    });
-                }
-                $("#create-order .overlay").addClass("hidden");
-            },
-            error: function (data, errorThrown) {
-                console.log(data.responseText);
-                console.log(errorThrown);
-                Swal.fire({
-                    type: 'error',
-                    title: 'Đã xảy ra lỗi',
-                    text: ""
-                })
-                $("#create-order .overlay").addClass("hidden");
-            }
-        });
-    }
-
-    function removeVC() {
-        Swal.fire({
-            title: 'Bạn có chắc chắn muốn xoá?',
-            text: "",
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ok'
-        }).then((result) => {
-            if (result.value) {
-                $(".msg").html("");
-                $("#vcFlag").val(0);
-                $("#vcCode").val("");
-                $("#voucher").val("");
-                $("#voucher_value").val("");
-                $("#voucher").prop("disabled", "");
-                calculateTotal();
-                toastr.warning('Mã giảm giá đã được xoá.');
-                $(".voucher_info").addClass("hidden");
-            }
-        });
-    }
+    // function removeVC() {
+    //     Swal.fire({
+    //         title: 'Bạn có chắc chắn muốn xoá?',
+    //         text: "",
+    //         type: 'warning',
+    //         showCancelButton: true,
+    //         confirmButtonColor: '#3085d6',
+    //         cancelButtonColor: '#d33',
+    //         confirmButtonText: 'Ok'
+    //     }).then((result) => {
+    //         if (result.value) {
+    //             $(".msg").html("");
+    //             $("#vcFlag").val(0);
+    //             $("#vcCode").val("");
+    //             $("#voucher").val("");
+    //             $("#voucher_value").val("");
+    //             $("#voucher").prop("disabled", "");
+    //             calculateTotal();
+    //             toastr.warning('Mã giảm giá đã được xoá.');
+    //             $(".voucher_info").addClass("hidden");
+    //         }
+    //     });
+    // }
 
     function validate_discount(discount) {
         let discount1 = replaceComma(discount);
@@ -999,76 +1015,74 @@
 
     function processDataCheckout() {
         // order information
-        $total_amount = replaceComma($("#totalAmount").text());
-        $total_reduce = replaceComma($("#totalReduce").text());
-        $discount = replaceComma($("#discount").val());
-
-        $total_checkout = replaceComma($("#totalCheckout").text());
-        $customer_payment = replaceComma($("#payment").val());
-        $payment_type = $("#sel_payment").val();
-        $repay = replaceComma($("#repay").text());
-        $flag_print_receipt = $("#flag_print_receipt").is(':checked');
-        $voucher_code = $("#vcCode").val();
-        $voucher_value = $("#voucher_value").val();
-
-        if ($discount.indexOf("%") > -1) {
-            $discount = $discount.replace("%", "");
-            $discount = ($discount * $total_checkout) / 100;
+        let currentOrderId = Number($("#currentOrderId").val());
+        let total_amount = replaceComma($("#surcharge").text());
+        let total_checkout = replaceComma($("#total_checkout_new").text());
+        let payment_type = $("#sel_payment_new").val();
+        let customer_payment = replaceComma($("#payment_new").val());
+        let repay = replaceComma($("#repay_new").text());
+        let flag_print_receipt = $("#flag_print_receipt").is(':checked');
+        let discount = replaceComma($("#discount_new").val());
+        if (discount.indexOf("%") > -1) {
+            discount = discount.replace("%", "");
+            discount = (discount * total_checkout) / 100;
         }
-
-        var data = {};
-        data["total_amount"] = $total_amount;
-        data["total_reduce"] = $total_reduce;
-        data["discount"] = $discount;
-        data["total_checkout"] = $total_checkout;
-        data["customer_payment"] = $customer_payment;
-        data["payment_type"] = $payment_type;
-        data["repay"] = $repay;
+        // equal
+        let paymentExchangeType = 0;
+        if(total_checkout > 0) {
+            // Additional guests pay
+            paymentExchangeType = 1;
+        } else if(total_checkout < 0) {
+            // Guest received back
+            paymentExchangeType = 1;
+        }
+        let data = {};
+        data["total_amount"] = Math.abs(total_amount);
+        data["total_reduce"] = discount;
+        data["discount"] = discount;
+        data["total_checkout"] = Math.abs(total_checkout);
+        data["customer_payment"] = customer_payment;
+        data["payment_type"] = payment_type;
+        data["repay"] = repay;
         data["customer_id"] = 0;
-        data["type"] = 0;// Sale on shop
-        data["flag_print_receipt"] = $flag_print_receipt;
-        data["voucher_code"] = $voucher_code;
-        data["voucher_value"] = $voucher_value;
+        data["type"] = 2;// exchange product
+        data["flag_print_receipt"] = flag_print_receipt;
+        data["voucher_code"] = "";
+        data["voucher_value"] = "";
+        data["current_order_id"] = currentOrderId;
+        data["payment_exchange_type"] = paymentExchangeType;
 
         //order detail information
-        var details = [];
+        let details = [];
         $.each($("#tableProd tbody tr"), function (key, value) {
-            $product_id = $(value).find("input[name=prodId]").val();
-            $variant_id = $(value).find("input[name=variantId]").val();
-            $sku = $(value).find("input[name=sku]").val();
-            $product_name = $(value).find("span.product-name").text();
-            $price = replaceComma($(value).find("span.price").text());
-            $quantity = $(value).find("input[name=qty]").val();
-            $reduce = replaceComma($(value).find("input[name=reduce]").val());
-            $reduce_percent = "";
-            if ($reduce.indexOf("%") > -1) {
-                $reduce = $reduce.replace("%", "");
-                $reduce_percent = $reduce;
-                $reduce = ($reduce * $price) / 100;
+            let product_id = $(value).find("input[name=prodIdNew]").val();
+            let variant_id = $(value).find("input[name=variantIdNew]").val();
+            let sku = $(value).find("input[name=skuNew]").val();
+            let product_name = $(value).find("span.product-name-new").text();
+            let price = replaceComma($(value).find("span.price-new").text());
+            let quantity = $(value).find("input[name=qtyNew]").val();
+            let reduce = replaceComma($(value).find("input[name=reduceNew]").val());
+            let reduce_percent = "";
+            if (reduce.indexOf("%") > -1) {
+                reduce = reduce.replace("%", "");
+                reduce_percent = reduce;
+                reduce = (reduce * price) / 100;
             } else {
-                $reduce_percent = Math.round($reduce * 100 / ($price * $quantity));
+                reduce_percent = Math.round(reduce * 100 / (price * quantity));
             }
 
-            var product = {};
-            product["product_id"] = $product_id;
-            product["variant_id"] = $variant_id;
-            product["sku"] = $sku;
-            product["product_name"] = $product_name;
-            product["price"] = $price;
-            product["quantity"] = $quantity;
-            product["reduce"] = $reduce;
-            product["reduce_percent"] = $reduce_percent;
+            let product = {};
+            product["product_id"] = product_id;
+            product["variant_id"] = variant_id;
+            product["sku"] = sku;
+            product["product_name"] = product_name;
+            product["price"] = price;
+            product["quantity"] = quantity;
+            product["reduce"] = reduce;
+            product["reduce_percent"] = reduce_percent;
             details.push(product);
         });
 
-        if (jQuery.isEmptyObject(details[0])) {
-            Swal.fire({
-                type: 'error',
-                title: 'Đã xảy ra lỗi',
-                text: 'Bạn chưa chọn sản phẩm.'
-            })
-            return;
-        }
         data["details"] = details;
         console.log(JSON.stringify(data));
         $.ajax({
@@ -1080,8 +1094,8 @@
             },
             type: 'POST',
             success: function (data) {
-                var orderId = data.orderId;
-                var filename = data.fileName;
+                let orderId = data.orderId;
+                let filename = data.fileName;
                 console.log('filename: ' + filename);
                 $(".iframeArea").html("");
                 if (typeof filename !== "undefined" && filename !== "") {
