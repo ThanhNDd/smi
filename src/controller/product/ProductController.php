@@ -145,7 +145,7 @@ if(isset($_POST["type"]) && $_POST["type"]=="delete_variation")   {
     $db->commit();
 }
 
-if(isset($_GET["type"]) && $_GET["type"]=="findall")   {
+if(isset($_GET["method"]) && $_GET["method"]=="findall")   {
     try {
         $lists = $dao->find_all();
         echo json_encode($lists);
@@ -153,6 +153,17 @@ if(isset($_GET["type"]) && $_GET["type"]=="findall")   {
     {
         echo $e -> getMessage();
     }    
+}
+
+if(isset($_POST["method"]) && $_POST["method"]=="find_detail")   {
+    $product_id = $_POST["product_id"];
+    try {
+        $variations = $dao->find_detail($product_id);
+        echo json_encode($variations);
+    } catch(Exception $e)
+    {
+        throw new Exception($e);
+    }
 }
 
 if(isset($_POST["type"]) && $_POST["type"]=="addNew")   {

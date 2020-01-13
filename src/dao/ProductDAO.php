@@ -151,8 +151,42 @@ class ProductDAO {
             throw new Exception($e);
         }
     }
-
     function find_all()
+    {
+        try {
+            $sql = "select 
+                        A.id as product_id, 
+                        A.name , 
+                        A.image , 
+                        A.link , 
+                        A.retail,
+                        A.discount
+                    from 
+                        smi_products A
+                    order by A.created_at desc, A.id";
+            $result = mysqli_query($this->conn,$sql);
+            $data = array();
+            foreach($result as $k => $row) {
+                $product = array(
+                    'product_id' => $row["product_id"],
+                    'name' => $row["name"],
+                    'image' => $row["image"],
+                    'link' => $row["link"],
+                    'retail' => number_format($row["retail"]),
+                    'discount' => $row["discount"]
+                );
+                array_push($data, $product);
+            }
+            $arr = array();
+            $arr["data"] = $data;
+            return $arr;
+        } catch(Exception $e)
+        {
+            echo "Open connection database is error exception >> ".$e->getMessage();
+        }
+    }
+
+    function find_detail($productId)
     {
         try {
             $sql = "select 
@@ -188,10 +222,11 @@ class ProductDAO {
                         A.created_at,
                         A.discount
                     from 
-                        smi_products A left join smi_variations B on A.id = B.product_id     
+                        smi_products A left join smi_variations B on A.id = B.product_id    
+                    where B.product_id = $productId 
                     order by A.created_at desc, A.id, B.id, B.color, B.size";
-            $result = mysqli_query($this->conn,$sql);    
-            $data = array();                 
+            $result = mysqli_query($this->conn,$sql);
+            $data = array();
             $product_id = 0;
             $i = 0;
             foreach($result as $k => $row) {

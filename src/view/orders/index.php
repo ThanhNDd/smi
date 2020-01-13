@@ -313,9 +313,9 @@
 
         // Add event listener for opening and closing details
         $('#example tbody').off('click').on('click', '.details-control', function (event) {
-            var tr = $(this).closest('tr');
-            var tdi = tr.find("i.fa");
-            var row = table.row(tr);
+            let tr = $(this).closest('tr');
+            let tdi = tr.find("i.fa");
+            let row = table.row(tr);
             let order_id = row.data().order_id;
             let start_date = $("#startDate").val();
             let end_date = $("#endDate").val();
