@@ -24,8 +24,6 @@
                                 <option value="1">Online</option>
                                 <option value="0">Shop</option>
                             </select>
-                            <input type="text" class="form-control mt-2 hidden" name="payment" id="payment"
-                                   width="100px" style="text-align: right;">
                         </div>
                         <div class="w200 mr-2">
                             <label>Mã vận đơn</label>
@@ -60,19 +58,19 @@
                         <div class="col-4">
                             <label>Tỉnh / Thành phố <span style="color:red">*</span></label>
                             <select class="select-city form-control" id="select_city">
-                                <option value="">Lựa chọn</option>
+                                <option value="-1">Lựa chọn</option>
                             </select>
                         </div>
                         <div class="col-4">
                             <label>Quận / Huyện <span style="color:red">*</span></label>
                             <select class="select-district form-control" id="select_district">
-                                <option value="">Lựa chọn</option>
+                                <option value="-1">Lựa chọn</option>
                             </select>
                         </div>
                         <div class="col-4">
                             <label>Phường xã <span style="color:red">*</span></label>
                             <select class="select-village form-control" id="select_village">
-                                <option value="">Lựa chọn</option>
+                                <option value="-1">Lựa chọn</option>
                             </select>
                         </div>
                         <div class="col-6">
@@ -96,16 +94,7 @@
                             <input class="form-control datepicker" id="orderDate" data-date-format="dd/mm/yyyy"
                                    value="<?php echo date('d/m/Y'); ?>">
                         </div>
-                        <div class="col-2">
-                            <label>Thanh toán</label>
-                            <select class="form-control" name="payment_type" id="payment_type">
-                                <option value="0">Tiền mặt</option>
-                                <option value="1" selected="selected">Chuyển khoản</option>
-                                <option value="2">Nợ</option>
-                            </select>
-                            <input type="text" class="form-control mt-2 hidden" name="payment" id="payment"
-                                   width="100px" style="text-align: right;">
-                        </div>
+                        
                     </div>
                 </div>
                 <div class="form-group">
@@ -145,7 +134,6 @@
                             <label class="pd-t-5">Tổng tiền hàng</label>
                         </div>
                         <h3 class="col-2 right pt-2" id="total_amount">0</h3>
-                        <small class="right pt-2">đ</small>
                     </div>
                     <div class="row pd-t-5">
                         <div class="col-9 right pd-t-10">
@@ -170,7 +158,26 @@
                             <label>Tổng thanh toán</label>
                         </div>
                         <h3 class="col-2 right pt-2" style="color: red;" id="total_checkout">0</h3>
-                        <small class="right pt-2">đ</small>
+                    </div>
+                    <div class="row pd-t-5">
+                        <div class="col-9 right pd-t-10">
+                            <label>Khách thanh toán</label>
+                        </div>
+                        <div class="col-2 right pd-t-5">
+                            <select class="form-control" name="payment_type" id="payment_type">
+                                <option value="0">Tiền mặt</option>
+                                <option value="1" selected="selected">Chuyển khoản</option>
+                                <option value="2">Nợ</option>
+                            </select>
+                            <input type="text" class="form-control mt-2 hidden" name="payment" id="payment"
+                                    width="100px" style="text-align: right;">
+                        </div>
+                    </div>
+                    <div class="row pd-t-5">
+                        <div class="col-9 right pd-t-10">
+                            <label>Trả lại</label>
+                        </div>
+                        <h3 class="col-2 right pt-2" id="repay">0</h3>
                     </div>
                 </div>
             </div>
@@ -214,6 +221,22 @@
                     $("#payment").val("");
                     $("#payment").addClass("hidden");
                 }
+            });
+
+            $("#payment").change(function() {
+                $("#payment").removeCLass("is-invalid");
+                let total_checout = $("#total_checkout").text();
+                total_checkout = replaceComma(total_checkout);
+                let customer_payment = $("#customer_payment").val();
+                customer_payment = replaceComma(customer_payment);
+                let repay = 0;
+                if(customer_payment > total_checkout) {
+                    repay = Number(customer_payment) - Number(total_checkout);
+                } else if(customer_payment < total_checkout) {
+                    $("#payment").addCLass("is-invalid");
+                    return false;
+                }
+                $("#repay").text(formatNumber(repay));
             });
 
             $('.order-create').click(function () {
@@ -323,7 +346,8 @@
         });
 
         function validate() {
-            $(".modal-body").find("is-invalid").removeClass("is-invalid");
+            $(".modal-body").find("input").removeClass("is-invalid");
+            $(".modal-body").find("select").removeClass("is-invalid");
             let order_type = $('#order_type').val();
             if (order_type == 1) {
                 // online
@@ -346,7 +370,7 @@
                     check_products_list();
                 }
                 let cityId = $(".select-city").val();
-                if (cityId == "") {
+                if (cityId === "-1") {
                     $(".select-city").addClass("is-invalid");
                     disable_btn_add_new();
                     return false;
@@ -354,7 +378,7 @@
                     $(".select-city").removeClass("is-invalid");
                     check_products_list();
                     let districtId = $(".select-district").val();
-                    if (districtId == "") {
+                    if (districtId === "-1") {
                         $(".select-district").addClass("is-invalid");
                         disable_btn_add_new();
                         return false;
@@ -362,7 +386,7 @@
                         $(".select-district").removeClass("is-invalid");
                         check_products_list();
                         let villageId = $(".select-village").val();
-                        if (villageId == "") {
+                        if (villageId === "-1") {
                             $(".select-village").addClass("is-invalid");
                             disable_btn_add_new();
                             return false;
@@ -370,7 +394,7 @@
                             $(".select-village").removeClass("is-invalid");
                             check_products_list();
                             let add = $("#address").val();
-                            if (add == "") {
+                            if (add === "") {
                                 $("#address").addClass("is-invalid");
                                 disable_btn_add_new();
                                 return false;
@@ -383,6 +407,18 @@
                     }
                 }
             }
+            let payment_type = $("#payment_type").val();
+            if(payment_type == 0) {
+                let customer_payment = $("#payment").val();
+                if(customer_payment === "") {
+                    $("#payment").addClass("is-invalid");
+                    disable_btn_add_new();
+                    return false;
+                } else {
+                    $("#payment").removeClass("is-invalid");
+                    check_products_list();
+                }
+            } 
             return true;
         }
 
@@ -399,6 +435,7 @@
                 $("#select_district").prop("disabled", true);
                 $("#select_village").prop("disabled", true);
                 $("#address").prop("disabled", true);
+                $("#shipping").prop("disabled", true);
             } else {
                 // online
                 $("#bill_of_lading_no").prop("disabled", "");
@@ -411,6 +448,7 @@
                 $("#select_district").prop("disabled", "");
                 $("#select_village").prop("disabled", "");
                 $("#address").prop("disabled", "");
+                $("#shipping").prop("disabled", "");
             }
         }
 
@@ -454,6 +492,7 @@
             data["payment_type"] = $("#payment_type").val();
             data["order_date"] = $("#orderDate").val();
             data["order_status"] = $("#order_status").val();
+            data["customer_payment"] = $("#payment").val();
             let rowProductNumber = $(".count-row").val();
 
             let products = [];
@@ -562,6 +601,7 @@
         function reset_data() {
             $(".modal-title").text("Tạo mới đơn hàng");
             $("#create_new").text("Tạo mới");
+            $("#order_type").val("1");
             $("#payment_type").val("1");
             $("#customer_id").val("");
             $("#bill_of_lading_no").val("");
@@ -863,16 +903,9 @@
                 type: 'GET',
                 success: function (data) {
                     $('.select-city').select2({
-                        placeholder: {
-                            id: '-1', // the value of the option
-                            text: 'Select an option'
-                        },
                         data: data.results,
                         theme: 'bootstrap4',
                     });
-                    if (city_id !== "underfined" && city_id !== "") {
-                        $(".select-city").val(city_id).trigger("change");
-                    }
                     $("#create-order .overlay").addClass("hidden");
                 },
                 error: function (data, errorThrown) {
@@ -896,14 +929,17 @@
                 type: 'GET',
                 success: function (data) {
                     $('.select-district').select2({
-                        placeholder: {
-                            id: '-1', // the value of the option
-                            text: 'Select an option'
-                        },
                         data: data.results,
                         theme: 'bootstrap4',
                     });
                     $("#create-order .overlay").addClass("hidden");
+                    var select = $('.select-district');
+                    var option = $('<option></option>').
+                        attr('selected', true).
+                        text("Lựa chọn").
+                        val(-1);
+                    option.prependTo(select);
+                    select.trigger('change');
                 },
                 error: function (data, errorThrown) {
                     console.log(data.responseText);
@@ -926,14 +962,18 @@
                 type: 'GET',
                 success: function (data) {
                     $('.select-village').select2({
-                        placeholder: {
-                            id: '-1', // the value of the option
-                            text: 'Select an option'
-                        },
                         data: data.results,
                         theme: 'bootstrap4',
                     });
+                    var select = $('.select-village');
+                    var option = $('<option></option>').
+                        attr('selected', true).
+                        text("Lựa chọn").
+                        val(-1);
+                    option.prependTo(select);
+                    select.trigger('change');
                     $("#create-order .overlay").addClass("hidden");
+
                 },
                 error: function (data, errorThrown) {
                     console.log(data.responseText);

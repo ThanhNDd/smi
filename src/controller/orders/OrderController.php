@@ -154,7 +154,10 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $data = $_POST["data"];
         $data = json_decode($data);
 
+        $order = new Order();
+
         $order_type = $data->order_type;
+        $cusId = 0;
         if ($order_type == 1) {
             //online
             $customer = new Customer();
@@ -177,26 +180,24 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
                     throw new Exception("Insert customer is failure", 1);
                 }
             }
+            $order->setBill_of_lading_no($data->bill_of_lading_no);
+            $order->setShipping_fee($data->shipping_fee);
+            $order->setShipping($data->shipping);
+            $order->setShipping_unit($data->shipping_unit);
         }
-
-        $order = new Order();
         $order->setTotal_reduce(null);
         $order->setTotal_reduce_percent(null);
         $order->setDiscount($data->discount);
         $order->setTotal_amount($data->total_amount);
         $order->setTotal_checkout($data->total_checkout);
-        $order->setCustomer_payment(null);
+        $order->setCustomer_payment($data->customer_payment);
         $order->setRepay(null);
         $order->setCustomer_id($cusId);
         $order->setType($order_type);
-        $order->setBill_of_lading_no($data->bill_of_lading_no);
-        $order->setShipping_fee($data->shipping_fee);
-        $order->setShipping($data->shipping);
-        $order->setShipping_unit($data->shipping_unit);
         $order->setStatus($data->order_status);
-        $order->setDeleted(0);
         $order->setPayment_type($data->payment_type);
-
+        $order->setOrder_date($data->order_date);
+        $order->setVoucherValue(0);
         if ($data->order_id > 0) {
             $order->setId($data->order_id);
             $orderId = $checkoutDAO->updateOrder($order);

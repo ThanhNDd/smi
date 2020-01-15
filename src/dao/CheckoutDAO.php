@@ -681,7 +681,7 @@ class CheckoutDAO
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(),NOW())");
             $stmt->bind_param("ddddddidiisddsisdii", $total_reduce, $total_reduce_percent, $discount, $total_amount, $total_checkout, $customer_payment, $payment_type, $repay, $customer_id, $type, $bill, $shipping_fee, $shipping, $shipping_unit, $status, $voucher_code, $voucher_value, $orderRefer, $paymentExchangeType);
             $stmt->execute();
-            // var_dump($this->getConn()->error);
+            var_dump($this->getConn()->error);
             //You can get the number of rows affected by your query
             $nrows = $stmt->affected_rows;
             if (!$nrows) {

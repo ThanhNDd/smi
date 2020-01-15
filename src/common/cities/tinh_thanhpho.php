@@ -1,6 +1,5 @@
 <?php
 $tinh_thanhpho = array(
-	""	 =>	"Lựa chọn",
 	"1" => "Hà Nội",
 	"2" => "Hà Giang",
 	"4" => "Cao Bằng",
