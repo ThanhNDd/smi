@@ -674,10 +674,10 @@ class CheckoutDAO
                     `status`,
                     `voucher_code`,
                     `voucher_value`,
-                    `order_date`,
-                    `created_date`,
                     `order_refer`,
-                    `payment_exchange_type`) 
+                    `payment_exchange_type`,
+                    `order_date`,
+                    `created_date`) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(),NOW())");
             $stmt->bind_param("ddddddidiisddsisdii", $total_reduce, $total_reduce_percent, $discount, $total_amount, $total_checkout, $customer_payment, $payment_type, $repay, $customer_id, $type, $bill, $shipping_fee, $shipping, $shipping_unit, $status, $voucher_code, $voucher_value, $orderRefer, $paymentExchangeType);
             $stmt->execute();
@@ -740,6 +740,7 @@ class CheckoutDAO
             $price = $detail->getPrice();
             $qty = $detail->getQuantity();
             $reduce = $detail->getReduce();
+            $product_exchange = $detail->getProductExchange();
             $stmt = $this->getConn()->prepare("insert into smi_order_detail (
                     `order_id`,
                     `product_id`,
@@ -747,9 +748,10 @@ class CheckoutDAO
                     `sku`,
                     `price`,
                     `quantity`,
-                    `reduce`) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("iiisdid", $order_id, $product_id, $variant_id, $sku, $price, $qty, $reduce);
+                    `reduce`,
+                    `product_exchange`) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("iiisdidi", $order_id, $product_id, $variant_id, $sku, $price, $qty, $reduce, $product_exchange);
             $stmt->execute();
             print_r($this->getConn()->error);
             $nrows = $stmt->affected_rows;

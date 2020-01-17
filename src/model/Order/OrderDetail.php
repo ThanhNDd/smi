@@ -10,6 +10,7 @@ class OrderDetail {
     private $reduce;
     private $reduce_percent;
     private $product_name;
+    private $product_exchange;
 
     /**
      * Get the value of id
@@ -207,6 +208,26 @@ class OrderDetail {
     public function setProductName($product_name)
     {
         $this->product_name = $product_name;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of product_exchange
+     */
+    public function getProductExchange()
+    {
+        return $this->product_exchange;
+    }
+
+    /**
+     * Set the value of product_exchange
+     *
+     * @return  self
+     */
+    public function setProductExchange($product_exchange)
+    {
+        $this->product_exchange = $product_exchange;
 
         return $this;
     }

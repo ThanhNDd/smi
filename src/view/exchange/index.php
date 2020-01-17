@@ -435,6 +435,7 @@
                         $("#cancel_exchange").removeClass("hidden");
 
 
+                        $("#totalAmount").text(value[0].total_amount);
                         $("#discount").text(value[0].discount);
                         $("#totalReduce").text(value[0].total_reduce);
                         $("#totalCheckout").text(value[0].total_checkout);
@@ -509,6 +510,7 @@
                         discount = replaceComma(discount);
                         into_money = retail - discount;
                     }
+                    $(e).parent().parent().addClass("has-change");
                     $(e).parent().parent().find("td:eq(1)").children(":first").addClass("old");
                     $(e).parent().parent().find("td:eq(1)").append('<input type="hidden" name="prodIdNew" id="prodId_new_' + noRow + '" class="form-control new" value="' + products[0].product_id + '">');
                     $(e).parent().parent().find("td:eq(2)").children(":first").addClass("old");
@@ -686,6 +688,7 @@
             confirmButtonText: 'Ok'
         }).then((result) => {
             if (result.value) {
+                $(e).parent().parent().removeClass("has-change");
                 $(e).parent().parent().find(".new").remove();
                 $(e).parent().parent().find(".old").removeClass("old");
                 $(e).addClass("hidden");
@@ -1055,34 +1058,47 @@
         //order detail information
         let details = [];
         $.each($("#tableProd tbody tr"), function (key, value) {
-            let product_id = $(value).find("input[name=prodIdNew]").val();
-            let variant_id = $(value).find("input[name=variantIdNew]").val();
-            let sku = $(value).find("input[name=skuNew]").val();
-            let product_name = $(value).find("span.product-name-new").text();
-            let price = replaceComma($(value).find("span.price-new").text());
-            let quantity = $(value).find("input[name=qtyNew]").val();
-            let reduce = replaceComma($(value).find("input[name=reduceNew]").val());
-            let reduce_percent = "";
-            if (reduce.indexOf("%") > -1) {
-                reduce = reduce.replace("%", "");
-                reduce_percent = reduce;
-                reduce = (reduce * price) / 100;
-            } else {
-                reduce_percent = Math.round(reduce * 100 / (price * quantity));
+            //product new
+            if($(value).hasClass("has-change")) {
+                let product_id_new = $(value).find("input[name=prodIdNew]").val();
+                let variant_id_new = $(value).find("input[name=variantIdNew]").val();
+                let sku_new = $(value).find("input[name=skuNew]").val();
+                let product_name_new = $(value).find("span.product-name-new").text();
+                let price_new = replaceComma($(value).find("span.price-new").text());
+                let quantity_new = $(value).find("input[name=qtyNew]").val();
+                let reduce_new = replaceComma($(value).find("input[name=reduceNew]").val());
+                let reduce_percent_new = "";
+                if (reduce_new.indexOf("%") > -1) {
+                    reduce_new = reduce_new.replace("%", "");
+                    reduce_percent_new = reduce_new;
+                    reduce_new = (reduce_new * price_new) / 100;
+                } else {
+                    reduce_percent_new = Math.round(reduce_new * 100 / (price_new * quantity_new));
+                }
+                //product old
+                let product_exchange = $(value).find("input[name=sku]").val();
+
+                let product = {};
+                product["product_id"] = product_id_new;
+                product["variant_id"] = variant_id_new;
+                product["sku"] = sku_new;
+                product["product_name"] = product_name_new;
+                product["price"] = price_new;
+                product["quantity"] = quantity_new;
+                product["reduce"] = reduce_new;
+                product["reduce_percent"] = reduce_percent_new;
+                product["product_exchange"] = product_exchange;
+                details.push(product);
             }
-
-            let product = {};
-            product["product_id"] = product_id;
-            product["variant_id"] = variant_id;
-            product["sku"] = sku;
-            product["product_name"] = product_name;
-            product["price"] = price;
-            product["quantity"] = quantity;
-            product["reduce"] = reduce;
-            product["reduce_percent"] = reduce_percent;
-            details.push(product);
         });
-
+        if(details.length <= 0) {
+            Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Bạn hãy thử tạo lại đơn hàng hoặc liên hệ quản trị viên hệ thống!"
+                });
+            return;
+        }
         data["details"] = details;
         console.log(JSON.stringify(data));
         $.ajax({

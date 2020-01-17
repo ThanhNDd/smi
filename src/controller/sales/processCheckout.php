@@ -34,10 +34,19 @@ if(isset($_POST["type"]) && $_POST["type"]=="checkout")   {
     try {
         $data = $_POST["data"];
         $data = json_decode($data); 
+        $total_amount = 0;
+        if(!empty($data->total_amount))
+        {
+            $total_amount = $data->total_amount;
+        } else {
+            throw new Exception("total_amount is null");
+        }
         $total_checkout = 0;
         if(!empty($data->total_checkout))
         {
             $total_checkout = $data->total_checkout;
+        } else {
+            throw new Exception("Total_Checkout is null");
         }
         $total_reduce = 0;
         $total_reduce_percent = 0;    
@@ -46,7 +55,7 @@ if(isset($_POST["type"]) && $_POST["type"]=="checkout")   {
             $total_reduce_percent = round($total_reduce*100/$total_checkout);
         }
         $order = new Order();
-        $order->setTotal_amount(empty($data->total_amount) ? 0 : $data->total_amount);
+        $order->setTotal_amount($total_amount);
         $order->setTotal_reduce($total_reduce);
         $order->setTotal_reduce_percent($total_reduce_percent);
         $order->setDiscount(empty($data->discount) ? 0 : $data->discount);
@@ -71,11 +80,32 @@ if(isset($_POST["type"]) && $_POST["type"]=="checkout")   {
             $details = $data->details;
             for($i=0; $i<count($details); $i++)
             {
+                $product_id = 0;
+                $variant_id = 0;
+                $sku = 0;
                 $price = 0;
                 $qty = 0;
                 $reduce = 0;
                 $reduce_percent = 0;
 
+                if(!empty($details[$i]->product_id))
+                {
+                    $product_id = $details[$i]->product_id;
+                } else {
+                    throw new Exception("Product_Id is null");
+                }
+                if(!empty($details[$i]->variant_id))
+                {
+                    $variant_id = $details[$i]->variant_id;
+                } else {
+                    throw new Exception("Variant_id is null");
+                }
+                if(!empty($details[$i]->sku))
+                {
+                    $sku = $details[$i]->sku;
+                } else {
+                    throw new Exception("SKU is null");
+                }
                 if(!empty($details[$i]->price))
                 {
                     $price = $details[$i]->price;
@@ -95,18 +125,19 @@ if(isset($_POST["type"]) && $_POST["type"]=="checkout")   {
 
                 $detail = new OrderDetail();
                 $detail->setOrder_id($orderId);
-                $detail->setProduct_id(empty($details[$i]->product_id) ? 0 : $details[$i]->product_id);
-                $detail->setVariant_id(empty($details[$i]->variant_id) ? 0 : $details[$i]->variant_id);
-                $detail->setSku(empty($details[$i]->sku) ? 0 : $details[$i]->sku);
-                $detail->setPrice(empty($details[$i]->price) ? 0 : $details[$i]->price);
-                $detail->setQuantity(empty($details[$i]->quantity) ? 0 : $details[$i]->quantity);
-                $detail->setReduce(empty($details[$i]->reduce) ? 0 : $details[$i]->reduce);
+                $detail->setProduct_id($product_id);
+                $detail->setVariant_id($variant_id);
+                $detail->setSku($sku);
+                $detail->setPrice($price);
+                $detail->setQuantity($qty);
+                $detail->setReduce($reduce);
                 $detail->setReduce_percent($reduce_percent);
+                $detail->setProductExchange($details[$i]->product_exchange);
                 $checkout_dao->saveOrderDetail($detail);
                 $detail->setProductName($details[$i]->product_name);
                 array_push($detailsObj, $detail);
-                if(!empty($details[$i]->sku)) {
-                    $dao->update_quantity_by_sku((int) $details[$i]->sku, (int) $details[$i]->quantity);
+                if(!empty($sku)) {
+                    $dao->update_quantity_by_sku((int) $sku, (int) $qty);
                 } else
                 {
                     throw new Exception("SKU is empty");

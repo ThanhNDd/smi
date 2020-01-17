@@ -465,10 +465,10 @@ class ProductDAO {
     function update_quantity_by_sku($sku, $qty)
     {
         try {
-            var_dump($sku);
-            var_dump($qty);
-            $stmt = $this->getConn()->prepare("update smi_variations set quantity = (select case when quantity > 0 then quantity - ? else 0 end from smi_variations where sku = ?) where sku = ?");
-            $stmt->bind_param("iii", $qty, $sku, $sku);
+            // $sku1 = $sku;
+            // $sku2 = $sku;
+            $stmt = $this->getConn()->prepare("update smi_variations set quantity = (select case when quantity > 0 then quantity - $qty else 0 end from smi_variations where sku = $sku) where sku = $sku");
+            // $stmt->bind_param("iii", $qty, $sku1, $sku2);
             $stmt->execute();
             print_r($this->getConn()->error);
             $nrows = $stmt->affected_rows;
