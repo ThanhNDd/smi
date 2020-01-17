@@ -592,22 +592,22 @@
                     noRow = Number(noRow);
                     noRow++;
                     $("#noRow").val(noRow);
-                    $("#tableProd tbody").append('<tr id="product-' + noRow + '">'
+                    $("#tableProd tbody").append('<tr id="product-' + noRow + '" class="add-new-product">'
                         + '<td>' + noRow + '</td>'
-                        + '<td class="hidden"><input type="hidden" name="prodIdNew" id="prodId_new_' + noRow + '" class="form-control" value="' + products[0].product_id + '"></td>'
-                        + '<td class="hidden"><input type="hidden" name="variantIdNew" id="variantId_new_' + noRow + '" class="form-control" value="' + products[0].variant_id + '"></td>'
-                        + '<td class="hidden"><input type="hidden" name="skuNew" id="sku_new_' + noRow + '" class="form-control" value="' + products[0].sku + '"></td>'
-                        + '<td>' + products[0].sku + '</td>'
-                        + '<td><span class="product-name" id="name_new_' + noRow + '">' + products[0].name + '</span></td>'
-                        + '<td><span class="size" id="size_new_' + noRow + '">' + products[0].size + '</span></td>'
-                        + '<td><span class="color" id="color_new_' + noRow + '">' + products[0].color + '</span></td>'
-                        + '<td><span class="price" id="price_new_' + noRow + '">' + products[0].retail + '</span><span> đ</span></td>'
-                        + '<td><input type="number" name="qty" id="qty_new_' + noRow + '" class="form-control" min="1" value="'+qty+'" onchange="on_change_qty(\'price_' + noRow + '\', \'qty_' + noRow + '\', \'intoMoney_' + noRow + '\', \'reduce_' + noRow + '\')"></td>'
-                        + '<td><input type="text" name="reduce" id="reduce_new_' + noRow + '" class="form-control" value="' + discount + '" onchange="on_change_reduce(\'price_' + noRow + '\',\'qty_' + noRow + '\', \'intoMoney_' + noRow + '\', \'reduce_' + noRow + '\')"></td>'
-                        + '<td><span class="intoMoney" id="diff_money_new_' + noRow + '">' + products[0].retail + '</span><span> đ</span></td>'
+                        + '<td class="hidden"><input type="hidden" name="prodIdAddNew" id="prodId_add_new_' + noRow + '" class="form-control" value="' + products[0].product_id + '"></td>'
+                        + '<td class="hidden"><input type="hidden" name="variantIdAddNew" id="variantId_add_new_' + noRow + '" class="form-control" value="' + products[0].variant_id + '"></td>'
+                        + '<td class="hidden"><input type="hidden" name="skuAddNew" id="sku_add_new_' + noRow + '" class="form-control" value="' + products[0].sku + '"></td>'
+                        + '<td><span class="product-sku-add-new">' + products[0].sku + '</span></td>'
+                        + '<td><span class="product-name-add-new" id="name_add_new_' + noRow + '">' + products[0].name + '</span></td>'
+                        + '<td><span class="size-add-new" id="size_add_new_' + noRow + '">' + products[0].size + '</span></td>'
+                        + '<td><span class="color-add-new" id="color_add_new_' + noRow + '">' + products[0].color + '</span></td>'
+                        + '<td><span class="price-add-new" id="price_add_new_' + noRow + '">' + products[0].retail + '</span><span> đ</span></td>'
+                        + '<td><input type="number" name="qtyAddNew" id="qty_add_new_' + noRow + '" class="form-control" min="1" value="'+qty+'" onchange="on_change_qty(\'price_' + noRow + '\', \'qty_' + noRow + '\', \'intoMoney_' + noRow + '\', \'reduce_' + noRow + '\')"></td>'
+                        + '<td><input type="text" name="reduceAddNew" id="reduce_add_new_' + noRow + '" class="form-control" value="' + discount + '" onchange="on_change_reduce(\'price_' + noRow + '\',\'qty_' + noRow + '\', \'intoMoney_' + noRow + '\', \'reduce_' + noRow + '\')"></td>'
+                        + '<td><span class="intoMoney" id="diff_money_add_new_' + noRow + '">' + products[0].retail + '</span><span> đ</span></td>'
                         + '<td><button type="button" class="btn btn-danger form-control add-new-prod" title="Xóa"  onclick="del_product(this, \'product-' + noRow + '\')"><i class="fa fa-trash" aria-hidden="true"></i> Xóa</button></td>'
                         + '</tr>');
-                    $('[id=qty_' + noRow + ']').trigger("change");
+                    $('[id=qty_add_new_' + noRow + ']').trigger("change");
                     calculateTotal();
                     $("#checkout").prop("disabled", "");
                 } else {
@@ -1060,9 +1060,38 @@
         $.each($("#tableProd tbody tr"), function (key, value) {
             //product new
             if($(value).hasClass("has-change")) {
+                //current product
+                let product_id = $(value).find("input[name=prodId]").val();
+                let variant_id = $(value).find("input[name=variantId]").val();
+                let sku = replaceComma($(value).find("span.product-sku").text());
+                let product_name = $(value).find("span.product-name").text();
+                let price = replaceComma($(value).find("span.price").text());
+                let quantity = $(value).find("input[name=qty]").val();
+                let reduce = replaceComma($(value).find("input[name=reduce]").val());
+                let reduce_percent = "";
+                if (reduce.indexOf("%") > -1) {
+                    reduce = reduce.replace("%", "");
+                    reduce_percent = reduce;
+                    reduce = (reduce * price) / 100;
+                } else {
+                    reduce_percent = Math.round(reduce * 100 / (price * quantity));
+                }
+                let curr_product = {};
+                curr_product["product_id"] = product_id;
+                curr_product["variant_id"] = variant_id;
+                curr_product["sku"] = sku;
+                curr_product["product_name"] = product_name;
+                curr_product["price"] = price;
+                curr_product["quantity"] = quantity;
+                curr_product["reduce"] = reduce;
+                curr_product["reduce_percent"] = reduce_percent;
+
+                details["curr_product"] = curr_product;
+
+                //exchange_product
                 let product_id_new = $(value).find("input[name=prodIdNew]").val();
                 let variant_id_new = $(value).find("input[name=variantIdNew]").val();
-                let sku_new = $(value).find("input[name=skuNew]").val();
+                let sku_new = replaceComma($(value).find("span.product-sku-new").text());
                 let product_name_new = $(value).find("span.product-name-new").text();
                 let price_new = replaceComma($(value).find("span.price-new").text());
                 let quantity_new = $(value).find("input[name=qtyNew]").val();
@@ -1075,9 +1104,6 @@
                 } else {
                     reduce_percent_new = Math.round(reduce_new * 100 / (price_new * quantity_new));
                 }
-                //product old
-                let product_exchange = $(value).find("input[name=sku]").val();
-
                 let product = {};
                 product["product_id"] = product_id_new;
                 product["variant_id"] = variant_id_new;
@@ -1087,8 +1113,38 @@
                 product["quantity"] = quantity_new;
                 product["reduce"] = reduce_new;
                 product["reduce_percent"] = reduce_percent_new;
-                product["product_exchange"] = product_exchange;
-                details.push(product);
+                product["product_exchange"] = sku;
+
+                details["exchange_product"] = product;
+            }
+            // add new product
+            if($(value).hasClass("add-new-product")) {
+                let product_id_add_new = $(value).find("input[name=prodIdAddNew]").val();
+                let variant_id_add_new = $(value).find("input[name=variantIdAddNew]").val();
+                let sku_add_new = replaceComma($(value).find("span.product-sku-add-new").text());
+                let product_name_add_new = $(value).find("span.product-name-add-new").text();
+                let price_add_new = replaceComma($(value).find("span.price-add-new").text());
+                let quantity_add_new = $(value).find("input[name=qtyAddNew]").val();
+                let reduce_add_new = replaceComma($(value).find("input[name=reduceAddNew]").val());
+                let reduce_percent_add_new = "";
+                if (reduce_add_new.indexOf("%") > -1) {
+                    reduce_add_new = reduce_new.replace("%", "");
+                    reduce_percent_add_new = reduce_add_new;
+                    reduce_add_new = (reduce_add_new * price_add_new) / 100;
+                } else {
+                    reduce_percent_add_new = Math.round(reduce_add_new * 100 / (price_add_new * quantity_add_new));
+                }
+                let new_product = {};
+                new_product["product_id_add_new"] = product_id_add_new;
+                new_product["variant_id_add_new"] = variant_id_add_new;
+                new_product["sku_add_new"] = sku_add_new;
+                new_product["product_name_add_new"] = product_name_add_new;
+                new_product["price_add_new"] = price_add_new;
+                new_product["quantity_add_new"] = quantity_add_new;
+                new_product["reduce_add_new"] = reduce_add_new;
+                new_product["reduce_percent_add_new"] = reduce_percent_add_new;
+
+                details["new_product"] = new_product;
             }
         });
         if(details.length <= 0) {
@@ -1105,7 +1161,7 @@
             dataType: 'json',
             url: '<?php echo __PATH__ . 'src/controller/sales/processCheckout.php' ?>',
             data: {
-                type: "checkout",
+                method: "exchange",
                 data: JSON.stringify(data)
             },
             type: 'POST',

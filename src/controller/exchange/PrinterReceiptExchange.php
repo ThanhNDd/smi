@@ -33,15 +33,15 @@ class PrinterReceiptExchange
             $mpdf->AddPage();
 
             // $this->rrmdir("pdf");
-            $folder_path = "pdf"; 
-            $files = glob($folder_path.'/*');  
+            // $folder_path = "pdf"; 
+            // $files = glob($folder_path.'/*');  
             // Deleting all the files in the list 
-            foreach($files as $file) { 
-                if(is_file($file))  {
+            // foreach($files as $file) { 
+                // if(is_file($file))  {
                     // Delete the given file 
-                    unlink($file);  
-                }
-            } 
+                    // unlink($file);  
+                // }
+            // } 
             
             // mkdir("pdf", 0777, true);
             $filename = "receipt".time().".pdf";
@@ -75,11 +75,11 @@ class PrinterReceiptExchange
                         text-align: right;
                         padding-right: 3px;
                     }
-                    p, h3 {
+                    p, h3, h4 {
                         margin: 5px;
                     }
                     .container, table {
-                        width: 300px;
+                        width: 210px;
                         font-size: 13px;
                         font-family: sans-serif;
                     }
@@ -114,15 +114,15 @@ class PrinterReceiptExchange
                         <div class="center col-12 p-0 m-0">
                             <h4>SHOP MẸ ỈN</h4>
                             <p>Thời trang trẻ em cao cấp</p>
-                            <span>* * * * * * * * * * * *</span>
+                            <span>* * * * * * * * * * * * * * * * * * * * * */span>
                             <p style="margin: 5px 0;">Đ/c: 227 Phố Huyện - Thị Trấn Quốc Oai - Hà Nội</p>
                             <p>Hotline: 0962.926.302</p>
-                            <p>Website: www.shopmein.net</p>
+                            <p>Website: www.shopmein.vn</p>
                             <p>Facebook: Shop Mẹ Ỉn</p>
-                            <span>* * * * * * * * * * * *</span>
+                            <span>* * * * * * * * * * * * * * * * * * * * * *</span>
                             <h4>HÓA ĐƠN THANH TOÁN</h4>
-                            <barcode code="'.$order->getId().'" type="C128A" class="barcode" />
-                            <p>HD'.$order->getId().'</p>
+                            <barcode code="'.$this->generate_barcode_value($order->getId()).'" type="C128A" class="barcode" />
+                            <p>'.$this->generate_barcode_value($order->getId()).'</p>
                             <span>
                                 <span class="float-left">Ngày tháng:</span>
                                 <span class="float-right mr-2">'.date('d/m/Y - H:i:s').'</span>
@@ -156,13 +156,13 @@ class PrinterReceiptExchange
             $c++;
             $body .= '<tr>
                         <td class="center">'.$c.'</td>
-                        <td colspan="4" class="left">'.$value->getProductId().'</td>
+                        <td colspan="4" class="left">'.$value->getProductName().'</td>
                     </tr>
                     <tr>
                         <td class="left"></td>
                         <td class="center">'.$value->getQuantity().'</td>
                         <td class="right">'.number_format($value->getPrice()).'</td>
-                        <td class="right">'.((!empty($value->getReducePercent()) && $value->getReducePercent() != 0) ? ("-".$value->getReducePercent()."%") : "").'</td>
+                        <td class="right">'.((!empty($value->getReduce_percent()) && $value->getReduce_percent() != 0) ? ("-".$value->getReduce_percent()."%") : "").'</td>
                         <td class="right">'.number_format($intoMoney).'</td>
                     </tr>';
         }
@@ -184,27 +184,27 @@ class PrinterReceiptExchange
         // $reduce = $reduce + $discount;
         $footer =   '<tfoot>
                             <tr>
-                                <td colspan="4" class="right">Tổng tiền:</td>
+                                <td colspan="4" class="left">Tổng tiền</td>
                                 <td class="right">'.number_format(empty($order->getTotal_amount()) || $order->getTotal_amount() == 'NULL' ? 0 : $order->getTotal_amount()).'</td>
                             </tr>
                             <tr>
-                                <td colspan="4" class="right">Giảm trên tổng đơn:</td>
-                                <td class="right">'.($order->getDiscount() < 100 ? $order->getDiscount()."%" : number_format($order->getDiscount())).'</td>
+                                <td colspan="4" class="left">Giảm trên tổng đơn</td>
+                                <td class="right">'.($order->getDiscount() > 0 && $order->getDiscount() < 100 ? $order->getDiscount()."%" : number_format($order->getDiscount())).'</td>
                             </tr>
                             <tr>
-                                <td colspan="4" class="right">Tổng Giảm trừ:</td>
+                                <td colspan="4" class="left">Tổng Giảm trừ</td>
                                 <td class="right">'.number_format($reduce).'</td>
                             </tr>
                             <tr>
-                                <td colspan="4" class="right">Tổng thanh toán:</td>
+                                <td colspan="4" class="left">Tổng thanh toán</td>
                                 <td class="right">'.number_format(empty($order->getTotal_checkout()) || $order->getTotal_checkout() == 'NULL' ? 0 : $order->getTotal_checkout()).'</td>
                             </tr>
                             <tr>
-                                <td colspan="4" class="right">Khách thanh toán:</td>
+                                <td colspan="4" class="left">Khách thanh toán</td>
                                 <td class="right">'.number_format(empty($order->getCustomer_payment()) || $order->getCustomer_payment() == 'NULL' ? 0 : $order->getCustomer_payment()).'</td>
                             </tr>
                             <tr>
-                                <td colspan="4" class="right">Trả lại:</td>
+                                <td colspan="4" class="left">Trả lại</td>
                                 <td class="right">'.number_format(empty($order->getRepay()) || $order->getRepay() == 'NULL' ? 0 : $order->getRepay()).'</td>
                             </tr>
                         </tfoot>
@@ -267,13 +267,13 @@ class PrinterReceiptExchange
     function generate_barcode_value($value)
     {
         $length = strlen($value);
-        $number_zero = 13 - $length;
+        $number_zero = 10 - $length;
         $zero = "";
         for($i = 0; $i<$number_zero; $i++)
         {
             $zero .= "0";
         }
-        return $zero.$value;
+        return "HD".$zero.$value;
     }
 }
 

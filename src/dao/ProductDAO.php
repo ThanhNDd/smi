@@ -467,14 +467,16 @@ class ProductDAO {
         try {
             // $sku1 = $sku;
             // $sku2 = $sku;
-            $stmt = $this->getConn()->prepare("update smi_variations set quantity = (select case when quantity > 0 then quantity - $qty else 0 end from smi_variations where sku = $sku) where sku = $sku");
+            // $stmt = $this->getConn()->prepare("update smi_variations set quantity = (select case when quantity > 0 then quantity - $qty else 0 end from smi_variations where sku = $sku) where sku = $sku");
             // $stmt->bind_param("iii", $qty, $sku1, $sku2);
-            $stmt->execute();
-            print_r($this->getConn()->error);
-            $nrows = $stmt->affected_rows;
-            if (!$nrows) {
-                throw new Exception("update_quantity_by_sku  has failure!!!");
-            }
+            // $stmt->execute();
+            // print_r($this->getConn()->error);
+            // $nrows = $stmt->affected_rows;
+            // if (!$nrows) {
+            //     throw new Exception("update_quantity_by_sku  has failure!!!");
+            // }
+            $sql = "update smi_variations set quantity = (select case when quantity > 0 then quantity - $qty else 0 end from smi_variations where sku = $sku) where sku = $sku";
+            $result = mysqli_query($this->conn,$sql); 
         } catch(Exception $e)
         {
             throw new Exception("update_quantity_by_sku >> ".$e);
