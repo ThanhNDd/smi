@@ -290,6 +290,13 @@ if(isset($_POST["method"]) && $_POST["method"]=="exchange")   {
                     throw new Exception("SKU is empty");
                 }
             }  
+
+            $curr_product = $data["curr_product"];
+            $exchange_product = $data["exchange_product"];
+            $add_new_product = $data["new_product"];
+    
+            $curr_product = json_decode($curr_product);
+
             // printer receipt
             if($data->flag_print_receipt) {
                 $printer = new PrinterReceiptExchange();
