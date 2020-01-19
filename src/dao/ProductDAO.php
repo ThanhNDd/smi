@@ -1,6 +1,7 @@
 <?php
 
-class ProductDAO {
+class ProductDAO
+{
     private $conn;
 
     function get_data_print_barcode($skus)
@@ -15,12 +16,12 @@ class ProductDAO {
                     from 
                         smi_products A left join smi_variations B on A.id = B.product_id 
                     where 
-                        B.sku in (".$skus.")
+                        B.sku in (" . $skus . ")
                     order by 
                         A.id, B.id, B.color, B.size";
-            $result = mysqli_query($this->conn,$sql);    
-            $data = array();        
-            foreach($result as $k => $row) {
+            $result = mysqli_query($this->conn, $sql);
+            $data = array();
+            foreach ($result as $k => $row) {
                 $product = array(
                     'name' => $row["name"],
                     'sku' => $row["sku"],
@@ -33,8 +34,7 @@ class ProductDAO {
             // $arr = array();
             // $arr["results"] = $data;
             return $data;
-        } catch(Exception $e)
-        {
+        } catch (Exception $e) {
             throw new Exception($e);
         }
     }
@@ -48,16 +48,16 @@ class ProductDAO {
                         A.retail 
                     from smi_products A 
                         left join smi_variations B on A.id = B.product_id";
-            $result = mysqli_query($this->conn,$sql);    
-            $data = array();        
+            $result = mysqli_query($this->conn, $sql);
+            $data = array();
             $product = array(
-                    'product_id' => '',
-                    'id' => '-1',
-                    'text' => '',
-                    'price' => ''
-                );
+                'product_id' => '',
+                'id' => '-1',
+                'text' => '',
+                'price' => ''
+            );
             array_push($data, $product);
-            foreach($result as $k => $row) {
+            foreach ($result as $k => $row) {
                 $product = array(
                     'product_id' => $row["product_id"],
                     'id' => $row["variation_id"],
@@ -69,15 +69,14 @@ class ProductDAO {
             $arr = array();
             $arr["results"] = $data;
             return $arr;
-        } catch(Exception $e)
-        {
+        } catch (Exception $e) {
             throw new Exception($e);
         }
     }
 
     function find_by_id($id)
     {
-         try {
+        try {
             $sql = "select A.id AS product_id,
                            A.name,
                            A.image,
@@ -96,14 +95,13 @@ class ProductDAO {
                            B.sku
                     FROM smi_products A
                     LEFT JOIN smi_variations B ON A.id = B.product_id
-                    WHERE A.id = ".$id;
-            $result = mysqli_query($this->conn,$sql);    
-            $data = array();                 
+                    WHERE A.id = " . $id;
+            $result = mysqli_query($this->conn, $sql);
+            $data = array();
             $product_id = 0;
             $i = 0;
-            foreach($result as $k => $row) {
-                if($product_id != $row["product_id"])
-                {
+            foreach ($result as $k => $row) {
+                if ($product_id != $row["product_id"]) {
                     $product = array(
                         'product_id' => $row["product_id"],
                         'name' => $row["name"],
@@ -139,19 +137,19 @@ class ProductDAO {
                         'sku' => $row["sku"],
                         'product_id' => $row["product_id"]
                     );
-                    array_push($data[$i-1]['variations'],  $variation);
+                    array_push($data[$i - 1]['variations'], $variation);
                 }
             }
             $arr = array();
             $arr["data"] = $data;
             // print_r($arr);
             return $arr;
-        } catch(Exception $e)
-        {
+        } catch (Exception $e) {
             throw new Exception($e);
         }
     }
-    function find_all()
+
+    function find_all($status)
     {
         try {
             $sql = "select 
@@ -163,10 +161,12 @@ class ProductDAO {
                         A.discount
                     from 
                         smi_products A
+                    where
+                        A.status = $status
                     order by A.created_at desc, A.id";
-            $result = mysqli_query($this->conn,$sql);
+            $result = mysqli_query($this->conn, $sql);
             $data = array();
-            foreach($result as $k => $row) {
+            foreach ($result as $k => $row) {
                 $product = array(
                     'product_id' => $row["product_id"],
                     'name' => $row["name"],
@@ -180,9 +180,8 @@ class ProductDAO {
             $arr = array();
             $arr["data"] = $data;
             return $arr;
-        } catch(Exception $e)
-        {
-            echo "Open connection database is error exception >> ".$e->getMessage();
+        } catch (Exception $e) {
+            echo "Open connection database is error exception >> " . $e->getMessage();
         }
     }
 
@@ -225,13 +224,12 @@ class ProductDAO {
                         smi_products A left join smi_variations B on A.id = B.product_id    
                     where B.product_id = $productId 
                     order by A.created_at desc, A.id, B.id, B.color, B.size";
-            $result = mysqli_query($this->conn,$sql);
+            $result = mysqli_query($this->conn, $sql);
             $data = array();
             $product_id = 0;
             $i = 0;
-            foreach($result as $k => $row) {
-                if($product_id != $row["product_id"])
-                {
+            foreach ($result as $k => $row) {
+                if ($product_id != $row["product_id"]) {
                     $product = array(
                         'product_id' => $row["product_id"],
                         'name' => $row["name"],
@@ -242,7 +240,7 @@ class ProductDAO {
                         'retail' => number_format($row["retail"]),
                         'profit' => number_format($row["profit"]),
                         'discount' => $row["discount"],
-                        'created_at' => date_format(date_create($row["created_at"]),"d/m/Y"),
+                        'created_at' => date_format(date_create($row["created_at"]), "d/m/Y"),
                         'variations' => array()
                     );
                     $variation = array(
@@ -266,51 +264,48 @@ class ProductDAO {
                         'sku' => $row["sku"],
                         'product_id' => $row["product_id"]
                     );
-                    array_push($data[$i-1]['variations'],  $variation);
+                    array_push($data[$i - 1]['variations'], $variation);
                 }
             }
             $arr = array();
             $arr["data"] = $data;
             // print_r($arr);
             return $arr;
-        } catch(Exception $e)
-        {
-            echo "Open connection database is error exception >> ".$e->getMessage();
+        } catch (Exception $e) {
+            echo "Open connection database is error exception >> " . $e->getMessage();
         }
     }
 
     function delete_product($product_id)
     {
-    	try {
-            $sql = "delete from smi_products where id = ".$product_id;
-            mysqli_query($this->conn,$sql); 
-        } catch(Exception $e)
-        {
-            echo "Open connection database is error exception >> ".$e->getMessage();
-        }   
+        try {
+            $sql = "delete from smi_products where id = " . $product_id;
+            mysqli_query($this->conn, $sql);
+        } catch (Exception $e) {
+            echo "Open connection database is error exception >> " . $e->getMessage();
+        }
     }
 
     function update_product(Product $product)
     {
         try {
             $sql = "update smi_products
-                    SET name = ".$product->getName().",
-                        image = ".$product->getImage().",
-                        LINK = ".$product->getLink().",
-                        price = ".$product->getPrice().",
-                        fee_transport = ".$product->getFee_transport().",
-                        profit = ".$product->getProfit().",
-                        retail = ".$product->getRetail().",
-                        percent = ".$product->getPercent().",
-                        TYPE = ".$product->getType().",
-                        category_id = ".$product->getCategory_id().",
+                    SET name = " . $product->getName() . ",
+                        image = " . $product->getImage() . ",
+                        LINK = " . $product->getLink() . ",
+                        price = " . $product->getPrice() . ",
+                        fee_transport = " . $product->getFee_transport() . ",
+                        profit = " . $product->getProfit() . ",
+                        retail = " . $product->getRetail() . ",
+                        percent = " . $product->getPercent() . ",
+                        TYPE = " . $product->getType() . ",
+                        category_id = " . $product->getCategory_id() . ",
                         updated_at = NOW()
-                    WHERE id = ".$product->getId();
-            mysqli_query($this->conn,$sql); 
-        } catch(Exception $e)
-        {
+                    WHERE id = " . $product->getId();
+            mysqli_query($this->conn, $sql);
+        } catch (Exception $e) {
             echo $e->getMessage();
-        }   
+        }
     }
 
     function update_discount($discount, $product_id)
@@ -323,37 +318,76 @@ class ProductDAO {
             if (!$nrows) {
                 throw new Exception("Update discount has failure!!!");
             }
-        } catch(Exception $e)
-        {
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function check_stock($product_id)
+    {
+        try {
+            $sql = "select count(*) as stock from smi_products a left join smi_variations b on a.id = b.product_id
+                    where a.id = $product_id and b.quantity > 0";
+            $result = mysqli_query($this->conn, $sql);
+            $row = $result->fetch_assoc();
+            $stock = $row['stock'];
+            return $stock;
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function count_out_of_stock()
+    {
+        try {
+            $sql = "select count(*) as out_of_stock from smi_products where status = 1";
+            $result = mysqli_query($this->conn, $sql);
+            $row = $result->fetch_assoc();
+            $stock = $row['out_of_stock'];
+            return $stock;
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function update_stock($status, $product_id)
+    {
+        try {
+            $stmt = $this->getConn()->prepare("update smi_products SET status = ?, updated_at = NOW() where id = ?");
+            $stmt->bind_param("ii", $status, $product_id);
+            $stmt->execute();
+            $nrows = $stmt->affected_rows;
+            if (!$nrows) {
+                throw new Exception("update_out_of_stock has failure!!!");
+            }
+        } catch (Exception $e) {
             throw new Exception($e);
         }
     }
 
     function update_variation($sku, $color, $size, $qty)
     {
-    	try {
-            $sql = "update smi_variations set color = \"".$color."\", size = \"".$size."\", quantity = ".$qty." where sku = ".$sku;
-            mysqli_query($this->conn,$sql); 
-        } catch(Exception $e)
-        {
-            throw new Exception("update_variation >> ".$e);
-        }   
+        try {
+            $sql = "update smi_variations set color = \"" . $color . "\", size = \"" . $size . "\", quantity = " . $qty . " where sku = " . $sku;
+            mysqli_query($this->conn, $sql);
+        } catch (Exception $e) {
+            throw new Exception("update_variation >> " . $e);
+        }
     }
 
     function delete_variation($sku)
     {
-    	try {
-            $sql = "delete from smi_variations where sku = ".$sku;
-            mysqli_query($this->conn,$sql); 
-        } catch(Exception $e)
-        {
-            echo "delete_variation >> ".$e->getMessage();
-        }   
+        try {
+            $sql = "delete from smi_variations where sku = " . $sku;
+            mysqli_query($this->conn, $sql);
+        } catch (Exception $e) {
+            echo "delete_variation >> " . $e->getMessage();
+        }
     }
 
     function save_product(Product $product)
     {
-    	try {
+        try {
             $sql = "INSERT INTO smi_products (
                     `name`,
                     `image`,
@@ -366,30 +400,29 @@ class ProductDAO {
                     `type`,
                     `category_id`,
                     `created_at`) 
-                VALUES (".
-                    $product->getName().",".
-                    $product->getImage().",".
-                    $product->getLink().",".
-                    $product->getPrice().",".
-                    $product->getFee_transport().",".
-                    $product->getProfit().",".
-                    $product->getRetail().",".
-                    $product->getPercent().",".
-                    $product->getType().",".
-                    $product->getCategory_id().
-                    ", NOW())";
-            mysqli_query($this->conn,$sql); 
-            $lastid = mysqli_insert_id($this->conn); 
+                VALUES (" .
+                $product->getName() . "," .
+                $product->getImage() . "," .
+                $product->getLink() . "," .
+                $product->getPrice() . "," .
+                $product->getFee_transport() . "," .
+                $product->getProfit() . "," .
+                $product->getRetail() . "," .
+                $product->getPercent() . "," .
+                $product->getType() . "," .
+                $product->getCategory_id() .
+                ", NOW())";
+            mysqli_query($this->conn, $sql);
+            $lastid = mysqli_insert_id($this->conn);
             return $lastid;
-        } catch(Exception $e)
-        {
+        } catch (Exception $e) {
             throw new Exception($e);
-        }   
+        }
     }
 
     function save_variations(Array $variations)
     {
-    	try {
+        try {
             $sql = "INSERT INTO smi_variations (
                 `product_id`,
                 `size`,
@@ -398,24 +431,22 @@ class ProductDAO {
                 `sku`,
                 `created_at`) 
             VALUES ";
-            for($i=0; $i < count($variations); $i++)
-            {
-                $sql .= "(".
-                    $variations[$i]->getProduct_id().",".
-                    $variations[$i]->getSize().",".
-                    $variations[$i]->getColor().",".
-                    $variations[$i]->getQuantity().",".
-                    $variations[$i]->getSku()."".
+            for ($i = 0; $i < count($variations); $i++) {
+                $sql .= "(" .
+                    $variations[$i]->getProduct_id() . "," .
+                    $variations[$i]->getSize() . "," .
+                    $variations[$i]->getColor() . "," .
+                    $variations[$i]->getQuantity() . "," .
+                    $variations[$i]->getSku() . "" .
                     ",NOW()),";
-            }    
-            $sql = substr($sql, 0, -1);      
-            mysqli_query($this->conn,$sql); 
-            $lastid = mysqli_insert_id($this->conn); 
+            }
+            $sql = substr($sql, 0, -1);
+            mysqli_query($this->conn, $sql);
+            $lastid = mysqli_insert_id($this->conn);
             return $lastid;
-        } catch(Exception $e)
-        {
-            echo "Open connection database is error exception >> ".$e->getMessage();
-        }   
+        } catch (Exception $e) {
+            echo "Open connection database is error exception >> " . $e->getMessage();
+        }
     }
 
     function find_by_sku($sku)
@@ -434,12 +465,12 @@ class ProductDAO {
                         A.price 
                     from 
                         smi_products A left join smi_variations B on A.id = B.product_id 
-                        where B.sku = ".$sku."
+                        where B.sku = " . $sku . "
                         order by A.id, B.id, B.color, B.size";
-            $result = mysqli_query($this->conn,$sql);    
+            $result = mysqli_query($this->conn, $sql);
             $data = array();
-            if(!empty($result)) {
-                foreach($result as $k => $row) {
+            if (!empty($result)) {
+                foreach ($result as $k => $row) {
                     $product = array(
                         'product_id' => $row["product_id"],
                         'variant_id' => $row["variant_id"],
@@ -454,11 +485,10 @@ class ProductDAO {
                     array_push($data, $product);
                 }
             }
-            
+
             return $data;
-        } catch(Exception $e)
-        {
-            echo "Open connection database is error exception >> ".$e->getMessage();
+        } catch (Exception $e) {
+            echo "Open connection database is error exception >> " . $e->getMessage();
         }
     }
 
@@ -476,45 +506,43 @@ class ProductDAO {
             //     throw new Exception("update_quantity_by_sku  has failure!!!");
             // }
             $sql = "update smi_variations set quantity = (select case when quantity > 0 then quantity - $qty else 0 end from smi_variations where sku = $sku) where sku = $sku";
-            $result = mysqli_query($this->conn,$sql); 
-        } catch(Exception $e)
-        {
-            throw new Exception("update_quantity_by_sku >> ".$e);
-        }   
+            $result = mysqli_query($this->conn, $sql);
+        } catch (Exception $e) {
+            throw new Exception("update_quantity_by_sku >> " . $e);
+        }
     }
 
     function find_variation_by_product_id($product_id)
     {
         try {
-            $sql = "select `id`, `product_id`, `size`, `color`, `quantity`, `sku`, `created_at`, `updated_at` from smi_variations where product_id = ".$product_id;
-            $result = mysqli_query($this->conn,$sql); 
+            $sql = "select `id`, `product_id`, `size`, `color`, `quantity`, `sku`, `created_at`, `updated_at` from smi_variations where product_id = " . $product_id;
+            $result = mysqli_query($this->conn, $sql);
 
             return $result;
-        } catch(Exception $e)
-        {
-            throw new Exception("find_variation_by_product_id >> ".$e);
-        }   
+        } catch (Exception $e) {
+            throw new Exception("find_variation_by_product_id >> " . $e);
+        }
     }
 
     function find_variation_by_sku($sku)
     {
         try {
-            $sql = "select `id`, `product_id`, `size`, `color`, `quantity`, `sku`, `created_at`, `updated_at` from smi_variations where sku = ".$sku;
-            $result = mysqli_query($this->conn,$sql);
+            $sql = "select `id`, `product_id`, `size`, `color`, `quantity`, `sku`, `created_at`, `updated_at` from smi_variations where sku = " . $sku;
+            $result = mysqli_query($this->conn, $sql);
             return $result;
-        } catch(Exception $e)
-        {
-            throw new Exception("find_variation_by_sku >> ".$e);
+        } catch (Exception $e) {
+            throw new Exception("find_variation_by_sku >> " . $e);
         }
     }
 
-    function update_qty_variation_by_sku($sku) {
+    function update_qty_variation_by_sku($sku)
+    {
         try {
             $stmt = $this->getConn()->prepare("update smi_variations set quantity = quantity + 1 where sku = ?");
             $stmt->bind_param("s", $sku);
             $stmt->execute();
             $nrows = $stmt->affected_rows;
-            if(!$nrows) {
+            if (!$nrows) {
                 throw new Exception("Update Qty for variations has failure");
             }
         } catch (Exception $e) {
@@ -524,7 +552,7 @@ class ProductDAO {
 
     /**
      * Get the value of conn
-     */ 
+     */
     public function getConn()
     {
         return $this->conn;
@@ -534,7 +562,7 @@ class ProductDAO {
      * Set the value of conn
      *
      * @return  self
-     */ 
+     */
     public function setConn($conn)
     {
         $this->conn = $conn;

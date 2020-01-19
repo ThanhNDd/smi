@@ -1056,7 +1056,9 @@
         data["payment_exchange_type"] = paymentExchangeType;
 
         //order detail information
-        let details = [];
+        let curr_products = [];
+        let exchange_products = [];
+        let add_new_products = [];
         $.each($("#tableProd tbody tr"), function (key, value) {
             //product new
             if($(value).hasClass("has-change")) {
@@ -1066,8 +1068,8 @@
                 let sku = replaceComma($(value).find("span.product-sku").text());
                 let product_name = $(value).find("span.product-name").text();
                 let price = replaceComma($(value).find("span.price").text());
-                let quantity = $(value).find("input[name=qty]").val();
-                let reduce = replaceComma($(value).find("input[name=reduce]").val());
+                let quantity = $(value).find("span[name=qty]").val();
+                let reduce = replaceComma($(value).find("span[name=reduce]").val());
                 let reduce_percent = "";
                 if (reduce.indexOf("%") > -1) {
                     reduce = reduce.replace("%", "");
@@ -1085,8 +1087,9 @@
                 curr_product["quantity"] = quantity;
                 curr_product["reduce"] = reduce;
                 curr_product["reduce_percent"] = reduce_percent;
+                curr_product["product_exchange"] = 0;
 
-                details["curr_product"] = curr_product;
+                curr_products.push(curr_product);
 
                 //exchange_product
                 let product_id_new = $(value).find("input[name=prodIdNew]").val();
@@ -1115,7 +1118,7 @@
                 product["reduce_percent"] = reduce_percent_new;
                 product["product_exchange"] = sku;
 
-                details["exchange_product"] = product;
+                exchange_products.push(product);
             }
             // add new product
             if($(value).hasClass("add-new-product")) {
@@ -1128,26 +1131,27 @@
                 let reduce_add_new = replaceComma($(value).find("input[name=reduceAddNew]").val());
                 let reduce_percent_add_new = "";
                 if (reduce_add_new.indexOf("%") > -1) {
-                    reduce_add_new = reduce_new.replace("%", "");
+                    reduce_add_new = reduce_add_new.replace("%", "");
                     reduce_percent_add_new = reduce_add_new;
                     reduce_add_new = (reduce_add_new * price_add_new) / 100;
                 } else {
                     reduce_percent_add_new = Math.round(reduce_add_new * 100 / (price_add_new * quantity_add_new));
                 }
                 let new_product = {};
-                new_product["product_id_add_new"] = product_id_add_new;
-                new_product["variant_id_add_new"] = variant_id_add_new;
-                new_product["sku_add_new"] = sku_add_new;
-                new_product["product_name_add_new"] = product_name_add_new;
-                new_product["price_add_new"] = price_add_new;
-                new_product["quantity_add_new"] = quantity_add_new;
-                new_product["reduce_add_new"] = reduce_add_new;
-                new_product["reduce_percent_add_new"] = reduce_percent_add_new;
+                new_product["product_id"] = product_id_add_new;
+                new_product["variant_id"] = variant_id_add_new;
+                new_product["sku"] = sku_add_new;
+                new_product["product_name"] = product_name_add_new;
+                new_product["price"] = price_add_new;
+                new_product["quantity"] = quantity_add_new;
+                new_product["reduce"] = reduce_add_new;
+                new_product["reduce_percent"] = reduce_percent_add_new;
+                new_product["product_exchange"] = 0;
 
-                details["new_product"] = new_product;
+                add_new_products.push(new_product);
             }
         });
-        if(details.length <= 0) {
+        if(curr_products.length <= 0 || exchange_products.length <= 0) {
             Swal.fire({
                     type: 'error',
                     title: 'Đã xảy ra lỗi',
@@ -1155,11 +1159,13 @@
                 });
             return;
         }
-        data["details"] = details;
+        data["curr_products"] = curr_products;
+        data["exchange_products"] = exchange_products;
+        data["add_new_products"] = add_new_products;
         console.log(JSON.stringify(data));
         $.ajax({
             dataType: 'json',
-            url: '<?php echo __PATH__ . 'src/controller/sales/processCheckout.php' ?>',
+            url: '<?php echo __PATH__ . 'src/controller/exchange/ExchangeController.php' ?>',
             data: {
                 method: "exchange",
                 data: JSON.stringify(data)

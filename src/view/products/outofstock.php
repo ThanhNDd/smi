@@ -3,9 +3,8 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Quản lý sản phẩm</title>
+    <title>Sản phẩm hết hàng</title>
     <link rel="shortcut icon" type="image/x-icon" href="<?php echo __PATH__ ?>dist/img/icon.png"/>
     <?php require('../../common/css.php'); ?>
     <?php require('../../common/js.php'); ?>
@@ -52,16 +51,6 @@
             position: relative;
             top: 20px;
         }
-
-        #thumbnail:hover {
-            /*width: 100% !important;*/
-            /*transform: scale(1.2);
-                -webkit-transform: scale(1.2);
-                -moz-transform: scale(1.2);
-                -o-transform: scale(1.2);
-                -ms-transform: scale(1.2);
-            cursor: pointer; */
-        }
     </style>
 </head>
 <?php require('../../common/header.php'); ?>
@@ -72,18 +61,9 @@
             <div class="card">
                 <div class="row col-12" style="display: inline-block;">
                     <section class="ml-4" style="display: inline-block;float: left;padding-top: 1.25rem;">
-                        <a class="btn btn-secondary btn-flat" href="<?php echo __PATH__ ?>src/view/products/outofstock.php">
-                            Hết hàng <span class="badge badge-light out_of_stock">0</span>
+                        <a class="btn btn-secondary btn-flat" href="<?php echo __PATH__ ?>src/view/products/index.php">
+                            <i class="fas fa-chevron-circle-left"></i> Quay lại
                         </a>
-                    </section>
-                    <section style="display: inline-block;float: right;padding-top: 1.25rem;">
-                        <button type="button" class="btn btn-success btn-flat product-create">
-                            <i class="fa fa-plus-circle" aria-hidden="true"></i> Tạo mới
-                        </button>
-                        <button type="button" class="btn btn-info btn-flat print-barcode">
-                            <i class="fa fa-barcode" aria-hidden="true"></i> In mã vạch <span
-                                    class="badge badge-light number-checked">0</span>
-                        </button>
                     </section>
                 </div>
                 <!-- /.card-header -->
@@ -97,12 +77,7 @@
                             <th class="hidden">Id</th>
                             <th>Hình ảnh</th>
                             <th>Tên sản phẩm</th>
-                            <!-- <th>Giá nhập</th>
-                            <th>Phí vận chuyển</th>
-                            <th>Thành tiền</th> -->
                             <th>Giá bán lẻ</th>
-                            <th>Giảm giá</th>
-                            <th>Giảm giá</th>
                             <th>Hành động</th>
                         </tr>
                         </thead>
@@ -119,29 +94,17 @@
     </div>
     <!-- /.row -->
 </section>
-<!-- /.content -->
 <?php include 'createProducts.php'; ?>
+<!-- /.content -->
 </div>
 <div class="iframeArea hidden"></div>
 <?php include __PATH__ . 'src/common/footer.php'; ?>
 <script>
     $(document).ready(function () {
-        set_title("Danh sách sản phẩm");
-        count_out_of_stock();
+        set_title("Danh sách sản phẩm hết hàng");
+
         generate_datatable();
 
-        $(".print-barcode").on("click", function () {
-            let data = [];
-            $.each($("#example tbody td input[type='checkbox']:checked"), function () {
-                let id = $(this).attr("id");
-                if (id != "selectall") {
-                    data.push($(this).attr("id"));
-                }
-            });
-            if (data.length > 0) {
-                printBarcode(data);
-            }
-        });
         $(".clearAll").on("click", function () {
             clearAll();
         });
@@ -204,7 +167,7 @@
 
     function generate_datatable() {
         let table = $('#example').DataTable({
-            "ajax": '<?php echo __PATH__ . 'src/controller/product/ProductController.php?method=findall&status=0' ?>',
+            "ajax": '<?php echo __PATH__ . 'src/controller/product/ProductController.php?method=findall&status=1' ?>',
             select: "single",
             deferRender: true,
             rowId: 'extn',
@@ -232,28 +195,8 @@
                     "data": format_name,
                     width: "150px"
                 },
-                // { 
-                //     "data": "price",
-                //      width:"50px" 
-                // },
-                // { 
-                //     "data": "fee_transport",
-                //      width:"70px" 
-                // },
-                // { 
-                //     "data": format_intomoney,
-                //      width:"50px" 
-                // },
                 {
                     "data": "retail",
-                    width: "50px"
-                },
-                {
-                    "data": format_discount,
-                    width: "50px"
-                },
-                {
-                    "data": format_discount_display,
                     width: "50px"
                 },
                 {
@@ -310,131 +253,6 @@
                     }
                 });
             }
-        });
-
-        $('#example tbody').on('click', '.del_product', function () {
-            let tr = $(this).closest('tr');
-            let td = tr.find("td");
-            let product_id = $(td[1]).text();
-            Swal.fire({
-                title: 'Bạn có chắc chắn muốn hủy bỏ?',
-                text: "",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ok'
-            }).then((result) => {
-                if (result.value) {
-                    $.ajax({
-                        url: '<?php echo __PATH__ . 'src/controller/product/ProductController.php' ?>',
-                        type: "POST",
-                        dataType: "json",
-                        data: {
-                            type: "del_product",
-                            product_id: product_id
-                        },
-                        success: function (res) {
-                            let response = res.response;
-                            console.log(response);
-                            if (response == "error") {
-                                Swal.fire({
-                                    type: 'error',
-                                    title: 'Đã xảy ra lỗi',
-                                    text: "Bạn cần xóa biến thể sản phẩm trước khi xóa sản phẩm!"
-                                })
-                            } else if (response == "successfully") {
-                                Swal.fire(
-                                    'Thành công!',
-                                    'Sản phẩm đã được xóa thành công.',
-                                    'success'
-                                );
-                                hide_loading();
-                                table.ajax.reload();
-                            }
-                        },
-                        error: function (data, errorThrown) {
-                            console.log(data.responseText);
-                            console.log(errorThrown);
-                            Swal.fire({
-                                type: 'error',
-                                title: 'Đã xảy ra lỗi',
-                                text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-                            })
-                            hide_loading();
-                        }
-                    });
-                }
-            });
-        });
-
-        $('#example tbody').on('click', '.edit_product', function () {
-            let tr = $(this).closest('tr');
-            let row_index = tr.index();
-            let td = tr.find("td");
-            let product_id = $(td[1]).text();
-            clear();
-            open_modal();
-            add_new_product();
-            $.ajax({
-                url: '<?php echo __PATH__ . 'src/controller/product/ProductController.php' ?>',
-                type: "POST",
-                dataType: "json",
-                data: {
-                    type: "edit_product",
-                    product_id: product_id
-                },
-                success: function (res) {
-                    let arr = res.data;
-                    $("#product_id_1").val(arr[0].product_id);
-                    $("#p_image_1").val(arr[0].image);
-                    $("#p_name_1").val(arr[0].name);
-                    $("#p_link_1").val(arr[0].link);
-                    $("#p_price_1").val(arr[0].price);
-                    $("#p_fee_1").val(arr[0].fee_transport);
-                    $("#p_percent_1").val(arr[0].percent);
-                    $("#p_retail_1").val(arr[0].retail);
-                    $("#p_retail_temp_1").val(arr[0].retail);
-                    $("#p_profit_1").text(arr[0].profit);
-                    $("#select_type_1").val(arr[0].type).trigger("change");
-                    $("#select_cat_1").val(arr[0].category_id).trigger("change");
-                    $("#select_size_1").attr("disabled", "disabled");
-                    $("#select_color_1").attr("disabled", "disabled");
-                    $("#p_qty_1").attr("disabled", "disabled");
-
-                    for (let i = 2; i <= 10; i++) {
-                        $("#p_image_" + i).attr("disabled", "disabled");
-                        $("#p_name_" + i).attr("disabled", "disabled");
-                        $("#p_link_" + i).attr("disabled", "disabled");
-                        $("#p_price_" + i).attr("disabled", "disabled");
-                        $("#p_fee_" + i).attr("disabled", "disabled");
-                        $("#p_percent_" + i).val("");
-                        $("#p_percent_" + i).attr("disabled", "disabled");
-                        $("#p_retail_" + i).attr("disabled", "disabled");
-                        $("#p_retail_temp_" + i).attr("disabled", "disabled");
-                        $("#p_profit_" + i).attr("disabled", "disabled");
-                        $("#select_type_" + i).attr("disabled", "disabled");
-                        $("#select_cat_" + i).attr("disabled", "disabled");
-                        $("#select_size_" + i).attr("disabled", "disabled");
-                        $("#select_color_" + i).attr("disabled", "disabled");
-                        $("#p_qty_" + i).val("");
-                        $("#p_qty_" + i).attr("disabled", "disabled");
-                    }
-                    $(".add-new-prod").attr("disabled", "disabled");
-                    $(".create-new").text("Cập nhật");
-
-                },
-                error: function (data, errorThrown) {
-                    console.log(data.responseText);
-                    console.log(errorThrown);
-                    Swal.fire({
-                        type: 'error',
-                        title: 'Đã xảy ra lỗi',
-                        text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-                    })
-                    hide_loading();
-                }
-            });
         });
 
         // Event click add new row variation
@@ -668,135 +486,11 @@
             });
         });
 
-        $('#example tbody').on('click', '.out_of_stock', function () {
+        $('#example tbody').on('click', '.update_in_stock', function () {
             let tr = $(this).closest('tr');
             let td = tr.find("td");
             let product_id = $(td[1]).text();
-            if ( $(this).hasClass('selected') ) {
-                $(this).removeClass('selected');
-            }
-            else {
-                table.$('tr.selected').removeClass('selected');
-                $(this).addClass('selected');
-            }
             check_stock($(this), product_id);
-        });
-    }
-
-    function format_discount_display(data) {
-        let discount = data.discount;
-        if (typeof discount == "undefined" || discount == 0) {
-            discount = "";
-        } else {
-            if (discount < 100) {
-                discount = discount + "%";
-            } else {
-                discount = formatNumber(discount);
-            }
-        }
-        return discount;
-    }
-
-    function format_discount(data) {
-        let discount = data.discount;
-        if (typeof discount == "undefined" || discount == 0) {
-            discount = "";
-        } else {
-            if (discount < 100) {
-                discount = discount + "%";
-            } else {
-                discount = formatNumber(discount);
-            }
-        }
-        let retail = data.retail;
-        let profit = data.profit;
-        let product_id = data.product_id;
-        return '<input type="text" onchange="onchange_discount(this, \'' + profit + '\')" onblur="onchange_discount(this, \'' + profit + '\', \'' + retail + '\')" class="form-control col-md-6 float-left" value="' + discount + '"/>&nbsp;' +
-            '<button type="button" class="btn bg-gradient-info btn-sm mt-1" onclick="update_discount(this, ' + product_id + ')"><i class="fas fa-save"></i> Lưu</button>';
-    }
-
-    function onchange_discount(e, profit, retail) {
-        $(e).removeClass("is-invalid");
-        $("#update_discount").prop("disabled", true);
-        let val = $(e).val();
-        val = replaceComma(val);
-        console.log(val);
-        // let profit;
-        if (val == "") {
-
-        } else if (val.indexOf("%") == -1) {
-            if (!isNaN(val) && val >= 0) {
-                profit = replaceComma(profit);
-                profit = profit - val;
-                val = formatNumber(val);
-                $(e).val(val);
-                $("#update_discount").prop("disabled", "");
-            } else {
-                $(e).addClass("is-invalid");
-                $("#update_discount").prop("disabled", true);
-            }
-        } else {
-            val = replacePercent(val);
-            profit = replaceComma(profit);
-            retail = replaceComma(retail);
-            profit = profit - retail * val / 100;
-            $("#update_discount").prop("disabled", "");
-        }
-        $(e).parent().next("td").text(formatNumber(profit));
-    }
-
-    function update_discount(e, product_id) {
-        let discount = $(e).parent().find("input").val();
-        discount = replaceComma(discount);
-        discount = replacePercent(discount);
-        console.log(discount);
-        console.log(product_id);
-        if (discount == "undefined" || discount == "" || discount < 0) {
-            toastr.error('Nhập chưa đúng!');
-            return;
-        }
-        $.ajax({
-            url: '<?php echo __PATH__ . 'src/controller/product/ProductController.php' ?>',
-            type: "POST",
-            dataType: "json",
-            data: {
-                method: "update_discount",
-                product_id: product_id,
-                discount: discount
-            },
-            success: function (res) {
-                console.log(res);
-                toastr.success('Cập nhật thành công!');
-            },
-            error: function (data, errorThrown) {
-                console.log(data.responseText);
-                console.log(errorThrown);
-                Swal.fire({
-                    type: 'error',
-                    title: 'Đã xảy ra lỗi',
-                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-                })
-            }
-        });
-    }
-
-    function count_out_of_stock() {
-        $.ajax({
-            url: '<?php echo __PATH__ . 'src/controller/product/ProductController.php' ?>',
-            type: "POST",
-            dataType: "json",
-            data: {
-                method: "count_out_of_stock"
-            },
-            success: function (res) {
-                console.log(res);
-                $(".out_of_stock").text(res.response);
-            },
-            error: function (data, errorThrown) {
-                console.log(data.responseText);
-                console.log(errorThrown);
-                $(".out_of_stock").text(0);
-            }
         });
     }
 
@@ -806,21 +500,21 @@
             type: "POST",
             dataType: "json",
             data: {
-                method: "check_update_out_of_stock",
+                method: "check_update_in_stock",
                 product_id: product_id
             },
             success: function (res) {
                 console.log(res);
-                if(res.response === "in_stock") {
+                if(res.response === "out_stock") {
                     Swal.fire({
                         type: 'error',
-                        title: 'Số lượng sản phẩm vẫn còn',
-                        text: "Bạn vui lòng kiểm tra lại trước khi cập nhật hết hàng."
+                        title: 'Chưa cập nhật số lượng',
+                        text: "Bạn vui lòng cập nhật lại số lượng sản phẩm."
                     });
                     return;
                 } else if(res.response === "success") {
                     Swal.fire({
-                        title: 'Bạn chắc chắn muốn cập nhật hết hàng cho sản phẩm này?',
+                        title: 'Bạn chắc chắn muốn cập nhật còn hàng cho sản phẩm này?',
                         text: "",
                         type: 'warning',
                         showCancelButton: true,
@@ -829,7 +523,7 @@
                         confirmButtonText: 'Ok'
                     }).then((result) => {
                         if (result.value) {
-                            update_out_of_stock(e, product_id);
+                            update_in_stock(e, product_id);
                         }
                     });
                 }
@@ -846,7 +540,7 @@
         });
     }
 
-    function update_out_of_stock(e, product_id) {
+    function update_in_stock(e, product_id) {
         $.ajax({
             url: '<?php echo __PATH__ . 'src/controller/product/ProductController.php' ?>',
             type: "POST",
@@ -854,14 +548,13 @@
             data: {
                 method: "update_stock",
                 product_id: product_id,
-                status: 1 // out of stock
+                status: 0 // in stock
             },
             success: function (res) {
                 console.log(res);
                 toastr.success('Cập nhật thành công!');
                 $(e).parent().parent().hide(700);
                 $(e).parent().parent().next().hide(700);
-                count_out_of_stock();
             },
             error: function (data, errorThrown) {
                 console.log(data.responseText);
@@ -876,21 +569,7 @@
     }
 
     function format_action() {
-        return '<button type="button" class="btn bg-gradient-success btn-sm add_variation" title="Thêm biến thể sản phẩm"><i class="fas fa-plus-circle"></i></button>&nbsp;'
-            + '<button type="button" class="btn bg-gradient-info btn-sm edit_product" title="Sửa sản phẩm"><i class="fas fa-edit"></i></button>&nbsp;'
-            + '<button type="button" class="btn bg-gradient-danger btn-sm out_of_stock" title="Cập nhật hết hàng"><i class="fas fa-eye-slash"></i></button>';
-    }
-
-    function format_intomoney(data) {
-        let price = replaceComma(data.price);
-        let fee = replaceComma(data.fee_transport);
-        let into_money = Number(price) + Number(fee);
-        if (!isNaN(into_money)) {
-            return formatNumber(into_money);
-        } else {
-            return "";
-        }
-
+        return '<button type="button" class="btn bg-gradient-success btn-sm update_in_stock" title="Cập nhật còn hàng"><i class="fas fa-eye"></i></button>';
     }
 
     function format_name(data) {

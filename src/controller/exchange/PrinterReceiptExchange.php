@@ -11,7 +11,7 @@ class PrinterReceiptExchange
         
     }  
 
-    function print(Order $order, array $details)
+    function print(Order $order, array $exchange_arr, array $curr_arr, array $add_new_arr)
     {
         try {  
             $mpdf = new \Mpdf\Mpdf([
@@ -22,7 +22,9 @@ class PrinterReceiptExchange
                 'tempDir' => __DIR__ . '/tmp'
             ]);
             $html = $this->getHeader($order);
-            $html .= $this->getBody($details);
+            $html .= $this->getBody('Sản phẩm đã mua',$curr_arr);
+            $html .= $this->getBody('Sản phẩm đổi',$exchange_arr);
+            $html .= $this->getBody('Sản phẩm mua mới',$add_new_arr);
             $html .= $this->getFooter($order);
 
             echo $html;
@@ -32,18 +34,15 @@ class PrinterReceiptExchange
             $mpdf->WriteHTML($html);
             $mpdf->AddPage();
 
-            // $this->rrmdir("pdf");
-            // $folder_path = "pdf"; 
-            // $files = glob($folder_path.'/*');  
-            // Deleting all the files in the list 
-            // foreach($files as $file) { 
-                // if(is_file($file))  {
-                    // Delete the given file 
-                    // unlink($file);  
-                // }
-            // } 
+             $this->rrmdir("pdf");
+             $folder_path = "pdf";
+             $files = glob($folder_path.'/*');
+             foreach($files as $file) {
+                 if(is_file($file))  {
+                     unlink($file);
+                 }
+             }
             
-            // mkdir("pdf", 0777, true);
             $filename = "receipt".time().".pdf";
             $mpdf->Output("pdf/".$filename, 'F');
             chmod("pdf/".$filename, 0777);
@@ -114,41 +113,42 @@ class PrinterReceiptExchange
                         <div class="center col-12 p-0 m-0">
                             <h4>SHOP MẸ ỈN</h4>
                             <p>Thời trang trẻ em cao cấp</p>
-                            <span>* * * * * * * * * * * * * * * * * * * * * */span>
+                            <span>* * * * * * * * * * * * * * * * * * * * * *</span>
                             <p style="margin: 5px 0;">Đ/c: 227 Phố Huyện - Thị Trấn Quốc Oai - Hà Nội</p>
                             <p>Hotline: 0962.926.302</p>
                             <p>Website: www.shopmein.vn</p>
                             <p>Facebook: Shop Mẹ Ỉn</p>
                             <span>* * * * * * * * * * * * * * * * * * * * * *</span>
-                            <h4>HÓA ĐƠN THANH TOÁN</h4>
-                            <barcode code="'.$this->generate_barcode_value($order->getId()).'" type="C128A" class="barcode" />
-                            <p>'.$this->generate_barcode_value($order->getId()).'</p>
+                            <h3>HÓA ĐƠN ĐỔI HÀNG</h3>
+                            <barcode code="' . $this->generate_barcode_value($order->getId()) . '" type="C128A" class="barcode" />
+                            <p>' . $this->generate_barcode_value($order->getId()) . '</p>
                             <span>
                                 <span class="float-left">Ngày tháng:</span>
-                                <span class="float-right mr-2">'.date('d/m/Y - H:i:s').'</span>
+                                <span class="float-right mr-2">' . date('d/m/Y - H:i:s') . '</span>
                             </span>
                         </div>
                     </div>
-                    <div class="body center">
-                        <table class="center">
-                            <thead>
-                                <tr>
-                                    <td class="center" style="width: 30px;">Stt</td>
-                                    <td colspan="4" class="left">Tên sản phẩm</td>
-                                </tr>
-                                <tr>
-                                    <td class="left"></td>
-                                    <td class="center" style="width: 30px;">SL</td>
-                                    <td class="right" style="width: 65px;">Giá</td>
-                                    <td class="right" style="width: 40px;">%</td>
-                                    <td class="right" style="width: 65px;">Thành tiền</td>
-                                </tr>
-                            </thead>';
+                    <div class="body">';
         return $header;
     }
-    function getBody($details)
+    function getBody($title, $details)
     {
-        $body = '<tbody>';
+        $body = '<h4 class="left" style="margin: 5px 0;">'.$title.'</h4>
+                <table class="center">
+                    <thead>
+                        <tr>
+                            <td class="center" style="width: 30px;">Stt</td>
+                            <td colspan="4" class="left">Tên sản phẩm</td>
+                        </tr>
+                        <tr>
+                            <td class="left"></td>
+                            <td class="center" style="width: 30px;">SL</td>
+                            <td class="center" style="width: 65px;">Giá</td>
+                            <td class="center" style="width: 40px;">%</td>
+                            <td class="center" style="width: 65px;">Thành tiền</td>
+                        </tr>
+                    </thead>
+                    <tbody>';
         $c = 0;
         foreach($details as $key => $value)
         {
@@ -166,9 +166,12 @@ class PrinterReceiptExchange
                         <td class="right">'.number_format($intoMoney).'</td>
                     </tr>';
         }
-        $body .= '</tbody>';
+        $body .=    '</tbody>
+                </table>';
         return $body;
     }
+
+
     function getFooter($order)
     {
         $reduce = 0;
@@ -176,13 +179,10 @@ class PrinterReceiptExchange
         {
            $reduce = $order->getTotal_reduce(); 
         }
-        // $discount = 0;
-        // if(!empty($order->getDiscount()) && $order->getDiscount() != 'NULL')
-        // {
-        //    $discount = $order->getDiscount(); 
-        // }
-        // $reduce = $reduce + $discount;
-        $footer =   '<tfoot>
+        $footer =   '<br/>
+                    <h4 class="left" style="margin: 5px 0;">Tổng hóa đơn</h4>
+                    <table>
+                        <tfoot>
                             <tr>
                                 <td colspan="4" class="left">Tổng tiền</td>
                                 <td class="right">'.number_format(empty($order->getTotal_amount()) || $order->getTotal_amount() == 'NULL' ? 0 : $order->getTotal_amount()).'</td>
@@ -209,7 +209,7 @@ class PrinterReceiptExchange
                             </tr>
                         </tfoot>
                     </table>
-                    <br>
+                    <br/>
                     <p class="left">Lưu ý:</p>
                     <p class="left note">- Hàng đổi trả kèm theo hóa đơn trong vòng 2 ngày</p>
                     <p class="left note">- Hàng sale không được đổi trả</p>

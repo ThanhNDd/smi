@@ -10,6 +10,7 @@ class Product {
     private $percent;
     private $retail;
     private $type;
+    private $status;
     private $category_id;
     private $created_at;
     private $updated_at;
@@ -234,6 +235,22 @@ class Product {
         $this->type = $type;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param mixed $status
+     */
+    public function setStatus($status): void
+    {
+        $this->status = $status;
     }
 
     /**

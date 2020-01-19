@@ -14,6 +14,7 @@
             <div class="modal-body">
                 <div class="form-group">
                     <input type="hidden" class="form-control" id="order_id" value="">
+                    <input type="hidden" class="form-control" id="type" value="">
                     <input type="hidden" class="form-control" id="customer_id" value="">
                     <!--<input type="hidden" class="form-control" id="payment_type" value="">-->
                     <input type="hidden" class="order_type" value="-1"/>
@@ -183,6 +184,7 @@
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-info print_receipt_popup"><i class="fa fa-print"></i> In hóa đơn</button>
                 <button type="button" class="btn btn-primary" id="create_new">Tạo mới</button>
             </div>
         </div>
@@ -191,8 +193,8 @@
     <!-- /.modal-dialog -->
     <?php include __PATH__ . 'src/common/js.php'; ?>
     <script>
-        var data_products;
-        var flagError = 0;
+        let data_products;
+        let flagError = 0;
         const Toast = Swal.mixin({
             toast: true,
             position: 'top-end',
@@ -342,6 +344,13 @@
             $(".add-new-prod").on("click", function () {
                 $(".add-new-prod").prop("disabled", true);
                 add_new_product();
+            });
+            
+            $(".print_receipt_popup").on("click", function () {
+                let order_id = row.data().order_id;
+                let type = row.data().type;
+                console.log(order_id);
+                print_receipt(order_id, type);
             });
         });
 
@@ -568,8 +577,8 @@
                         type: 'POST',
                         success: function (data) {
                             console.log(data);
-                            var order_id = $("#order_id").val();
-                            var msg;
+                            let order_id = $("#order_id").val();
+                            let msg;
                             if (order_id != "underfined" && order_id != "") {
                                 msg = "Đơn hàng #" + order_id + " đã được cập nhật thành công.!!!";
                             } else {
@@ -758,7 +767,7 @@
         }
 
         function validateEmail(email) {
-            var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             return re.test(String(email).toLowerCase());
         }
 
@@ -799,7 +808,7 @@
                 success: function (data) {
                     if (data.length > 0) {
                         $.each(data, function (k, v) {
-                            var name = v.name + " - " + v.size + " - " + v.color;
+                            let name = v.name + " - " + v.size + " - " + v.color;
                             $("[id=prod_" + rowIndex + "]").val(v.product_id);
                             $("[id=sku_" + rowIndex + "]").val(v.sku);
                             $("[id=" + productName + "]").val(name);
@@ -807,7 +816,7 @@
                             $("[id=" + variantId + "]").val(v.variant_id);
                             $("[id=prodReduce_" + rowIndex + "]").prop("disabled", false);
                             if (v.retail.replace(",", "") > 0) {
-                                var qty = $("[id=" + prodQty + "]").val();
+                                let qty = $("[id=" + prodQty + "]").val();
                                 if (qty == "underfined" || qty == "") {
                                     $("[id=" + prodQty + "]").val(1);
                                 }
@@ -933,8 +942,8 @@
                         theme: 'bootstrap4',
                     });
                     $("#create-order .overlay").addClass("hidden");
-                    var select = $('.select-district');
-                    var option = $('<option></option>').
+                    let select = $('.select-district');
+                    let option = $('<option></option>').
                         attr('selected', true).
                         text("Lựa chọn").
                         val(-1);
@@ -965,8 +974,8 @@
                         data: data.results,
                         theme: 'bootstrap4',
                     });
-                    var select = $('.select-village');
-                    var option = $('<option></option>').
+                    let select = $('.select-village');
+                    let option = $('<option></option>').
                         attr('selected', true).
                         text("Lựa chọn").
                         val(-1);

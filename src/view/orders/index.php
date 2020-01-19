@@ -374,37 +374,7 @@
             let order_id = row.data().order_id;
             let type = row.data().type;
             console.log(order_id);
-            $.ajax({
-                url: '<?php echo __PATH__ . 'src/controller/orders/OrderController.php' ?>',
-                type: "POST",
-                dataType: "json",
-                data: {
-                    method: "print_receipt",
-                    order_id: order_id,
-                    type: type
-                },
-                success: function (res) {
-                    var filename = res.fileName;
-                    $(".iframeArea").html("");
-                    if (typeof filename !== "underfined" && filename !== "") {
-                        $(".iframeArea").html('<iframe src="<?php echo __PATH__?>src/controller/orders/pdf/' + filename + '" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
-                        var objFra = document.getElementById('receiptContent');
-                        objFra.contentWindow.focus();
-                        objFra.contentWindow.print();
-                        // window.open("<?php echo __PATH__?>src/controller/product/pdf/"+filename, "_blank");
-                    }
-                },
-                error: function (data, errorThrown) {
-                    console.log(data.responseText);
-                    console.log(errorThrown);
-                    Swal.fire({
-                        type: 'error',
-                        title: 'Đã xảy ra lỗi',
-                        text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-                    })
-                    hide_loading();
-                }
-            });
+            print_receipt(order_id, type);
         });
 
         $('#example tbody').on('click', '.delete_order', function () {
@@ -485,12 +455,46 @@
 
     }
 
+    function print_receipt(order_id, type) {
+        $.ajax({
+            url: '<?php echo __PATH__ . 'src/controller/orders/OrderController.php' ?>',
+            type: "POST",
+            dataType: "json",
+            data: {
+                method: "print_receipt",
+                order_id: order_id,
+                type: type
+            },
+            success: function (res) {
+                var filename = res.fileName;
+                $(".iframeArea").html("");
+                if (typeof filename !== "underfined" && filename !== "") {
+                    $(".iframeArea").html('<iframe src="<?php echo __PATH__?>src/controller/orders/pdf/' + filename + '" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
+                    var objFra = document.getElementById('receiptContent');
+                    objFra.contentWindow.focus();
+                    objFra.contentWindow.print();
+                    // window.open("<?php echo __PATH__?>src/controller/product/pdf/"+filename, "_blank");
+                }
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                })
+                hide_loading();
+            }
+        });
+    }
+
     function set_data_edit_order(order_id, data, order_type) {
         reset_data();
         $(".modal-title").text("Cập nhật đơn hàng #" + order_id);
         $(".create-new").text("Cập nhật");
         enable_btn_add_new();
-        $(".order_type").val(order_type);
+        $("#order_type").val(order_type).trigger("change");
         $.each(data, function (key, value) {
             console.log(order_type);
             if (value.length != 0) {

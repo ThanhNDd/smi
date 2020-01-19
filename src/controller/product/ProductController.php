@@ -68,6 +68,48 @@ if(isset($_POST["method"]) && $_POST["method"]=="update_discount")   {
     $db->commit();
 }
 
+if(isset($_POST["method"]) && $_POST["method"]=="check_update_out_of_stock") {
+    $product_id = $_POST["product_id"];
+    $result = $dao->check_stock((int)$product_id);
+    if($result > 0) {
+        $response_array['response'] = "in_stock";
+    } else {
+        $response_array['response'] = "success";
+    }
+    echo json_encode($response_array);
+}
+
+if(isset($_POST["method"]) && $_POST["method"]=="check_update_in_stock") {
+    $product_id = $_POST["product_id"];
+    $result = $dao->check_stock((int)$product_id);
+    if($result > 0) {
+        $response_array['response'] = "success";
+    } else {
+        $response_array['response'] = "out_stock";
+    }
+    echo json_encode($response_array);
+}
+
+if(isset($_POST["method"]) && $_POST["method"]=="count_out_of_stock") {
+    $result = $dao->count_out_of_stock();
+    $response_array['response'] = $result;
+    echo json_encode($response_array);
+}
+
+if(isset($_POST["method"]) && $_POST["method"]=="update_stock") {
+    try {
+        $product_id = $_POST["product_id"];
+        $status = $_POST["status"];
+        $dao->update_stock((int) $status,(int)$product_id);
+        $response_array['response'] = "success";
+        echo json_encode($response_array);
+    } catch(Exception $e) {
+        $db->rollback();
+        throw new Exception("update_out_of_stock error exception: ".$e);
+    }
+    $db->commit();
+}
+
 if(isset($_POST["type"]) && $_POST["type"]=="edit_product")   {
     $product_id = $_POST["product_id"];
     $lists = $dao->find_by_id($product_id);
@@ -147,7 +189,8 @@ if(isset($_POST["type"]) && $_POST["type"]=="delete_variation")   {
 
 if(isset($_GET["method"]) && $_GET["method"]=="findall")   {
     try {
-        $lists = $dao->find_all();
+        $status = $_GET["status"];
+        $lists = $dao->find_all($status);
         echo json_encode($lists);
     } catch(Exception $e)
     {
