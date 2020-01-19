@@ -180,15 +180,8 @@
                 $(".iframeArea").html("");
                 if (typeof filename !== "underfined" && filename !== "") {
                     $(".iframeArea").html('<iframe src="<?php echo __PATH__?>src/controller/product/pdf/' + filename + '" id="barcodeContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
-                    // let objFra = document.getElementById('barcodeContent');
-                    //     		objFra.contentWindow.focus();
-                    //     		objFra.contentWindow.print();
                     window.open("<?php echo __PATH__?>src/controller/product/pdf/" + filename, "_blank");
                 }
-                // $(".iframeArea").html('<iframe src="<?php echo __PATH__?>src/controller/product/barcode.pdf" id="barcodeContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
-                // let objFra = document.getElementById('barcodeContent');
-                // objFra.contentWindow.focus();
-                // objFra.contentWindow.print();
             },
             error: function (data, errorThrown) {
                 console.log(data.responseText);
@@ -232,18 +225,6 @@
                     "data": format_name,
                     width: "150px"
                 },
-                // { 
-                //     "data": "price",
-                //      width:"50px" 
-                // },
-                // { 
-                //     "data": "fee_transport",
-                //      width:"70px" 
-                // },
-                // { 
-                //     "data": format_intomoney,
-                //      width:"50px" 
-                // },
                 {
                     "data": "retail",
                     width: "50px"
@@ -312,65 +293,8 @@
             }
         });
 
-        $('#example tbody').on('click', '.del_product', function () {
-            let tr = $(this).closest('tr');
-            let td = tr.find("td");
-            let product_id = $(td[1]).text();
-            Swal.fire({
-                title: 'Bạn có chắc chắn muốn hủy bỏ?',
-                text: "",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ok'
-            }).then((result) => {
-                if (result.value) {
-                    $.ajax({
-                        url: '<?php echo __PATH__ . 'src/controller/product/ProductController.php' ?>',
-                        type: "POST",
-                        dataType: "json",
-                        data: {
-                            type: "del_product",
-                            product_id: product_id
-                        },
-                        success: function (res) {
-                            let response = res.response;
-                            console.log(response);
-                            if (response == "error") {
-                                Swal.fire({
-                                    type: 'error',
-                                    title: 'Đã xảy ra lỗi',
-                                    text: "Bạn cần xóa biến thể sản phẩm trước khi xóa sản phẩm!"
-                                })
-                            } else if (response == "successfully") {
-                                Swal.fire(
-                                    'Thành công!',
-                                    'Sản phẩm đã được xóa thành công.',
-                                    'success'
-                                );
-                                hide_loading();
-                                table.ajax.reload();
-                            }
-                        },
-                        error: function (data, errorThrown) {
-                            console.log(data.responseText);
-                            console.log(errorThrown);
-                            Swal.fire({
-                                type: 'error',
-                                title: 'Đã xảy ra lỗi',
-                                text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-                            })
-                            hide_loading();
-                        }
-                    });
-                }
-            });
-        });
-
         $('#example tbody').on('click', '.edit_product', function () {
             let tr = $(this).closest('tr');
-            let row_index = tr.index();
             let td = tr.find("td");
             let product_id = $(td[1]).text();
             clear();
@@ -511,12 +435,8 @@
                     size: size,
                     qty: qty
                 },
-                success: function (res) {
-                    Swal.fire(
-                        'Thành công!',
-                        'Sản phẩm đã được tạo thành công.',
-                        'success'
-                    );
+                success: function () {
+                    toastr.success('Sản phẩm đã được tạo thành công.');
                     hide_loading();
                     table.ajax.reload();
                 },
@@ -555,11 +475,7 @@
                     qty: qty
                 },
                 success: function (res) {
-                    Swal.fire(
-                        'Thành công!',
-                        'Cập nhật thành công!',
-                        'success'
-                    );
+                    toastr.success('Cập nhật thành công!');
                     let btn_gr = '<button type="button" class="btn bg-gradient-info btn-sm edit_variation"><i class="fas fa-edit"></i> Sửa</button>&nbsp;';
                     $(td[2]).html(color);
                     $(td[3]).html(txtsize);
@@ -589,7 +505,6 @@
             let size = $("#curr_size_" + sku).val();
             let qty = $("#curr_qty_" + sku).val();
             let btn_gr = '<button type="button" class="btn bg-gradient-info btn-sm edit_variation"><i class="fas fa-edit"></i> Sửa</button>&nbsp;';
-            // '<button type="button" class="btn bg-gradient-danger btn-sm delete_variation"><i class="fas fa-trash"></i> Xóa</button>';
 
             $(td[2]).html(color);
             $(td[3]).html(size);
@@ -627,13 +542,7 @@
                         },
                         success: function (res) {
                             console.log(res);
-                            Swal.fire(
-                                'Thành công!',
-                                'Xóa thành công.',
-                                'success'
-                            );
-
-
+                            toastr.success('Xóa thành công!');
                         },
                         error: function (data, errorThrown) {
                             console.log(data.responseText);
@@ -712,7 +621,7 @@
         let profit = data.profit;
         let product_id = data.product_id;
         return '<input type="text" onchange="onchange_discount(this, \'' + profit + '\')" onblur="onchange_discount(this, \'' + profit + '\', \'' + retail + '\')" class="form-control col-md-6 float-left" value="' + discount + '"/>&nbsp;' +
-            '<button type="button" class="btn bg-gradient-info btn-sm mt-1" onclick="update_discount(this, ' + product_id + ')"><i class="fas fa-save"></i> Lưu</button>';
+            '<button type="button" class="btn bg-gradient-info btn-sm mt-1" onclick="update_discount(this, ' + product_id + ')" title="Lưu khuyến mãi"><i class="fas fa-save"></i></button>';
     }
 
     function onchange_discount(e, profit, retail) {
@@ -890,7 +799,6 @@
         } else {
             return "";
         }
-
     }
 
     function format_name(data) {
@@ -937,7 +845,6 @@
                 '<td><select class="select-qty-' + new_sku + ' form-control w100" id="select_qty_' + new_sku + '"><option value="-1"></option></select></td>' +
                 '<td>' +
                 '<button type="button" class="btn bg-gradient-primary btn-sm save_variation"><i class="fas fa-save"></i> Lưu</button>&nbsp;' +
-                //'<button type="button" class="btn bg-gradient-danger btn-sm cancal_add_new"><i class="fas fa-trash"></i> Hủy</button>' +
                 '</td>' +
                 '<input type="hidden" class="product-id-' + new_sku + '" value="' + variations[variations.length - 1].product_id + '">' +
                 '</tr>';

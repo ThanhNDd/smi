@@ -79,7 +79,7 @@ class PrinterReceipt
                         margin: 5px;
                     }
                     .container, table {
-                        width: 300px;
+                        width: 219px;
                         font-size: 13px;
                         font-family: sans-serif;
                     }

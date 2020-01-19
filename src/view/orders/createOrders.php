@@ -14,9 +14,7 @@
             <div class="modal-body">
                 <div class="form-group">
                     <input type="hidden" class="form-control" id="order_id" value="">
-                    <input type="hidden" class="form-control" id="type" value="">
                     <input type="hidden" class="form-control" id="customer_id" value="">
-                    <!--<input type="hidden" class="form-control" id="payment_type" value="">-->
                     <input type="hidden" class="order_type" value="-1"/>
                     <div class="row">
                         <div class="w150 mr-2">
@@ -347,10 +345,11 @@
             });
             
             $(".print_receipt_popup").on("click", function () {
-                let order_id = row.data().order_id;
-                let type = row.data().type;
+                let order_id = $("#order_id").val();
+                let order_type = $("#order_type").val();
                 console.log(order_id);
-                print_receipt(order_id, type);
+                console.log(order_type);
+                print_receipt(order_id, order_type);
             });
         });
 
@@ -901,7 +900,7 @@
             });
         }
 
-        function generate_select2_city(city_id) {
+        function generate_select2_city() {
             $("#create-order .overlay").removeClass("hidden");
             $.ajax({
                 dataType: "json",

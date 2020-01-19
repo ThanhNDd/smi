@@ -117,54 +117,6 @@
         $(".number-checked").text(0);
     }
 
-    function countAllChecked() {
-        let count = 0;
-        $.each($("#example tbody td input[type='checkbox']:checked"), function () {
-            let id = $(this).attr("id");
-            if (id != "selectall") {
-                count++;
-            }
-        });
-        $(".number-checked").text(count);
-    }
-
-    function printBarcode(data) {
-        $(".iframeArea").html("");
-        $.ajax({
-            url: '<?php echo __PATH__ . 'src/controller/product/ProductController.php' ?>',
-            type: "POST",
-            dataType: "json",
-            data: {
-                method: "print_barcode",
-                data: JSON.stringify(data)
-            },
-            success: function (res) {
-                let filename = res.fileName;
-                $(".iframeArea").html("");
-                if (typeof filename !== "underfined" && filename !== "") {
-                    $(".iframeArea").html('<iframe src="<?php echo __PATH__?>src/controller/product/pdf/' + filename + '" id="barcodeContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
-                    // let objFra = document.getElementById('barcodeContent');
-                    //     		objFra.contentWindow.focus();
-                    //     		objFra.contentWindow.print();
-                    window.open("<?php echo __PATH__?>src/controller/product/pdf/" + filename, "_blank");
-                }
-                // $(".iframeArea").html('<iframe src="<?php echo __PATH__?>src/controller/product/barcode.pdf" id="barcodeContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
-                // let objFra = document.getElementById('barcodeContent');
-                // objFra.contentWindow.focus();
-                // objFra.contentWindow.print();
-            },
-            error: function (data, errorThrown) {
-                console.log(data.responseText);
-                console.log(errorThrown);
-                Swal.fire({
-                    type: 'error',
-                    title: 'Đã xảy ra lỗi',
-                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-                })
-            }
-        });
-    }
-
     function generate_datatable() {
         let table = $('#example').DataTable({
             "ajax": '<?php echo __PATH__ . 'src/controller/product/ProductController.php?method=findall&status=1' ?>',
@@ -233,7 +185,6 @@
                     success: function (res) {
                         console.log(res);
                         let data = res.data;
-                        // let details = res[0].details;
                         if (data.length > 0) {
                             row.child(format_variation(data[0].variations)).show();
                             tr.addClass('shown');
@@ -329,12 +280,8 @@
                     size: size,
                     qty: qty
                 },
-                success: function (res) {
-                    Swal.fire(
-                        'Thành công!',
-                        'Sản phẩm đã được tạo thành công.',
-                        'success'
-                    );
+                success: function () {
+                    toastr.success('Sản phẩm đã được tạo thành công.');
                     hide_loading();
                     table.ajax.reload();
                 },
@@ -372,12 +319,8 @@
                     size: size,
                     qty: qty
                 },
-                success: function (res) {
-                    Swal.fire(
-                        'Thành công!',
-                        'Cập nhật thành công!',
-                        'success'
-                    );
+                success: function () {
+                    toastr.success('Cập nhật thành công.');
                     let btn_gr = '<button type="button" class="btn bg-gradient-info btn-sm edit_variation"><i class="fas fa-edit"></i> Sửa</button>&nbsp;';
                     $(td[2]).html(color);
                     $(td[3]).html(txtsize);
@@ -407,7 +350,6 @@
             let size = $("#curr_size_" + sku).val();
             let qty = $("#curr_qty_" + sku).val();
             let btn_gr = '<button type="button" class="btn bg-gradient-info btn-sm edit_variation"><i class="fas fa-edit"></i> Sửa</button>&nbsp;';
-            // '<button type="button" class="btn bg-gradient-danger btn-sm delete_variation"><i class="fas fa-trash"></i> Xóa</button>';
 
             $(td[2]).html(color);
             $(td[3]).html(size);
@@ -445,13 +387,7 @@
                         },
                         success: function (res) {
                             console.log(res);
-                            Swal.fire(
-                                'Thành công!',
-                                'Xóa thành công.',
-                                'success'
-                            );
-
-
+                            toastr.success('Xóa thành công.');
                         },
                         error: function (data, errorThrown) {
                             console.log(data.responseText);
@@ -505,14 +441,14 @@
             },
             success: function (res) {
                 console.log(res);
-                if(res.response === "out_stock") {
+                if (res.response === "out_stock") {
                     Swal.fire({
                         type: 'error',
                         title: 'Chưa cập nhật số lượng',
                         text: "Bạn vui lòng cập nhật lại số lượng sản phẩm."
                     });
                     return;
-                } else if(res.response === "success") {
+                } else if (res.response === "success") {
                     Swal.fire({
                         title: 'Bạn chắc chắn muốn cập nhật còn hàng cho sản phẩm này?',
                         text: "",
@@ -633,7 +569,6 @@
         } else {
             $(e).prop("checked", "");
         }
-        countAllChecked();
     }
 
     function checkAll(e) {
@@ -643,7 +578,6 @@
         } else {
             $(e).parent().parent().parent().parent().find('td input:checkbox').prop("checked", "");
         }
-        countAllChecked();
     }
 
     function formatNumber(num) {
