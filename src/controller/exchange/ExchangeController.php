@@ -30,7 +30,6 @@ if(isset($_POST["method"]) && $_POST["method"]=="exchange") {
     try {
         $exchanges = $_POST["data"];
         $data = json_decode($exchanges);
-//        $data = json_decode($exchange_products);
         $total_amount = 0;
         if(!empty($data->total_amount))
         {
@@ -63,7 +62,7 @@ if(isset($_POST["method"]) && $_POST["method"]=="exchange") {
         $order->setCustomer_id(empty($data->customer_id) ? 0 : $data->customer_id);
         $order->setType(0); // Sale on shop
         $order->setCustomer_id(0); // retail customer
-        $order->setStatus(3);// order completed
+        $order->setStatus(6);// order exchange
         $order->setVoucherCode($data->voucher_code);
         $order->setVoucherValue($data->voucher_value);
         $order->setOrderRefer($data->current_order_id);
@@ -73,10 +72,17 @@ if(isset($_POST["method"]) && $_POST["method"]=="exchange") {
         if(empty($orderId)) {
             throw new Exception("Cannot insert order");
         } else {
-            $exchange_arr = get_details($data->exchange_products, $orderId);
-            $curr_arr = get_details($data->curr_products, $orderId);
-            $add_new_arr = get_details($data->add_new_products, $orderId);
+            $curr_arr = get_details($data->curr_products, $orderId, 2); // product exchange
+            if(count($curr_arr) <= 0) {
+                throw new Exception("Have no product!!");
+            }
+            $exchange_arr = get_details($data->exchange_products, $orderId, 1);// new product of exchange
+            if(count($exchange_arr) <= 0) {
+                throw new Exception("Have no product exchange!!");
+            }
+            $add_new_arr = get_details($data->add_new_products, $orderId, 0); // add new product
             // printer receipt
+            $response_array = array();
             if($data->flag_print_receipt) {
                 $printer = new PrinterReceiptExchange();
                 $filename = $printer->print($order, $exchange_arr, $curr_arr, $add_new_arr);
@@ -98,7 +104,7 @@ if(isset($_POST["method"]) && $_POST["method"]=="exchange") {
     $db->commit();
 }
 
-function get_details($details, $orderId) {
+function get_details($details, $orderId, $productType) {
     global $checkoutDAO;
     global $productDAO;
     $detailsObj = array();
@@ -153,7 +159,7 @@ function get_details($details, $orderId) {
         $detail->setQuantity($qty);
         $detail->setReduce($reduce);
         $detail->setReduce_percent($reduce_percent);
-        $detail->setProductExchange($details[$i]->product_exchange);
+        $detail->setType($productType);
         $checkoutDAO->saveOrderDetail($detail);
         $detail->setProductName($details[$i]->product_name);
         array_push($detailsObj, $detail);

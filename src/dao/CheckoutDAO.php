@@ -681,7 +681,7 @@ class CheckoutDAO
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(),NOW())");
             $stmt->bind_param("ddddddidiisddsisdii", $total_reduce, $total_reduce_percent, $discount, $total_amount, $total_checkout, $customer_payment, $payment_type, $repay, $customer_id, $type, $bill, $shipping_fee, $shipping, $shipping_unit, $status, $voucher_code, $voucher_value, $orderRefer, $paymentExchangeType);
             $stmt->execute();
-            var_dump($this->getConn()->error);
+//            var_dump($this->getConn()->error);
             //You can get the number of rows affected by your query
             $nrows = $stmt->affected_rows;
             if (!$nrows) {
@@ -740,7 +740,7 @@ class CheckoutDAO
             $price = $detail->getPrice();
             $qty = $detail->getQuantity();
             $reduce = $detail->getReduce();
-            $product_exchange = $detail->getProductExchange();
+            $type = $detail->getType();
             $stmt = $this->getConn()->prepare("insert into smi_order_detail (
                     `order_id`,
                     `product_id`,
@@ -749,9 +749,9 @@ class CheckoutDAO
                     `price`,
                     `quantity`,
                     `reduce`,
-                    `product_exchange`) 
+                    `type`) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("iiisdidi", $order_id, $product_id, $variant_id, $sku, $price, $qty, $reduce, $product_exchange);
+            $stmt->bind_param("iiisdidi", $order_id, $product_id, $variant_id, $sku, $price, $qty, $reduce, $type);
             $stmt->execute();
             print_r($this->getConn()->error);
             $nrows = $stmt->affected_rows;

@@ -67,6 +67,7 @@
                             <span id="orderDate" class="hidden" style="width: 100%; display: inline-block"></span>
                         </div>
                         <div class="col-md-3 mt-2 mb-2">
+                            <label class="hidden">Thêm sản phẩm</label>
                             <input class="form-control hidden" id="productId" type="text" autocomplete="off"
                                    placeholder="Nhập mã sản phẩm">
                         </div>
@@ -251,17 +252,16 @@
                     window.location.reload();
                 }
             });
-
         });
 
         $("#productId").change(function () {
-            var prodId = $(this).val();
-            if (prodId.indexOf('SP') > -1) {
-                prodId = prodId.replace("SP", "");
-                prodId = parseInt(prodId);
+            let sku = $(this).val();
+            if (sku.indexOf('SP') > -1) {
+                sku = sku.replace("SP", "");
+                sku = parseInt(sku);
             }
-            // validateProdId(prodId, calculateTotal, find_product, 1);
-            find_new_product(prodId);
+            validateProdId(sku, calculateTotal, find_new_product, 1);
+            // find_new_product(sku);
             $(this).val("");
         });
 
@@ -272,14 +272,14 @@
         });
         // $("#discount").blur(function(event){
         // 	console.log('blur');
-        // 	var discount = $(this).val();
+        // 	let discount = $(this).val();
         // 	onchange_discount(discount);
         // 	event.preventDefault();
         // });
         $('#discount').keypress(function (event) {
-            var keycode = (event.keyCode ? event.keyCode : event.which);
+            let keycode = (event.keyCode ? event.keyCode : event.which);
             if (keycode == '13') {
-                var discount = $(this).val();
+                let discount = $(this).val();
                 onchange_discount(discount, event);
                 event.preventDefault();
             }
@@ -300,19 +300,19 @@
         });
 
         $("#payment").change(function () {
-            var payment = $(this).val();
+            let payment = $(this).val();
             payment = replaceComma(payment);
             paymentChange(payment);
         });
         $("#payment").blur(function () {
-            var payment = $(this).val();
+            let payment = $(this).val();
             payment = replaceComma(payment);
             paymentChange(payment);
         });
         $('#payment').keypress(function (event) {
-            var keycode = (event.keyCode ? event.keyCode : event.which);
+            let keycode = (event.keyCode ? event.keyCode : event.which);
             if (keycode == '13') {
-                var payment = $(this).val();
+                let payment = $(this).val();
                 payment = replaceComma(payment);
                 paymentChange(payment);
             }
@@ -387,7 +387,7 @@
                         $("#orderId").addClass("hidden");
                         let details = value[0].details;
                         for (let i = 0; i < details.length; i++) {
-                            let price = replaceComma(details[i].price);
+                            // let price = replaceComma(details[i].price);
                             let reduce = details[i].reduce;
                             if (reduce == 0) {
                                 reduce = "";
@@ -416,7 +416,7 @@
                                 + '<td><div><span class="intoMoney" id="intoMoney_' + noRow + '">' + details[i].intoMoney + '</span> <small> đ</small></div></td>'
                                 + '<td><button type="button" id="exchange_' + noRow + '" class="btn btn-info form-control" onclick="exchangeBtn(this, ' + noRow + ')" title="Đổi hàng"><i class="fas fa-sync"></i> Đổi hàng</button>'
                                 + '<button type="button" id="cancelExchange_' + noRow + '" class="btn btn-danger form-control hidden" onclick="cancelExchangeBtn(this, ' + noRow + ')" title="Hủy đổi hàng"><i class="fas fa-ban"></i> Hủy</button>'
-                                + '<input type="text" value="" placeholder="Nhập mã sản phẩm" id="productName_' + noRow + '" onchange="find_product(this, 1, ' + noRow + ')" class="hidden form-control mt-2 mb-2">'
+                                + '<input type="text" value="" placeholder="Nhập mã sản phẩm" id="productName_' + noRow + '" onchange="find_product(this, '+details[i].sku+', 1, ' + noRow + ')" class="hidden form-control mt-2 mb-2">'
                                 + '<button type="button" id="del_' + noRow + '" onclick="del_product_new(this, ' + noRow + ')" class="btn btn-danger hidden form-control mt-2 mb-2" title="Xóa sản phẩm đổi"><i class="fas fa-trash"></i> Xóa</button>'
                                 + '</td>'
                                 + '</tr>');
@@ -432,6 +432,7 @@
                         $("#orderDate").text("Ngày mua hàng: " + value[0].order_date);
                         $("#orderDate").removeClass("hidden");
                         $("#productId").removeClass("hidden");
+                        $("#productId").prev("label").removeClass("hidden");
                         $("#cancel_exchange").removeClass("hidden");
 
 
@@ -481,9 +482,89 @@
         });
     }
 
-    function find_product(e, qty, noRow) {
+    function validateProdId(sku, calculateTotal, find_new_product)
+    {
+        let count = 0;
+        $.each($("#tableProd tbody").find("input[name=sku]"), function(k, v) {
+            if(v["value"] === sku) {
+                count++;
+                // let noId = v["id"];
+                // noId = noId.split("_")[1];
+                // let qty = $("[id=qty_"+noId+"]").val();
+                // qty++;
+                // $("[id=qty_"+noId+"]").val(qty);
+                // $("[id=qty_"+noId+"]").trigger("change");
+                // if(typeof calculateTotal  === 'function')
+                // {
+                //     calculateTotal();
+                // }
+                Swal.fire({
+                    type: 'error',
+                    title: 'Sản phẩm đã tồn tại',
+                    html: "Hãy chọn sản phẩm khác hoặc tạo đơn hàng mới <a href='<?php echo __PATH__ ?>src/view/sales/'>tại đây</a>!"
+                });
+                return;
+            }
+        });
+        count = 0;
+        $.each($("#tableProd tbody").find("input[name=skuNew]"), function(k, v) {
+            if(v["value"] === sku) {
+                count++;
+                // let noId = v["id"];
+                // noId = noId.split("_")[1];
+                // let qty = $("[id=qty_"+noId+"]").val();
+                // qty++;
+                // $("[id=qty_"+noId+"]").val(qty);
+                // $("[id=qty_"+noId+"]").trigger("change");
+                // if(typeof calculateTotal  === 'function')
+                // {
+                //     calculateTotal();
+                // }
+                Swal.fire({
+                    type: 'error',
+                    title: 'Sản phẩm đã tồn tại',
+                    html: "Hãy chọn sản phẩm khác hoặc tạo đơn hàng mới <a href='<?php echo __PATH__ ?>src/view/sales/'>tại đây</a>!"
+                });
+                return;
+            }
+        });
+        if(count == 0) {
+            Swal.fire({
+                type: 'error',
+                title: 'Không tồn tại sản phẩm đổi',
+                html: "Nếu không đổi sản phẩm thì hãy tạo đơn hàng mới <a href='<?php echo __PATH__ ?>src/view/sales/'>tại đây</a>!"
+            });
+            return;
+        }
+        if(count == 0)
+        {
+            if(typeof find_new_product  === 'function')
+            {
+                find_new_product(sku, 1);
+
+            }
+            if(typeof calculateTotal  === 'function')
+            {
+                calculateTotal();
+            }
+        }
+    }
+
+    function find_product(e, curr_sku, qty, noRow) {
         let sku = $(e).val();
-        if (sku == "") {
+        console.log("sku: "+sku);
+        console.log("curr_sku: "+curr_sku);
+        if (sku === "") {
+            return;
+        }
+        if(sku == curr_sku) {
+            console.log("sku = curr_sku");
+            Swal.fire({
+                type: 'error',
+                title: 'Sản phẩm đã tồn tại',
+                text: "Sản phẩm đổi phải khác sản phẩm đã mua!"
+            });
+            $(e).val("");
             return;
         }
         $.ajax({
@@ -530,7 +611,7 @@
                     $(e).parent().parent().find("td:eq(9)").children(":first").addClass("old");
                     $(e).parent().parent().find("td:eq(9)").append('<span class="price-new new" id="price_new_' + noRow + '">' + products[0].retail + '</span> <small class="new"> đ</small>');
                     $(e).parent().parent().find("td:eq(10)").children(":first").addClass("old");
-                    $(e).parent().parent().find("td:eq(10)").append('<input type="number" name="qtyNew" id="qty_new_' + noRow + '" class="new form-control" min="1" value="' + qty + '" onblur="on_change_qty(\'price_new_' + noRow + '\', \'qty_new_' + noRow + '\', \'intoMoney_new_' + noRow + '\', \'reduce_new_' + noRow + '\')">');
+                    $(e).parent().parent().find("td:eq(10)").append('<input type="number" name="qtyNew" id="qty_new_' + noRow + '" class="new form-control" min="1" value="' + qty + '" onblur="on_change_qty(\'price_new_' + noRow + '\', \'qty_new_' + noRow + '\', \'intoMoney_new_' + noRow + '\', \'reduce_new_' + noRow + '\', \'intoMoney_' + noRow + '\', \'diff_money_new_' + noRow + '\')">');
                     $(e).parent().parent().find("td:eq(11)").children(":first").addClass("old");
                     $(e).parent().parent().find("td:eq(11)").append('<input type="text" name="reduceNew" id="reduce_new_' + noRow + '" class="new form-control" value="' + discount + '" onblur="on_change_reduce(\'price_new_' + noRow + '\',\'qty_new_' + noRow + '\', \'intoMoney_new_' + noRow + '\', \'reduce_new_' + noRow + '\')">');
                     $(e).parent().parent().find("td:eq(12)").children(":first").addClass("old");
@@ -742,14 +823,14 @@
     //     }
     // }
     // function validate_form() {
-    //     var noRow = $("#noRow").val();
+    //     let noRow = $("#noRow").val();
     //     if (noRow == 0) {
     //         disableCheckOutBtn();
     //         return;
     //     }
-    //     var select_payment = $("#sel_payment").val();
+    //     let select_payment = $("#sel_payment").val();
     //     if (select_payment == 0) {
-    //         var payment = $("#payment").val();
+    //         let payment = $("#payment").val();
     //         if (payment == "") {
     //             disableCheckOutBtn();
     //             return;
@@ -812,7 +893,7 @@
     //        success: function (res) {
     //            console.log(res);
     //            if (res.length > 0) {
-    //                var status = res[0].status;
+    //                let status = res[0].status;
     //                if (status !== "undefined") {
     //                    switch (status) {
     //                        case '1':
@@ -972,7 +1053,7 @@
                 return false;
             }
             // $("#cash_value").val(discount);
-            // var totalCheckout = replaceComma($("#totalCheckout").text());
+            // let totalCheckout = replaceComma($("#totalCheckout").text());
             // if(discount !== "" && discount < 1000)
             // {
             // 	discount += "000";
@@ -996,7 +1077,7 @@
             validate_form();
             return;
         }
-        var totalCheckout = replaceComma($("#totalCheckout").text());
+        let totalCheckout = replaceComma($("#totalCheckout").text());
         payment = replaceComma(payment);
         // if(payment !== "" && payment < 1000)
         // {
@@ -1065,14 +1146,14 @@
                 //current product
                 let product_id = $(value).find("input[name=prodId]").val();
                 let variant_id = $(value).find("input[name=variantId]").val();
-                let sku = replaceComma($(value).find("span.product-sku").text());
+                let sku = $(value).find("span.product-sku").text();
                 let product_name = $(value).find("span.product-name").text();
                 let price = replaceComma($(value).find("span.price").text());
-                let quantity = $(value).find("span[name=qty]").val();
-                let reduce = replaceComma($(value).find("span[name=reduce]").val());
+                let quantity = $(value).find("span[name=qty]").text();
+                let reduce = replaceComma($(value).find("span[name=reduce]").text());
                 let reduce_percent = "";
                 if (reduce.indexOf("%") > -1) {
-                    reduce = reduce.replace("%", "");
+                    reduce = replacePercent(reduce);
                     reduce_percent = reduce;
                     reduce = (reduce * price) / 100;
                 } else {
@@ -1094,14 +1175,14 @@
                 //exchange_product
                 let product_id_new = $(value).find("input[name=prodIdNew]").val();
                 let variant_id_new = $(value).find("input[name=variantIdNew]").val();
-                let sku_new = replaceComma($(value).find("span.product-sku-new").text());
+                let sku_new = $(value).find("span.product-sku-new").text();
                 let product_name_new = $(value).find("span.product-name-new").text();
                 let price_new = replaceComma($(value).find("span.price-new").text());
                 let quantity_new = $(value).find("input[name=qtyNew]").val();
                 let reduce_new = replaceComma($(value).find("input[name=reduceNew]").val());
                 let reduce_percent_new = "";
                 if (reduce_new.indexOf("%") > -1) {
-                    reduce_new = reduce_new.replace("%", "");
+                    reduce_new = replacePercent(reduce_new);
                     reduce_percent_new = reduce_new;
                     reduce_new = (reduce_new * price_new) / 100;
                 } else {
@@ -1124,14 +1205,14 @@
             if($(value).hasClass("add-new-product")) {
                 let product_id_add_new = $(value).find("input[name=prodIdAddNew]").val();
                 let variant_id_add_new = $(value).find("input[name=variantIdAddNew]").val();
-                let sku_add_new = replaceComma($(value).find("span.product-sku-add-new").text());
+                let sku_add_new = $(value).find("span.product-sku-add-new").text();
                 let product_name_add_new = $(value).find("span.product-name-add-new").text();
                 let price_add_new = replaceComma($(value).find("span.price-add-new").text());
                 let quantity_add_new = $(value).find("input[name=qtyAddNew]").val();
                 let reduce_add_new = replaceComma($(value).find("input[name=reduceAddNew]").val());
                 let reduce_percent_add_new = "";
                 if (reduce_add_new.indexOf("%") > -1) {
-                    reduce_add_new = reduce_add_new.replace("%", "");
+                    reduce_add_new = replacePercent(reduce_add_new);
                     reduce_percent_add_new = reduce_add_new;
                     reduce_add_new = (reduce_add_new * price_add_new) / 100;
                 } else {
@@ -1177,17 +1258,26 @@
                 console.log('filename: ' + filename);
                 $(".iframeArea").html("");
                 if (typeof filename !== "undefined" && filename !== "") {
-                    $(".iframeArea").html('<iframe src="<?php echo __PATH__?>src/controller/sales/pdf/' + filename + '" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
+                    $(".iframeArea").html('<iframe src="<?php echo __PATH__?>src/controller/exchange/pdf/' + filename + '" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
                 }
-                toastr.success('Đơn hàng #' + orderId + ' đã được tạo thành công.');
-                resetData();
-                if ($flag_print_receipt === true && typeof filename !== "undefined" && filename !== "") {
+                // toastr.success('Đơn hàng #' + orderId + ' đã được tạo thành công.');
+                // resetData();
+                if (flag_print_receipt === true && typeof filename !== "undefined" && filename !== "") {
                     printReceipt();
                 }
-
                 $("#create-order .overlay").addClass("hidden");
+                Swal.fire({
+                    type: 'success',
+                    title: 'Thành công!',
+                    text: "Đơn hàng #" + orderId + " đã được tạo thành công.!"
+                }).then((result) => {
+                    if (result.value) {
+                        window.location.reload();
+                    }
+                });
             },
             error: function (data, errorThrown) {
+                console.log(data);
                 console.log(data.responseText);
                 console.log(errorThrown);
                 Swal.fire({
@@ -1205,66 +1295,14 @@
     }
 
     function printReceipt() {
-        var objFra = document.getElementById('receiptContent');
+        let objFra = document.getElementById('receiptContent');
         objFra.contentWindow.focus();
         objFra.contentWindow.print();
     }
 
-    function validateProdId(prodId, calculateTotal, find_product) {
-        var count = 0;
-        $.each($("#tableProd tbody").find("input[name=sku]"), function (k, v) {
-            if (v["value"] === prodId) {
-                count++;
-                var noId = v["id"];
-                noId = noId.split("_")[1];
-                var qty = $("[id=qty_" + noId + "]").val();
-                qty++;
-                $("[id=qty_" + noId + "]").val(qty);
-                $("[id=qty_" + noId + "]").trigger("change");
-                if (typeof calculateTotal === 'function') {
-                    calculateTotal();
-                }
-                return;
-            }
-        });
-        if (count == 0) {
-            if (typeof find_product === 'function') {
-                find_product(prodId, 1);
-
-            }
-            if (typeof calculateTotal === 'function') {
-                calculateTotal();
-            }
-        }
-    }
-
-
-
-
     function formatNumber(num) {
         return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
     }
-
-
-    // function del_product(e, p) {
-    //     Swal.fire({
-    //         title: 'Bạn có chắc chắn muốn xóa sản phẩm này?',
-    //         text: "",
-    //         type: 'warning',
-    //         showCancelButton: true,
-    //         confirmButtonColor: '#3085d6',
-    //         cancelButtonColor: '#d33',
-    //         confirmButtonText: 'Ok'
-    //     }).then((result) => {
-    //         if (result.value) {
-    //             $(e).closest("[id='" + p + "']").remove();
-    //             toastr.success('Sản phẩm đã được xóa.');
-    //             reloadData(calculateTotal, find_product);
-    //         }
-    //     })
-    // }
-
-
 
     function on_change_reduce(priceId, qtyId, intoMoneyId, reduceId) {
         let price = get_price(priceId);
@@ -1328,9 +1366,9 @@
         }
     }
 
-    function on_change_qty(priceId, qtyId, intoMoneyId, reduceId) {
-        var price = get_price(priceId);
-        var qty = get_qty(qtyId);
+    function on_change_qty(priceId, qtyId, intoMoneyId, reduceId, oldIntoMoneyId, diffMoneyId) {
+        let price = get_price(priceId);
+        let qty = get_qty(qtyId);
         if (!validateQty(qty, qtyId)) {
             disableCheckOutBtn();
             //  validate_form();
@@ -1338,15 +1376,19 @@
         }
         // enableCheckOutBtn();
         //  validate_form();
-        var intoMoney = price * qty;
+        let intoMoney = price * qty;
         $("[id=" + intoMoneyId + "]").text(formatNumber(intoMoney));
         $("[id=" + reduceId + "]").trigger("change");
-        // calculateTotal();
+        let oldIntoMoney = $("[id=" + oldIntoMoneyId + "]").text();
+        oldIntoMoney = replaceComma(oldIntoMoney);
+        let diff_money = intoMoney - oldIntoMoney;
+        $("[id=" + diffMoneyId + "]").text(formatNumber(diff_money));
+        calculateTotal();
     }
 
 
     function get_qty(qtyId) {
-        var qty = $("[id=" + qtyId + "]").val();
+        let qty = $("[id=" + qtyId + "]").val();
         qty = qty == "" ? 0 : Number(qty);
         return qty;
     }
@@ -1380,11 +1422,21 @@
     }
 
     function replaceComma(value) {
-        return value.replace(/,/g, '');
+        value = value.replace(/,/g, '');
+        if(value.indexOf("đ")) {
+            value = value.replace(" đ","");
+        }
+        value = value.replace(/ /g, '');
+        return value;
     }
 
     function replacePercent(value) {
-        return value.replace(/%/g, '');
+        value = value.replace(/%/g, '');
+        if(value.indexOf("đ")) {
+            value = value.replace("đ","");
+        }
+        value = value.replace(/ /g, '');
+        return value;
     }
 
     function resetData() {
@@ -1404,8 +1456,6 @@
         $("#voucher").prop("disabled", "");
         disableCheckOutBtn();
     }
-
-
 </script>
 </body>
 </html>

@@ -134,7 +134,7 @@
         set_title("Bán hàng");
 
 		$("#productId").change(function(){
-			var prodId = $(this).val();
+			let prodId = $(this).val();
 			if(prodId.indexOf('SP') > -1)
 			{
 				prodId = prodId.replace("SP","");
@@ -151,14 +151,14 @@
 		});
 		// $("#discount").blur(function(event){
 		// 	console.log('blur');
-		// 	var discount = $(this).val();
+		// 	let discount = $(this).val();
 		// 	onchange_discount(discount);
 		// 	event.preventDefault();
 		// });
 		$('#discount').keypress(function(event){
-			var keycode = (event.keyCode ? event.keyCode : event.which);
+			let keycode = (event.keyCode ? event.keyCode : event.which);
 			if(keycode == '13'){
-				var discount = $(this).val();
+				let discount = $(this).val();
 				onchange_discount(discount, event);
 				event.preventDefault();
 			}
@@ -179,19 +179,19 @@
         });
 
 		$("#payment").change(function(){
-			var payment = $(this).val();
+			let payment = $(this).val();
 			payment = replaceComma(payment);
 			paymentChange(payment);
 		});
 		$("#payment").blur(function(){
-			var payment = $(this).val();
+			let payment = $(this).val();
 			payment = replaceComma(payment);
 			paymentChange(payment);
 		});
 		$('#payment').keypress(function(event){
-			var keycode = (event.keyCode ? event.keyCode : event.which);
+			let keycode = (event.keyCode ? event.keyCode : event.which);
 			if(keycode == '13'){
-				var payment = $(this).val();
+				let payment = $(this).val();
 				payment = replaceComma(payment);
 				paymentChange(payment);
 			}
@@ -234,14 +234,14 @@
     });
 
 	function validate_form() {
-		var noRow = $("#noRow").val();
+		let noRow = $("#noRow").val();
 		if(noRow == 0) {
 			disableCheckOutBtn();
 			return;
 		}
-		var select_payment = $("#sel_payment").val();
+		let select_payment = $("#sel_payment").val();
 		if(select_payment == 0) {
-			var payment = $("#payment").val();
+			let payment = $("#payment").val();
 			if(payment == "") {
 				disableCheckOutBtn();
 				return;
@@ -307,7 +307,7 @@
 			{
 				console.log(res);
 				if(res.length > 0) {
-					var status = res[0].status;
+					let status = res[0].status;
 					if(status !== "undefined") {
 						switch(status) {
 							case '1':
@@ -471,7 +471,7 @@
 				return false;
 			}
             // $("#cash_value").val(discount);
-			// var totalCheckout = replaceComma($("#totalCheckout").text());
+			// let totalCheckout = replaceComma($("#totalCheckout").text());
 			// if(discount !== "" && discount < 1000)
 			// {
 			// 	discount += "000";
@@ -497,7 +497,7 @@
 			 validate_form();
  			return;
  		}
- 		var totalCheckout = replaceComma($("#totalCheckout").text());
+ 		let totalCheckout = replaceComma($("#totalCheckout").text());
  		payment = replaceComma(payment);
  		if(payment !== "" && payment < 1000)
  		{
@@ -520,65 +520,65 @@
 	function processDataCheckout()
 	{
 		// order information
-		$total_amount = replaceComma($("#totalAmount").text());
-		$total_reduce = replaceComma($("#totalReduce").text());
-		$discount = replaceComma($("#discount").val());
-		
-		$total_checkout = replaceComma($("#totalCheckout").text());
-		$customer_payment = replaceComma($("#payment").val());
-		$payment_type = $("#sel_payment").val();
-		$repay = replaceComma($("#repay").text());
-		$flag_print_receipt = $("#flag_print_receipt").is(':checked');
-		$voucher_code = $("#vcCode").val();
-		$voucher_value = $("#voucher_value").val();
+		let total_amount = replaceComma($("#totalAmount").text());
+        let total_reduce = replaceComma($("#totalReduce").text());
+        let discount = replaceComma($("#discount").val());
 
-		if($discount.indexOf("%") > -1) {
-			$discount = $discount.replace("%", "");
-			$discount = ($discount * $total_checkout) / 100;
+        let total_checkout = replaceComma($("#totalCheckout").text());
+        let customer_payment = replaceComma($("#payment").val());
+        let payment_type = $("#sel_payment").val();
+        let repay = replaceComma($("#repay").text());
+        let flag_print_receipt = $("#flag_print_receipt").is(':checked');
+        let voucher_code = $("#vcCode").val();
+        let voucher_value = $("#voucher_value").val();
+
+		if(discount.indexOf("%") > -1) {
+			discount = discount.replace("%", "");
+			discount = (discount * total_checkout) / 100;
 		}
 
-		var data = {};
-		data["total_amount"] = $total_amount;
-		data["total_reduce"] = $total_reduce;
-		data["discount"] = $discount;
-		data["total_checkout"] = $total_checkout;
-		data["customer_payment"] = $customer_payment;
-		data["payment_type"] = $payment_type;
-		data["repay"] = $repay;
+        let data = {};
+		data["total_amount"] = total_amount;
+		data["total_reduce"] = total_reduce;
+		data["discount"] = discount;
+		data["total_checkout"] = total_checkout;
+		data["customer_payment"] = customer_payment;
+		data["payment_type"] = payment_type;
+		data["repay"] = repay;
 		data["customer_id"] = 0;
 		data["type"] = 0;// Sale on shop
-		data["flag_print_receipt"] = $flag_print_receipt;
-		data["voucher_code"] = $voucher_code;
-		data["voucher_value"] = $voucher_value;
+		data["flag_print_receipt"] = flag_print_receipt;
+		data["voucher_code"] = voucher_code;
+		data["voucher_value"] = voucher_value;
 
 		//order detail information
-		var details = [];
+        let details = [];
 		$.each($("#tableProd tbody tr"), function(key, value) {
-			$product_id = $(value).find("input[name=prodId]").val();
-			$variant_id = $(value).find("input[name=variantId]").val();
-			$sku = $(value).find("input[name=sku]").val();
-			$product_name = $(value).find("span.product-name").text();
-			$price = replaceComma($(value).find("span.price").text());
-			$quantity = $(value).find("input[name=qty]").val();
-			$reduce = replaceComma($(value).find("input[name=reduce]").val());
-			$reduce_percent = "";
-			if($reduce.indexOf("%") > -1) {
-				$reduce = $reduce.replace("%", "");
-				$reduce_percent = $reduce;
-				$reduce = ($reduce * $price) / 100;
+			let product_id = $(value).find("input[name=prodId]").val();
+            let variant_id = $(value).find("input[name=variantId]").val();
+            let sku = $(value).find("input[name=sku]").val();
+            let product_name = $(value).find("span.product-name").text();
+            let price = replaceComma($(value).find("span.price").text());
+            let quantity = $(value).find("input[name=qty]").val();
+            let reduce = replaceComma($(value).find("input[name=reduce]").val());
+            let reduce_percent = "";
+			if(reduce.indexOf("%") > -1) {
+				reduce = reduce.replace("%", "");
+				reduce_percent = reduce;
+				reduce = (reduce * price) / 100;
 			} else {
-				$reduce_percent = Math.round($reduce*100/($price*$quantity));
+				reduce_percent = Math.round(reduce*100/(price*quantity));
 			}
 
-			var product = {};
-			product["product_id"] = $product_id;
-			product["variant_id"] = $variant_id;
-			product["sku"] = $sku;
-			product["product_name"] = $product_name;
-			product["price"] = $price;
-			product["quantity"] = $quantity;
-			product["reduce"] = $reduce;
-			product["reduce_percent"] = $reduce_percent;
+            let product = {};
+			product["product_id"] = product_id;
+			product["variant_id"] = variant_id;
+			product["sku"] = sku;
+			product["product_name"] = product_name;
+			product["price"] = price;
+			product["quantity"] = quantity;
+			product["reduce"] = reduce;
+			product["reduce_percent"] = reduce_percent;
 			details.push(product);
 		});
 		
@@ -588,7 +588,7 @@
 				type: 'error',
 				title: 'Đã xảy ra lỗi',
 				text: 'Bạn chưa chọn sản phẩm.'
-			})
+			});
 			return;
 		}
 		data["details"] = details;
@@ -603,22 +603,30 @@
 			type : 'POST',
 			success: function(data)
 			{
-				var orderId = data.orderId;
-				var filename = data.fileName;
+                let orderId = data.orderId;
+                let filename = data.fileName;
 				console.log('filename: '+filename);
 				$(".iframeArea").html("");
 				if(typeof filename !== "undefined" && filename !== "")
 				{
     				$(".iframeArea").html('<iframe src="<?php echo __PATH__?>src/controller/sales/pdf/'+filename+'" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
 				}
-		        toastr.success('Đơn hàng #'+orderId+' đã được tạo thành công.');
-		        resetData();
-	            if($flag_print_receipt === true && typeof filename !== "undefined" && filename !== "")
+		        // toastr.success('Đơn hàng #'+orderId+' đã được tạo thành công.');
+		        // resetData();
+                $("#create-order .overlay").addClass("hidden");
+	            if(flag_print_receipt === true && typeof filename !== "undefined" && filename !== "")
 				{
 				    printReceipt();
 				}
-				
-				$("#create-order .overlay").addClass("hidden");
+                Swal.fire({
+                    type: 'success',
+                    title: 'Thành công!',
+                    text: "Đơn hàng #'+orderId+' đã được tạo thành công."
+                }).then((result) => {
+                    if (result.value) {
+                        window.location.reload();
+                    }
+                });
 			},
 			error : function (data, errorThrown) {
 				console.log(data.responseText);
@@ -637,19 +645,19 @@
 		});
 	}
 	function printReceipt() {
-		var objFra = document.getElementById('receiptContent');
+		let objFra = document.getElementById('receiptContent');
 		objFra.contentWindow.focus();
 		objFra.contentWindow.print();
 	}
     function validateProdId(prodId, calculateTotal, find_product)
     {
-    	var count = 0;
+    	let count = 0;
     	$.each($("#tableProd tbody").find("input[name=sku]"), function(k, v) {
       		if(v["value"] === prodId) {
       			count++;
-      			var noId = v["id"];
+                let noId = v["id"];
       			noId = noId.split("_")[1];
-      			var qty = $("[id=qty_"+noId+"]").val();
+      			let qty = $("[id=qty_"+noId+"]").val();
       			qty++;
       			$("[id=qty_"+noId+"]").val(qty);
       			$("[id=qty_"+noId+"]").trigger("change");
@@ -676,20 +684,20 @@
 
 	function calculateTotal()
 	{
-		var noRow = $("#noRow").val();
+		let noRow = $("#noRow").val();
 		noRow = Number(noRow);
-		var totalAmount = 0;
-		var totalReduce = 0;
-		for(var i=1; i<=noRow; i++)
+		let totalAmount = 0;
+		let totalReduce = 0;
+		for(let i=1; i<=noRow; i++)
 		{
-			var price = get_price("price_"+i);
- 			var qty = get_qty("qty_"+i);
+			let price = get_price("price_"+i);
+ 			let qty = get_qty("qty_"+i);
 
-			var intoMoney = qty*price;
+			let intoMoney = qty*price;
 
-			var reduce = 0;
+			let reduce = 0;
 			if(typeof $("[id=reduce_"+i+"]").val() !== "undefined") {
-				var val = $("[id=reduce_"+i+"]").val();
+				let val = $("[id=reduce_"+i+"]").val();
 				if(val.indexOf("%") > -1)
 				{
 					val = replacePercent(val);
@@ -702,10 +710,10 @@
 			totalAmount += Number(intoMoney);
 			totalReduce += Number(reduce);
 		}
-		var totalCheckout = Number(totalAmount) - Number(totalReduce);
+		let totalCheckout = Number(totalAmount) - Number(totalReduce);
 
         // use voucher
-        var voucherValue = $("#voucher_value").val();
+        let voucherValue = $("#voucher_value").val();
         if(voucherValue.indexOf("%") > -1)
         {
             voucherValue = replacePercent(voucherValue);
@@ -720,7 +728,7 @@
         // $("#voucher").val("");
 
         // use cash
-        var discount = $("#discount").val();
+        let discount = $("#discount").val();
         if(discount.indexOf("%") > -1)
         {
             discount = replacePercent(discount);
@@ -733,8 +741,8 @@
         totalReduce += Number(discount);
         totalCheckout = Number(totalAmount) - Number(totalReduce);
 
-		var payment = replaceComma($("#payment").val());
-		var repay = 0;
+		let payment = replaceComma($("#payment").val());
+		let repay = 0;
 		if(payment != 0 && totalCheckout > 0)
 		{
 			repay = Number(payment) - Number(totalCheckout);
@@ -766,13 +774,13 @@
 				console.log(JSON.stringify(products));
 				if(products.length > 0)
 				{
-					var discount = products[0].discount;
+					let discount = products[0].discount;
 					if(discount == 0) {
 						discount = "";
 					} else if(discount > 0 && discount < 100) {
 						discount = discount + "%";
 					}
-					var noRow = $("#noRow").val();
+					let noRow = $("#noRow").val();
 					noRow = Number(noRow);
 					noRow++;
 					$("#noRow").val(noRow);
@@ -829,8 +837,8 @@
     function reloadData(calculateTotal, find_product)
     {
     	$("#noRow").val(0);
-    	var arr = [];
-    	var qty = [];
+    	let arr = [];
+    	let qty = [];
       	$.each($("#tableProd tbody").find("input[name=sku]"), function(k, v) {
       		arr.push(v["value"]);
       	});
@@ -848,7 +856,7 @@
       	$("#tableProd tbody").html("");
       	if(typeof find_product  === 'function')
       	{
-	      	for(var i=0; i<arr.length; i++)
+	      	for(let i=0; i<arr.length; i++)
 	      	{
 				find_product(arr[i], qty[i]);
 	      	}
@@ -862,14 +870,14 @@
 
     function on_change_reduce(priceId, qtyId, intoMoneyId, reduceId)
  	{
- 		var price = get_price(priceId);
- 		var qty = get_qty(qtyId);
+ 		let price = get_price(priceId);
+ 		let qty = get_qty(qtyId);
 		if(!validateQty(qty, qtyId)) {
 			disableCheckOutBtn();
 			// validate_form();
  			return;
  		}
- 		var reduce = $("[id="+reduceId+"]").val();
+ 		let reduce = $("[id="+reduceId+"]").val();
  		reduce = replaceComma(reduce);
  		if(reduce.indexOf("%") > -1) 
  		{
@@ -909,7 +917,7 @@
  		
 		 // enableCheckOutBtn();
 		//  validate_form();
- 		var intoMoney = price*qty - reduce;
+ 		let intoMoney = price*qty - reduce;
  		$("[id="+intoMoneyId+"]").text(formatNumber(intoMoney));
  		calculateTotal();
  	}
@@ -933,8 +941,8 @@
 
  	function on_change_qty(priceId, qtyId, intoMoneyId, reduceId)
  	{
- 		var price = get_price(priceId);
- 		var qty = get_qty(qtyId);
+ 		let price = get_price(priceId);
+ 		let qty = get_qty(qtyId);
  		if(!validateQty(qty, qtyId)) {
 			 disableCheckOutBtn();
 			//  validate_form();
@@ -942,7 +950,7 @@
  		}
 		 // enableCheckOutBtn();
 		//  validate_form();
- 		var intoMoney = price*qty;
+ 		let intoMoney = price*qty;
  		$("[id="+intoMoneyId+"]").text(formatNumber(intoMoney));
  		$("[id="+reduceId+"]").trigger("change");
  		calculateTotal();
@@ -951,14 +959,14 @@
 
  	function get_qty(qtyId)
  	{
- 		var qty = $("[id="+qtyId+"]").val();
+ 		let qty = $("[id="+qtyId+"]").val();
  		qty = qty == "" ? 0 : Number(qty);
  		return qty;
  	}
 
  	function get_price(priceId)
  	{
- 		var price = replaceComma($("[id="+priceId+"]").text());
+ 		let price = replaceComma($("[id="+priceId+"]").text());
  		price = price == "" ? 0 : Number(price);
  		return price;
  	}

@@ -10,7 +10,8 @@ class OrderDetail {
     private $reduce;
     private $reduce_percent;
     private $product_name;
-    private $product_exchange;
+    // 0: add new, 1: exchange, 2: new product of exchange order
+    private $type;
 
     /**
      * Get the value of id
@@ -213,22 +214,19 @@ class OrderDetail {
     }
 
     /**
-     * Get the value of product_exchange
+     * @return mixed
      */
-    public function getProductExchange()
+    public function getType()
     {
-        return $this->product_exchange;
+        return $this->type;
     }
 
     /**
-     * Set the value of product_exchange
-     *
-     * @return  self
+     * @param mixed $type
      */
-    public function setProductExchange($product_exchange)
+    public function setType($type): void
     {
-        $this->product_exchange = $product_exchange;
-
-        return $this;
+        $this->type = $type;
     }
+
 }

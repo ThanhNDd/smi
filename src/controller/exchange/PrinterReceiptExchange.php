@@ -24,17 +24,17 @@ class PrinterReceiptExchange
             $html = $this->getHeader($order);
             $html .= $this->getBody('Sản phẩm đã mua',$curr_arr);
             $html .= $this->getBody('Sản phẩm đổi',$exchange_arr);
-            $html .= $this->getBody('Sản phẩm mua mới',$add_new_arr);
+            if(count($add_new_arr) > 0) {
+                $html .= $this->getBody('Sản phẩm mua mới',$add_new_arr);
+            }
             $html .= $this->getFooter($order);
-
-            echo $html;
 
             $mpdf->SetDisplayMode('real');
             $mpdf->SetDisplayPreferences('/FitWindow/NoPrintScaling');
             $mpdf->WriteHTML($html);
             $mpdf->AddPage();
 
-             $this->rrmdir("pdf");
+//             $this->rrmdir("pdf");
              $folder_path = "pdf";
              $files = glob($folder_path.'/*');
              foreach($files as $file) {
@@ -43,7 +43,7 @@ class PrinterReceiptExchange
                  }
              }
             
-            $filename = "receipt".time().".pdf";
+            $filename = "receiptExchange".time().".pdf";
             $mpdf->Output("pdf/".$filename, 'F');
             chmod("pdf/".$filename, 0777);
             return $filename;
@@ -152,7 +152,7 @@ class PrinterReceiptExchange
         $c = 0;
         foreach($details as $key => $value)
         {
-            $intoMoney = $value->getPrice()*$value->getQuantity() - (empty($value->getReduce()) ? 0 : $value->getReduce());
+            $intoMoney = (empty($value->getPrice()) ? 0 : $value->getPrice()) * (empty($value->getQuantity()) ? 0 : $value->getQuantity()) - (empty($value->getReduce()) ? 0 : $value->getReduce());
             $c++;
             $body .= '<tr>
                         <td class="center">'.$c.'</td>

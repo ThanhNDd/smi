@@ -73,7 +73,7 @@
                 <div class="row col-12" style="display: inline-block;">
                     <section class="ml-4" style="display: inline-block;float: left;padding-top: 1.25rem;">
                         <a class="btn btn-secondary btn-flat" href="<?php echo __PATH__ ?>src/view/products/outofstock.php">
-                            Hết hàng <span class="badge badge-light out_of_stock">0</span>
+                            Hết hàng <span class="badge badge-light number_out_of_stock">0</span>
                         </a>
                     </section>
                     <section style="display: inline-block;float: right;padding-top: 1.25rem;">
@@ -102,7 +102,7 @@
                             <th>Thành tiền</th> -->
                             <th>Giá bán lẻ</th>
                             <th>Giảm giá</th>
-                            <th>Giảm giá</th>
+                            <th></th>
                             <th>Hành động</th>
                         </tr>
                         </thead>
@@ -699,12 +699,12 @@
             },
             success: function (res) {
                 console.log(res);
-                $(".out_of_stock").text(res.response);
+                $(".number_out_of_stock").text(res.response);
             },
             error: function (data, errorThrown) {
                 console.log(data.responseText);
                 console.log(errorThrown);
-                $(".out_of_stock").text(0);
+                $(".number_out_of_stock").text(0);
             }
         });
     }
@@ -874,7 +874,7 @@
         countAllChecked();
     }
 
-    function formatNumber(num) {
+    function formatNumber(num) {out_of_stock
         return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
     }
 
