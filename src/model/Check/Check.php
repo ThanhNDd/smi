@@ -3,142 +3,136 @@
 
 class Check
 {
-    private $product_id;
-    private $variation_id;
-    private $sku;
-    private $quantity;
-    private $size;
-    private $color;
-    private $name;
-    private $price;
+    private $id;
+    private $seq;
+    private $status;
+    private $total_products;
+    private $products_checked;
+    private $start_date;
+    private $finished_date;
+    private $total_money;
+    private $money_checked;
     private $created_date;
+    private $updated_date;
+
+    /**
+     * Check constructor.
+     */
+    public function __construct()
+    {
+    }
+
 
     /**
      * @return mixed
      */
-    public function getProductId()
+    public function getId()
     {
-        return $this->product_id;
+        return $this->id;
     }
 
     /**
-     * @param mixed $product_id
+     * @param mixed $id
      */
-    public function setProductId($product_id): void
+    public function setId($id): void
     {
-        $this->product_id = $product_id;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getVariationId()
-    {
-        return $this->variation_id;
-    }
-
-    /**
-     * @param mixed $variation_id
-     */
-    public function setVariationId($variation_id): void
-    {
-        $this->variation_id = $variation_id;
+        $this->id = $id;
     }
 
     /**
      * @return mixed
      */
-    public function getSku()
+    public function getSeq()
     {
-        return $this->sku;
+        return $this->seq;
     }
 
     /**
-     * @param mixed $sku
+     * @param mixed $seq
      */
-    public function setSku($sku): void
+    public function setSeq($seq): void
     {
-        $this->sku = $sku;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getQuantity()
-    {
-        return $this->quantity;
-    }
-
-    /**
-     * @param mixed $quantity
-     */
-    public function setQuantity($quantity): void
-    {
-        $this->quantity = $quantity;
+        $this->seq = $seq;
     }
 
     /**
      * @return mixed
      */
-    public function getSize()
+    public function getStatus()
     {
-        return $this->size;
+        return $this->status;
     }
 
     /**
-     * @param mixed $size
+     * @param mixed $status
      */
-    public function setSize($size): void
+    public function setStatus($status): void
     {
-        $this->size = $size;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getColor()
-    {
-        return $this->color;
-    }
-
-    /**
-     * @param mixed $color
-     */
-    public function setColor($color): void
-    {
-        $this->color = $color;
+        $this->status = $status;
     }
 
     /**
      * @return mixed
      */
-    public function getName()
+    public function getTotalProducts()
     {
-        return $this->name;
+        return $this->total_products;
     }
 
     /**
-     * @param mixed $name
+     * @param mixed $total_products
      */
-    public function setName($name): void
+    public function setTotalProducts($total_products): void
     {
-        $this->name = $name;
+        $this->total_products = $total_products;
     }
 
     /**
      * @return mixed
      */
-    public function getPrice()
+    public function getStartDate()
     {
-        return $this->price;
+        return $this->start_date;
     }
 
     /**
-     * @param mixed $price
+     * @param mixed $start_date
      */
-    public function setPrice($price): void
+    public function setStartDate($start_date): void
     {
-        $this->price = $price;
+        $this->start_date = $start_date;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFinishedDate()
+    {
+        return $this->finished_date;
+    }
+
+    /**
+     * @param mixed $finished_date
+     */
+    public function setFinishedDate($finished_date): void
+    {
+        $this->finished_date = $finished_date;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTotalMoney()
+    {
+        return $this->total_money;
+    }
+
+    /**
+     * @param mixed $total_money
+     */
+    public function setTotalMoney($total_money): void
+    {
+        $this->total_money = $total_money;
     }
 
     /**
@@ -157,5 +151,52 @@ class Check
         $this->created_date = $created_date;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getUpdatedDate()
+    {
+        return $this->updated_date;
+    }
+
+    /**
+     * @param mixed $updated_date
+     */
+    public function setUpdatedDate($updated_date): void
+    {
+        $this->updated_date = $updated_date;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getProductsChecked()
+    {
+        return $this->products_checked;
+    }
+
+    /**
+     * @param mixed $products_checked
+     */
+    public function setProductsChecked($products_checked): void
+    {
+        $this->products_checked = $products_checked;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMoneyChecked()
+    {
+        return $this->money_checked;
+    }
+
+    /**
+     * @param mixed $money_checked
+     */
+    public function setMoneyChecked($money_checked): void
+    {
+        $this->money_checked = $money_checked;
+    }
 
 }

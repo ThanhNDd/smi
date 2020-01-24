@@ -168,13 +168,23 @@
                                 <h3 style="color: red;"><span id="surcharge">0</span>
                                     <small> đ</small>
                                 </h3>
+                                <h6 class="hidden" style="color: green;" id="add_more_discount">
+                                    <span>0</span>
+                                    <small>đ</small>
+                                </h6>
                             </td>
                         </tr>
                         <tr>
                             <td class="left p-0">Giảm trừ</td>
                             <td class="right pt-2 pr-0">
-                                <input type="text" class="form-control" name="discount_new" id="discount_new"
-                                       placeholder="Số tiền" width="100px" disabled>
+<!--                                <input type="text" class="form-control" name="discount_new" id="discount_new"-->
+<!--                                       placeholder="Số tiền" width="100px" disabled>-->
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" name="discount_new" id="discount_new" disabled>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">đ</span>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                         <tr>
@@ -193,14 +203,28 @@
                                     <option value="1">Chuyển khoản</option>
                                     <option value="2">Nợ</option>
                                 </select>
-                                <input type="text" class="form-control mt-2" name="payment_new" id="payment_new" width="100px" disabled
-                                       style="text-align: right;">
-
+<!--                                <input type="text" class="form-control mt-2" name="payment_new" id="payment_new" width="100px" disabled-->
+<!--                                       style="text-align: right;">-->
+                                <div class="input-group mb-3 mt-2">
+                                    <input type="text" class="form-control right" name="payment_new" id="payment_new" disabled>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">đ</span>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                         <tr>
                             <td class="right">Trả lại</td>
-                            <td class="right"><span style="font-size: 20px;" id="repay_new">0</span><span> đ</span></td>
+                            <td class="right">
+<!--                                <input type="text" class="form-control" name="repay_new" id="repay_new" width="100px" disabled-->
+<!--                                       style="text-align: right;"><span> đ</span>-->
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control right" name="repay_new" id="repay_new" disabled>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">đ</span>
+                                    </div>
+                                </div>
+                            </td>
                         </tr>
                         </tbody>
                     </table>
@@ -351,6 +375,13 @@
         $("#sel_discount").change(function () {
             $("#discount").focus();
         });
+
+        $("#repay_new").on("change", function(){
+            let val = $(this).val();
+            val = val + "000";
+            $(this).val(formatNumber(val));
+        });
+
         // end document ready
     });
 
@@ -719,9 +750,13 @@
                 totalAmount += Number(diff_money);
             }
         }
-        let discount = $("#discount_new").val();
-        discount = replaceComma(discount);
-        let totalCheckout = Number(totalAmount) - Number(discount);
+        let discountOld = replaceComma($("#discount").text());
+        if(discountOld == "") {
+            discountOld = 0;
+        }
+        let discountNew = $("#discount_new").val();
+        discountNew = replaceComma(discountNew);
+        let totalCheckout = Number(totalAmount) - Number(discountNew) + Number(discountOld);
 
         //
         // // use cash
@@ -742,17 +777,22 @@
             if (payment != 0 && totalCheckout > 0) {
                 repay = Number(payment) - Number(totalCheckout);
             }
-            $("#repay_new").text(formatNumber(repay));
+            $("#repay_new").val(formatNumber(repay));
             $("#discount_new").prop("disabled", "");
             $("#sel_payment_new").prop("disabled", "");
             $("#payment_new").prop("disabled", "");
         } else {
-            $("#repay_new").text(formatNumber(Math.abs(totalCheckout)));
+            $("#repay_new").val(formatNumber(Math.abs(totalCheckout)));
             $("#discount_new").prop("disabled", true);
             $("#sel_payment_new").prop("disabled", true);
             $("#payment_new").prop("disabled", true);
         }
+        $("#repay_new").prop("disabled", "");
         $("#surcharge").text(formatNumber(totalAmount));
+        if(discountOld > 0) {
+            $("#add_more_discount").removeClass("hidden");
+            $("#add_more_discount span").text("+"+formatNumber(discountOld));
+        }
         $("#total_checkout_new").text(formatNumber(totalCheckout));
 
         // validate_form();
@@ -1104,7 +1144,7 @@
         let total_checkout = replaceComma($("#total_checkout_new").text());
         let payment_type = $("#sel_payment_new").val();
         let customer_payment = replaceComma($("#payment_new").val());
-        let repay = replaceComma($("#repay_new").text());
+        let repay = replaceComma($("#repay_new").val());
         let flag_print_receipt = $("#flag_print_receipt").is(':checked');
         let discount = replaceComma($("#discount_new").val());
         if (discount.indexOf("%") > -1) {
@@ -1118,7 +1158,7 @@
             paymentExchangeType = 1;
         } else if(total_checkout < 0) {
             // Guest received back
-            paymentExchangeType = 1;
+            paymentExchangeType = 2;
         }
         let data = {};
         data["total_amount"] = Math.abs(total_amount);

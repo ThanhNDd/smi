@@ -188,7 +188,7 @@
                         </div>
                         <!-- /.info-box -->
                     </div>
-                    <div class="col-12 col-sm-12 col-md-12">
+                    <div class="col-12 col-sm-12 col-md-12" style="display: none;">
                         <div class="info-box mb-3">
                             <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-wallet"></i></span>
                             <div class="info-box-content">
@@ -220,12 +220,12 @@
         // set title for page
         set_title("Danh sách đơn hàng");
 
-        var currentDate = new Date()
-        var day = currentDate.getDate()
-        var month = currentDate.getMonth() + 1
-        var year = currentDate.getFullYear()
-        var start_date = year + "-" + month + "-" + day;
-        var end_date = year + "-" + month + "-" + day;
+        let currentDate = new Date()
+        let day = currentDate.getDate()
+        let month = currentDate.getMonth() + 1
+        let year = currentDate.getFullYear()
+        let start_date = year + "-" + month + "-" + day;
+        let end_date = year + "-" + month + "-" + day;
         $("#startDate").val(start_date);
         $("#endDate").val(end_date);
         generate_datatable();
@@ -237,15 +237,15 @@
                 format: 'DD/MM/YYYY',
             }
         }, function (start, end, label) {
-            var start_date = start.format('YYYY-MM-DD');
-            var end_date = end.format('YYYY-MM-DD');
+            let start_date = start.format('YYYY-MM-DD');
+            let end_date = end.format('YYYY-MM-DD');
             $("#startDate").val(start_date);
             $("#endDate").val(end_date);
             generate_datatable();
             get_info_total_checkout(start_date, end_date);
         });
     });
-    var table;
+    let table;
 
     function generate_datatable() {
         if ($.fn.dataTable.isDataTable('#example')) {
@@ -389,9 +389,9 @@
             }).then((result) => {
                 if (result.value) {
                     show_loading();
-                    var tr = $(this).closest('tr');
-                    var row = table.row(tr);
-                    var order_id = row.data().order_id;
+                    let tr = $(this).closest('tr');
+                    let row = table.row(tr);
+                    let order_id = row.data().order_id;
                     $.ajax({
                         url: '<?php echo __PATH__ . 'src/controller/orders/OrderController.php' ?>',
                         type: "POST",
@@ -422,10 +422,10 @@
 
         $('#example tbody').on('click', '.edit_order', function () {
             show_loading();
-            var tr = $(this).closest('tr');
-            var row = table.row(tr);
-            var order_id = row.data().order_id;
-            var order_type = row.data().type;
+            let tr = $(this).closest('tr');
+            let row = table.row(tr);
+            let order_id = row.data().order_id;
+            let order_type = row.data().type;
             $.ajax({
                 url: '<?php echo __PATH__ . 'src/controller/orders/OrderController.php' ?>',
                 type: "POST",
@@ -466,11 +466,11 @@
                 type: type
             },
             success: function (res) {
-                var filename = res.fileName;
+                let filename = res.fileName;
                 $(".iframeArea").html("");
                 if (typeof filename !== "underfined" && filename !== "") {
                     $(".iframeArea").html('<iframe src="<?php echo __PATH__?>src/controller/orders/pdf/' + filename + '" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
-                    var objFra = document.getElementById('receiptContent');
+                    let objFra = document.getElementById('receiptContent');
                     objFra.contentWindow.focus();
                     objFra.contentWindow.print();
                     // window.open("<?php echo __PATH__?>src/controller/product/pdf/"+filename, "_blank");
@@ -492,7 +492,7 @@
     function set_data_edit_order(order_id, data, order_type) {
         reset_data();
         $(".modal-title").text("Cập nhật đơn hàng #" + order_id);
-        $(".create-new").text("Cập nhật");
+        $("#create-new").text("Cập nhật");
         enable_btn_add_new();
         $("#order_type").val(order_type).trigger("change");
         $.each(data, function (key, value) {
@@ -539,14 +539,17 @@
                     $(".select-village").prop("disabled", true);
                     $("#address").prop("disabled", true);
                     $("#shipping").prop("disabled", true);
+                    $("#order_status").val(3).trigger("change");//complete
                 }
-                $("#payment_type").val(value[0].payment_type);
+                $("#payment_type").val(value[0].payment_type).trigger("change");
+                $("#payment").val(value[0].customer_payment);
                 $("#total_amount").text(value[0].total_amount);
                 $("#discount").val(value[0].discount).trigger("change");
                 $("#total_checkout").text(value[0].total_checkout);
+                $("#repay").text(value[0].repay);
                 $(".product-area").html("");
-                var details = value[0].details;
-                for (var i = 0; i < details.length; i++) {
+                let details = value[0].details;
+                for (let i = 0; i < details.length; i++) {
                     $('.count-row').val(i);
                     add_new_product();
                     $("#detailId_" + (i + 1)).val(details[i].order_detail_id)
@@ -573,8 +576,8 @@
     function format_order_detail(data) {
         console.log(data);
 
-        var details = data.details;
-        var table = '<div class="card-body">';
+        let details = data.details;
+        let table = '<div class="card-body">';
         table += '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
         table += '<thead>' +
             '<tr>' +
@@ -586,13 +589,13 @@
             '<th class="right">Giá</th>' +
             '<th class="right">Giảm trừ</th>' +
             '<th class="right">Thành tiền</th>' +
-            '<th class="right">Profit</th>' +
+            '<th class="right" style="display: none;">Profit</th>' +
             '</tr>' +
             '</thead>';
-        var total_reduce = 0;
-        var profit = 0;
-        var intoMoney = 0;
-        for (var i = 0; i < details.length; i++) {
+        let total_reduce = 0;
+        let profit = 0;
+        let intoMoney = 0;
+        for (let i = 0; i < details.length; i++) {
             total_reduce += Number(replaceComma(details[i].reduce));
             profit += Number(replaceComma(details[i].profit));
             intoMoney += Number(replaceComma(details[i].intoMoney));
@@ -608,16 +611,16 @@
                 '<td class="right">' + details[i].price + ' <small>đ</small></td>' +
                 '<td class="right">' + details[i].reduce + ' <small>đ</small></td>' +
                 '<td class="right">' + details[i].intoMoney + ' <small>đ</small></td>' +
-                '<td class="right">' + formatNumber(replaceComma(details[i].profit) - replaceComma(details[i].reduce)) + ' <small>đ</small></td>' +
+                '<td class="right" style="display: none;">' + formatNumber(replaceComma(details[i].profit) - replaceComma(details[i].reduce)) + ' <small>đ</small></td>' +
                 '</tr>';
         }
         table += '</table>';
         table += '</div>';
         table += '</div>';
 
-        var voucher_value = 0;
-        var order_type = data.type;
-        var d = '<div class="card">' +
+        let voucher_value = 0;
+        let order_type = data.type;
+        let d = '<div class="card">' +
             '<div class="card-body">';
         if (order_type == 1) {
             // online
@@ -644,7 +647,7 @@
             '<div class="col-3 col-sm-3 col-md-3"><small>Chiết khấu trên tổng đơn hàng</small> <h5>' + data.discount + ' <small>đ</small></h5></div>' +
             '<div class="col-3 col-sm-3 col-md-3"><small>Tổng giảm trừ</small> <h5>' + data.total_reduce + ' <small>đ</small></h5></div>' +
             '<div class="col-3 col-sm-3 col-md-3"><small>Tổng tiền thanh toán</small> <h5>' + data.total_checkout + ' <small>đ</small></h5></div>' +
-            '<div class="col-3 col-sm-3 col-md-3"><small>Profit</small> <h5>' + formatNumber(profit) + ' <small>đ</small></h5></div>' +
+            '<div class="col-3 col-sm-3 col-md-3" style="display: none;"><small>Profit</small> <h5>' + formatNumber(profit) + ' <small>đ</small></h5></div>' +
             '</div>' +
             '</div>' +
             '</div>' +
@@ -691,7 +694,7 @@
     }
 
     function format_payment(data) {
-        var type = data.payment_type;
+        let type = data.payment_type;
         switch (type) {
             case '0' :
                 return '<span class="badge badge-info">Tiền mặt</span>';
@@ -712,7 +715,7 @@
         if (data.status === null) {
             return;
         }
-        var status = data.status;
+        let status = data.status;
         switch (status) {
             case '0' :
                 return '<span class="badge badge-warning">Đang đợi</span>';

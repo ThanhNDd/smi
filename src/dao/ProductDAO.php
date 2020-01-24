@@ -4,6 +4,47 @@ class ProductDAO
 {
     private $conn;
 
+    function set_all_quantity_to_zero() {
+        try {
+            $stmt = $this->getConn()->prepare("UPDATE `smi_variations` SET `quantity`= 0");
+            $stmt->execute();
+            $nrows = $stmt->affected_rows;
+            if (!$nrows) {
+                throw new Exception("set_all_quantity_to_zero has failure");
+            }
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function count_all_product($status)
+    {
+        try {
+            $sql = "SELECT count(tmp.id) AS total_products,
+                           sum(tmp.total_price) AS total_money
+                    FROM
+                      (SELECT a.id,
+                              a.price,
+                              sum(b.quantity) AS quantity,
+                              a.price * sum(b.quantity) AS total_price
+                       FROM smi_products a
+                       LEFT JOIN smi_variations b ON a.id = b.product_id
+                       WHERE a.status = $status
+                       GROUP BY a.id,
+                                a.price) AS tmp";
+            $result = mysqli_query($this->conn, $sql);
+            $row = $result->fetch_assoc();
+            $total_products = $row['total_products'];
+            $total_money = number_format($row['total_money']);
+            $data = array();
+            array_push($data, $total_products);
+            array_push($data, $total_money);
+            return $data;
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
     function get_data_print_barcode($skus)
     {
         try {

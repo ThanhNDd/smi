@@ -4477,7 +4477,7 @@ var widgetsAccordion = $.widget( "ui.accordion", {
 
 		var keyCode = $.ui.keyCode,
 			length = this.headers.length,
-			currentIndex = this.headers.index( event.target ),
+			currentIndex = this.headers.processCheck( event.target ),
 			toFocus = false;
 
 		switch ( event.keyCode ) {
@@ -4546,7 +4546,7 @@ var widgetsAccordion = $.widget( "ui.accordion", {
 		} else {
 
 			// make sure active index is correct
-			options.active = this.headers.index( this.active );
+			options.active = this.headers.processCheck( this.active );
 		}
 
 		this._destroyIcons();
@@ -4735,7 +4735,7 @@ var widgetsAccordion = $.widget( "ui.accordion", {
 			return;
 		}
 
-		options.active = collapsing ? false : this.headers.index( clicked );
+		options.active = collapsing ? false : this.headers.processCheck( clicked );
 
 		// When the call to ._toggle() comes after the class changes
 		// it causes a very odd bug in IE 8 (see #6720)
@@ -4820,7 +4820,7 @@ var widgetsAccordion = $.widget( "ui.accordion", {
 			adjust = 0,
 			boxSizing = toShow.css( "box-sizing" ),
 			down = toShow.length &&
-				( !toHide.length || ( toShow.index() < toHide.index() ) ),
+				( !toHide.length || ( toShow.processCheck() < toHide.processCheck() ) ),
 			animate = this.options.animate || {},
 			options = down && animate.down || animate,
 			complete = function() {
@@ -5155,7 +5155,7 @@ var widgetsMenu = $.widget( "ui.menu", {
 			}
 
 			match = this._filterMenuItems( character );
-			match = skip && match.index( this.active.next() ) !== -1 ?
+			match = skip && match.processCheck( this.active.next() ) !== -1 ?
 				this.active.nextAll( ".ui-menu-item" ) :
 				match;
 
@@ -12040,7 +12040,7 @@ $.widget( "ui.dialog", {
 		};
 		this.originalPosition = {
 			parent: this.element.parent(),
-			index: this.element.parent().children().index( this.element )
+			index: this.element.parent().children().processCheck( this.element )
 		};
 		this.originalTitle = this.element.attr( "title" );
 		if ( this.options.title == null && this.originalTitle != null ) {
@@ -13954,16 +13954,16 @@ var widgetsSelectmenu = $.widget( "ui.selectmenu", [ $.ui.formResetMixin, {
 					var item = ui.item.data( "ui-selectmenu-item" );
 
 					// Prevent inital focus from firing and check if its a newly focused item
-					if ( that.focusIndex != null && item.index !== that.focusIndex ) {
+					if ( that.focusIndex != null && item.processCheck !== that.focusIndex ) {
 						that._trigger( "focus", event, { item: item } );
 						if ( !that.isOpen ) {
 							that._select( item, event );
 						}
 					}
-					that.focusIndex = item.index;
+					that.focusIndex = item.processCheck;
 
 					that.button.attr( "aria-activedescendant",
-						that.menuItems.eq( item.index ).attr( "id" ) );
+						that.menuItems.eq( item.processCheck ).attr( "id" ) );
 				}
 			} )
 			.menu( "instance" );
@@ -14301,12 +14301,12 @@ var widgetsSelectmenu = $.widget( "ui.selectmenu", [ $.ui.formResetMixin, {
 		var oldIndex = this.element[ 0 ].selectedIndex;
 
 		// Change native select element
-		this.element[ 0 ].selectedIndex = item.index;
+		this.element[ 0 ].selectedIndex = item.processCheck;
 		this.buttonItem.replaceWith( this.buttonItem = this._renderButtonItem( item ) );
 		this._setAria( item );
 		this._trigger( "select", event, { item: item } );
 
-		if ( item.index !== oldIndex ) {
+		if ( item.processCheck !== oldIndex ) {
 			this._trigger( "change", event, { item: item } );
 		}
 
@@ -14314,7 +14314,7 @@ var widgetsSelectmenu = $.widget( "ui.selectmenu", [ $.ui.formResetMixin, {
 	},
 
 	_setAria: function( item ) {
-		var id = this.menuItems.eq( item.index ).attr( "id" );
+		var id = this.menuItems.eq( item.processCheck ).attr( "id" );
 
 		this.button.attr( {
 			"aria-labelledby": id,
@@ -17374,7 +17374,7 @@ $.widget( "ui.tabs", {
 		if ( $.isArray( options.disabled ) ) {
 			options.disabled = $.unique( options.disabled.concat(
 				$.map( this.tabs.filter( ".ui-state-disabled" ), function( li ) {
-					return that.tabs.index( li );
+					return that.tabs.processCheck( li );
 				} )
 			) ).sort();
 		}
@@ -17412,7 +17412,7 @@ $.widget( "ui.tabs", {
 
 			// Check for a tab marked active via a class
 			if ( active === null ) {
-				active = this.tabs.index( this.tabs.filter( ".ui-tabs-active" ) );
+				active = this.tabs.processCheck( this.tabs.filter( ".ui-tabs-active" ) );
 			}
 
 			// No active tab, set to false
@@ -17423,7 +17423,7 @@ $.widget( "ui.tabs", {
 
 		// Handle numbers: negative, out of range
 		if ( active !== false ) {
-			active = this.tabs.index( this.tabs.eq( active ) );
+			active = this.tabs.processCheck( this.tabs.eq( active ) );
 			if ( active === -1 ) {
 				active = collapsible ? false : 0;
 			}
@@ -17446,7 +17446,7 @@ $.widget( "ui.tabs", {
 
 	_tabKeydown: function( event ) {
 		var focusedTab = $( $.ui.safeActiveElement( this.document[ 0 ] ) ).closest( "li" ),
-			selectedIndex = this.tabs.index( focusedTab ),
+			selectedIndex = this.tabs.processCheck( focusedTab ),
 			goingForward = true;
 
 		if ( this._handlePageNav( event ) ) {
@@ -17598,7 +17598,7 @@ $.widget( "ui.tabs", {
 		// Get disabled tabs from class attribute from HTML
 		// this will get converted to a boolean if needed in _refresh()
 		options.disabled = $.map( lis.filter( ".ui-state-disabled" ), function( tab ) {
-			return lis.index( tab );
+			return lis.processCheck( tab );
 		} );
 
 		this._processTabs();
@@ -17625,7 +17625,7 @@ $.widget( "ui.tabs", {
 		} else {
 
 			// make sure active index is correct
-			options.active = this.tabs.index( this.active );
+			options.active = this.tabs.processCheck( this.active );
 		}
 
 		this._refresh();
@@ -17898,7 +17898,7 @@ $.widget( "ui.tabs", {
 			return;
 		}
 
-		options.active = collapsing ? false : this.tabs.index( tab );
+		options.active = collapsing ? false : this.tabs.processCheck( tab );
 
 		this.active = clickedIsActive ? $() : tab;
 		if ( this.xhr ) {
@@ -17910,7 +17910,7 @@ $.widget( "ui.tabs", {
 		}
 
 		if ( toShow.length ) {
-			this.load( this.tabs.index( tab ), event );
+			this.load( this.tabs.processCheck( tab ), event );
 		}
 		this._toggle( event, eventData );
 	},
@@ -18009,7 +18009,7 @@ $.widget( "ui.tabs", {
 
 		// meta-function to give users option to provide a href string instead of a numerical index.
 		if ( typeof index === "string" ) {
-			index = this.anchors.index( this.anchors.filter( "[href$='" +
+			index = this.anchors.processCheck( this.anchors.filter( "[href$='" +
 				$.ui.escapeSelector( index ) + "']" ) );
 		}
 

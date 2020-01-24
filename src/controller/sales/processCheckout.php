@@ -100,7 +100,7 @@ if(isset($_POST["type"]) && $_POST["type"]=="checkout")   {
                 } else {
                     throw new Exception("Variant_id is null");
                 }
-                if(!empty($details[$i]->sku))
+                if($details[$i]->sku != "")
                 {
                     $sku = $details[$i]->sku;
                 } else {
@@ -132,11 +132,11 @@ if(isset($_POST["type"]) && $_POST["type"]=="checkout")   {
                 $detail->setQuantity($qty);
                 $detail->setReduce($reduce);
                 $detail->setReduce_percent($reduce_percent);
-                $detail->setProductExchange($details[$i]->product_exchange);
+                $detail->setType(0);//add new
                 $checkout_dao->saveOrderDetail($detail);
                 $detail->setProductName($details[$i]->product_name);
                 array_push($detailsObj, $detail);
-                if(!empty($sku)) {
+                if($sku != "") {
                     $dao->update_quantity_by_sku((int) $sku, (int) $qty);
                 } else
                 {

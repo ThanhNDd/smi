@@ -6228,13 +6228,13 @@ module.exports = function(Chart) {
 
 			rectangle._xScale = xScale;
 			rectangle._yScale = yScale;
-			rectangle._datasetIndex = me.index;
+			rectangle._datasetIndex = me.processCheck;
 			rectangle._index = index;
 
 			var ruler = me.getRuler(index); // The index argument for compatible
 			rectangle._model = {
-				x: me.calculateBarX(index, me.index, ruler),
-				y: reset ? scaleBase : me.calculateBarY(index, me.index),
+				x: me.calculateBarX(index, me.processCheck, ruler),
+				y: reset ? scaleBase : me.calculateBarY(index, me.processCheck),
 
 				// Tooltip
 				label: me.chart.data.labels[index],
@@ -6242,7 +6242,7 @@ module.exports = function(Chart) {
 
 				// Appearance
 				horizontal: false,
-				base: reset ? scaleBase : me.calculateBarBase(me.index, index),
+				base: reset ? scaleBase : me.calculateBarBase(me.processCheck, index),
 				width: me.calculateBarWidth(ruler),
 				backgroundColor: custom.backgroundColor ? custom.backgroundColor : helpers.getValueAtIndexOrDefault(dataset.backgroundColor, index, rectangleElementOptions.backgroundColor),
 				borderSkipped: custom.borderSkipped ? custom.borderSkipped : rectangleElementOptions.borderSkipped,
@@ -6472,8 +6472,8 @@ module.exports = function(Chart) {
 					if (tooltipItems.length > 0) {
 						if (tooltipItems[0].yLabel) {
 							title = tooltipItems[0].yLabel;
-						} else if (data.labels.length > 0 && tooltipItems[0].index < data.labels.length) {
-							title = data.labels[tooltipItems[0].index];
+						} else if (data.labels.length > 0 && tooltipItems[0].processCheck < data.labels.length) {
+							title = data.labels[tooltipItems[0].processCheck];
 						}
 					}
 
@@ -6521,13 +6521,13 @@ module.exports = function(Chart) {
 
 			rectangle._xScale = xScale;
 			rectangle._yScale = yScale;
-			rectangle._datasetIndex = me.index;
+			rectangle._datasetIndex = me.processCheck;
 			rectangle._index = index;
 
 			var ruler = me.getRuler(index); // The index argument for compatible
 			rectangle._model = {
-				x: reset ? scaleBase : me.calculateBarX(index, me.index),
-				y: me.calculateBarY(index, me.index, ruler),
+				x: reset ? scaleBase : me.calculateBarX(index, me.processCheck),
+				y: me.calculateBarY(index, me.processCheck, ruler),
 
 				// Tooltip
 				label: me.chart.data.labels[index],
@@ -6535,7 +6535,7 @@ module.exports = function(Chart) {
 
 				// Appearance
 				horizontal: true,
-				base: reset ? scaleBase : me.calculateBarBase(me.index, index),
+				base: reset ? scaleBase : me.calculateBarBase(me.processCheck, index),
 				height: me.calculateBarHeight(ruler),
 				backgroundColor: custom.backgroundColor ? custom.backgroundColor : helpers.getValueAtIndexOrDefault(dataset.backgroundColor, index, rectangleElementOptions.backgroundColor),
 				borderSkipped: custom.borderSkipped ? custom.borderSkipped : rectangleElementOptions.borderSkipped,
@@ -6717,7 +6717,7 @@ module.exports = function(Chart) {
 				},
 				label: function(tooltipItem, data) {
 					var datasetLabel = data.datasets[tooltipItem.datasetIndex].label || '';
-					var dataPoint = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+					var dataPoint = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.processCheck];
 					return datasetLabel + ': (' + tooltipItem.xLabel + ', ' + tooltipItem.yLabel + ', ' + dataPoint.r + ')';
 				}
 			}
@@ -6749,7 +6749,7 @@ module.exports = function(Chart) {
 			var dataset = me.getDataset();
 			var data = dataset.data[index];
 			var pointElementOptions = me.chart.options.elements.point;
-			var dsIndex = me.index;
+			var dsIndex = me.processCheck;
 
 			helpers.extend(point, {
 				// Utility
@@ -6881,7 +6881,7 @@ module.exports = function(Chart) {
 			},
 
 			onClick: function(e, legendItem) {
-				var index = legendItem.index;
+				var index = legendItem.processCheck;
 				var chart = this.chart;
 				var i, ilen, meta;
 
@@ -6913,8 +6913,8 @@ module.exports = function(Chart) {
 					return '';
 				},
 				label: function(tooltipItem, data) {
-					var dataLabel = data.labels[tooltipItem.index];
-					var value = ': ' + data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+					var dataLabel = data.labels[tooltipItem.processCheck];
+					var value = ': ' + data.datasets[tooltipItem.datasetIndex].data[tooltipItem.processCheck];
 
 					if (helpers.isArray(dataLabel)) {
 						// show value on first line of multiline label
@@ -7001,7 +7001,7 @@ module.exports = function(Chart) {
 
 			meta.total = me.calculateTotal();
 
-			me.outerRadius = chart.outerRadius - (chart.radiusLength * me.getRingIndex(me.index));
+			me.outerRadius = chart.outerRadius - (chart.radiusLength * me.getRingIndex(me.processCheck));
 			me.innerRadius = Math.max(me.outerRadius - chart.radiusLength, 0);
 
 			helpers.each(meta.data, function(arc, index) {
@@ -7027,7 +7027,7 @@ module.exports = function(Chart) {
 
 			helpers.extend(arc, {
 				// Utility
-				_datasetIndex: me.index,
+				_datasetIndex: me.processCheck,
 				_index: index,
 
 				// Desired view properties
@@ -7096,7 +7096,7 @@ module.exports = function(Chart) {
 		// gets the max border or hover width to properly scale pie charts
 		getMaxBorderWidth: function(elements) {
 			var max = 0,
-				index = this.index,
+				index = this.processCheck,
 				length = elements.length,
 				borderWidth,
 				hoverWidth;
@@ -7173,7 +7173,7 @@ module.exports = function(Chart) {
 
 				// Utility
 				line._scale = scale;
-				line._datasetIndex = me.index;
+				line._datasetIndex = me.processCheck;
 				// Data
 				line._children = points;
 				// Model
@@ -7271,7 +7271,7 @@ module.exports = function(Chart) {
 			var meta = me.getMeta();
 			var custom = point.custom || {};
 			var dataset = me.getDataset();
-			var datasetIndex = me.index;
+			var datasetIndex = me.processCheck;
 			var value = dataset.data[index];
 			var yScale = me.getScaleForId(meta.yAxisID);
 			var xScale = me.getScaleForId(meta.xAxisID);
@@ -7533,7 +7533,7 @@ module.exports = function(Chart) {
 			},
 
 			onClick: function(e, legendItem) {
-				var index = legendItem.index;
+				var index = legendItem.processCheck;
 				var chart = this.chart;
 				var i, ilen, meta;
 
@@ -7553,7 +7553,7 @@ module.exports = function(Chart) {
 					return '';
 				},
 				label: function(tooltipItem, data) {
-					return data.labels[tooltipItem.index] + ': ' + tooltipItem.yLabel;
+					return data.labels[tooltipItem.processCheck] + ': ' + tooltipItem.yLabel;
 				}
 			}
 		}
@@ -7577,7 +7577,7 @@ module.exports = function(Chart) {
 			chart.innerRadius = Math.max(opts.cutoutPercentage ? (chart.outerRadius / 100) * (opts.cutoutPercentage) : 1, 0);
 			chart.radiusLength = (chart.outerRadius - chart.innerRadius) / chart.getVisibleDatasetCount();
 
-			me.outerRadius = chart.outerRadius - (chart.radiusLength * me.index);
+			me.outerRadius = chart.outerRadius - (chart.radiusLength * me.processCheck);
 			me.innerRadius = me.outerRadius - chart.radiusLength;
 
 			meta.count = me.countVisibleElements();
@@ -7621,7 +7621,7 @@ module.exports = function(Chart) {
 
 			helpers.extend(arc, {
 				// Utility
-				_datasetIndex: me.index,
+				_datasetIndex: me.processCheck,
 				_index: index,
 				_scale: scale,
 
@@ -7715,7 +7715,7 @@ module.exports = function(Chart) {
 
 			helpers.extend(meta.dataset, {
 				// Utility
-				_datasetIndex: me.index,
+				_datasetIndex: me.processCheck,
 				// Data
 				_children: points,
 				_loop: true,
@@ -7759,7 +7759,7 @@ module.exports = function(Chart) {
 
 			helpers.extend(point, {
 				// Utility
-				_datasetIndex: me.index,
+				_datasetIndex: me.processCheck,
 				_index: index,
 				_scale: scale,
 
@@ -13153,8 +13153,8 @@ module.exports = function(Chart) {
 
 					if (item.xLabel) {
 						title = item.xLabel;
-					} else if (labelCount > 0 && item.index < labelCount) {
-						title = labels[item.index];
+					} else if (labelCount > 0 && item.processCheck < labelCount) {
+						title = labels[item.processCheck];
 					}
 				}
 
@@ -13173,7 +13173,7 @@ module.exports = function(Chart) {
 			},
 			labelColor: function(tooltipItem, chartInstance) {
 				var meta = chartInstance.getDatasetMeta(tooltipItem.datasetIndex);
-				var activeElement = meta.data[tooltipItem.index];
+				var activeElement = meta.data[tooltipItem.processCheck];
 				var view = activeElement._view;
 				return {
 					borderColor: view.borderColor,

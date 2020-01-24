@@ -383,8 +383,6 @@ class CheckoutDAO
                     order by A.ID desc";
             $result = mysqli_query($this->conn, $sql);
             $data = array();
-            $order_id = 0;
-            $i = 0;
             foreach ($result as $k => $row) {
                 $order = array(
                     'order_id' => $row["order_id"],
@@ -718,7 +716,7 @@ class CheckoutDAO
 
             $stmt->bind_param("dddddddiisddsiii", $total_reduce, $total_reduce_percent, $discount, $total_amount, $total_checkout, $customer_payment, $repay, $customer_id, $type, $bill, $shipping_fee, $shipping, $shipping_unit, $status, $payment_type, $id);
             $stmt->execute();
-            // var_dump($this->getConn()->error);
+            print_r($this->getConn()->error);
             //You can get the number of rows affected by your query
             $nrows = $stmt->affected_rows;
             if (!$nrows) {

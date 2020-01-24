@@ -6,7 +6,7 @@ $(function () {
     fontStyle: 'bold'
   }
 
-  var mode      = 'index'
+  var mode      = 'processCheck.php'
   var intersect = true
 
   var $salesChart = $('#sales-chart')

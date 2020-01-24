@@ -25,7 +25,7 @@ class PrinterReceipt
             $html .= $this->getBody($details);
             $html .= $this->getFooter($order);
 
-            // echo $html;
+//             echo $html;
 
             $mpdf->SetDisplayMode('real');
             $mpdf->SetDisplayPreferences('/FitWindow/NoPrintScaling');
@@ -189,27 +189,27 @@ class PrinterReceipt
         // $reduce = $reduce + $discount;
         $footer =   '<tfoot>
                             <tr>
-                                <td colspan="4" class="right">Tổng tiền:</td>
+                                <td colspan="4" class="right">Tổng tiền</td>
                                 <td class="right">'.number_format(empty($order->getTotal_amount()) || $order->getTotal_amount() == 'NULL' ? 0 : $order->getTotal_amount()).'</td>
                             </tr>
                             <tr>
-                                <td colspan="4" class="right">Giảm trên tổng đơn:</td>
+                                <td colspan="4" class="right">Giảm trên tổng đơn</td>
                                 <td class="right">'.($order->getDiscount() > 0 && $order->getDiscount() < 100 ? $order->getDiscount()."%" : number_format($order->getDiscount())).'</td>
                             </tr>
                             <tr>
-                                <td colspan="4" class="right">Tổng Giảm trừ:</td>
+                                <td colspan="4" class="right">Tổng Giảm trừ</td>
                                 <td class="right">'.number_format($reduce).'</td>
                             </tr>
                             <tr>
-                                <td colspan="4" class="right">Tổng thanh toán:</td>
+                                <td colspan="4" class="right">Tổng thanh toán</td>
                                 <td class="right">'.number_format(empty($order->getTotal_checkout()) || $order->getTotal_checkout() == 'NULL' ? 0 : $order->getTotal_checkout()).'</td>
                             </tr>
                             <tr>
-                                <td colspan="4" class="right">Khách thanh toán:</td>
+                                <td colspan="4" class="right">Khách thanh toán</td>
                                 <td class="right">'.number_format(empty($order->getCustomer_payment()) || $order->getCustomer_payment() == 'NULL' ? 0 : $order->getCustomer_payment()).'</td>
                             </tr>
                             <tr>
-                                <td colspan="4" class="right">Trả lại:</td>
+                                <td colspan="4" class="right">Trả lại</td>
                                 <td class="right">'.number_format(empty($order->getRepay()) || $order->getRepay() == 'NULL' ? 0 : $order->getRepay()).'</td>
                             </tr>
                         </tfoot>

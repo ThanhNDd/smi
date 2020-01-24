@@ -1,53 +1,177 @@
 <?php
 include("../../common/DBConnection.php");
 include("../../model/Check/Check.php");
+include("../../model/Check/CheckDetail.php");
 include("../../model/Check/ResultCheck.php");
 include("../../dao/CheckDAO.php");
+include("../../dao/ProductDAO.php");
 
 $db = new DBConnect();
 
 $dao = new CheckDAO();
 $dao->setConn($db->getConn());
 
-if(isset($_POST["method"]) && $_POST["method"]=="save_check")   {
-    $data = $_POST["data"];
-    $data = json_decode($data);
-    $sku = $data->sku;
-    try {
-        $is_exist_sku = $dao->is_exist_sku($sku);
-        if(empty($is_exist_sku)) {
-            $product_id = $data->product_id;
-            $variation_id = $data->variant_id;
-            $color = $data->color;
-            $size = $data->size;
-            $qty = $data->quantity;
-            $name = $data->name;
-            $price = $data->price;
+$product_dao = new ProductDAO();
+$product_dao->setConn($db->getConn());
 
-            $check = new Check();
-            $check->setProductId($product_id);
-            $check->setVariationId($variation_id);
-            $check->setSku((int) $sku);
-            $check->setQuantity($qty);
-            $check->setSize($size);
-            $check->setColor($color);
-            $check->setName($name);
-            $check->setPrice($price);
-            $dao->save_check($check);
-        } else {
-            $dao->update_qty_by_sku((int) $sku);
-        }
+/**
+ * Count all product of instock
+ */
+if (isset($_POST["method"]) && $_POST["method"] == "count_all_products") {
+    $result = $product_dao->count_all_product(0);
+    $response_array['total'] = $result;
+    echo json_encode($response_array);
+}
+
+if (isset($_POST["method"]) && $_POST["method"] == "cancel_checking") {
+    $id = $_POST["data"];
+    $result = $dao->update_status($id, 2);// cancel status
+    echo json_encode($result);
+}
+
+if (isset($_GET["method"]) && $_GET["method"] == "findall") {
+    $result = $dao->find_all();
+    echo json_encode($result);
+}
+
+if (isset($_POST["method"]) && $_POST["method"] == "find_detail") {
+    $seq = $_POST["seq"];
+    $result = $dao->find_detail((int) $seq);
+    echo json_encode($result);
+}
+
+if (isset($_POST["method"]) && $_POST["method"] == "delete_product") {
+    try {
+        $seq = $_POST["seq"];
+        $sku = $_POST["sku"];
+        $result = $dao->delete_product((int) $seq, $sku);
         $response_array['success'] = "successfully";
         echo json_encode($response_array);
-    } catch(Exception $e)
-    {
+    } catch (Exception $e) {
         $db->rollback();
         echo $e->getMessage();
     }
     $db->commit();
 }
 
-if(isset($_POST["method"]) && $_POST["method"]=="save_result_check")   {
+if (isset($_POST["method"]) && $_POST["method"] == "onchange_qty") {
+    try {
+        $sku = $_POST["sku"];
+        $qty = $_POST["qty"];
+        $seq = $_POST["seq"];
+        $result = $dao->onchange_qty($sku, (int) $qty, (int) $seq);
+        $response_array['success'] = "successfully";
+        echo json_encode($response_array);
+    } catch (Exception $e) {
+        $db->rollback();
+        echo $e->getMessage();
+    }
+    $db->commit();
+}
+
+if (isset($_POST["method"]) && $_POST["method"] == "get_status") {
+    $seq = $_POST["seq"];
+    $status = $dao->get_status($seq);
+    echo json_encode($status);
+
+}
+
+if (isset($_POST["method"]) && $_POST["method"] == "check_exists_checking") {
+    $result = $dao->check_exists_checking();
+    echo json_encode($result);
+}
+
+if (isset($_POST["method"]) && $_POST["method"] == "checking_finish") {
+    try {
+        $id = $_POST['id'];
+        $product_checked = $_POST['product_checked'];
+        $money_checked = $_POST['money_checked'];
+
+        // set all quantity of variation to zero before update new quantity
+        $product_dao->set_all_quantity_to_zero();
+
+        $check = new Check();
+        $check->setId($id);
+        $check->setStatus(1);// finish
+        $check->setProductsChecked($product_checked);
+        $check->setMoneyChecked($money_checked);
+
+        $result = $dao->checking_finish($check);
+
+        $response_array['success'] = "successfully";
+        echo json_encode($response_array);
+    } catch (Exception $e) {
+        $db->rollback();
+        echo $e->getMessage();
+    }
+    $db->commit();
+}
+
+if (isset($_POST["method"]) && $_POST["method"] == "create_new_check") {
+    $total_products = $_POST["total_products"];
+    $total_money = $_POST["total_money"];
+    try {
+        $check = new Check();
+        $check->setStatus(0);// checking
+        $check->setTotalProducts($total_products);
+        $check->setProductsChecked(0);
+        $check->setTotalMoney($total_money);
+        $check->setMoneyChecked(0);
+        $result = $dao->save_check($check);
+        $response_array['checkId'] = $result["checkId"];
+        $response_array['seq'] = $result["seq"];
+
+        echo json_encode($response_array);
+    } catch (Exception $e) {
+        $db->rollback();
+        echo $e->getMessage();
+    }
+    $db->commit();
+}
+
+if (isset($_POST["method"]) && $_POST["method"] == "save_check_detail") {
+    $data = $_POST["data"];
+    $data = json_decode($data);
+    $sku = $data->sku;
+    try {
+        $is_exist_sku = $dao->is_exist_sku($sku);
+        if (empty($is_exist_sku)) {
+            $check_id = $data->check_id;
+            $seq = $data->seq;
+            $product_id = $data->product_id;
+            $variation_id = $data->variation_id;
+            $sku = $data->sku;
+            $color = $data->color;
+            $size = $data->size;
+            $qty = $data->quantity;
+            $name = $data->name;
+            $price = $data->price;
+
+            $checkDetail = new CheckDetail();
+            $checkDetail->setCheckId($check_id);
+            $checkDetail->setSeq($seq);
+            $checkDetail->setProductId($product_id);
+            $checkDetail->setVariationId($variation_id);
+            $checkDetail->setSku($sku);
+            $checkDetail->setQuantity($qty);
+            $checkDetail->setSize($size);
+            $checkDetail->setColor($color);
+            $checkDetail->setName($name);
+            $checkDetail->setPrice($price);
+            $dao->save_check_detail($checkDetail);
+        } else {
+            $dao->update_qty_by_sku((int)$sku);
+        }
+        $response_array['success'] = "successfully";
+        echo json_encode($response_array);
+    } catch (Exception $e) {
+        $db->rollback();
+        echo $e->getMessage();
+    }
+    $db->commit();
+}
+
+if (isset($_POST["method"]) && $_POST["method"] == "save_result_check") {
     $data = $_POST["data"];
     $data = json_decode($data);
     $total_qty = $data->total_qty;
@@ -65,8 +189,7 @@ if(isset($_POST["method"]) && $_POST["method"]=="save_result_check")   {
         // return result
         $response_array['success'] = "successfully";
         echo json_encode($response_array);
-    } catch(Exception $e)
-    {
+    } catch (Exception $e) {
         $db->rollback();
         echo $e->getMessage();
     }

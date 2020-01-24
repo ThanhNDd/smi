@@ -176,7 +176,7 @@
                         <div class="col-9 right pd-t-10">
                             <label>Trả lại</label>
                         </div>
-                        <h3 class="col-2 right pt-2" id="repay">0</h3>
+                        <h6 class="col-2 right pt-2" id="repay">0</h6>
                     </div>
                 </div>
             </div>
@@ -224,10 +224,10 @@
             });
 
             $("#payment").change(function() {
-                $("#payment").removeCLass("is-invalid");
-                let total_checout = $("#total_checkout").text();
+                $("#payment").removeClass("is-invalid");
+                let total_checkout = $("#total_checkout").text();
                 total_checkout = replaceComma(total_checkout);
-                let customer_payment = $("#customer_payment").val();
+                let customer_payment = $("#payment").val();
                 customer_payment = replaceComma(customer_payment);
                 let repay = 0;
                 if(customer_payment > total_checkout) {
@@ -236,6 +236,7 @@
                     $("#payment").addCLass("is-invalid");
                     return false;
                 }
+                $(this).val(formatNumber(customer_payment));
                 $("#repay").text(formatNumber(repay));
             });
 
@@ -500,7 +501,7 @@
             data["payment_type"] = $("#payment_type").val();
             data["order_date"] = $("#orderDate").val();
             data["order_status"] = $("#order_status").val();
-            data["customer_payment"] = $("#payment").val();
+            data["customer_payment"] = replaceComma($("#payment").val());
             let rowProductNumber = $(".count-row").val();
 
             let products = [];
@@ -610,7 +611,7 @@
             $(".modal-title").text("Tạo mới đơn hàng");
             $("#create_new").text("Tạo mới");
             $("#order_type").val("1");
-            $("#payment_type").val("1");
+            $("#payment_type").val("1").trigger("change");
             $("#customer_id").val("");
             $("#bill_of_lading_no").val("");
             $("#shipping_fee").val("");
@@ -723,7 +724,7 @@
             let qty = $("[id=" + qtyId + "]").val();
             let price = $("[id=" + priceId + "]").val();
             let reduce = $("[id=" + reduceId + "]").val();
-            let total = Number(qty) * Number(replaceComma(price)) - Number(replaceComma(reduce));
+            let total = Number(qty) * (Number(replaceComma(price)) - Number(replaceComma(reduce)));
             if (total > 0) {
                 $("[id=" + totalId + "]").val(formatNumber(total));
             } else {
@@ -750,7 +751,7 @@
                 $(e).val(formatNumber(val));
                 let qty = $("[id=" + qtyId + "]").val();
                 let price = $("[id=" + priceId + "]").val();
-                let total = Number(qty) * Number(replaceComma(price)) - Number(val);
+                let total = Number(qty) * (Number(replaceComma(price)) - Number(val));
                 if (total > 0) {
                     $("[id=" + totalId + "]").val(formatNumber(total));
                 } else {

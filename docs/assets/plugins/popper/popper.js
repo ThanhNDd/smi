@@ -743,7 +743,7 @@ function getPopperOffsets(popper, referenceOffsets, placement) {
  * @argument {Array} arr
  * @argument prop
  * @argument value
- * @returns index or -1
+ * @returns processCheck.php or -1
  */
 function find(arr, check) {
   // use native find if supported
@@ -762,7 +762,7 @@ function find(arr, check) {
  * @argument {Array} arr
  * @argument prop
  * @argument value
- * @returns index or -1
+ * @returns processCheck.php or -1
  */
 function findIndex(arr, prop, value) {
   // use native findIndex if supported

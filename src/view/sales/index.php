@@ -550,6 +550,8 @@
 		data["flag_print_receipt"] = flag_print_receipt;
 		data["voucher_code"] = voucher_code;
 		data["voucher_value"] = voucher_value;
+        data["current_order_id"] = 0;
+        data["payment_exchange_type"] = 0;
 
 		//order detail information
         let details = [];
@@ -579,6 +581,7 @@
 			product["quantity"] = quantity;
 			product["reduce"] = reduce;
 			product["reduce_percent"] = reduce_percent;
+            product["product_exchange"] = 0;
 			details.push(product);
 		});
 		
@@ -620,8 +623,8 @@
 				}
                 Swal.fire({
                     type: 'success',
-                    title: 'Thành công!',
-                    text: "Đơn hàng #'+orderId+' đã được tạo thành công."
+                    title:'Thành công!',
+                    text: 'Đơn hàng #'+orderId+' đã được tạo thành công!'
                 }).then((result) => {
                     if (result.value) {
                         window.location.reload();
@@ -704,7 +707,9 @@
 					reduce = intoMoney*val/100;
 				} else 
 				{
-					reduce = replaceComma(val);				
+                    val = replaceComma(val);
+                    reduce = Number(val) * Number(qty);
+					// reduce = replaceComma(val);
 				}
 			}
 			totalAmount += Number(intoMoney);

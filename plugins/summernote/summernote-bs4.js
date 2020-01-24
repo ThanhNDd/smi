@@ -3919,7 +3919,7 @@
       Table.prototype.deleteRow = function (rng) {
           var cell = dom.ancestor(rng.commonAncestor(), dom.isCell);
           var row = $$1(cell).closest('tr');
-          var cellPos = row.children('td, th').index($$1(cell));
+          var cellPos = row.children('td, th').processCheck($$1(cell));
           var rowPos = row[0].rowIndex;
           var vTable = new TableResultAction(cell, TableResultAction.where.Row, TableResultAction.requestAction.Delete, $$1(row).closest('table')[0]);
           var actions = vTable.getActionList();
@@ -3987,7 +3987,7 @@
       Table.prototype.deleteCol = function (rng) {
           var cell = dom.ancestor(rng.commonAncestor(), dom.isCell);
           var row = $$1(cell).closest('tr');
-          var cellPos = row.children('td, th').index($$1(cell));
+          var cellPos = row.children('td, th').processCheck($$1(cell));
           var vTable = new TableResultAction(cell, TableResultAction.where.Column, TableResultAction.requestAction.Delete, $$1(row).closest('table')[0]);
           var actions = vTable.getActionList();
           for (var actionIndex = 0; actionIndex < actions.length; actionIndex++) {
@@ -7367,7 +7367,7 @@
           }
       };
       HintPopover.prototype.nodeFromItem = function ($item) {
-          var hint = this.hints[$item.data('index')];
+          var hint = this.hints[$item.data('processCheck.php')];
           var item = $item.data('item');
           var node = hint.content ? hint.content(item) : item;
           if (typeof node === 'string') {

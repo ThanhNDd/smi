@@ -3986,7 +3986,7 @@ var controller_bar = core_datasetController.extend({
 
 		rectangle._xScale = me.getScaleForId(meta.xAxisID);
 		rectangle._yScale = me.getScaleForId(meta.yAxisID);
-		rectangle._datasetIndex = me.index;
+		rectangle._datasetIndex = me.processCheck;
 		rectangle._index = index;
 		rectangle._model = {
 			backgroundColor: options.backgroundColor,
@@ -4012,8 +4012,8 @@ var controller_bar = core_datasetController.extend({
 		var base = vscale.getBasePixel();
 		var horizontal = vscale.isHorizontal();
 		var ruler = me._ruler || me.getRuler();
-		var vpixels = me.calculateBarValuePixels(me.index, index);
-		var ipixels = me.calculateBarIndexPixels(me.index, index, ruler);
+		var vpixels = me.calculateBarValuePixels(me.processCheck, index);
+		var ipixels = me.calculateBarIndexPixels(me.processCheck, index, ruler);
 
 		model.horizontal = horizontal;
 		model.base = reset ? base : vpixels.base;
@@ -4084,7 +4084,7 @@ var controller_bar = core_datasetController.extend({
 		var me = this;
 		var scale = me._getIndexScale();
 		var stackCount = me.getStackCount();
-		var datasetIndex = me.index;
+		var datasetIndex = me.processCheck;
 		var isHorizontal = scale.isHorizontal();
 		var start = isHorizontal ? scale.left : scale.top;
 		var end = start + (isHorizontal ? scale.width : scale.height);
@@ -4216,7 +4216,7 @@ var controller_bar = core_datasetController.extend({
 		var me = this;
 		var chart = me.chart;
 		var datasets = chart.data.datasets;
-		var dataset = datasets[me.index];
+		var dataset = datasets[me.processCheck];
 		var custom = rectangle.custom || {};
 		var options = chart.options.elements.rectangle;
 		var values = {};
@@ -4227,7 +4227,7 @@ var controller_bar = core_datasetController.extend({
 			chart: chart,
 			dataIndex: index,
 			dataset: dataset,
-			datasetIndex: me.index
+			datasetIndex: me.processCheck
 		};
 
 		var keys = [
@@ -4279,7 +4279,7 @@ core_defaults._set('bubble', {
 			},
 			label: function(item, data) {
 				var datasetLabel = data.datasets[item.datasetIndex].label || '';
-				var dataPoint = data.datasets[item.datasetIndex].data[item.index];
+				var dataPoint = data.datasets[item.datasetIndex].data[item.processCheck];
 				return datasetLabel + ': (' + item.xLabel + ', ' + item.yLabel + ', ' + dataPoint.r + ')';
 			}
 		}
@@ -4317,7 +4317,7 @@ var controller_bubble = core_datasetController.extend({
 		var yScale = me.getScaleForId(meta.yAxisID);
 		var options = me._resolveElementOptions(point, index);
 		var data = me.getDataset().data[index];
-		var dsIndex = me.index;
+		var dsIndex = me.processCheck;
 
 		var x = reset ? xScale.getPixelForDecimal(0.5) : xScale.getPixelForValue(typeof data === 'object' ? data : NaN, index, dsIndex);
 		var y = reset ? yScale.getBasePixel() : yScale.getPixelForValue(data, index, dsIndex);
@@ -4371,7 +4371,7 @@ var controller_bubble = core_datasetController.extend({
 		var me = this;
 		var chart = me.chart;
 		var datasets = chart.data.datasets;
-		var dataset = datasets[me.index];
+		var dataset = datasets[me.processCheck];
 		var custom = point.custom || {};
 		var options = chart.options.elements.point;
 		var data = dataset.data[index];
@@ -4383,7 +4383,7 @@ var controller_bubble = core_datasetController.extend({
 			chart: chart,
 			dataIndex: index,
 			dataset: dataset,
-			datasetIndex: me.index
+			datasetIndex: me.processCheck
 		};
 
 		var keys = [
@@ -4486,7 +4486,7 @@ core_defaults._set('doughnut', {
 		},
 
 		onClick: function(e, legendItem) {
-			var index = legendItem.index;
+			var index = legendItem.processCheck;
 			var chart = this.chart;
 			var i, ilen, meta;
 
@@ -4518,8 +4518,8 @@ core_defaults._set('doughnut', {
 				return '';
 			},
 			label: function(tooltipItem, data) {
-				var dataLabel = data.labels[tooltipItem.index];
-				var value = ': ' + data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+				var dataLabel = data.labels[tooltipItem.processCheck];
+				var value = ': ' + data.datasets[tooltipItem.datasetIndex].data[tooltipItem.processCheck];
 
 				if (helpers$1.isArray(dataLabel)) {
 					// show value on first line of multiline label
@@ -4568,7 +4568,7 @@ var controller_doughnut = core_datasetController.extend({
 		var arcs = meta.data;
 		var cutoutPercentage = opts.cutoutPercentage;
 		var circumference = opts.circumference;
-		var chartWeight = me._getRingWeight(me.index);
+		var chartWeight = me._getRingWeight(me.processCheck);
 		var i, ilen;
 
 		// If the chart's circumference isn't a full circle, calculate minSize as a ratio of the width/height of the arc
@@ -4603,7 +4603,7 @@ var controller_doughnut = core_datasetController.extend({
 
 		meta.total = me.calculateTotal();
 
-		me.outerRadius = chart.outerRadius - chart.radiusLength * me._getRingWeightOffset(me.index);
+		me.outerRadius = chart.outerRadius - chart.radiusLength * me._getRingWeightOffset(me.processCheck);
 		me.innerRadius = Math.max(me.outerRadius - chart.radiusLength * chartWeight, 0);
 
 		for (i = 0, ilen = arcs.length; i < ilen; ++i) {
@@ -4629,7 +4629,7 @@ var controller_doughnut = core_datasetController.extend({
 
 		helpers$1.extend(arc, {
 			// Utility
-			_datasetIndex: me.index,
+			_datasetIndex: me.processCheck,
 			_index: index,
 
 			// Desired view properties
@@ -4706,7 +4706,7 @@ var controller_doughnut = core_datasetController.extend({
 				if (chart.isDatasetVisible(i)) {
 					meta = chart.getDatasetMeta(i);
 					arcs = meta.data;
-					if (i !== me.index) {
+					if (i !== me.processCheck) {
 						controller = meta.controller;
 					}
 					break;
@@ -4768,7 +4768,7 @@ var controller_doughnut = core_datasetController.extend({
 			chart: chart,
 			dataIndex: index,
 			dataset: dataset,
-			datasetIndex: me.index
+			datasetIndex: me.processCheck
 		};
 
 		var keys = [
@@ -4827,7 +4827,7 @@ var controller_doughnut = core_datasetController.extend({
 
 core_defaults._set('horizontalBar', {
 	hover: {
-		mode: 'index',
+		mode: 'processCheck.php',
 		axis: 'y'
 	},
 
@@ -4856,7 +4856,7 @@ core_defaults._set('horizontalBar', {
 	},
 
 	tooltips: {
-		mode: 'index',
+		mode: 'processCheck.php',
 		axis: 'y'
 	}
 });
@@ -4930,7 +4930,7 @@ var controller_line = core_datasetController.extend({
 
 			// Utility
 			line._scale = scale;
-			line._datasetIndex = me.index;
+			line._datasetIndex = me.processCheck;
 			// Data
 			line._children = points;
 			// Model
@@ -4959,7 +4959,7 @@ var controller_line = core_datasetController.extend({
 		var meta = me.getMeta();
 		var custom = point.custom || {};
 		var dataset = me.getDataset();
-		var datasetIndex = me.index;
+		var datasetIndex = me.processCheck;
 		var value = dataset.data[index];
 		var yScale = me.getScaleForId(meta.yAxisID);
 		var xScale = me.getScaleForId(meta.xAxisID);
@@ -5003,7 +5003,7 @@ var controller_line = core_datasetController.extend({
 	_resolvePointOptions: function(element, index) {
 		var me = this;
 		var chart = me.chart;
-		var dataset = chart.data.datasets[me.index];
+		var dataset = chart.data.datasets[me.processCheck];
 		var custom = element.custom || {};
 		var options = chart.options.elements.point;
 		var values = {};
@@ -5014,7 +5014,7 @@ var controller_line = core_datasetController.extend({
 			chart: chart,
 			dataIndex: index,
 			dataset: dataset,
-			datasetIndex: me.index
+			datasetIndex: me.processCheck
 		};
 
 		var ELEMENT_OPTIONS = {
@@ -5051,7 +5051,7 @@ var controller_line = core_datasetController.extend({
 	_resolveLineOptions: function(element) {
 		var me = this;
 		var chart = me.chart;
-		var dataset = chart.data.datasets[me.index];
+		var dataset = chart.data.datasets[me.processCheck];
 		var custom = element.custom || {};
 		var options = chart.options;
 		var elementOptions = options.elements.line;
@@ -5309,7 +5309,7 @@ core_defaults._set('polarArea', {
 		},
 
 		onClick: function(e, legendItem) {
-			var index = legendItem.index;
+			var index = legendItem.processCheck;
 			var chart = this.chart;
 			var i, ilen, meta;
 
@@ -5329,7 +5329,7 @@ core_defaults._set('polarArea', {
 				return '';
 			},
 			label: function(item, data) {
-				return data.labels[item.index] + ': ' + item.yLabel;
+				return data.labels[item.processCheck] + ': ' + item.yLabel;
 			}
 		}
 	}
@@ -5382,7 +5382,7 @@ var controller_polarArea = core_datasetController.extend({
 		chart.innerRadius = Math.max(opts.cutoutPercentage ? (chart.outerRadius / 100) * (opts.cutoutPercentage) : 1, 0);
 		chart.radiusLength = (chart.outerRadius - chart.innerRadius) / chart.getVisibleDatasetCount();
 
-		me.outerRadius = chart.outerRadius - (chart.radiusLength * me.index);
+		me.outerRadius = chart.outerRadius - (chart.radiusLength * me.processCheck);
 		me.innerRadius = me.outerRadius - chart.radiusLength;
 	},
 
@@ -5409,7 +5409,7 @@ var controller_polarArea = core_datasetController.extend({
 
 		helpers$1.extend(arc, {
 			// Utility
-			_datasetIndex: me.index,
+			_datasetIndex: me.processCheck,
 			_index: index,
 			_scale: scale,
 
@@ -5483,7 +5483,7 @@ var controller_polarArea = core_datasetController.extend({
 			chart: chart,
 			dataIndex: index,
 			dataset: dataset,
-			datasetIndex: me.index
+			datasetIndex: me.processCheck
 		};
 
 		var keys = [
@@ -5526,7 +5526,7 @@ var controller_polarArea = core_datasetController.extend({
 			chart: me.chart,
 			dataIndex: index,
 			dataset: dataset,
-			datasetIndex: me.index
+			datasetIndex: me.processCheck
 		};
 
 		return resolve$5([
@@ -5582,7 +5582,7 @@ var controller_radar = core_datasetController.extend({
 
 		// Utility
 		line._scale = scale;
-		line._datasetIndex = me.index;
+		line._datasetIndex = me.processCheck;
 		// Data
 		line._children = points;
 		line._loop = true;
@@ -5619,7 +5619,7 @@ var controller_radar = core_datasetController.extend({
 		// Utility
 		point._scale = scale;
 		point._options = options;
-		point._datasetIndex = me.index;
+		point._datasetIndex = me.processCheck;
 		point._index = index;
 
 		// Desired view properties
@@ -5647,7 +5647,7 @@ var controller_radar = core_datasetController.extend({
 	_resolvePointOptions: function(element, index) {
 		var me = this;
 		var chart = me.chart;
-		var dataset = chart.data.datasets[me.index];
+		var dataset = chart.data.datasets[me.processCheck];
 		var custom = element.custom || {};
 		var options = chart.options.elements.point;
 		var values = {};
@@ -5658,7 +5658,7 @@ var controller_radar = core_datasetController.extend({
 			chart: chart,
 			dataIndex: index,
 			dataset: dataset,
-			datasetIndex: me.index
+			datasetIndex: me.processCheck
 		};
 
 		var ELEMENT_OPTIONS = {
@@ -5695,7 +5695,7 @@ var controller_radar = core_datasetController.extend({
 	_resolveLineOptions: function(element) {
 		var me = this;
 		var chart = me.chart;
-		var dataset = chart.data.datasets[me.index];
+		var dataset = chart.data.datasets[me.processCheck];
 		var custom = element.custom || {};
 		var options = chart.options.elements.line;
 		var values = {};
@@ -7326,8 +7326,8 @@ core_defaults._set('global', {
 						title = item.label;
 					} else if (item.xLabel) {
 						title = item.xLabel;
-					} else if (labelCount > 0 && item.index < labelCount) {
-						title = labels[item.index];
+					} else if (labelCount > 0 && item.processCheck < labelCount) {
+						title = labels[item.processCheck];
 					}
 				}
 
@@ -7355,7 +7355,7 @@ core_defaults._set('global', {
 			},
 			labelColor: function(tooltipItem, chart) {
 				var meta = chart.getDatasetMeta(tooltipItem.datasetIndex);
-				var activeElement = meta.data[tooltipItem.index];
+				var activeElement = meta.data[tooltipItem.processCheck];
 				var view = activeElement._view;
 				return {
 					borderColor: view.borderColor,
