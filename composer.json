@@ -26,7 +26,8 @@
     "automattic/woocommerce": "^3.0",
     "mikehaertl/phpwkhtmltopdf": "^2.4",
     "mike42/escpos-php": "^3.0",
-    "mpdf/mpdf": "^8.0"
+    "mpdf/mpdf": "^8.0",
+    "ext-mysqli": "*"
   },
   "autoload": {
         "psr-4": {

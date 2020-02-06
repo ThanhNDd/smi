@@ -10,6 +10,7 @@ include("../../model/Order/OrderDetail.php");
 include("../../model/Customer/Customer.php");
 include("PrintReceiptOnline.php");
 include("../sales/PrinterReceipt.php");
+include("../exchange/PrinterReceiptExchange.php");
 
 $db = new DBConnect();
 $productDAO = new ProductDAO();
@@ -32,12 +33,46 @@ if (isset($_POST["method"]) && $_POST["method"] == "print_receipt") {
             $print_receipt = new PrintReceiptOnline();
             $receipt = $checkoutDAO->get_data_print_receipt($order_id);
             $filename = $print_receipt->print($receipt);
-        } else {
+        } else if ($type == 0) {
+          // on shop
             $order = $checkoutDAO->find_order_by_order_id($order_id);
             $details = $checkoutDAO->find_order_detail_by_order_id($order_id);
             $printer = new PrinterReceipt();
             $filename = $printer->print($order, $details);
             $response_array['fileName'] = $filename;
+        } else if ($type == 2) {
+          // exchange
+          $order = $checkoutDAO->find_order_by_order_id($order_id);
+          $details = $checkoutDAO->find_order_detail_by_order_id($order_id);
+          $curr_products = [];
+          $exchange_products = [];
+          $add_new_products = [];
+          for($i=0; $i<count($details); $i++) {
+            $type = $details[$i]->getType();
+            if($type == 0) {
+              // add new product
+              array_push($add_new_products, $details[$i]);
+            } else if($type == 1) {
+              // exchange product
+              array_push($curr_products, $details[$i]);
+            } else if($type == 2) {
+              // add new of exchange product
+              array_push($exchange_products, $details[$i]);
+            }
+          }
+          print_r($curr_products);
+          $curr_arr = get_details($curr_products, $order_id, 1); // product exchange
+          if(count($curr_arr) <= 0) {
+            throw new Exception("Have no product!!");
+          }
+          $exchange_arr = get_details($exchange_products, $order_id, 2);// new product of exchange
+          if(count($exchange_arr) <= 0) {
+            throw new Exception("Have no product exchange!!");
+          }
+          $add_new_arr = get_details($add_new_products, $order_id, 0); // add new product
+          $printer = new PrinterReceiptExchange();
+          $filename = $printer->print($order, $exchange_arr, $curr_arr, $add_new_arr);
+          $response_array['fileName'] = $filename;
         }
         $response_array['fileName'] = $filename;
         echo json_encode($response_array);
@@ -243,4 +278,73 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
     }
     // all Ok
     $db->commit();
+}
+
+function get_details($details, $orderId, $productType) {
+  global $checkoutDAO;
+  global $productDAO;
+  $detailsObj = array();
+  for($i=0; $i<count($details); $i++)
+  {
+    $price = 0;
+    $qty = 0;
+    $reduce = 0;
+    $reduce_percent = 0;
+
+    if(!empty($details[$i]->getProduct_id()))
+    {
+      $product_id = $details[$i]->getProduct_id();
+    } else {
+      throw new Exception("Product_Id is null");
+    }
+    if(!empty($details[$i]->getVariant_id()))
+    {
+      $variant_id = $details[$i]->getVariant_id();
+    } else {
+      throw new Exception("Variant_id is null");
+    }
+    if(!empty($details[$i]->getSku()))
+    {
+      $sku = $details[$i]->getSku();
+    } else {
+      throw new Exception("SKU is null");
+    }
+    if(!empty($details[$i]->getPrice()))
+    {
+      $price = $details[$i]->getPrice();
+    }
+    if(!empty($details[$i]->getQuantity()))
+    {
+      $qty = $details[$i]->getQuantity();
+    }
+    if(!empty($details[$i]->getReduce()))
+    {
+      $reduce = $details[$i]->getReduce();
+    }
+    if(!empty($details[$i]->getReduce_percent()))
+    {
+      $reduce_percent = $details[$i]->getReduce_percent();
+    }
+
+    $detail = new OrderDetail();
+    $detail->setOrder_id($orderId);
+    $detail->setProduct_id($product_id);
+    $detail->setVariant_id($variant_id);
+    $detail->setSku($sku);
+    $detail->setPrice($price);
+    $detail->setQuantity($qty);
+    $detail->setReduce($reduce);
+    $detail->setReduce_percent($reduce_percent);
+    $detail->setType($productType);
+//    $checkoutDAO->saveOrderDetail($detail);
+    $detail->setProductName($details[$i]->getProductName());
+    array_push($detailsObj, $detail);
+//    if(!empty($sku)) {
+//      $productDAO->update_quantity_by_sku((int) $sku, (int) $qty);
+//    } else
+//    {
+//      throw new Exception("SKU is empty");
+//    }
+  }
+  return $detailsObj;
 }

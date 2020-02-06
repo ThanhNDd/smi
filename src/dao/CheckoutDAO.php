@@ -30,21 +30,31 @@ class CheckoutDAO
     {
         try {
             $sql = "select 
+                        a.order_id,
+                        a.product_id,
+                        a.variant_id,
+                        a.sku,
                         b.name,
                         a.quantity,
                         a.price,
                         a.reduce,
-                        a.reduce_percent
+                        a.reduce_percent,
+                        a.type
                     from smi_order_detail a inner join smi_products b on a.product_id = b.id where a.order_id = $orderId";
             $result = mysqli_query($this->conn, $sql);
             $data = array();
             foreach ($result as $k => $row) {
                 $detail = new OrderDetail();
+                $detail->setOrder_id($row["order_id"]);
+                $detail->setProduct_id($row["product_id"]);
+                $detail->setVariant_id($row["variant_id"]);
+                $detail->setSku($row["sku"]);
                 $detail->setProductName($row["name"]);
                 $detail->setPrice($row["price"]);
                 $detail->setQuantity($row["quantity"]);
                 $detail->setReduce($row["reduce"]);
                 $detail->setReduce_percent($row["reduce_percent"]);
+                $detail->setType($row["type"]);
                 array_push($data, $detail);
             }
             return $data;
@@ -375,7 +385,9 @@ class CheckoutDAO
                         A.order_date,
                         A.type,
                         A.status,
-                        A.payment_type
+                        A.payment_type,
+                        A.payment_exchange_type,
+                        A.order_refer
                     from smi_orders A 
                     where 
                     DATE(order_date) between DATE('" . $start_date . "') and DATE('" . $end_date . "')
@@ -390,7 +402,9 @@ class CheckoutDAO
                     'order_date' => date_format(date_create($row["order_date"]), "d/m/Y H:i:s"),
                     'type' => $row["type"],
                     'status' => $row["status"],
-                    'payment_type' => $row["payment_type"]
+                    'payment_type' => $row["payment_type"],
+                    'payment_exchange_type' => $row["payment_exchange_type"],
+                    'order_refer' => $row["order_refer"]
                 );
                 array_push($data, $order);
             }
@@ -417,7 +431,7 @@ class CheckoutDAO
                         C.village_id,
                         A.shipping,
                         A.discount,
-                        case when A.total_reduce is not null then A.total_amount - A.total_reduce else A.total_amount end as 'total_checkout',
+                        A.total_checkout,
                         A.order_date,
                         A.type,
                         A.status,
@@ -433,7 +447,8 @@ class CheckoutDAO
                         E.size,
                         E.color,
                         A.payment_type,
-                        D.profit
+                        D.profit,
+                        B.type
                     from smi_orders A 
                         left join smi_order_detail B on A.id = B.order_id
                         left join smi_customers C on A.customer_id = C.id
@@ -482,7 +497,8 @@ class CheckoutDAO
                         'price' => number_format($price),
                         'reduce' => number_format($qty * $reduce),
                         'intoMoney' => number_format($intoMoney),
-                        'profit' => number_format($row["profit"] * $qty - $reduce)
+                        'profit' => number_format($row["profit"] * $qty - $reduce),
+                        'type' => $row["type"]
                     );
                     array_push($order['details'], $detail);
                     array_push($data, $order);
@@ -504,7 +520,8 @@ class CheckoutDAO
                         'price' => number_format($price),
                         'reduce' => number_format($qty * $reduce),
                         'intoMoney' => number_format($intoMoney),
-                        'profit' => number_format($row["profit"] * $qty - $reduce)
+                        'profit' => number_format($row["profit"] * $qty - $reduce),
+                      'type' => $row["type"]
                     );
                     array_push($data[$i - 1]['details'], $detail);
                 }

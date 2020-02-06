@@ -60,7 +60,7 @@ if(isset($_POST["method"]) && $_POST["method"]=="exchange") {
         $order->setPayment_type(empty($data->payment_type) ? 0 : $data->payment_type);
         $order->setRepay(empty($data->repay) ? 0 : $data->repay);
         $order->setCustomer_id(empty($data->customer_id) ? 0 : $data->customer_id);
-        $order->setType(0); // Sale on shop
+        $order->setType(2); // exchange
         $order->setCustomer_id(0); // retail customer
         $order->setStatus(6);// order exchange
         $order->setVoucherCode($data->voucher_code);
@@ -72,11 +72,11 @@ if(isset($_POST["method"]) && $_POST["method"]=="exchange") {
         if(empty($orderId)) {
             throw new Exception("Cannot insert order");
         } else {
-            $curr_arr = get_details($data->curr_products, $orderId, 2); // product exchange
+            $curr_arr = get_details($data->curr_products, $orderId, 1); // product exchange
             if(count($curr_arr) <= 0) {
                 throw new Exception("Have no product!!");
             }
-            $exchange_arr = get_details($data->exchange_products, $orderId, 1);// new product of exchange
+            $exchange_arr = get_details($data->exchange_products, $orderId, 2);// new product of exchange
             if(count($exchange_arr) <= 0) {
                 throw new Exception("Have no product exchange!!");
             }

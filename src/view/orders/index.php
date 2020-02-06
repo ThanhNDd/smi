@@ -286,7 +286,7 @@
                     width: "30px",
                 },
                 {
-                    "data": "total_checkout",
+                    "data": format_total_checkout,
                     width: "50px",
                     class: 'right'
                 },
@@ -343,7 +343,7 @@
                         let data = res.data;
                         // let details = res[0].details;
                         if(data.length > 0) {
-                            row.child(format_order_detail(data[0])).show();
+                            row.child(format_order_detail(data[0],row.data())).show();
                             tr.addClass('shown');
                             tdi.first().removeClass('fa-plus-square');
                             tdi.first().addClass('fa-minus-square');
@@ -573,9 +573,11 @@
 
     }
 
-    function format_order_detail(data) {
+    function format_order_detail(data, row_data) {
         console.log(data);
-
+        let order_type = row_data.type;
+        let payment_exchange_type = row_data.payment_exchange_type;
+        let order_refer = row_data.order_refer;
         let details = data.details;
         let table = '<div class="card-body">';
         table += '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
@@ -599,8 +601,14 @@
             total_reduce += Number(replaceComma(details[i].reduce));
             profit += Number(replaceComma(details[i].profit));
             intoMoney += Number(replaceComma(details[i].intoMoney));
-            console.log("profit" + i + ": " + profit);
-            table += '<tr>' +
+            let type = details[i].type;
+            let style = "color: black;";
+            if(type == '1') {
+                style = "color: red;";
+            } else if(type == '2') {
+                style = "color: green;";
+            }
+            table += '<tr style="'+style+'">' +
                 '<input type="hidden" id="product_id_' + i + '" value="' + details[i].product_id + '"/>' +
                 '<input type="hidden" id="variant_id_' + i + '" value="' + details[i].variant_id + '"/>' +
                 '<td>' + details[i].sku + '</td>' +
@@ -619,7 +627,7 @@
         table += '</div>';
 
         let voucher_value = 0;
-        let order_type = data.type;
+        // let order_type = data.type;
         let d = '<div class="card">' +
             '<div class="card-body">';
         if (order_type == 1) {
@@ -637,6 +645,9 @@
                 voucher_value = Number((intoMoney * 10) / 100);
                 d += '<div class="col-3 col-sm-3 col-md-3"><small>Mã giảm giá</small> <h5>' + data.voucher_code + ' <small>(-10%)(' + formatNumber(voucher_value) + ' đ)</small></h5></div>';
             }
+            if (order_refer != "") {
+                d += '<div class="col-3 col-sm-3 col-md-3"><small>Mã đơn đổi</small> <h5>' + order_refer + '</h5></div>';
+            }
             d += '</div>';
         }
 
@@ -645,8 +656,12 @@
         profit = profit - total_reduce - voucher_value;
         d += '<div class="row">' +
             '<div class="col-3 col-sm-3 col-md-3"><small>Chiết khấu trên tổng đơn hàng</small> <h5>' + data.discount + ' <small>đ</small></h5></div>' +
-            '<div class="col-3 col-sm-3 col-md-3"><small>Tổng giảm trừ</small> <h5>' + data.total_reduce + ' <small>đ</small></h5></div>' +
-            '<div class="col-3 col-sm-3 col-md-3"><small>Tổng tiền thanh toán</small> <h5>' + data.total_checkout + ' <small>đ</small></h5></div>' +
+            '<div class="col-3 col-sm-3 col-md-3"><small>Tổng giảm trừ</small> <h5>' + data.total_reduce + ' <small>đ</small></h5></div>';
+        let total_checkout = data.total_checkout;
+        if(payment_exchange_type == '2') {
+          total_checkout = '-'+total_checkout;
+        }
+        d += '<div class="col-3 col-sm-3 col-md-3"><small>Tổng tiền thanh toán</small> <h5>' + total_checkout + ' <small>đ</small></h5></div>' +
             '<div class="col-3 col-sm-3 col-md-3" style="display: none;"><small>Profit</small> <h5>' + formatNumber(profit) + ' <small>đ</small></h5></div>' +
             '</div>' +
             '</div>' +
@@ -664,15 +679,34 @@
     }
 
     function format_action(data) {
+        let order_type = data.type;
         let content = '';
         // online
         // if (data.type == 1) {
             content += '<a href="javascript:void(0);" class="print_receipt mr-1 text-info" title="In hoá đơn"><i class="fa fa-print"></i></a>';
 
         // }
-        content += '<a href="javascript:void(0);" class="edit_order mr-1 text-primary" title="Sửa đơn hàng"><i class="fa fa-edit"></i></a>';
+        if(order_type != 2) {
+            content += '<a href="javascript:void(0);" class="edit_order mr-1 text-primary" title="Sửa đơn hàng"><i class="fa fa-edit"></i></a>';
+        }
         content += '<a href="javascript:void(0);" class="delete_order mr-1 text-danger" title="Xoá đơn hàng"><i class="fa fa-trash"></i></a>';
         return content;
+    }
+
+    function format_total_checkout(data) {
+        let total_checkout = data.total_checkout;
+        let payment_exchange_type = data.payment_exchange_type;
+        switch (payment_exchange_type) {
+            case '1':
+                return total_checkout;
+                break;
+            case '2':
+                return '-'+total_checkout;
+                break;
+            default:
+                return '';
+                break;
+        }
     }
 
     function format_type(data) {
@@ -685,7 +719,7 @@
                 return '<span class="badge badge-success">Online</span>';
                 break;
             case '2':
-                return '<span class="badge badge-secondary">Đổi hàng</span>';
+                return '<span class="badge badge-danger">Đổi hàng</span>';
                 break;
             default:
                 return '';
