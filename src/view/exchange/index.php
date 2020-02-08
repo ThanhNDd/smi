@@ -1173,11 +1173,13 @@
         let customer_payment = replaceComma($("#payment_new").val());
         let repay = replaceComma($("#repay_new").val());
         let flag_print_receipt = $("#flag_print_receipt").is(':checked');
+        let discount_old = replaceComma($("#discount").text());
         let discount = replaceComma($("#discount_new").val());
         if (discount.indexOf("%") > -1) {
             discount = discount.replace("%", "");
             discount = (discount * total_checkout) / 100;
         }
+        let total_reduce = Number(discount) + Number(discount_old);
         // equal
         let paymentExchangeType = 0;
         if(total_checkout > 0) {
@@ -1189,7 +1191,7 @@
         }
         let data = {};
         data["total_amount"] = Math.abs(total_amount);
-        data["total_reduce"] = discount;
+        data["total_reduce"] = total_reduce;
         data["discount"] = discount;
         data["total_checkout"] = Math.abs(total_checkout);
         data["customer_payment"] = customer_payment;

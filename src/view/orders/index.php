@@ -2,211 +2,232 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="shortcut icon" type="image/x-icon" href="<?php echo __PATH__ ?>dist/img/icon.png"/>
-    <title>Quản lý đơn hàng</title>
-    <?php require('../../common/css.php'); ?>
-    <?php require('../../common/js.php'); ?>
-    <style>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="shortcut icon" type="image/x-icon" href="<?php echo __PATH__ ?>dist/img/icon.png"/>
+  <title>Quản lý đơn hàng</title>
+  <?php require('../../common/css.php'); ?>
+  <?php require('../../common/js.php'); ?>
+  <style>
 
-        td.details-control {
-            text-align: center;
-            color: forestgreen;
-            cursor: pointer;
-        }
+    td.details-control {
+      text-align: center;
+      color: forestgreen;
+      cursor: pointer;
+    }
 
-        tr.shown td.details-control {
-            text-align: center;
-            color: red;
-        }
+    tr.shown td.details-control {
+      text-align: center;
+      color: red;
+    }
 
-        div#example_wrapper {
-            margin-top: 10px;
-        }
+    div#example_wrapper {
+      margin-top: 10px;
+    }
 
-        div#example_filter label {
-            width: 100%;
-            float: left;
-        }
+    div#example_filter label {
+      width: 100%;
+      float: left;
+    }
 
-        table.dataTable.no-footer {
-            border-bottom: none;
-        }
-    </style>
+    table.dataTable.no-footer {
+      border-bottom: none;
+    }
+  </style>
 </head>
 <?php require('../../common/header.php'); ?>
 <?php require('../../common/menu.php'); ?>
 <section class="content">
-    <div class="row pt-2">
-        <div class="col-md-8 col-sm-12">
-            <div class="card">
-                <div class="card-header border-transparent pb-0">
-                    <div class="form-group col-md-4 float-left mb-0">
-                        <div class="input-group">
-                            <div class="input-group-prepend">
+  <div class="row pt-2">
+    <div class="col-md-8 col-sm-12">
+      <div class="card">
+        <div class="card-header border-transparent pb-0">
+          <div class="form-group col-md-4 float-left mb-0">
+            <div class="input-group">
+              <div class="input-group-prepend">
                   <span class="input-group-text">
                     <i class="far fa-calendar-alt"></i>
                   </span>
-                            </div>
-                            <input type="text" class="form-control float-left" id="reservation">
-                        </div>
-                        <!-- /.input group -->
-                    </div>
-                    <div class="float-right">
-                        <a href="javascript:void(0)" class="btn btn-sm btn-info float-left order-create">Tạo mới</a>
-                    </div>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body pt-0">
-                    <div class="table-responsive">
-                        <table id="example" class="table table-bordered table-striped">
-                            <thead>
-                            <tr>
-                                <th></th>
-                                <th>Mã đơn hàng</th>
-                                <!-- <th>Khách hàng</th> -->
-                                <!-- <th>Số điện thoại</th>
-                                <th>Địa chỉ</th> -->
-                                <!--  <th class="right">Phí ship</th> -->
-                                <!-- <th class="right">Chiết khấu</th> -->
-                                <th class="right">Tổng tiền</th>
-                                <th class="center">Ngày mua hàng</th>
-                                <th class="left">Loại đơn</th>
-                                <th class="left">Thanh toán</th>
-                                <th class="left">Hành động</th>
-                            </tr>
-                            </thead>
-                        </table>
-                    </div>
-                    <!-- /.table-responsive -->
-                </div>
-                <!-- /.card-body -->
+              </div>
+              <input type="text" class="form-control float-left" id="reservation">
             </div>
+            <!-- /.input group -->
+          </div>
+          <div class="float-right">
+            <a href="javascript:void(0)" class="btn btn-sm btn-info float-left order-create">Tạo mới</a>
+          </div>
         </div>
-        <div class="col-md-4 col-sm-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class="col-12 col-sm-12 col-md-12">
-                        <div class="info-box">
-                            <span class="info-box-icon bg-info elevation-1"><i class="fas fa-dollar-sign"></i></span>
-                            <div class="info-box-content col-12 row">
-                                <div class="col-8">
-                                    <span class="info-box-text">Tổng tiền</span>
-                                    <span class="info-box-number">
+        <!-- /.card-header -->
+        <div class="card-body pt-0">
+          <div class="table-responsive">
+            <table id="example" class="table table-bordered table-striped">
+              <thead>
+              <tr>
+                <th></th>
+                <th>Mã đơn hàng</th>
+                <!-- <th>Khách hàng</th> -->
+                <!-- <th>Số điện thoại</th>
+                <th>Địa chỉ</th> -->
+                <!--  <th class="right">Phí ship</th> -->
+                <!-- <th class="right">Chiết khấu</th> -->
+                <th class="right">Tổng tiền</th>
+                <th class="center">Ngày mua hàng</th>
+                <th class="left">Loại đơn</th>
+                <th class="left">Thanh toán</th>
+                <th class="left">Hành động</th>
+              </tr>
+              </thead>
+            </table>
+          </div>
+          <!-- /.table-responsive -->
+        </div>
+        <!-- /.card-body -->
+      </div>
+    </div>
+    <div class="col-md-4 col-sm-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="col-12 col-sm-12 col-md-12">
+            <div class="info-box">
+              <span class="info-box-icon bg-info elevation-1"><i class="fas fa-dollar-sign"></i></span>
+              <div class="info-box-content col-12 row">
+                <div class="col-8">
+                  <span class="info-box-text">Tổng tiền</span>
+                  <span class="info-box-number">
                     <h5 class="total_money">
                       <small>đ</small>
                     </h5>
                   </span>
-                                </div>
-                                <div class="col-4">
-                                    <h1 class="display-5 text-danger text-right total_orders"></h1>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- /.info-box -->
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-12 col-sm-12 col-md-12">
-                        <div class="info-box mb-3">
-                            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-store"></i></span>
-                            <div class="info-box-content col-12 row">
-                                <div class="col-8">
-                                    <span class="info-box-text">Shop</span>
-                                    <span class="info-box-number">
+                </div>
+                <div class="col-4">
+                  <h1 class="display-5 text-danger text-right total_orders"></h1>
+                </div>
+              </div>
+            </div>
+            <!-- /.info-box -->
+          </div>
+          <!-- /.col -->
+          <div class="col-12 col-sm-12 col-md-12">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-store"></i></span>
+              <div class="info-box-content col-12 row">
+                <div class="col-8">
+                  <span class="info-box-text">Shop</span>
+                  <span class="info-box-number">
                     <h5 class="total_on_shop">
                       <small>đ</small>
                     </h5>
                     
                   </span>
-                                </div>
-                                <div class="col-4">
-                                    <h1 class="display-5 text-right count_on_shop">12</h1>
-                                </div>
-                            </div>
-                            <!-- /.info-box-content -->
-                        </div>
-                        <!-- /.info-box -->
-                    </div>
-                    <!-- /.col -->
-                    <!-- fix for small devices only -->
-                    <div class="clearfix hidden-md-up"></div>
-                    <div class="col-12 col-sm-12 col-md-12">
-                        <div class="info-box mb-3">
-                            <span class="info-box-icon bg-success elevation-1"><i class="fas fa-globe"></i></span>
-                            <div class="info-box-content col-12 row">
-                                <div class="col-8">
-                                    <span class="info-box-text">Online</span>
-                                    <span class="info-box-number">
+                </div>
+                <div class="col-4">
+                  <h1 class="display-5 text-right count_on_shop">12</h1>
+                </div>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+          <!-- /.col -->
+          <!-- fix for small devices only -->
+          <div class="clearfix hidden-md-up"></div>
+          <div class="col-12 col-sm-12 col-md-12">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-success elevation-1"><i class="fas fa-globe"></i></span>
+              <div class="info-box-content col-12 row">
+                <div class="col-8">
+                  <span class="info-box-text">Online</span>
+                  <span class="info-box-number">
                     <h5 class="total_online">
                       <small>đ</small>
                     </h5>
                   </span>
-                                </div>
-                                <div class="col-4">
-                                    <h1 class="display-5 text-right count_online"></h1>
-                                </div>
-                            </div>
-                            <!-- /.info-box-content -->
-                        </div>
-                        <!-- /.info-box -->
-                    </div>
                 </div>
+                <div class="col-4">
+                  <h1 class="display-5 text-right count_online"></h1>
+                </div>
+              </div>
+              <!-- /.info-box-content -->
             </div>
-            <div class="card">
-                <div class="card-body">
-                    <div class="col-12 col-sm-12 col-md-12">
-                        <div class="info-box">
+            <!-- /.info-box -->
+          </div>
+          <div class="clearfix hidden-md-up"></div>
+          <div class="col-12 col-sm-12 col-md-12">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-globe"></i></span>
+              <div class="info-box-content col-12 row">
+                <div class="col-8">
+                  <span class="info-box-text">Đổi hàng</span>
+                  <span class="info-box-number">
+                    <h5 class="total_exchange">
+                      <small>đ</small>
+                    </h5>
+                  </span>
+                </div>
+                <div class="col-4">
+                  <h1 class="display-5 text-right count_exchange"></h1>
+                </div>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="col-12 col-sm-12 col-md-12">
+            <div class="info-box">
                             <span class="info-box-icon bg-primary elevation-1"><i
-                                        class="far fa-money-bill-alt"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-text">Tiền mặt</span>
-                                <span class="info-box-number">
+                                class="far fa-money-bill-alt"></i></span>
+              <div class="info-box-content">
+                <span class="info-box-text">Tiền mặt</span>
+                <span class="info-box-number">
                     <h5 class="total_cash">
                       <small>đ</small>
                     </h5>
                   </span>
-                            </div>
-                        </div>
-                        <!-- /.info-box -->
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-12 col-sm-12 col-md-12">
-                        <div class="info-box mb-3">
-                            <span class="info-box-icon bg-success elevation-1"><i class="fas fa-credit-card"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-text">Chuyển khoản</span>
-                                <span class="info-box-number">
+              </div>
+            </div>
+            <!-- /.info-box -->
+          </div>
+          <!-- /.col -->
+          <div class="col-12 col-sm-12 col-md-12">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-success elevation-1"><i class="fas fa-credit-card"></i></span>
+              <div class="info-box-content">
+                <span class="info-box-text">Chuyển khoản</span>
+                <span class="info-box-number">
                     <h5 class="total_transfer">
                       <small>đ</small>
                     </h5>
                     
                   </span>
-                            </div>
-                            <!-- /.info-box-content -->
-                        </div>
-                        <!-- /.info-box -->
-                    </div>
-                    <div class="col-12 col-sm-12 col-md-12" style="display: none;">
-                        <div class="info-box mb-3">
-                            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-wallet"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-text">Profit</span>
-                                <span class="info-box-number">
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+          <div class="col-12 col-sm-12 col-md-12" style="display: block;">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-wallet"></i></span>
+              <div class="info-box-content">
+                <span class="info-box-text">Profit</span>
+                <span class="info-box-number">
                     <h5 class="total_profit">
                       <small>đ</small>
                     </h5>
                     
                   </span>
-                            </div>
-                            <!-- /.info-box-content -->
-                        </div>
-                        <!-- /.info-box -->
-                    </div>
-                </div>
+              </div>
+              <!-- /.info-box-content -->
             </div>
+            <!-- /.info-box -->
+          </div>
         </div>
+      </div>
+    </div>
 </section>
 <div class="iframeArea hidden"></div>
 <!-- /.content -->
@@ -342,13 +363,13 @@
                         console.log(res);
                         let data = res.data;
                         // let details = res[0].details;
-                        if(data.length > 0) {
-                            row.child(format_order_detail(data[0],row.data())).show();
+                        if (data.length > 0) {
+                            row.child(format_order_detail(data[0], row.data())).show();
                             tr.addClass('shown');
                             tdi.first().removeClass('fa-plus-square');
                             tdi.first().addClass('fa-minus-square');
                         }
-                        
+
                     },
                     error: function (data, errorThrown) {
                         console.log(data.responseText);
@@ -361,7 +382,7 @@
                         hide_loading();
                     }
                 });
-                
+
             }
             event.preventDefault();
         });
@@ -591,7 +612,7 @@
             '<th class="right">Giá</th>' +
             '<th class="right">Giảm trừ</th>' +
             '<th class="right">Thành tiền</th>' +
-            '<th class="right" style="display: none;">Profit</th>' +
+            '<th class="right" style="display: block;">Profit</th>' +
             '</tr>' +
             '</thead>';
         let total_reduce = 0;
@@ -599,16 +620,23 @@
         let intoMoney = 0;
         for (let i = 0; i < details.length; i++) {
             total_reduce += Number(replaceComma(details[i].reduce));
-            profit += Number(replaceComma(details[i].profit));
             intoMoney += Number(replaceComma(details[i].intoMoney));
             let type = details[i].type;
             let style = "color: black;";
-            if(type == '1') {
+            if (type == '1') {
                 style = "color: red;";
-            } else if(type == '2') {
+            } else if (type == '2') {
                 style = "color: green;";
             }
-            table += '<tr style="'+style+'">' +
+            let detail_profit = 0;
+            if (type == '1') {
+                profit += 0 - Number(replaceComma(details[i].profit));
+                detail_profit = 0 - Number(replaceComma(details[i].profit));
+            } else {
+                profit += Number(replaceComma(details[i].profit));
+                detail_profit = Number(replaceComma(details[i].profit));
+            }
+            table += '<tr style="' + style + '">' +
                 '<input type="hidden" id="product_id_' + i + '" value="' + details[i].product_id + '"/>' +
                 '<input type="hidden" id="variant_id_' + i + '" value="' + details[i].variant_id + '"/>' +
                 '<td>' + details[i].sku + '</td>' +
@@ -619,7 +647,7 @@
                 '<td class="right">' + details[i].price + ' <small>đ</small></td>' +
                 '<td class="right">' + details[i].reduce + ' <small>đ</small></td>' +
                 '<td class="right">' + details[i].intoMoney + ' <small>đ</small></td>' +
-                '<td class="right" style="display: none;">' + formatNumber(replaceComma(details[i].profit) - replaceComma(details[i].reduce)) + ' <small>đ</small></td>' +
+                '<td class="right" style="display: block;">' + formatNumber(detail_profit) + ' <small>đ</small></td>' +
                 '</tr>';
         }
         table += '</table>';
@@ -651,18 +679,18 @@
             d += '</div>';
         }
 
-        total_reduce += Number(replaceComma(data.discount));
+        let discount = Number(replaceComma(data.discount));
+        profit = profit - discount - voucher_value;
 
-        profit = profit - total_reduce - voucher_value;
         d += '<div class="row">' +
             '<div class="col-3 col-sm-3 col-md-3"><small>Chiết khấu trên tổng đơn hàng</small> <h5>' + data.discount + ' <small>đ</small></h5></div>' +
             '<div class="col-3 col-sm-3 col-md-3"><small>Tổng giảm trừ</small> <h5>' + data.total_reduce + ' <small>đ</small></h5></div>';
         let total_checkout = data.total_checkout;
-        if(payment_exchange_type == '2') {
-          total_checkout = '-'+total_checkout;
+        if (payment_exchange_type == '2') {
+            total_checkout = '-' + total_checkout;
         }
         d += '<div class="col-3 col-sm-3 col-md-3"><small>Tổng tiền thanh toán</small> <h5>' + total_checkout + ' <small>đ</small></h5></div>' +
-            '<div class="col-3 col-sm-3 col-md-3" style="display: none;"><small>Profit</small> <h5>' + formatNumber(profit) + ' <small>đ</small></h5></div>' +
+            '<div class="col-3 col-sm-3 col-md-3" style="display: block;"><small>Profit</small> <h5>' + formatNumber(profit) + ' <small>đ</small></h5></div>' +
             '</div>' +
             '</div>' +
             '</div>' +
@@ -683,10 +711,10 @@
         let content = '';
         // online
         // if (data.type == 1) {
-            content += '<a href="javascript:void(0);" class="print_receipt mr-1 text-info" title="In hoá đơn"><i class="fa fa-print"></i></a>';
+        content += '<a href="javascript:void(0);" class="print_receipt mr-1 text-info" title="In hoá đơn"><i class="fa fa-print"></i></a>';
 
         // }
-        if(order_type != 2) {
+        if (order_type != 2) {
             content += '<a href="javascript:void(0);" class="edit_order mr-1 text-primary" title="Sửa đơn hàng"><i class="fa fa-edit"></i></a>';
         }
         content += '<a href="javascript:void(0);" class="delete_order mr-1 text-danger" title="Xoá đơn hàng"><i class="fa fa-trash"></i></a>';
@@ -701,10 +729,10 @@
                 return total_checkout;
                 break;
             case '2':
-                return '-'+total_checkout;
+                return '-' + total_checkout;
                 break;
             default:
-                return '';
+                return total_checkout;
                 break;
         }
     }
@@ -791,6 +819,8 @@
                 $(".count_on_shop").html(res.count_on_shop);
                 $(".total_online").html(res.total_online + " <small>đ</small>");
                 $(".count_online").html(res.count_online);
+                $(".total_exchange").html(res.total_exchange + " <small>đ</small>");
+                $(".count_exchange").html(res.count_exchange);
                 $(".total_cash").html(res.total_cash + " <small>đ</small>");
                 $(".total_transfer").html(res.total_transfer + " <small>đ</small>");
                 $(".total_profit").html(res.total_profit + " <small>đ</small>");
