@@ -533,23 +533,38 @@ class ProductDAO
         }
     }
 
-    function update_quantity_by_sku($sku, $qty)
+   /* function update_quantity_by_sku($sku, $qty)
     {
         try {
-            // $sku1 = $sku;
-            // $sku2 = $sku;
-            // $stmt = $this->getConn()->prepare("update smi_variations set quantity = (select case when quantity > 0 then quantity - $qty else 0 end from smi_variations where sku = $sku) where sku = $sku");
-            // $stmt->bind_param("iii", $qty, $sku1, $sku2);
-            // $stmt->execute();
-            // print_r($this->getConn()->error);
-            // $nrows = $stmt->affected_rows;
-            // if (!$nrows) {
-            //     throw new Exception("update_quantity_by_sku  has failure!!!");
-            // }
-            $sql = "update smi_variations set quantity = (select case when quantity > 0 then quantity - $qty else 0 end from smi_variations where sku = $sku) where sku = $sku";
-            $result = mysqli_query($this->conn, $sql);
+            $stmt = $this->getConn()->prepare("update smi_variations set quantity = (select case when quantity > 0 then quantity - $qty else 0 end from smi_variations where sku = $sku) where sku = $sku");
+            $stmt->execute();
+            $nrows = $stmt->affected_rows;
+            if (!$nrows) {
+                throw new Exception("Update Qty for variations has failure");
+            }
         } catch (Exception $e) {
             throw new Exception("update_quantity_by_sku >> " . $e);
+        }
+    }*/
+
+    function update_qty_variation_by_sku($sku, $qty = 1, $product_type = 0)
+    {
+        try {
+            if($product_type == 1) {
+//                $stmt = $this->getConn()->prepare("update smi_variations set quantity = (select case when a.quantity > 0 then a.quantity - $qty else 0 end from smi_variations a where a.sku = $sku) where sku = $sku");
+                $stmt = $this->getConn()->prepare("update smi_variations a, (select case when a.quantity > 0 then a.quantity - $qty else 0 end as qty from smi_variations a where a.sku = $sku) b set a.quantity = b.qty where sku = $sku");
+            } else {
+                $stmt = $this->getConn()->prepare("update smi_variations set quantity = quantity + $qty where sku = ?");
+                $stmt->bind_param("s", $sku);
+            }
+            print_r($this->getConn()->error);
+            $stmt->execute();
+            $nrows = $stmt->affected_rows;
+            if (!$nrows) {
+                throw new Exception("Update Qty for variations has failure");
+            }
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
         }
     }
 
@@ -576,20 +591,7 @@ class ProductDAO
         }
     }
 
-    function update_qty_variation_by_sku($sku)
-    {
-        try {
-            $stmt = $this->getConn()->prepare("update smi_variations set quantity = quantity + 1 where sku = ?");
-            $stmt->bind_param("s", $sku);
-            $stmt->execute();
-            $nrows = $stmt->affected_rows;
-            if (!$nrows) {
-                throw new Exception("Update Qty for variations has failure");
-            }
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage());
-        }
-    }
+
 
     /**
      * Get the value of conn

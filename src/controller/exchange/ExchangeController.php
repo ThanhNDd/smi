@@ -72,18 +72,19 @@ if(isset($_POST["method"]) && $_POST["method"]=="exchange") {
         if(empty($orderId)) {
             throw new Exception("Cannot insert order");
         } else {
-            $curr_arr = get_details($data->curr_products, $orderId, 1); // product exchange
-            if(count($curr_arr) <= 0) {
-                throw new Exception("Have no product!!");
-            }
-            $exchange_arr = get_details($data->exchange_products, $orderId, 2);// new product of exchange
-            if(count($exchange_arr) <= 0) {
-                throw new Exception("Have no product exchange!!");
-            }
-            $add_new_arr = get_details($data->add_new_products, $orderId, 0); // add new product
             // printer receipt
             $response_array = array();
             if($data->flag_print_receipt) {
+                $curr_arr = get_details($data->curr_products, $orderId, 1); // product exchange
+                if(count($curr_arr) <= 0) {
+                    throw new Exception("Have no product!!");
+                }
+                $exchange_arr = get_details($data->exchange_products, $orderId, 2);// new product of exchange
+                if(count($exchange_arr) <= 0) {
+                    throw new Exception("Have no product exchange!!");
+                }
+                $add_new_arr = get_details($data->add_new_products, $orderId, 0); // add new product
+
                 $printer = new PrinterReceiptExchange();
                 $filename = $printer->print($order, $exchange_arr, $curr_arr, $add_new_arr);
                 $response_array['fileName'] = $filename;
@@ -91,8 +92,8 @@ if(isset($_POST["method"]) && $_POST["method"]=="exchange") {
             $response_array['orderId'] = $orderId;
             echo json_encode($response_array);
 
-            //     // $sendMail = new SendMail();
-            //     // $sendMail->send();
+         // $sendMail = new SendMail();
+         // $sendMail->send();
         }
     } catch(Exception $e)
     {
@@ -164,7 +165,7 @@ function get_details($details, $orderId, $productType) {
         $detail->setProductName($details[$i]->product_name);
         array_push($detailsObj, $detail);
         if(!empty($sku)) {
-            $productDAO->update_quantity_by_sku((int) $sku, (int) $qty);
+            $productDAO->update_qty_variation_by_sku((int) $sku, (int) $qty, $productType);
         } else
         {
             throw new Exception("SKU is empty");
