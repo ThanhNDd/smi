@@ -1,4 +1,7 @@
-<?php require_once("../../common/common.php") ?>
+<?php
+require_once("../../common/common.php");
+Common::authen();
+?>
 <div class="modal fade" id="create-order">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">
@@ -189,7 +192,7 @@
         <!-- /.modal-content -->
     </div>
     <!-- /.modal-dialog -->
-    <?php include __PATH__ . 'src/common/js.php'; ?>
+  <?php require_once ('../../common/js.php'); ?>
     <script>
         let data_products;
         let flagError = 0;
@@ -569,7 +572,7 @@
                     $("#create-order .overlay").removeClass("hidden");
                     $.ajax({
                         dataType: 'json',
-                        url: '<?php echo __PATH__ . 'src/controller/orders/OrderController.php' ?>',
+                        url: '<?php Common::getPath() ?>src/controller/orders/OrderController.php',
                         data: {
                             method: 'add_new',
                             data: JSON.stringify(data)
@@ -799,7 +802,7 @@
             $(e).removeClass("is-invalid");
             $.ajax({
                 dataType: "json",
-                url: "<?php echo __PATH__ . 'src/controller/orders/OrderController.php' ?>",
+                url: "<?php Common::getPath() ?>src/controller/orders/OrderController.php",
                 data: {
                     method: 'find_product_by_sku',
                     sku: val
@@ -905,7 +908,7 @@
             $("#create-order .overlay").removeClass("hidden");
             $.ajax({
                 dataType: "json",
-                url: "<?php echo __PATH__ . 'src/controller/orders/OrderController.php' ?>",
+                url: "<?php Common::getPath() ?>src/controller/orders/OrderController.php",
                 data: {
                     orders: 'loadDataCity'
                 },
@@ -930,7 +933,7 @@
             $('.select-district').empty();
             $.ajax({
                 dataType: "json",
-                url: "<?php echo __PATH__ . 'src/controller/orders/OrderController.php' ?>",
+                url: "<?php Common::getPath() ?>src/controller/orders/OrderController.php",
                 data: {
                     orders: 'loadDataDistrict',
                     cityId: cityId
@@ -963,7 +966,7 @@
             $('.select-village').empty();
             $.ajax({
                 dataType: "json",
-                url: "<?php echo __PATH__ . 'src/controller/orders/OrderController.php' ?>",
+                url: "<?php Common::getPath() ?>src/controller/orders/OrderController.php",
                 data: {
                     orders: 'loadDataVillage',
                     districtId: districtId

@@ -4,7 +4,7 @@
 <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <link rel="shortcut icon" type="image/x-icon" href="<?php echo __PATH__?>dist/img/icon.png"/>
+  <link rel="shortcut icon" type="image/x-icon" href="<?php Common::getPath() ?>dist/img/icon.png"/>
   <title>Bán hàng</title>
   	<?php require_once ('../../common/css.php'); ?>
   	<?php require_once ('../../common/js.php'); ?>

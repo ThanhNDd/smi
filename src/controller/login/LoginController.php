@@ -14,7 +14,7 @@ if (isset($_POST["submit"])) {
     $pwd = $_POST["password"];
 
     $result = $userDao->find_user($uid, $pwd);
-    $url = __PATH__;
+    $url = Common::getPath();
     if ($result == "error") {
         $url .= "src/view/login";
     }

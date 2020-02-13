@@ -1,14 +1,16 @@
-<?php require_once("../../common/common.php") ?>
+<?php require_once("../../common/common.php");
+Common::authen();
+?>
 <!DOCTYPE html>
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <link rel="shortcut icon" type="image/x-icon" href="<?php echo __PATH__ ?>dist/img/icon.png"/>
+  <link rel="shortcut icon" type="image/x-icon" href="<?php Common::getPath() ?>dist/img/icon.png"/>
   <title>Quản lý đơn hàng</title>
-  <?php require('../../common/css.php'); ?>
-  <?php require('../../common/js.php'); ?>
+  <?php require_once('../../common/css.php'); ?>
+  <?php require_once('../../common/js.php'); ?>
   <style>
 
     td.details-control {
@@ -36,8 +38,8 @@
     }
   </style>
 </head>
-<?php require('../../common/header.php'); ?>
-<?php require('../../common/menu.php'); ?>
+<?php require_once('../../common/header.php'); ?>
+<?php require_once('../../common/menu.php'); ?>
 <section class="content">
   <div class="row pt-2">
     <div class="col-md-8 col-sm-12">
@@ -235,7 +237,7 @@
 <input type="hidden" id="startDate">
 <input type="hidden" id="endDate">
 </div>
-<?php include __PATH__ . 'src/common/footer.php'; ?>
+<?php require_once ('../../common/footer.php'); ?>
 <script>
     $(document).ready(function () {
         // set title for page
@@ -277,7 +279,7 @@
         table = $('#example').DataTable({
             'ajax': {
                 "type": "GET",
-                "url": "<?php echo __PATH__ . 'src/controller/orders/OrderController.php'?>",
+                "url": "<?php Common::getPath() ?>src/controller/orders/OrderController.php",
                 "data": function (d) {
                     d.method = 'find_all';
                     d.start_date = $("#startDate").val();
@@ -350,7 +352,7 @@
                 // Open this row
                 // row.child(format_order_detail(row.data())).show();
                 $.ajax({
-                    url: '<?php echo __PATH__ . 'src/controller/orders/OrderController.php' ?>',
+                    url: '<?php Common::getPath() ?>src/controller/orders/OrderController.php',
                     type: "POST",
                     dataType: "json",
                     data: {
@@ -414,7 +416,7 @@
                     let row = table.row(tr);
                     let order_id = row.data().order_id;
                     $.ajax({
-                        url: '<?php echo __PATH__ . 'src/controller/orders/OrderController.php' ?>',
+                        url: '<?php Common::getPath() ?>src/controller/orders/OrderController.php',
                         type: "POST",
                         dataType: "json",
                         data: {
@@ -448,7 +450,7 @@
             let order_id = row.data().order_id;
             let order_type = row.data().type;
             $.ajax({
-                url: '<?php echo __PATH__ . 'src/controller/orders/OrderController.php' ?>',
+                url: '<?php Common::getPath() ?>src/controller/orders/OrderController.php',
                 type: "POST",
                 dataType: "json",
                 data: {
@@ -478,7 +480,7 @@
 
     function print_receipt(order_id, type) {
         $.ajax({
-            url: '<?php echo __PATH__ . 'src/controller/orders/OrderController.php' ?>',
+            url: '<?php Common::getPath() ?>src/controller/orders/OrderController.php',
             type: "POST",
             dataType: "json",
             data: {
@@ -490,11 +492,10 @@
                 let filename = res.fileName;
                 $(".iframeArea").html("");
                 if (typeof filename !== "underfined" && filename !== "") {
-                    $(".iframeArea").html('<iframe src="<?php echo __PATH__?>src/controller/orders/pdf/' + filename + '" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
+                    $(".iframeArea").html('<iframe src="<?php Common::getPath() ?>src/controller/orders/pdf/' + filename + '" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
                     let objFra = document.getElementById('receiptContent');
                     objFra.contentWindow.focus();
                     objFra.contentWindow.print();
-                    // window.open("<?php echo __PATH__?>src/controller/product/pdf/"+filename, "_blank");
                 }
             },
             error: function (data, errorThrown) {
@@ -804,7 +805,7 @@
 
     function get_info_total_checkout(start_date, end_date) {
         $.ajax({
-            url: '<?php echo __PATH__ . 'src/controller/orders/OrderController.php' ?>',
+            url: '<?php Common::getPath() ?>src/controller/orders/OrderController.php',
             type: "POST",
             dataType: "json",
             data: {

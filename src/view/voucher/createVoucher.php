@@ -1,4 +1,7 @@
-
+<?php
+require_once("../../common/common.php");
+Common::authen();
+?>
 <div class="modal fade" id="create-voucher">
   <div class="modal-dialog modal-xl modal-dialog-scrollable">
     <div class="modal-content">
@@ -70,7 +73,7 @@
     <!-- /.modal-content -->
   </div>
   <!-- /.modal-dialog -->
-  <?php include __PATH__.'src/common/js.php'; ?>
+  <?php include Common::getPath().'src/common/js.php'; ?>
   <script>
     var flagError = 0;
     const Toast = Swal.mixin({
@@ -411,7 +414,7 @@
           show_loading();
           $.ajax({
             dataType : 'json',
-            url      : '<?php echo __PATH__.'src/controller/product/ProductController.php' ?>',
+            url      : '<?php Common::getPath().'src/controller/product/ProductController.php' ?>',
             data : {
               type : 'addNew',
               data : JSON.stringify(data)

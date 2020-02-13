@@ -1,10 +1,13 @@
-<?php require_once("../../common/common.php") ?>
+<?php
+require_once("../../common/common.php");
+Common::authen();
+?>
 <!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="shortcut icon" type="image/x-icon" href="<?php echo __PATH__ ?>dist/img/icon.png"/>
+    <link rel="shortcut icon" type="image/x-icon" href="<?php Common::getPath() ?>dist/img/icon.png"/>
     <title>Kiểm hàng</title>
     <?php require_once('../../common/css.php'); ?>
     <?php require_once('../../common/js.php'); ?>
@@ -15,7 +18,7 @@
     <input type="hidden" value="<?php echo $_GET["seq"]; ?>" id="check_id">
     <div class="row col-12" style="display: inline-block;">
         <section class="ml-1" style="display: inline-block;float: left;padding-top: 1.25rem;">
-            <a class="btn btn-secondary btn-flat" href="<?php echo __PATH__ ?>src/view/check/index.php">
+            <a class="btn btn-secondary btn-flat" href="<?php Common::getPath() ?>src/view/check/index.php">
                 <i class="fas fa-chevron-circle-left"></i> Quay lại
             </a>
         </section>
@@ -129,7 +132,7 @@
         let product_checked = $("#totalQty").text();
         let money_checked = replaceComma($("#totalMoney").text());
         $.ajax({
-            url: '<?php echo __PATH__ . 'src/controller/Check/CheckController.php' ?>',
+            url: '<?php Common::getPath() ?>src/controller/Check/CheckController.php',
             type: "POST",
             dataType: "json",
             data: {
@@ -146,7 +149,7 @@
                     text: "Đã hoàn thành kiểm hàng lần thứ #" + seq
                 }).then((result) => {
                     if (result.value) {
-                        window.location.href = "<?php echo __PATH__ ?>src/view/check/index.php";
+                        window.location.href = "<?php Common::getPath() ?>src/view/check/index.php";
                     }
                 });
             },
@@ -192,7 +195,7 @@
 
     function find_by_id(seq) {
         $.ajax({
-            url: '<?php echo __PATH__ . 'src/controller/Check/CheckController.php' ?>',
+            url: '<?php Common::getPath() ?>src/controller/Check/CheckController.php',
             type: "POST",
             dataType: "json",
             data: {
@@ -241,7 +244,7 @@
 
     function get_status(seq) {
         $.ajax({
-            url: '<?php echo __PATH__ . 'src/controller/Check/CheckController.php' ?>',
+            url: '<?php Common::getPath() ?>src/controller/Check/CheckController.php',
             type: "POST",
             dataType: "json",
             data: {
@@ -275,7 +278,7 @@
     function find_product(sku) {
         let seq = "<?php echo $_GET["seq"]; ?>";
         $.ajax({
-            url: '<?php echo __PATH__ . 'src/controller/sales/processCheckout.php' ?>',
+            url: '<?php Common::getPath() ?>src/controller/sales/processCheckout.php',
             type: "POST",
             dataType: "json",
             data: {
@@ -333,7 +336,7 @@
         let qty = $(e).val();
         $.ajax({
             dataType: 'json',
-            url: '<?php echo __PATH__ . 'src/controller/Check/CheckController.php' ?>',
+            url: '<?php Common::getPath() ?>src/controller/Check/CheckController.php',
             data: {
                 method: "onchange_qty",
                 seq: seq,
@@ -379,7 +382,7 @@
     function del_prod(seq,sku) {
         $.ajax({
             dataType: 'json',
-            url: '<?php echo __PATH__ . 'src/controller/Check/CheckController.php' ?>',
+            url: '<?php Common::getPath() ?>src/controller/Check/CheckController.php',
             data: {
                 method: "delete_product",
                 seq: seq,
@@ -407,7 +410,7 @@
         console.log(JSON.stringify(product));
         $.ajax({
             dataType: 'json',
-            url: '<?php echo __PATH__ . 'src/controller/Check/CheckController.php' ?>',
+            url: '<?php Common::getPath() ?>src/controller/Check/CheckController.php',
             data: {
                 method: "save_check_detail",
                 data: JSON.stringify(product)
@@ -440,7 +443,7 @@
         data["total_money"] = $total_money;
         $.ajax({
             dataType: 'json',
-            url: '<?php echo __PATH__ . 'src/controller/Check/CheckController.php' ?>',
+            url: '<?php Common::getPath() ?>src/controller/Check/CheckController.php',
             data: {
                 method: "save_result_check",
                 data: JSON.stringify(data)

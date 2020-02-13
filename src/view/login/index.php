@@ -1,31 +1,25 @@
-<?php //require_once("../../common/common.php");
-//$name = 'is_login';
-//$value = true;
-//$expire = time()-3600;
-//$path = '/';
-//setcookie($name, $value,$expire ,$path);
-?>
+<?php require_once("../../common/common.php"); ?>
 <!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="shortcut icon" type="image/x-icon" href="<?php echo __PATH__ ?>dist/img/icon.png"/>
+    <link rel="shortcut icon" type="image/x-icon" href="<?php Common::getPath() ?>dist/img/icon.png"/>
     <title>Đăng nhập</title>
-    <?php require('../../common/css.php'); ?>
-    <?php require('../../common/js.php'); ?>
+    <?php require_once('../../common/css.php'); ?>
+    <?php require_once('../../common/js.php'); ?>
 </head>
 <body class="hold-transition login-page">
 <div class="login-box">
     <div class="login-logo">
-        <img src="<?php echo __PATH__ ?>dist/img/icon.png" width="100px">
+        <img src="<?php Common::getPath() ?>dist/img/icon.png" width="100px">
         <span style="display: block;">Shop Mẹ Ỉn</span>
     </div>
     <!-- /.login-logo -->
     <div class="card">
         <div class="card-body login-card-body">
             <p class="login-box-msg">Đăng nhập</p>
-            <form action="<?php echo __PATH__ . 'src/controller/login/LoginController.php'?>" method="post">
+            <form action="<?php Common::getPath() ?>src/controller/login/LoginController.php" method="post">
                 <div class="input-group mb-3">
                     <input type="text" class="form-control" name="username" placeholder="Tên đăng nhập" autofocus>
                     <div class="input-group-append">

@@ -1,13 +1,16 @@
-<?php require_once("../../common/common.php") ?>
+<?php
+require_once("../../common/common.php");
+Common::authen();
+?>
 <!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Sản phẩm hết hàng</title>
-    <link rel="shortcut icon" type="image/x-icon" href="<?php echo __PATH__ ?>dist/img/icon.png"/>
-    <?php require('../../common/css.php'); ?>
-    <?php require('../../common/js.php'); ?>
+    <link rel="shortcut icon" type="image/x-icon" href="<<?php Common::getPath() ?>dist/img/icon.png"/>
+    <?php require_once('../../common/css.php'); ?>
+    <?php require_once('../../common/js.php'); ?>
     <style>
 
         td.details-control {
@@ -61,7 +64,7 @@
             <div class="card">
                 <div class="row col-12" style="display: inline-block;">
                     <section class="ml-4" style="display: inline-block;float: left;padding-top: 1.25rem;">
-                        <a class="btn btn-secondary btn-flat" href="<?php echo __PATH__ ?>src/view/products/index.php">
+                        <a class="btn btn-secondary btn-flat" href="<?php Common::getPath() ?>src/view/products/index.php">
                             <i class="fas fa-chevron-circle-left"></i> Quay lại
                         </a>
                     </section>
@@ -98,7 +101,7 @@
 <!-- /.content -->
 </div>
 <div class="iframeArea hidden"></div>
-<?php include __PATH__ . 'src/common/footer.php'; ?>
+<?php require_once ('../../common/footer.php'); ?>
 <script>
     $(document).ready(function () {
         set_title("Danh sách sản phẩm hết hàng");
@@ -119,7 +122,7 @@
 
     function generate_datatable() {
         let table = $('#example').DataTable({
-            "ajax": '<?php echo __PATH__ . 'src/controller/product/ProductController.php?method=findall&status=1' ?>',
+            "ajax": '<?php Common::getPath() ?>src/controller/product/ProductController.php?method=findall&status=1',
             select: "single",
             deferRender: true,
             rowId: 'extn',
@@ -175,7 +178,7 @@
             } else {
                 // Open this row
                 $.ajax({
-                    url: '<?php echo __PATH__ . 'src/controller/product/ProductController.php' ?>',
+                    url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
                     type: "POST",
                     dataType: "json",
                     data: {
@@ -269,7 +272,7 @@
             let size = $(".select-size-" + sku).val();
             let qty = $(".select-qty-" + sku).val();
             $.ajax({
-                url: '<?php echo __PATH__ . 'src/controller/product/ProductController.php' ?>',
+                url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
                 type: "POST",
                 dataType: "json",
                 data: {
@@ -309,7 +312,7 @@
             let txtsize = $(".select-size-" + sku + ' option:selected').text();
             let qty = $(".select-qty-" + sku).val();
             $.ajax({
-                url: '<?php echo __PATH__ . 'src/controller/product/ProductController.php' ?>',
+                url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
                 type: "POST",
                 dataType: "json",
                 data: {
@@ -378,7 +381,7 @@
                 if (result.value) {
                     show_loading();
                     $.ajax({
-                        url: '<?php echo __PATH__ . 'src/controller/product/ProductController.php' ?>',
+                        url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
                         type: "POST",
                         dataType: "json",
                         data: {
@@ -432,7 +435,7 @@
 
     function check_stock(e, product_id) {
         $.ajax({
-            url: '<?php echo __PATH__ . 'src/controller/product/ProductController.php' ?>',
+            url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
             type: "POST",
             dataType: "json",
             data: {
@@ -478,7 +481,7 @@
 
     function update_in_stock(e, product_id) {
         $.ajax({
-            url: '<?php echo __PATH__ . 'src/controller/product/ProductController.php' ?>',
+            url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
             type: "POST",
             dataType: "json",
             data: {

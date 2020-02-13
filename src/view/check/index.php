@@ -1,13 +1,16 @@
-<?php require_once("../../common/common.php") ?>
+<?php
+  require_once("../../common/common.php");
+  Common::authen();
+?>
 <!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Kiểm hàng</title>
-    <link rel="shortcut icon" type="image/x-icon" href="<?php echo __PATH__ ?>dist/img/icon.png"/>
-    <?php require('../../common/css.php'); ?>
-    <?php require('../../common/js.php'); ?>
+    <link rel="shortcut icon" type="image/x-icon" href="<?php Common::getPath() ?>dist/img/icon.png"/>
+    <?php require_once('../../common/css.php'); ?>
+    <?php require_once('../../common/js.php'); ?>
     <style>
 
         td.details-control {
@@ -63,8 +66,8 @@
         }
     </style>
 </head>
-<?php require('../../common/header.php'); ?>
-<?php require('../../common/menu.php'); ?>
+<?php require_once('../../common/header.php'); ?>
+<?php require_once('../../common/menu.php'); ?>
 <section class="content">
     <div class="row">
         <div class="col-12">
@@ -111,7 +114,7 @@
 <?php //include 'createProducts.php'; ?>
 </div>
 <div class="iframeArea hidden"></div>
-<?php include __PATH__ . 'src/common/footer.php'; ?>
+<?php require_once ('../../common/footer.php'); ?>
 <script>
     $(document).ready(function () {
         set_title("Danh sách kiểm hàng");
@@ -141,7 +144,7 @@
 
     function validate_new_checking() {
         $.ajax({
-            url: '<?php echo __PATH__ . 'src/controller/Check/CheckController.php' ?>',
+            url: '<?php Common::getPath()?>src/controller/Check/CheckController.php',
             type: "POST",
             dataType: "json",
             data: {
@@ -176,7 +179,7 @@
         let total_products = $("#total_products").val();
         let total_money = replaceComma($("#total_money").val());
         $.ajax({
-            url: '<?php echo __PATH__ . 'src/controller/Check/CheckController.php' ?>',
+            url: '<?php Common::getPath() ?>src/controller/Check/CheckController.php',
             type: "POST",
             dataType: "json",
             data: {
@@ -186,7 +189,7 @@
             },
             success: function (res) {
                 // console.log(res.checkId);
-                window.location.href = "<?php echo __PATH__ ?>src/view/check/processCheck.php?id="+ res.checkId+"&seq="+res.seq;
+                window.location.href = "<?php Common::getPath() ?>src/view/check/processCheck.php?id="+ res.checkId+"&seq="+res.seq;
             },
             error: function (data, errorThrown) {
                 console.log(data.responseText);
@@ -221,7 +224,7 @@
     function printBarcode(data) {
         $(".iframeArea").html("");
         $.ajax({
-            url: '<?php echo __PATH__ . 'src/controller/product/ProductController.php' ?>',
+            url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
             type: "POST",
             dataType: "json",
             data: {
@@ -232,8 +235,8 @@
                 let filename = res.fileName;
                 $(".iframeArea").html("");
                 if (typeof filename !== "underfined" && filename !== "") {
-                    $(".iframeArea").html('<iframe src="<?php echo __PATH__?>src/controller/product/pdf/' + filename + '" id="barcodeContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
-                    window.open("<?php echo __PATH__?>src/controller/product/pdf/" + filename, "_blank");
+                    $(".iframeArea").html('<iframe src="<?php Common::getPath() ?>src/controller/product/pdf/' + filename + '" id="barcodeContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
+                    window.open("<?php Common::getPath() ?>src/controller/product/pdf/" + filename, "_blank");
                 }
             },
             error: function (data, errorThrown) {
@@ -250,7 +253,7 @@
 
     function generate_datatable() {
         let table = $('#example').DataTable({
-            "ajax": '<?php echo __PATH__ . 'src/controller/Check/CheckController.php?method=findall' ?>',
+            "ajax": '<?php Common::getPath() ?>src/controller/Check/CheckController.php?method=findall',
             select: "single",
             // deferRender: true,
             // rowId: 'extn',
@@ -320,7 +323,7 @@
                 if (result.value) {
                     show_loading();
                     $.ajax({
-                        url: '<?php echo __PATH__ . 'src/controller/Check/CheckController.php' ?>',
+                        url: '<?php Common::getPath() ?>src/controller/Check/CheckController.php',
                         type: "POST",
                         dataType: "json",
                         data: {
@@ -382,7 +385,7 @@
 
     function count_all_products() {
         $.ajax({
-            url: '<?php echo __PATH__ . 'src/controller/Check/CheckController.php' ?>',
+            url: '<?php Common::getPath() ?>src/controller/Check/CheckController.php',
             type: "POST",
             dataType: "json",
             data: {
@@ -411,11 +414,11 @@
         let seq = data.seq;
         let id = data.id;
         if(status == 0) {
-            return '<a href="<?php echo __PATH__ ?>src/view/check/processCheck.php?id='+id+'&seq='+seq+'" class="btn bg-gradient-info btn-sm continue_checking" title="Tiếp tục thực hiện kiểm hàng">' +
+            return '<a href="<?php Common::getPath() ?>src/view/check/processCheck.php?id='+id+'&seq='+seq+'" class="btn bg-gradient-info btn-sm continue_checking" title="Tiếp tục thực hiện kiểm hàng">' +
                 '<i class="fas fa-undo"></i> Tiếp tục</a>&nbsp;'
                 + '<button type="button" class="btn bg-gradient-danger btn-sm" id="cancel_checking" title="Hủy bỏ"><i class="fas fa-ban"></i> Hủy</button>';
         } else if(status == 1) {
-            return '<a href="<?php echo __PATH__ ?>src/view/check/processCheck.php?id='+id+'&seq='+seq+'" class="btn bg-gradient-success btn-sm detail_checked" title="Chi tiết">' +
+            return '<a href="<?php Common::getPath() ?>src/view/check/processCheck.php?id='+id+'&seq='+seq+'" class="btn bg-gradient-success btn-sm detail_checked" title="Chi tiết">' +
                 '<i class="fas fa-info-circle"></i> Chi tiết</a>&nbsp;';
         }
         return '';
@@ -496,7 +499,7 @@
             return;
         }
         $.ajax({
-            url: '<?php echo __PATH__ . 'src/controller/product/ProductController.php' ?>',
+            url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
             type: "POST",
             dataType: "json",
             data: {
@@ -524,7 +527,7 @@
 
     function check_stock(e, product_id) {
         $.ajax({
-            url: '<?php echo __PATH__ . 'src/controller/product/ProductController.php' ?>',
+            url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
             type: "POST",
             dataType: "json",
             data: {
@@ -570,7 +573,7 @@
 
     function update_out_of_stock(e, product_id) {
         $.ajax({
-            url: '<?php echo __PATH__ . 'src/controller/product/ProductController.php' ?>',
+            url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
             type: "POST",
             dataType: "json",
             data: {

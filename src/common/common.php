@@ -1,13 +1,50 @@
 <?php
-if (!defined('__PATH__')) define('__PATH__', (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://{$_SERVER['HTTP_HOST']}/smi/");
 
-if (isset($_COOKIE["is_login"]) && $_COOKIE["is_login"]) {
-    echo "logged";
-    header('location:' . __PATH__);
+class Common
+{
+  public static function getPath()
+  {
+    if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+      $path = "https";
+    } else {
+      $path = "http";
+    }
+    $path .= "://{$_SERVER['HTTP_HOST']}/smi/";
+    echo $path;
+  }
+
+  public static function is_logged_in()
+  {
+    if (isset($_COOKIE["is_login"]) && $_COOKIE["is_login"]) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public static function redirect_login_page()
+  {
+    if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+      $path = "https";
+    } else {
+      $path = "http";
+    }
+    $path .= "://{$_SERVER['HTTP_HOST']}/smi/src/view/login";
+    header("location:$path");
     exit;
-} else {
-    echo "not login";
-    $url = __PATH__ . "src/view/login";
-    header('location:' . $url);
-    exit;
+  }
+
+  public static function authen()
+  {
+    if (!Common::is_logged_in()) {
+      Common::redirect_login_page();
+    }
+  }
+
+  public static function authen_get_data()
+  {
+    if (!Common::is_logged_in()) {
+        throw new Exception("Forbidden! You don't have permission to access this resource.");
+    }
+  }
 }

@@ -1,11 +1,13 @@
-<?php require_once("../../common/common.php") ?>
+<?php
+require_once("../../common/common.php");
+Common::authen();
+?>
 <!DOCTYPE html>
 <html>
 <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Danh sách mã giảm giá</title>
-    <link rel="shortcut icon" type="image/x-icon" href="<?php echo __PATH__?>dist/img/icon.png"/>
+    <link rel="shortcut icon" type="image/x-icon" href="<?php Common::getPath()?>dist/img/icon.png"/>
     <?php require_once ('../../common/css.php'); ?>
     <?php require_once ('../../common/js.php'); ?>
     <style>
@@ -99,7 +101,7 @@
     });
     function generate_datatable() {
         let table = $('#example').DataTable({
-            "ajax": '<?php echo __PATH__.'src/controller/voucher/VoucherController.php?method=findall' ?>',
+            "ajax": '<?php Common::getPath() ?>src/controller/voucher/VoucherController.php?method=findall',
             select:"single",
             deferRender: true,
             rowId: 'extn',
@@ -154,7 +156,7 @@
             let voucher_id = $(td[1]).text();
             let voucher_code = $(td[2]).text();
             $.ajax({
-                url : '<?php echo __PATH__.'src/controller/voucher/VoucherController.php' ?>',
+                url : '<?php Common::getPath() ?>src/controller/voucher/VoucherController.php',
                 type : "POST",
                 dataType : "json",
                 data : {
@@ -195,7 +197,7 @@
         //    let voucher_id = $(td[1]).text();
         //    let voucher_code = $(td[2]).text();
         //    $.ajax({
-        //        url : '<?php //echo __PATH__.'src/controller/voucher/VoucherController.php' ?>//',
+        //        url : '<?php //Common::getPath().'src/controller/voucher/VoucherController.php' ?>//',
         //        type : "POST",
         //        dataType : "json",
         //        data : {
@@ -228,7 +230,7 @@
         //    let voucher_id = $(td[1]).text();
         //    let voucher_code = $(td[2]).text();
         //    $.ajax({
-        //        url : '<?php //echo __PATH__.'src/controller/voucher/VoucherController.php' ?>//',
+        //        url : '<?php //Common::getPath().'src/controller/voucher/VoucherController.php' ?>//',
         //        type : "POST",
         //        dataType : "json",
         //        data : {
@@ -270,7 +272,7 @@
         //    }).then((result) => {
         //        if (result.value) {
         //            $.ajax({
-        //                url : '<?php //echo __PATH__.'src/controller/voucher/VoucherController.php' ?>//',
+        //                url : '<?php //Common::getPath().'src/controller/voucher/VoucherController.php' ?>//',
         //                type : "POST",
         //                dataType : "json",
         //                data : {
@@ -310,7 +312,7 @@
             return '<button type="button" class="btn bg-gradient-danger btn-sm update_voucher" data-status="1"><i class="fas fa-check"></i> Ngừng Kích hoạt</button>';
         } else if(data.status == 1) {
             return '<button type="button" class="btn bg-gradient-success btn-sm update_voucher" data-status="2"><i class="fas fa-check"></i> Kích hoạt</button> &nbsp;&nbsp;' +
-                '<a class="btn bg-gradient-info btn-sm update_voucher" data-status="2" href="<?php echo __PATH__?>src/view/voucher/image/'+data.code+'.png" download>' +
+                '<a class="btn bg-gradient-info btn-sm update_voucher" data-status="2" href="<?php Common::getPath()?>src/view/voucher/image/'+data.code+'.png" download>' +
                 '<i class="fa fa-download" aria-hidden="true"></i> Sử dụng mã này' +
                 '</a>';
         } else {

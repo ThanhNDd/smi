@@ -1,16 +1,18 @@
-<?php require_once("../../common/common.php") ?>
+<?php
+require_once("../../common/common.php");
+Common::authen();
+?>
 <!DOCTYPE html>
 <html>
 <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <link rel="shortcut icon" type="image/x-icon" href="<?php echo __PATH__?>dist/img/icon.png"/>
+  <link rel="shortcut icon" type="image/x-icon" href="<?php Common::getPath() ?>dist/img/icon.png"/>
   <title>Bán hàng</title>
   	<?php require_once ('../../common/css.php'); ?>
   	<?php require_once ('../../common/js.php'); ?>
- 	<link rel="stylesheet" href="<?php echo __PATH__?>plugins/typeahead/css/typeaheadjs.css">	
-	<script src="<?php echo __PATH__?>plugins/typeahead/js/typeahead.jquery.min.js"></script>
-	<script src="<?php echo __PATH__?>plugins/typeahead/js/bloodhound.min.js"></script>
+ 	<link rel="stylesheet" href="<?php Common::getPath() ?>plugins/typeahead/css/typeaheadjs.css">
+	<script src="<?php Common::getPath()?>plugins/typeahead/js/typeahead.jquery.min.js"></script>
+	<script src="<?php Common::getPath()?>plugins/typeahead/js/bloodhound.min.js"></script>
 </head>  
 <?php require_once ('../../common/header.php'); ?>
 <?php require_once ('../../common/menu.php'); ?>
@@ -297,7 +299,7 @@
 	function ues_voucher(voucher_code) {
 		$.ajax({
 			dataType : 'json',
-			url      : '<?php echo __PATH__.'src/controller/voucher/VoucherController.php' ?>',
+			url      : '<?php Common::getPath().'src/controller/voucher/VoucherController.php' ?>',
 			data : {
 				method : "find_by_code",
 				code: voucher_code
@@ -598,7 +600,7 @@
 		console.log(JSON.stringify(data));
 		$.ajax({
 			dataType : 'json',
-			url      : '<?php echo __PATH__.'src/controller/sales/processCheckout.php' ?>',
+			url      : '<?php Common::getPath().'src/controller/sales/processCheckout.php' ?>',
 			data : {
 				type : "checkout",
 				data: JSON.stringify(data)
@@ -612,7 +614,7 @@
 				$(".iframeArea").html("");
 				if(typeof filename !== "undefined" && filename !== "")
 				{
-    				$(".iframeArea").html('<iframe src="<?php echo __PATH__?>src/controller/sales/pdf/'+filename+'" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
+    				$(".iframeArea").html('<iframe src="<?php Common::getPath()?>src/controller/sales/pdf/'+filename+'" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
 				}
 		        // toastr.success('Đơn hàng #'+orderId+' đã được tạo thành công.');
 		        // resetData();
@@ -768,7 +770,7 @@
 	function find_product(sku, qty)
  	{
 		$.ajax({
-			url : '<?php echo __PATH__.'src/controller/sales/processCheckout.php' ?>',
+			url : '<?php Common::getPath() ?>src/controller/sales/processCheckout.php',
 			type : "POST",
 			dataType : "json",
 			data : {

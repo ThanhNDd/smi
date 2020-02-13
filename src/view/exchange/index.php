@@ -1,10 +1,13 @@
-<?php require_once("../../common/common.php") ?>
+<?php
+require_once("../../common/common.php");
+Common::authen();
+?>
 <!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="shortcut icon" type="image/x-icon" href="<?php echo __PATH__ ?>dist/img/icon.png"/>
+    <link rel="shortcut icon" type="image/x-icon" href="<?php Common::getPath() ?>dist/img/icon.png"/>
     <title>Đổi sản phẩm</title>
     <?php require_once('../../common/css.php'); ?>
     <?php require_once('../../common/js.php'); ?>
@@ -402,7 +405,7 @@
 
     function find_order(orderId) {
         $.ajax({
-            url: '<?php echo __PATH__ . 'src/controller/exchange/ExchangeController.php' ?>',
+            url: '<?php Common::getPath() ?>src/controller/exchange/ExchangeController.php',
             type: "POST",
             dataType: "json",
             data: {
@@ -532,7 +535,7 @@
                 Swal.fire({
                     type: 'error',
                     title: 'Sản phẩm đã tồn tại',
-                    html: "Hãy chọn sản phẩm khác hoặc tạo đơn hàng mới <a href='<?php echo __PATH__ ?>src/view/sales/'>tại đây</a>!"
+                    html: "Hãy chọn sản phẩm khác hoặc tạo đơn hàng mới <a href='<?php Common::getPath() ?>src/view/sales/'>tại đây</a>!"
                 });
                 return;
             }
@@ -554,7 +557,7 @@
                 Swal.fire({
                     type: 'error',
                     title: 'Sản phẩm đã tồn tại',
-                    html: "Hãy chọn sản phẩm khác hoặc tạo đơn hàng mới <a href='<?php echo __PATH__ ?>src/view/sales/'>tại đây</a>!"
+                    html: "Hãy chọn sản phẩm khác hoặc tạo đơn hàng mới <a href='<?php Common::getPath() ?>src/view/sales/'>tại đây</a>!"
                 });
                 return;
             }
@@ -563,7 +566,7 @@
             Swal.fire({
                 type: 'error',
                 title: 'Không tồn tại sản phẩm đổi',
-                html: "Nếu không đổi sản phẩm thì hãy tạo đơn hàng mới <a href='<?php echo __PATH__ ?>src/view/sales/'>tại đây</a>!"
+                html: "Nếu không đổi sản phẩm thì hãy tạo đơn hàng mới <a href='<?php Common::getPath() ?>src/view/sales/'>tại đây</a>!"
             });
             return;
         } else {
@@ -597,7 +600,7 @@
             return;
         }
         $.ajax({
-            url: '<?php echo __PATH__ . 'src/controller/sales/processCheckout.php' ?>',
+            url: '<?php Common::getPath() ?>src/controller/sales/processCheckout.php',
             type: "POST",
             dataType: "json",
             data: {
@@ -689,7 +692,7 @@
             return;
         }
         $.ajax({
-            url: '<?php echo __PATH__ . 'src/controller/sales/processCheckout.php' ?>',
+            url: '<?php Common::getPath() ?>src/controller/sales/processCheckout.php',
             type: "POST",
             dataType: "json",
             data: {
@@ -1315,7 +1318,7 @@
         console.log(JSON.stringify(data));
         $.ajax({
             dataType: 'json',
-            url: '<?php echo __PATH__ . 'src/controller/exchange/ExchangeController.php' ?>',
+            url: '<?php Common::getPath() ?>src/controller/exchange/ExchangeController.php',
             data: {
                 method: "exchange",
                 data: JSON.stringify(data)
@@ -1327,7 +1330,7 @@
                 console.log('filename: ' + filename);
                 $(".iframeArea").html("");
                 if (typeof filename !== "undefined" && filename !== "") {
-                    $(".iframeArea").html('<iframe src="<?php echo __PATH__?>src/controller/exchange/pdf/' + filename + '" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
+                    $(".iframeArea").html('<iframe src="<<?php Common::getPath() ?>src/controller/exchange/pdf/' + filename + '" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
                 }
                 // toastr.success('Đơn hàng #' + orderId + ' đã được tạo thành công.');
                 // resetData();

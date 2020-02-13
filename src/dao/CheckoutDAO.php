@@ -1,7 +1,6 @@
 <?php
-// require "../../common/cities/Zone.php";
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+require_once("../common/common.php");
+Common::authen();
 
 
 class CheckoutDAO
@@ -285,7 +284,8 @@ class CheckoutDAO
                       ) tmp
                     group by
                       tmp.type,
-                      tmp.payment_type
+                      tmp.payment_type,
+                      tmp.discount
                     order by 
                       tmp.type";
             $result = mysqli_query($this->conn, $sql);
