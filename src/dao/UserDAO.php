@@ -12,6 +12,9 @@ class UserDAO
             $pwd = mysqli_query($this->conn, $sql);
 //            print_r($this->conn->error);
             $pwd = mysqli_fetch_array($pwd)['password'];
+            if($pwd == null) {
+              return "error";
+            }
 //            print_r($pwd);
             $check = crypt($password, $pwd);
 //            print_r($check);

@@ -129,7 +129,7 @@ if (isset($_POST["type"]) && $_POST["type"] == "checkout") {
         $detail->setProductName($details[$i]->product_name);
         array_push($detailsObj, $detail);
         if ($sku != "") {
-          $dao->update_quantity_by_sku((int)$sku, (int)$qty);
+          $dao->update_qty_variation_by_sku((int)$sku, (int)$qty);
         } else {
           throw new Exception("SKU is empty");
         }

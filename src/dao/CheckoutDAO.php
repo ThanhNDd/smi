@@ -1,6 +1,6 @@
 <?php
-require_once("../common/common.php");
-Common::authen();
+//require_once("../common/common.php");
+//Common::authen();
 
 
 class CheckoutDAO

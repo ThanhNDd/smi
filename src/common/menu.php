@@ -19,7 +19,7 @@ require_once("common.php");
                 <img src="<?php Common::getPath() ?>dist/img/avatar-in.jpg" class="img-circle elevation-2" alt="User Image">
             </div>
             <div class="info">
-                <a href="#" class="d-block">Ỉn Thối</a>
+                <a href="<?php Common::getPath() ?>src/controller/login/LoginController.php?logout" class="d-block">Ỉn Thối</a>
             </div>
         </div>
 

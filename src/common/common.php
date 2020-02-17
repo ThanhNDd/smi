@@ -2,6 +2,16 @@
 
 class Common
 {
+  public static function path()
+  {
+    if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+      $path = "https";
+    } else {
+      $path = "http";
+    }
+    $path .= "://{$_SERVER['HTTP_HOST']}/smi/";
+    return $path;
+  }
   public static function getPath()
   {
     if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {

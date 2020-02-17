@@ -4,7 +4,7 @@ require_once("common.php");
 ?>
 <!-- REQUIRED SCRIPTS -->
 <!-- jQuery -->
-<script src="<?php Common::getPath()?>plugins/jquery/jquery.min.js"></script>
+<script src="<?php Common::getPath()?>plugins/jquery/jquery.js"></script>
 <!-- Bootstrap -->
 <script src="<?php Common::getPath()?>plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- overlayScrollbars -->
@@ -29,11 +29,11 @@ require_once("common.php");
 
 <script src="<?php Common::getPath()?>plugins/datatables/jquery.dataTables.js"></script>
 <script src="<?php Common::getPath()?>plugins/datatables/dataTables.bootstrap4.js"></script>
-<script src="<?php Common::getPath()?>plugins/datatables/dataTables.select.min.js" type="text/javascript"></script>
+<!--<script src="<?php /*Common::getPath()*/?>plugins/datatables/dataTables.select.min.js" type="text/javascript"></script>-->
 <script src="<?php Common::getPath()?>plugins/datatables/dataTables.buttons.min.js" type="text/javascript"></script>
 <script src="<?php Common::getPath()?>plugins/datatables/extensions/button/js/buttons.html5.min.js"></script>
 
-<script src="<?php Common::getPath()?>plugins/select2/js/select2.full.min.js"></script>
+<script src="<?php Common::getPath()?>plugins/select2/js/select2.js"></script>
 
 <!-- Toastr -->
 <script src="<?php Common::getPath()?>plugins/sweetalert2/sweetalert2.all.min.js"></script>

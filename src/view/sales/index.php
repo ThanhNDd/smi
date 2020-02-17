@@ -600,7 +600,7 @@ Common::authen();
 		console.log(JSON.stringify(data));
 		$.ajax({
 			dataType : 'json',
-			url      : '<?php Common::getPath().'src/controller/sales/processCheckout.php' ?>',
+			url      : '<?php Common::getPath()?>src/controller/sales/processCheckout.php',
 			data : {
 				type : "checkout",
 				data: JSON.stringify(data)
