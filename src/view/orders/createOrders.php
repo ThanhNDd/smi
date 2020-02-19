@@ -632,6 +632,7 @@ Common::authen();
             $(".product-area").html("");
             $('.count-row').val("");
             $('#order_id').val("");
+            $('#orderDate').val($('#orderDate').val());
             disable_btn_add_new();
             onchange_order_type(1);
         }

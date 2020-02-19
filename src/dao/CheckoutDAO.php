@@ -1,7 +1,4 @@
 <?php
-//require_once("../common/common.php");
-//Common::authen();
-
 
 class CheckoutDAO
 {
@@ -164,7 +161,7 @@ class CheckoutDAO
                             'total_reduce' => number_format($row["total_reduce"]),
                             'customer_payment' => number_format($row["customer_payment"]),
                             'repay' => number_format($row["repay"]),
-                            'order_date' => date_format(date_create($row["order_date"]), "d/m/Y - H:i:s"),
+                            'order_date' => date_format(date_create($row["order_date"]), "d/m/Y"),
                             'details' => array()
                         );
                     }
@@ -214,125 +211,6 @@ class CheckoutDAO
             $arr = array();
             $arr["data"] = $data;
             return $arr;
-        } catch (Exception $e) {
-            throw new Exception($e);
-        }
-    }
-
-    function get_info_total_checkout($start_date, $end_date)
-    {
-        try {
-//            $sql = "select
-//                        sum(tmp.total_checkout) as total_checkout,
-//                        sum(tmp.profit - tmp.discount) as total_profit,
-//                        count(tmp.type) as count_type,
-//                        tmp.type,
-//                        tmp.payment_type
-//                    from (
-//                        SELECT A.id, A.discount,
-//                            sum(D.profit * B.quantity - B.reduce) as profit,
-//                            A.total_amount - A.total_reduce  as 'total_checkout',
-//                            A.type,  A.payment_type
-//                        FROM smi_orders A
-//                            LEFT JOIN smi_order_detail B ON A.id = B.order_id
-//                            LEFT JOIN smi_customers C ON A.customer_id = C.id
-//                            LEFT JOIN smi_variations E ON B.variant_id = E.id
-//                            LEFT JOIN smi_products D ON E.product_id = D.id
-//                        where DATE(order_date) between DATE('" . $start_date . "') and DATE('" . $end_date . "')
-//                        and A.deleted = 0
-//                        group by A.id, A.type,  A.payment_type
-//                        ) tmp
-//                    group by
-//                        tmp.type,
-//                        tmp.payment_type
-//                    order by
-//                        tmp.type";
-            $sql = "select 
-                      sum(tmp.total_checkout) as total_checkout, 
-                      sum(tmp.profit) - tmp.discount as total_profit,
-                      count(tmp.type) as count_type, 
-                      tmp.type,
-                      tmp.payment_type
-                    from (
-                      SELECT A.id, A.discount,
-                            sum(t.p) as profit,
-                        A.type,  A.payment_type,
-                            case A.payment_exchange_type
-                            when 2 then 0 - A.total_amount + A.total_reduce
-                            else A.total_amount - A.total_reduce
-                            end as 'total_checkout'
-                      FROM smi_orders A
-                        LEFT JOIN smi_order_detail B ON A.id = B.order_id
-                        LEFT JOIN smi_customers C ON A.customer_id = C.id
-                        LEFT JOIN smi_variations E ON B.variant_id = E.id
-                        LEFT JOIN smi_products D ON E.product_id = D.id
-                            LEFT JOIN (select B.id,
-                            case B.type
-                            when 1 then sum(0 - (D.profit * B.quantity - B.reduce)) 
-                            else sum(D.profit * B.quantity - B.reduce) 
-                            end as p
-                            from smi_orders A
-                        LEFT JOIN smi_order_detail B ON A.id = B.order_id
-                            LEFT JOIN smi_variations E ON B.variant_id = E.id
-                        LEFT JOIN smi_products D ON E.product_id = D.id 
-                            where DATE(order_date) between DATE('" . $start_date . "') and DATE('" . $end_date . "')
-                        and A.deleted = 0
-                            group by B.id,B.type) as t on t.id = B.id
-                      where DATE(order_date) between DATE('" . $start_date . "') and DATE('" . $end_date . "')
-                      and A.deleted = 0
-                      group by A.id, A.discount,A.type,  A.payment_type
-                      ) tmp
-                    group by
-                      tmp.type,
-                      tmp.payment_type,
-                      tmp.discount
-                    order by 
-                      tmp.type";
-            $result = mysqli_query($this->conn, $sql);
-            $total_checkout = 0;
-            $total_on_shop = 0;
-            $total_online = 0;
-            $count_on_shop = 0;
-            $count_online = 0;
-            $count_exchange = 0;
-            $total_exchange = 0;
-            $total_cash = 0;
-            $total_transfer = 0;
-            $total_profit = 0;
-            foreach ($result as $k => $row) {
-                $total_checkout += $row["total_checkout"];
-                $total_profit += $row["total_profit"];
-                if ($row["type"] == 0) {
-                    $total_on_shop += $row["total_checkout"];
-                    $count_on_shop += $row["count_type"];
-                } else if ($row["type"] == 1) {
-                    $total_online += $row["total_checkout"];
-                    $count_online += $row["count_type"];
-                } else if ($row["type"] == 2) {
-                    $total_exchange += $row["total_checkout"];
-                    $count_exchange += $row["count_type"];
-                }
-                if ($row["payment_type"] == 0) {
-                    $total_cash += $row["total_checkout"];
-                } else if ($row["payment_type"] == 1) {
-                    $total_transfer += $row["total_checkout"];
-                }
-            }
-            $count_total = $count_on_shop + $count_online + $count_exchange;
-            $arr = array();
-            $arr["total_checkout"] = number_format($total_checkout);
-            $arr["count_total"] = $count_total;
-            $arr["total_on_shop"] = number_format($total_on_shop);
-            $arr["count_on_shop"] = $count_on_shop;
-            $arr["total_online"] = number_format($total_online);
-            $arr["count_online"] = $count_online;
-            $arr["total_exchange"] = number_format($total_exchange);
-            $arr["count_exchange"] = $count_exchange;
-            $arr["total_cash"] = number_format($total_cash);
-            $arr["total_transfer"] = number_format($total_transfer);
-            $arr["total_profit"] = number_format($total_profit);
-            return $arr;
-
         } catch (Exception $e) {
             throw new Exception($e);
         }
@@ -417,6 +295,125 @@ class CheckoutDAO
             $arr = array();
             $arr["data"] = $data;
             return $arr;
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function get_info_total_checkout($start_date, $end_date)
+    {
+        try {
+//            $sql = "select
+//                        sum(tmp.total_checkout) as total_checkout,
+//                        sum(tmp.profit - tmp.discount) as total_profit,
+//                        count(tmp.type) as count_type,
+//                        tmp.type,
+//                        tmp.payment_type
+//                    from (
+//                        SELECT A.id, A.discount,
+//                            sum(D.profit * B.quantity - B.reduce) as profit,
+//                            A.total_amount - A.total_reduce  as 'total_checkout',
+//                            A.type,  A.payment_type
+//                        FROM smi_orders A
+//                            LEFT JOIN smi_order_detail B ON A.id = B.order_id
+//                            LEFT JOIN smi_customers C ON A.customer_id = C.id
+//                            LEFT JOIN smi_variations E ON B.variant_id = E.id
+//                            LEFT JOIN smi_products D ON E.product_id = D.id
+//                        where DATE(order_date) between DATE('" . $start_date . "') and DATE('" . $end_date . "')
+//                        and A.deleted = 0
+//                        group by A.id, A.type,  A.payment_type
+//                        ) tmp
+//                    group by
+//                        tmp.type,
+//                        tmp.payment_type
+//                    order by
+//                        tmp.type";
+            $sql = "select 
+                      sum(tmp.total_checkout) as total_checkout, 
+                      sum(tmp.profit - tmp.discount) as total_profit,
+                      count(tmp.type) as count_type, 
+                      tmp.type,
+                      tmp.payment_type
+                    from (
+                      SELECT A.id, A.discount,
+                            sum(t.p) as profit,
+                        A.type,  A.payment_type,
+                            case A.payment_exchange_type
+                            when 2 then 0 - total_checkout
+                            else A.total_checkout
+                            end as 'total_checkout'
+                      FROM smi_orders A
+                        LEFT JOIN smi_order_detail B ON A.id = B.order_id
+                        LEFT JOIN smi_customers C ON A.customer_id = C.id
+                        LEFT JOIN smi_variations E ON B.variant_id = E.id
+                        LEFT JOIN smi_products D ON E.product_id = D.id
+                            LEFT JOIN (select B.id,
+                            case B.type
+                            when 1 then sum(0 - (D.profit * B.quantity - B.reduce)) 
+                            else sum(D.profit * B.quantity - B.reduce) 
+                            end as p
+                            from smi_orders A
+                        LEFT JOIN smi_order_detail B ON A.id = B.order_id
+                            LEFT JOIN smi_variations E ON B.variant_id = E.id
+                        LEFT JOIN smi_products D ON E.product_id = D.id 
+                            where DATE(order_date) between DATE('" . $start_date . "') and DATE('" . $end_date . "')
+                        and A.deleted = 0
+                            group by B.id,B.type) as t on t.id = B.id
+                      where DATE(order_date) between DATE('" . $start_date . "') and DATE('" . $end_date . "')
+                      and A.deleted = 0
+                      group by A.id, A.discount,A.type,  A.payment_type
+                      ) tmp
+                    group by
+                      tmp.type,
+                      tmp.payment_type
+                    order by 
+                      tmp.type";
+            $result = mysqli_query($this->conn, $sql);
+            $total_checkout = 0;
+            $total_on_shop = 0;
+            $total_online = 0;
+            $count_on_shop = 0;
+            $count_online = 0;
+            $count_exchange = 0;
+            $total_exchange = 0;
+            $total_cash = 0;
+            $total_transfer = 0;
+            $total_profit = 0;
+            foreach ($result as $k => $row) {
+                $total_checkout += $row["total_checkout"];
+                $total_profit += $row["total_profit"];
+                if ($row["type"] == 0) {
+                    $total_on_shop += $row["total_checkout"];
+                    $count_on_shop += $row["count_type"];
+                } else if ($row["type"] == 1) {
+                    $total_online += $row["total_checkout"];
+                    $count_online += $row["count_type"];
+                } else if ($row["type"] == 2) {
+                    $total_exchange += $row["total_checkout"];
+                    $count_exchange += $row["count_type"];
+                }
+                if ($row["payment_type"] == 0) {
+                    $total_cash += $row["total_checkout"];
+                } else if ($row["payment_type"] == 1) {
+                    $total_transfer += $row["total_checkout"];
+                }
+            }
+            $count_total = $count_on_shop + $count_online + $count_exchange;
+            $arr = array();
+            $arr["total_checkout"] = number_format($total_checkout);
+            $arr["count_total"] = $count_total;
+            $arr["total_on_shop"] = number_format($total_on_shop);
+            $arr["count_on_shop"] = $count_on_shop;
+            $arr["total_online"] = number_format($total_online);
+            $arr["count_online"] = $count_online;
+            $arr["total_exchange"] = number_format($total_exchange);
+            $arr["count_exchange"] = $count_exchange;
+            $arr["total_cash"] = number_format($total_cash);
+            $arr["total_transfer"] = number_format($total_transfer);
+            $arr["total_profit"] = number_format($total_profit);
+
+            return $arr;
+
         } catch (Exception $e) {
             throw new Exception($e);
         }
@@ -774,11 +771,17 @@ class CheckoutDAO
             $shipping_unit = $order->getShipping_unit();
             $status = $order->getStatus();
             $payment_type = $order->getPayment_type();
+            $order_date = $order->getOrder_date();
+            if(!empty($order->getOrder_date())) {
+                $date = $order->getOrder_date();
+                $date = str_replace('/', '-', $date);
+                $order_date = date('Y-m-d H:i:s', strtotime($date));
+            }
             $id = $order->getId();
 
-            $stmt = $this->getConn()->prepare("update `smi_orders` SET `total_reduce` = ?, `total_reduce_percent` = ?, `discount` = ?, `total_amount` = ?, `total_checkout` = ?, `customer_payment` = ?, `repay` = ?, `customer_id` = ?, `type` = ?, `bill_of_lading_no` = ?, `shipping_fee` = ?, `shipping` = ?, `shipping_unit` = ?, `status` = ?, `updated_date` = NOW(), `deleted` = b'0', `payment_type` = ?  WHERE `id` = ?");
+            $stmt = $this->getConn()->prepare("update `smi_orders` SET `total_reduce` = ?, `total_reduce_percent` = ?, `discount` = ?, `total_amount` = ?, `total_checkout` = ?, `customer_payment` = ?, `repay` = ?, `customer_id` = ?, `type` = ?, `bill_of_lading_no` = ?, `shipping_fee` = ?, `shipping` = ?, `shipping_unit` = ?, `status` = ?, `updated_date` = NOW(), `deleted` = b'0', `payment_type` = ?, `order_date` = ?  WHERE `id` = ?");
 
-            $stmt->bind_param("dddddddiisddsiii", $total_reduce, $total_reduce_percent, $discount, $total_amount, $total_checkout, $customer_payment, $repay, $customer_id, $type, $bill, $shipping_fee, $shipping, $shipping_unit, $status, $payment_type, $id);
+            $stmt->bind_param("dddddddiisddsiisi", $total_reduce, $total_reduce_percent, $discount, $total_amount, $total_checkout, $customer_payment, $repay, $customer_id, $type, $bill, $shipping_fee, $shipping, $shipping_unit, $status, $payment_type, $order_date, $id);
             $stmt->execute();
             print_r($this->getConn()->error);
             //You can get the number of rows affected by your query

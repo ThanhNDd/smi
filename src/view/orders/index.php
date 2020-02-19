@@ -461,7 +461,6 @@ Common::authen();
                 success: function (res) {
                     console.log(res);
                     set_data_edit_order(order_id, res, order_type);
-
                 },
                 error: function (data, errorThrown) {
                     console.log(data.responseText);
@@ -514,13 +513,14 @@ Common::authen();
     function set_data_edit_order(order_id, data, order_type) {
         reset_data();
         $(".modal-title").text("Cập nhật đơn hàng #" + order_id);
-        $("#create-new").text("Cập nhật");
+        $("#create_new").text("Cập nhật");
         enable_btn_add_new();
         $("#order_type").val(order_type).trigger("change");
         $.each(data, function (key, value) {
             console.log(order_type);
             if (value.length != 0) {
                 $("#order_id").val(value[0].order_id);
+                $('#orderDate').val(value[0].order_date);
                 // online
                 if (order_type == 1) {
                     $("#customer_id").val(value[0].customer_id);
@@ -670,11 +670,11 @@ Common::authen();
         } else {
             d += '<div class="row">' +
                 '<div class="col-3 col-sm-3 col-md-3"><small>Khách hàng</small> <h5>Khách lẻ</h5></div>';
-            if (data.voucher_code != "") {
+            if (data.voucher_code != null && data.voucher_code != "") {
                 voucher_value = Number((intoMoney * 10) / 100);
                 d += '<div class="col-3 col-sm-3 col-md-3"><small>Mã giảm giá</small> <h5>' + data.voucher_code + ' <small>(-10%)(' + formatNumber(voucher_value) + ' đ)</small></h5></div>';
             }
-            if (order_refer != "") {
+            if (order_refer != null && order_refer != "" && order_refer != 0) {
                 d += '<div class="col-3 col-sm-3 col-md-3"><small>Mã đơn đổi</small> <h5>' + order_refer + '</h5></div>';
             }
             d += '</div>';

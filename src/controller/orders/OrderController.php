@@ -258,7 +258,8 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
     $order->setPayment_type($data->payment_type);
     $order->setOrder_date($data->order_date);
     $order->setVoucherValue(0);
-    if ($data->order_id > 0) {
+    $order->setOrder_date($data->order_date);
+    if (isset($data->order_id) && $data->order_id > 0) {
       $order->setId($data->order_id);
       $orderId = $checkoutDAO->updateOrder($order);
       if (!empty($orderId)) {

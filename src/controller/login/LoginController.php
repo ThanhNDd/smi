@@ -25,7 +25,7 @@ if (isset($_POST["submit"])) {
     $url = Common::path();
     $name = 'is_login';
     $value = true;
-    $expire = time()+3600;
+    $expire = time()+3600*24;
     $path = '/';
     setcookie($name, $value,$expire ,$path);
     header('location:' . $url);
