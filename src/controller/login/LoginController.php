@@ -16,7 +16,12 @@ if (isset($_POST["submit"])) {
 //  echo "<br>";
     $uid = $_POST["username"];
     $pwd = $_POST["password"];
-
+    if($uid == "") {
+        Common::redirect_login_page();
+    }
+    if($pwd == "") {
+        Common::redirect_login_page();
+    }
     $result = $userDao->find_user($uid, $pwd);
 
     if ($result == "error") {
