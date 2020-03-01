@@ -587,12 +587,15 @@ Common::authen();
                             } else {
                                 msg = "Đơn hàng #" + data.order_id + " đã được tạo thành công.!!!";
                             }
-                            toastr.success(msg);
-                            reset_data();
-                            $("#create-order .close").click();
-                            $("#create-order .overlay").addClass("hidden");
-                            table.ajax.reload();
-                            get_info_total_checkout($("#startDate").val(), $("#endDate").val());
+                            Swal.fire(msg).then((result) => {
+                                if (result.value) {
+                                    reset_data();
+                                    $("#create-order .close").click();
+                                    $("#create-order .overlay").addClass("hidden");
+                                    table.ajax.reload();
+                                    get_info_total_checkout($("#startDate").val(), $("#endDate").val());
+                                }
+                            });
                         },
                         error: function (data, errorThrown) {
                             console.log(data.responseText);

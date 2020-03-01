@@ -13,109 +13,62 @@ Common::authen();
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
+
             </div>
-            <div class="modal-body" style="min-height: 300px;">
-                <div class="row col-md-12">
-                    <div class="col-md-3">
-                        <div class="card card-outline card-danger">
-                            <div class="card-header">
-                                <h3 class="card-title">Danh sách sản phẩm</h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="form-inline">
-                                    <input type="hidden" id="product_id">
-                                    <div class="form-group mb-2">
-                                        <label for="name" class="w110">Tên sản phẩm</label>
-                                        <input type="text" value="https://via.placeholder.com/150" class="form-control ml-2" id="p_image" placeholder="Nhập tên sản phẩm">
-                                    </div>
-                                    <div class="form-group mb-2">
-                                        <label for="link" class="w110">Link sản phẩm</label>
-                                        <input type="text" class="form-control ml-2" id="p_link" placeholder="Nhập link sản phẩm">
-                                    </div>
-                                    <div class="form-group mb-2">
-                                        <label for="p_fee" class="w110">Phí vận chuyển</label>
-                                        <input type="text" class="form-control ml-2" id="p_fee" placeholder="Nhập phí vận chuyển">
-                                    </div>
-                                    <div class="form-group mb-2">
-                                        <label for="select_type" class="w110 mr-2" style="justify-content: left;">Giới tính</label>
-                                        <select class="select-type form-control ml-2" id="select_type" style="width: 208px;"></select>
-                                    </div>
-                                    <div class="form-group mb-2">
-                                        <label for="select_cat" style="justify-content: left;" class="w110 mr-2">Danh mục</label>
-                                        <select class="select-cat form-control ml-2" id="select_cat" style="width: 208px;"></select>
-                                    </div>
-                                    <div class="form-group mb-2">
-                                        <label for="p_price_" class="w110" style="justify-content: left;">Giá nhập</label>
-                                        <input type="text" class="form-control ml-2" id="p_price_" value="" >
-                                    </div>
-                                    <div class="input-group mb-2">
-                                        <label for="p_retail_" class="w110" style="justify-content: left;">Giá bán lẻ</label>
-                                        <input type="text" class="form-control ml-2" id="p_retail_" value="" style="width: 111px;">
-                                        <input type="number" class="form-control ml-2" id="p_percent_" value="100" min="0" max="100" style="width: 53px;padding-right: 5px;padding-left: 5px;">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text">%</span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group mb-2">
-                                        <label for="select_size" class="w110 mr-2" style="justify-content: left;">Size</label>
-                                        <select class="select-size form-control ml-2 mr-2" id="select_size" style="width: 157px;" multiple="multiple"></select>
-                                        <button class="btn btn-info btn-flat" id="add_size" title="Thêm size" style="margin-left: 10px;"><i class="fa fa-plus-circle"></i></button>
-                                    </div>
-                                    <div class="form-group mb-2">
-                                        <label for="select_color" class="w110 mr-2" style="justify-content: left;">Màu sắc</label>
-                                        <select class="select-color form-control ml-2 mr-" id="select_color" style="width: 157px;" multiple="multiple"></select>
-                                        <button class="btn btn-info btn-flat" id="add_color" title="Thêm màu sắc" style="margin-left: 10px;"><i class="fa fa-plus-circle"></i></button>
-                                    </div>
-                                    <div style="margin: auto">
-                                        <button class="btn btn-secondary btn-flat">Tạo biến thể</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <div class="modal-body">
+                <div class="row header-column">
+                    <div class="w30 center">
+                        <label>Stt</label>
                     </div>
-                    <div class="col-md-9">
-                        <div class="card card-outline card-danger" style="min-height: 543px;">
-                            <div class="card-header">
-                                <h3 class="card-title">Danh sách sản phẩm</h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="form-inline">
-                                    <div class="form-group" style="display: inline-block;vertical-align: top;float: left;height: 125px;">
-                                        <label class="mr-sm-2" style="justify-content: left;">Mã sản phẩm</label>
-                                        <label class="mr-sm-2" style="justify-content: center;">12345</label>
-                                    </div>
-                                    <div class="form-group" style="vertical-align: top;display: inline-block;float: left;height: 125px;">
-                                        <label for="p_image" class="mr-sm-2" style="justify-content: left;">Hình ảnh</label>
-                                        <img src="https://via.placeholder.com/100" style="justify-content: left;float: left;margin-right: 10px;">
-                                        <div class="input-group mb-3" style="float: left;">
-                                            <input type="text" class="form-control" placeholder="Nhập link hình ảnh" id="p_image">
-                                            <div class="input-group-append">
-                                                <button type="button" class="btn btn-info btn-flat">
-                                                    <i class="fa fa-upload"></i> Upload
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group" style="vertical-align: top;display: inline-block;float: left;margin-left: 10px;height: 125px;">
-                                        <label for="size_norow" class="mr-sm-2 ml-2" style="justify-content: left;">Size</label>
-                                        <input type="text" class="form-control mb-2 mr-sm-2" id="size_norow">
-                                    </div>
-                                    <div class="form-group" style="height: 125px;vertical-align: top;display: inline-block;">
-                                        <label for="color_norow" class="mr-sm-2" style="justify-content: left;">Màu sắc</label>
-                                        <input type="text" class="form-control mb-2 mr-sm-2" id="color_norow">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="pd-l-5 pd-r-5 w110">
+                        <label>Hình ảnh<span style="color:red">*</span></label>
+                    </div>
+                    <div class="pd-l-5 pd-r-5 w150">
+                        <label>Tên sản phẩm<span style="color:red">*</span></label>
+                    </div>
+                    <div class="pd-l-5 pd-r-5 w130">
+                        <label>Link sản phẩm</label>
+                    </div>
+                    <div class="pd-l-5 pd-r-5 w120">
+                        <label>Size<span style="color:red">*</span></label>
+                    </div>
+                    <div class="pd-l-5 pd-r-5 w120">
+                        <label>Màu sắc<span style="color:red">*</span></label>
+                    </div>
+                    <div class="pd-l-5 pd-r-5 w50">
+                        <label>SL<span style="color:red">*</span></label>
+                    </div>
+                    <div class="pd-l-5 pd-r-5 w100">
+                        <label>Giá nhập<span style="color:red">*</span></label>
+                    </div>
+                    <div class="pd-l-5 pd-r-5 w120">
+                        <label>Phí vận chuyển</label>
+                    </div>
+                    <div class="pd-l-5 pd-r-5 w70 center">
+                        <label>%</label>
+                    </div>
+                    <div class="pd-l-5 pd-r-5 w110">
+                        <label>Giá bán lẻ</label>
+                    </div>
+                    <div class="pd-l-5 pd-r-5 w70 center">
+                        <label>*</label>
+                    </div>
+                    <div class="pd-l-5 pd-r-5 w100 center">
+                        <label>Phân loại</label>
+                    </div>
+                    <div class="pd-l-5 pd-r-5 w130 center">
+                        <label>Danh mục</label>
                     </div>
                 </div>
+                <input type="hidden" value="0" class="count-row" />
+                <div class="form-group product-area"></div>
             </div>
             <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-secondary btn-flat" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-success form-control add-new-prod w80 btn-flat" title="Thêm 10 bản ghi">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success form-control add-new-prod w80" title="Thêm 10 bản ghi">
                     <i class="fa fa-plus-circle" aria-hidden="true"> </i>
                 </button>
-                <button type="button" class="btn btn-primary create-new btn-flat">Tạo mới</button>
+                <button type="button" class="btn btn-primary create-new">Tạo mới</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -150,11 +103,6 @@ Common::authen();
                 let table = $('#example').DataTable();
                 table.ajax.reload();
             })
-
-            generate_select2_size('#select_size');
-            generate_select2_colors('#select_color');
-            generate_select2_types('#select_type');
-            generate_select2_cats('#select_cat');
         });
 
 

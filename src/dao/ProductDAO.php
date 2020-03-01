@@ -355,10 +355,26 @@ class ProductDAO
             $stmt = $this->getConn()->prepare("update smi_products SET discount = ? where id = ?");
             $stmt->bind_param("ii", $discount, $product_id);
             $stmt->execute();
-            $nrows = $stmt->affected_rows;
-            if (!$nrows) {
-                throw new Exception("Update discount has failure!!!");
-            }
+//            $nrows = $stmt->affected_rows;
+//            if (!$nrows) {
+//                throw new Exception("Update discount has failure!!!");
+//            }
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function update_discount_all($discount)
+    {
+        try {
+            $stmt = $this->getConn()->prepare("update smi_products SET discount = ?");
+            $stmt->bind_param("i", $discount);
+            $stmt->execute();
+//            print_r($this->getConn()->error);
+//            $nrows = $stmt->affected_rows;
+//            if (!$nrows) {
+//                throw new Exception("Update discount all product has failure!!!");
+//            }
         } catch (Exception $e) {
             throw new Exception($e);
         }
@@ -551,7 +567,6 @@ class ProductDAO
     {
         try {
             if($product_type == 1) {
-//                $stmt = $this->getConn()->prepare("update smi_variations set quantity = (select case when a.quantity > 0 then a.quantity - $qty else 0 end from smi_variations a where a.sku = $sku) where sku = $sku");
                 $stmt = $this->getConn()->prepare("update smi_variations a, (select case when a.quantity > 0 then a.quantity - $qty else 0 end as qty from smi_variations a where a.sku = $sku) b set a.quantity = b.qty where sku = $sku");
             } else {
                 $stmt = $this->getConn()->prepare("update smi_variations set quantity = quantity + $qty where sku = ?");

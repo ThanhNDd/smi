@@ -78,6 +78,10 @@ Common::authen();
                         <a class="btn btn-secondary btn-flat" href="<?php Common::getPath() ?>src/view/products/outofstock.php">
                             Hết hàng <span class="badge badge-light number_out_of_stock">0</span>
                         </a>
+                        <div class="form-inline" style="display: inline-block">
+                            <input type="number" value="" name="discountAll" id="discountAll" min="0" placeholder="Giảm giá" class="form-control w110">
+                            <button id="update_all" class="btn btn-primary btn-flat">Áp dụng</button>
+                        </div>
                     </section>
                     <section style="display: inline-block;float: right;padding-top: 1.25rem;">
                         <button type="button" class="btn btn-success btn-flat product-create">
@@ -148,6 +152,22 @@ Common::authen();
         $(".clearAll").on("click", function () {
             clearAll();
         });
+
+        $("#update_all").on("click", function (e) {
+            Swal.fire({
+                title: 'Bạn chắc chắn chứ?',
+                text: "Bạn muốn cập nhật giảm giá cho tất cả sản phẩm!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Đồng ý'
+            }).then((result) => {
+                if (result.value) {
+                    update_discount_all(e);
+                }
+            })
+        })
     });
 
     function clearAll() {
@@ -679,6 +699,42 @@ Common::authen();
             success: function (res) {
                 console.log(res);
                 toastr.success('Cập nhật thành công!');
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                })
+            }
+        });
+    }
+
+    function update_discount_all() {
+        let discount = $("#discountAll").val();
+        console.log(discount);
+        discount = replaceComma(discount);
+        discount = replacePercent(discount);
+        console.log(discount);
+        if (discount == "undefined" || discount == "" || discount < 0) {
+            toastr.error('Nhập chưa đúng!');
+            return;
+        }
+        $.ajax({
+            url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
+            type: "POST",
+            dataType: "json",
+            data: {
+                method: "update_discount_all",
+                discount: discount
+            },
+            success: function (res) {
+                console.log(res);
+                toastr.success('Cập nhật thành công!');
+                let table = $('#example').DataTable();
+                table.ajax.reload();
             },
             error: function (data, errorThrown) {
                 console.log(data.responseText);

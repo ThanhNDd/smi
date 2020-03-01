@@ -221,8 +221,8 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
     if ($order_type == 1) {
       //online
       $customer = new Customer();
-      $customer->setName($data->customerName);
-      $customer->setPhone($data->phoneNumber);
+      $customer->setName($data->customer_name);
+      $customer->setPhone($data->phone_number);
       $customer->setEmail($data->email);
       $customer->setAddress($data->address);
       $customer->setCity_id($data->cityId);

@@ -69,6 +69,20 @@ if (isset($_POST["method"]) && $_POST["method"] == "update_discount") {
   $db->commit();
 }
 
+if (isset($_POST["method"]) && $_POST["method"] == "update_discount_all") {
+    try {
+        Common::authen_get_data();
+        $discount = $_POST["discount"];
+        $dao->update_discount_all((int)$discount);
+        $response_array['response'] = "success";
+        echo json_encode($response_array);
+    } catch (Exception $e) {
+        $db->rollback();
+        throw new Exception("Update discount all error exception: " . $e);
+    }
+    $db->commit();
+}
+
 if (isset($_POST["method"]) && $_POST["method"] == "check_update_out_of_stock") {
   try {
     Common::authen_get_data();
