@@ -55,15 +55,33 @@ Common::authen();
             position: relative;
             top: 20px;
         }
-
-        #thumbnail:hover {
-            /*width: 100% !important;*/
-            /*transform: scale(1.2);
-                -webkit-transform: scale(1.2);
-                -moz-transform: scale(1.2);
-                -o-transform: scale(1.2);
-                -ms-transform: scale(1.2);
-            cursor: pointer; */
+        .card-body {
+          padding: 0;
+        }
+        .table td, .table th {
+          padding: 5px;
+          border-top: none;
+          margin: 0 !important;
+        }
+        input[type=text],input[type=number], .select2-container--bootstrap4 .select2-selection {
+          border-radius: 0 !important;
+          margin: 0 !important;
+        }
+      .table-list td{
+        /*border-top: 1px solid #b3b3b3;*/
+      }
+        .select2-container {
+          display: inline-block;
+          float: left;
+        }
+        .table-list tbody {
+          max-height: 440px !important;
+          display: block;
+          width: 100%;
+          overflow: auto;
+        }
+        table.table.table-list {
+          display: inline-block;
         }
     </style>
 </head>
