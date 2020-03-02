@@ -951,7 +951,7 @@ Common::authen();
         countAllChecked();
     }
 
-    function formatNumber(num) {out_of_stock
+    function formatNumber(num) {
         return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
     }
 

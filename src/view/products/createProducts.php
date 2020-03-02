@@ -27,22 +27,26 @@ Common::authen();
                   <tr>
                     <td>Tên sản phẩm</td>
                     <td>
-                      <input type="text" value="https://via.placeholder.com/150" class="form-control ml-2 col-sm-10"
-                             id="p_image" placeholder="Nhập tên sản phẩm">
+                      <input type="text" class="form-control ml-2 col-sm-10"
+                             id="name" placeholder="Nhập tên sản phẩm">
                     </td>
                   </tr>
                   <tr>
                     <td>Link sản phẩm</td>
                     <td>
-                      <input type="text" class="form-control ml-2 col-sm-10" id="p_link"
+                      <input type="text" class="form-control ml-2 col-sm-10" id="link"
                              placeholder="Nhập link sản phẩm">
+
                     </td>
                   </tr>
                   <tr>
                     <td>Phí vận chuyển</td>
                     <td>
-                      <input type="text" class="form-control ml-2 col-sm-10" id="p_fee"
-                             placeholder="Nhập phí vận chuyển">
+                      <input type="text" class="form-control ml-2" style="float: left; width: 175px;" id="fee"
+                             value="0" placeholder="Nhập phí vận chuyển">
+                      <div class="input-group-append" style="float: left;">
+                        <span class="input-group-text" style="border-radius: 0;">đ</span>
+                      </div>
                     </td>
                   </tr>
                   <tr>
@@ -62,14 +66,17 @@ Common::authen();
                   <tr>
                     <td>Giá nhập</td>
                     <td>
-                      <input type="text" class="form-control ml-2 col-sm-10" id="p_price_" value="">
+                      <input type="text" class="form-control ml-2" style="float: left; width: 175px;" id="price" value="">
+                      <div class="input-group-append" style="float: left;">
+                        <span class="input-group-text" style="border-radius: 0;">đ</span>
+                      </div>
                     </td>
                   </tr>
                   <tr>
                     <td>Giá bán lẻ</td>
                     <td>
                       <div style="display: inline;vertical-align: top;">
-                        <input type="text" class="form-control ml-2 col-sm-10" id="p_retail_" value=""
+                        <input type="text" class="form-control ml-2 col-sm-10" id="retail" value=""
                                style="width: 120px;vertical-align: top;float: left;">
                         <input type="number" class="form-control ml-2" id="p_percent_" value="100" min="0" max="100"
                                style="width: 53px;padding-right: 5px;padding-left: 5px;vertical-align: top;float: left;">
@@ -99,7 +106,7 @@ Common::authen();
                   </tr>
                   <tr>
                     <td colspan="2" style="text-align: center;">
-                      <button class="btn btn-secondary btn-flat">Tạo biến thể</button>
+                      <button class="btn btn-secondary btn-flat" id="create_variation">Tạo biến thể</button>
                     </td>
                   </tr>
                 </table>
@@ -115,7 +122,7 @@ Common::authen();
                 <table class="table table-list">
                   <thead>
                   <tr>
-                    <th width="100px">Mã SP</th>
+                    <th width="50px">STT</th>
                     <th width="500px">Hình ảnh</th>
                     <th width="100px">Size</th>
                     <th width="100px">Màu sắc</th>
@@ -143,7 +150,7 @@ Common::authen();
   <!-- /.modal-dialog -->
   <?php require_once('../../common/js.php'); ?>
   <script>
-      var flagError = 0;
+      let flagError = 0;
       const Toast = Swal.mixin({
           toast: true,
           position: 'top-end',
@@ -153,18 +160,18 @@ Common::authen();
 
       $(document).ready(function () {
           $('.product-create').click(function () {
-              clear();
+              // clear();
               open_modal();
-              add_new_product();
+              // add_new_product();
           });
 
-          $('.add-new-prod').click(function () {
-              add_new_product();
-          });
+          // $('.add-new-prod').click(function () {
+          //     // add_new_product();
+          // });
 
-          $('.create-new').click(function () {
-              create_new();
-          });
+          // $('.create-new').click(function () {
+          //     create_new();
+          // });
           $('#create-product').on('hidden.bs.modal', function () {
               // location.reload();
               let table = $('#example').DataTable();
@@ -176,12 +183,120 @@ Common::authen();
           generate_select2_types('#select_type');
           generate_select2_cats('#select_cat');
 
-          generate_variations();
+
+          $("#create_variation").click(function(){
+              create_variation();
+          });
+
       });
+
+      function create_variation() {
+          if(!validate_product()) {
+              return;
+          }
+          generate_variations();
+      }
+
+      function validate_product() {
+          let regExp = /^\d*$|^\d*[,]?\d+$/;
+
+          let name = $("#name").val();
+          if(name == "") {
+              toastr.error("Tên sản phẩm không được để trống");
+              $("#name").focus();
+              $("#name").addClass("is-invalid");
+              return false;
+          } else {
+              $("#name").removeClass("is-invalid");
+          }
+
+          let fee = $("#fee").val();
+          if(fee != "" && !regExp.test(fee)) {
+              toastr.error("Phí vận chuyển phải là số");
+              $("#fee").focus();
+              $("#fee").addClass("is-invalid");
+              return false;
+          } else {
+              $("#fee").removeClass("is-invalid");
+              $("#fee").val(formatNumber(fee));
+          }
+
+          let type = $("#select_type").val();
+          if(type == "" || type == "-1") {
+              toastr.error("Bạn chưa chọn giới tính");
+              $("#select_type").focus();
+              $("#select_type").addClass("is-invalid");
+              return false;
+          } else {
+              $("#select_type").removeClass("is-invalid");
+          }
+
+          let cat = $("#select_cat").val();
+          if(cat == "" || cat == "-1") {
+              toastr.error("Bạn chưa chọn danh mục");
+              $("#select_cat").focus();
+              $("#select_cat").addClass("is-invalid");
+              return false;
+          } else {
+              $("#select_cat").removeClass("is-invalid");
+          }
+
+          let price_import = $("#price").val();
+          if(price_import == "") {
+              toastr.error("Giá nhập sản phẩm không được bỏ trống");
+              $("#price").focus();
+              $("#price").addClass("is-invalid");
+              return false;
+          } else if (!regExp.test(price_import)) {
+              toastr.error("Giá nhập phải là số");
+              $("#price").focus();
+              $("#price").addClass("is-invalid");
+              return false;
+          } else {
+              $("#price").removeClass("is-invalid");
+              $("#price").val(formatNumber(price_import));
+          }
+
+          let price_retail = $("#retail").val();
+          if(price_retail == "") {
+              toastr.error("Giá bán lẻ sản phẩm không được bỏ trống");
+              $("#retail").focus();
+              $("#retail").addClass("is-invalid");
+              return false;
+          } else if (!regExp.test(price_retail)) {
+              toastr.error("Giá bán lẻ phải là số");
+              $("#retail").focus();
+              $("#retail").addClass("is-invalid");
+              return false;
+          } else {
+              $("#retail").removeClass("is-invalid");
+              $("#retail").val(formatNumber(price_retail));
+          }
+
+          let size = $("#select_size").val();
+          if(size == "") {
+              toastr.error("Bạn chưa chọn size");
+              $("#select_size").focus();
+              $("#select_size").addClass("is-invalid");
+              return false;
+          } else {
+              $("#select_size").removeClass("is-invalid");
+          }
+          let color = $("#select_color").val();
+          if(color == "") {
+              toastr.error("Bạn chưa chọn màu sắc");
+              $("#select_color").focus();
+              $("#select_color").addClass("is-invalid");
+              return false;
+          } else {
+              $("#select_color").removeClass("is-invalid");
+          }
+          return true;
+      }
 
       function generate_variations() {
           $(".table-list tbody").append('<tr>\n' +
-              '                    <td width="100px">123456</td>\n' +
+              '                    <td width="50px">1</td>\n' +
               '                    <td width="500px">\n' +
               '                      <img src="https://via.placeholder.com/100" style="justify-content: left;float: left;">\n' +
               '                      <div class="input-group mb-3 col-md-9" style="float: left;">\n' +
@@ -210,83 +325,84 @@ Common::authen();
           });
       }
 
-      function reset_form() {
-          clear();
-          add_new_product();
-      }
+      // function reset_form() {
+      //     clear();
+      //     add_new_product();
+      // }
 
-      function clear() {
-          $('.count-row').val(0);
-          $(".product-area").html("");
-      }
+      // function clear() {
+      //     $('.count-row').val(0);
+      //     $(".product-area").html("");
+      // }
 
-      function add_new_product() {
-          show_loading();
-          var noRow = $('.count-row').val();
-          for ($i = 0; $i < 10; $i++) {
-              noRow = Number(noRow) + 1;
-              $('.count-row').val(noRow);
-              var content = '<div class="row" id="product-' + noRow + '" row-index="' + noRow + '" style="padding-top: 10px;">' +
-                  '<input type="hidden" id="product_id_' + noRow + '">' +
-                  '<div class="w30 center">' +
-                  '<span class="lineNo">' + noRow + '</span>' +
-                  '</div>' +
-                  '<div class="pd-l-5 pd-r-5 w110">' +
-                  '<input type="text" value="https://via.placeholder.com/150" class="form-control" id="p_image_' + noRow + '">' +
-                  '</div>' +
-                  '<div class="pd-l-5 pd-r-5 w150">' +
-                  '<input type="text" class="form-control" id="p_name_' + noRow + '">' +
-                  '</div>' +
-                  '<div class="pd-l-5 pd-r-5 w130">' +
-                  '<input type="text" class="form-control" id="p_link_' + noRow + '">' +
-                  '</div>' +
-                  '<div class="pd-l-5 pd-r-5 w120">' +
-                  '<select class="select-size-' + noRow + ' js-states form-control" id="select_size_' + noRow + '" multiple="multiple"></select>' +
-                  '</div>' +
-                  '<div class="pd-l-5 pd-r-5 w120">' +
-                  '<select class="select-color-' + noRow + ' js-states form-control" id="select_color_' + noRow + '" multiple="multiple"></select>' +
-                  '</div>' +
-                  '<div class="pd-l-5 pd-r-5 w50">' +
-                  '<input type="text" class="form-control" id="p_qty_' + noRow + '" min="1" value="1">' +
-                  '</div>' +
-                  '<div class="pd-l-5 pd-r-5 w100">' +
-                  '<input type="text" class="form-control" id="p_price_' + noRow + '" min="1" onchange="onchange_price(this)">' +
-                  '</div>' +
-                  '<div class="pd-l-5 pd-r-5 w120">' +
-                  '<input type="text" class="form-control" id="p_fee_' + noRow + '" onchange="onchange_price(this)">' +
-                  '</div>' +
-                  '<div class="pd-l-5 pd-r-5 w70 center">' +
-                  '<input type="text" class="form-control" id="p_percent_' + noRow + '" value="80" onchange="onchange_percent(this)">' +
-                  '</div>' +
-                  '<div class="pd-l-5 pd-r-5 w70 center hidden">' +
-                  '<input type="text" class="form-control" id="p_retail_temp_' + noRow + '" onchange="onchange_retail_tmp(this)">' +
-                  '</div>' +
-                  '<div class="pd-l-5 pd-r-5 w110">' +
-                  '<input type="text" class="form-control" id="p_retail_' + noRow + '" onchange="onchange_retail(this)">' +
-                  '</div>' +
-                  '<div class="pd-l-5 pd-r-5 pd-t-5 w70">' +
-                  '<span id="p_profit_' + noRow + '"></span>' +
-                  '</div>' +
-                  '<div class="pd-l-5 pd-r-5 w100">' +
-                  '<select class="select-type-' + noRow + ' form-control" id="select_type_' + noRow + '"></select>' +
-                  '</div>' +
-                  '<div class="pd-l-5 pd-r-5 w130">' +
-                  '<select class="select-cat-' + noRow + ' form-control" id="select_cat_' + noRow + '"></select>' +
-                  '</div>' +
-                  '</div>';
-              $(".product-area").append(content);
-              generate_select2_size('.select-size-' + noRow);
-              generate_select2_colors('.select-color-' + noRow);
-              generate_select2_types('.select-type-' + noRow);
-              generate_select2_cats('.select-cat-' + noRow);
-          }
-          hide_loading();
-      }
+      // function add_new_product() {
+      //     show_loading();
+      //     let noRow = $('.count-row').val();
+      //     for ($i = 0; $i < 10; $i++) {
+      //         noRow = Number(noRow) + 1;
+      //         $('.count-row').val(noRow);
+      //         let content = '<div class="row" id="product-' + noRow + '" row-index="' + noRow + '" style="padding-top: 10px;">' +
+      //             '<input type="hidden" id="product_id_' + noRow + '">' +
+      //             '<div class="w30 center">' +
+      //             '<span class="lineNo">' + noRow + '</span>' +
+      //             '</div>' +
+      //             '<div class="pd-l-5 pd-r-5 w110">' +
+      //             '<input type="text" value="https://via.placeholder.com/150" class="form-control" id="p_image_' + noRow + '">' +
+      //             '</div>' +
+      //             '<div class="pd-l-5 pd-r-5 w150">' +
+      //             '<input type="text" class="form-control" id="p_name_' + noRow + '">' +
+      //             '</div>' +
+      //             '<div class="pd-l-5 pd-r-5 w130">' +
+      //             '<input type="text" class="form-control" id="p_link_' + noRow + '">' +
+      //             '</div>' +
+      //             '<div class="pd-l-5 pd-r-5 w120">' +
+      //             '<select class="select-size-' + noRow + ' js-states form-control" id="select_size_' + noRow + '" multiple="multiple"></select>' +
+      //             '</div>' +
+      //             '<div class="pd-l-5 pd-r-5 w120">' +
+      //             '<select class="select-color-' + noRow + ' js-states form-control" id="select_color_' + noRow + '" multiple="multiple"></select>' +
+      //             '</div>' +
+      //             '<div class="pd-l-5 pd-r-5 w50">' +
+      //             '<input type="text" class="form-control" id="p_qty_' + noRow + '" min="1" value="1">' +
+      //             '</div>' +
+      //             '<div class="pd-l-5 pd-r-5 w100">' +
+      //             '<input type="text" class="form-control" id="p_price_' + noRow + '" min="1" onchange="onchange_price(this)">' +
+      //             '</div>' +
+      //             '<div class="pd-l-5 pd-r-5 w120">' +
+      //             '<input type="text" class="form-control" id="p_fee_' + noRow + '" onchange="onchange_price(this)">' +
+      //             '</div>' +
+      //             '<div class="pd-l-5 pd-r-5 w70 center">' +
+      //             '<input type="text" class="form-control" id="p_percent_' + noRow + '" value="80" onchange="onchange_percent(this)">' +
+      //             '</div>' +
+      //             '<div class="pd-l-5 pd-r-5 w70 center hidden">' +
+      //             '<input type="text" class="form-control" id="p_retail_temp_' + noRow + '" onchange="onchange_retail_tmp(this)">' +
+      //             '</div>' +
+      //             '<div class="pd-l-5 pd-r-5 w110">' +
+      //             '<input type="text" class="form-control" id="p_retail_' + noRow + '" onchange="onchange_retail(this)">' +
+      //             '</div>' +
+      //             '<div class="pd-l-5 pd-r-5 pd-t-5 w70">' +
+      //             '<span id="p_profit_' + noRow + '"></span>' +
+      //             '</div>' +
+      //             '<div class="pd-l-5 pd-r-5 w100">' +
+      //             '<select class="select-type-' + noRow + ' form-control" id="select_type_' + noRow + '"></select>' +
+      //             '</div>' +
+      //             '<div class="pd-l-5 pd-r-5 w130">' +
+      //             '<select class="select-cat-' + noRow + ' form-control" id="select_cat_' + noRow + '"></select>' +
+      //             '</div>' +
+      //             '</div>';
+      //         $(".product-area").append(content);
+      //         generate_select2_size('.select-size-' + noRow);
+      //         generate_select2_colors('.select-color-' + noRow);
+      //         generate_select2_types('.select-type-' + noRow);
+      //         generate_select2_cats('.select-cat-' + noRow);
+      //     }
+      //     hide_loading();
+      // }
 
       function generate_select2_size(el) {
           $(el).select2({
               data: size,
               theme: 'bootstrap4',
+              closeOnSelect: true
           });
       }
 
@@ -294,6 +410,7 @@ Common::authen();
           $(el).select2({
               data: colors,
               theme: 'bootstrap4',
+              closeOnSelect: true
           });
       }
 
@@ -311,39 +428,39 @@ Common::authen();
           });
       }
 
-      function onchange_retail_tmp(e) {
-          var rowIndex = $(e).parent().parent().attr("row-index");
-          var percent = $("[id=p_percent_" + rowIndex + "]").val();
-          var price = $("[id=p_price_" + rowIndex + "]").val();
-          price = replaceComma(price);
-          var fee = $("[id=p_fee_" + rowIndex + "]").val();
-          fee = replaceComma(fee);
-          if (price !== "" && !isNaN(price)) {
-              price = Number(price);
-          } else {
-              price = 0;
-          }
-          if (fee !== "" && !isNaN(fee)) {
-              fee = Number(fee);
-          } else {
-              fee = 0;
-          }
-          if (percent !== "" && !isNaN(percent)) {
-              percent = Number(percent);
-          } else {
-              percent = 0;
-          }
-          var retail = price + (price + fee) * percent / 100;
-          retail = formatNumber(retail);
-          if (retail === '0') {
-              retail = "";
-          }
-          $("[id=p_retail_" + rowIndex + "]").val(retail);
-      }
+      // function onchange_retail_tmp(e) {
+      //     let rowIndex = $(e).parent().parent().attr("row-index");
+      //     let percent = $("[id=p_percent_" + rowIndex + "]").val();
+      //     let price = $("[id=p_price_" + rowIndex + "]").val();
+      //     price = replaceComma(price);
+      //     let fee = $("[id=fee_" + rowIndex + "]").val();
+      //     fee = replaceComma(fee);
+      //     if (price !== "" && !isNaN(price)) {
+      //         price = Number(price);
+      //     } else {
+      //         price = 0;
+      //     }
+      //     if (fee !== "" && !isNaN(fee)) {
+      //         fee = Number(fee);
+      //     } else {
+      //         fee = 0;
+      //     }
+      //     if (percent !== "" && !isNaN(percent)) {
+      //         percent = Number(percent);
+      //     } else {
+      //         percent = 0;
+      //     }
+      //     let retail = price + (price + fee) * percent / 100;
+      //     retail = formatNumber(retail);
+      //     if (retail === '0') {
+      //         retail = "";
+      //     }
+      //     $("[id=retail]").val(retail);
+      // }
 
       function onchange_retail(e) {
-          var rowIndex = $(e).parent().parent().attr("row-index");
-          var val = $(e).val();
+          // let rowIndex = $(e).parent().parent().attr("row-index");
+          let val = $(e).val();
           val = replaceComma(val);
           if (isNaN(val) || val < 10) {
               $(e).addClass("is-invalid");
@@ -356,25 +473,25 @@ Common::authen();
                   val = Number(val + "000");
               }
               $(e).val(formatNumber(val));
-              calc_profit(rowIndex);
-              calc_percent(rowIndex);
+              calc_profit();
+              calc_percent();
           }
       }
 
-      function calc_profit(rowIndex) {
-          var retail = $("[id=p_retail_" + rowIndex + "]").val();
+      function calc_profit() {
+          let retail = $("[id=retail]").val();
           retail = replaceComma(retail);
-          var price = $("[id=p_price_" + rowIndex + "]").val();
+          let price = $("[id=price]").val();
           price = replaceComma(price);
-          var fee = $("[id=p_fee_" + rowIndex + "]").val();
+          let fee = $("[id=fee]").val();
           fee = replaceComma(fee);
-          var profit = Number(retail) - Number(price) - Number(fee);
-          $("[id=p_profit_" + rowIndex + "]").text(formatNumber(profit));
+          let profit = Number(retail) - Number(price) - Number(fee);
+          $("[id=profit]").text(formatNumber(profit));
       }
 
       function onchange_price(e) {
-          var rowIndex = $(e).parent().parent().attr("row-index");
-          var val = $(e).val();
+          let rowIndex = $(e).parent().parent().attr("row-index");
+          let val = $(e).val();
           val = replaceComma(val);
           if (val.indexOf(".") > 0) {
               val = val.replace(/\./g, '');
@@ -387,75 +504,75 @@ Common::authen();
           } else {
               $(e).removeClass("is-invalid");
               $(e).val(formatNumber(val));
-              $("[id=p_retail_temp_" + rowIndex + "]").trigger("change");
+              // $("[id=p_retail_temp_" + rowIndex + "]").trigger("change");
               calc_profit(rowIndex);
           }
       }
 
       function onchange_percent(e) {
-          var rowIndex = $(e).parent().parent().attr("row-index");
-          var val = $(e).val();
+          // let rowIndex = $(e).parent().parent().attr("row-index");
+          let val = $(e).val();
           if (isNaN(val) || val < 39) {
               $(e).addClass("is-invalid");
               $(e).focus();
           } else {
               $(e).removeClass("is-invalid");
-              $("[id=p_retail_temp_" + rowIndex + "]").trigger("change");
+              // $("[id=retail_temp_" + rowIndex + "]").trigger("change");
               calc_profit(rowIndex);
           }
       }
 
-      function calc_percent(rowIndex) {
-          var retail = $("[id=p_retail_" + rowIndex + "]").val();
+      function calc_percent() {
+          let retail = $("[id=retail]").val();
           retail = replaceComma(retail);
-          var price = $("[id=p_price_" + rowIndex + "]").val();
+          let price = $("[id=price]").val();
           price = replaceComma(price);
-          var fee = $("[id=p_fee_" + rowIndex + "]").val();
+          let fee = $("[id=fee]").val();
           fee = replaceComma(fee);
           if (isNaN(retail)) {
-              $("[id=p_retail_" + rowIndex + "]").addClass("is-invalid");
-              $("[id=p_retail_" + rowIndex + "]").focus();
+              $("[id=retail]").addClass("is-invalid");
+              $("[id=retail]").focus();
           } else if (isNaN(price)) {
-              $("[id=p_price_" + rowIndex + "]").addClass("is-invalid");
-              $("[id=p_price_" + rowIndex + "]").focus();
+              $("[id=price]").addClass("is-invalid");
+              $("[id=price]").focus();
           } else if (isNaN(fee)) {
-              $("[id=p_fee_" + rowIndex + "]").addClass("is-invalid");
-              $("[id=p_fee_" + rowIndex + "]").focus();
+              $("[id=fee]").addClass("is-invalid");
+              $("[id=fee]").focus();
           } else {
-              $("[id=p_retail_" + rowIndex + "]").removeClass("is-invalid");
-              $("[id=p_price_" + rowIndex + "]").removeClass("is-invalid");
-              $("[id=p_fee_" + rowIndex + "]").removeClass("is-invalid");
+              $("[id=retail]").removeClass("is-invalid");
+              $("[id=price]").removeClass("is-invalid");
+              $("[id=fee]").removeClass("is-invalid");
               retail = Number(retail);
               price = Number(price);
               fee = Number(fee);
-              var percent = (retail - price) * 100 / (price + fee);
+              let percent = (retail - price) * 100 / (price + fee);
               percent = Math.round(percent);
-              $("[id=p_percent_" + rowIndex + "]").val(percent);
+              $("[id=percent]").val(percent);
           }
       }
 
       function create_new() {
           show_loading();
-          var data = {};
-          var rowProductNumber = $(".count-row").val();
-          var products = [];
-          for (var i = 1; i <= rowProductNumber.length; i++) {
-              var product_id = $("#product_id_" + i).val();
-              var image = $("#p_image_" + i).val();
-              var name = $("#p_name_" + i).val();
-              var link = $("#p_link_" + i).val();
-              var size = $("#select_size_" + i).val();
-              var color = $("#select_color_" + i).val();
-              var qty = $("#p_qty_" + i).val();
-              var price = $("#p_price_" + i).val();
-              var fee = $("#p_fee_" + i).val();
-              var percent = $("#p_percent_" + i).val();
-              var retail = $("#p_retail_" + i).val();
-              var profit = $("#p_profit_" + i).text();
-              var type = $("#select_type_" + i).val();
-              var catId = $("#select_cat_" + i).val();
+          let data = {};
+          let rowProductNumber = $(".count-row").val();
+          let products = [];
+          for (let i = 1; i <= rowProductNumber.length; i++) {
+              let product_id = $("#product_id_" + i).val();
+              let image = $("#p_image_" + i).val();
+              let name = $("#p_name_" + i).val();
+              let link = $("#p_link_" + i).val();
+              let size = $("#select_size_" + i).val();
+              let color = $("#select_color_" + i).val();
+              let qty = $("#p_qty_" + i).val();
+              let price = $("#p_price_" + i).val();
+              let fee = $("#p_fee_" + i).val();
+              let percent = $("#p_percent_" + i).val();
+              let retail = $("#p_retail_" + i).val();
+              let profit = $("#p_profit_" + i).text();
+              let type = $("#select_type_" + i).val();
+              let catId = $("#select_cat_" + i).val();
               if (image !== "" && name !== "" && price !== "" && type.length > 0 && catId.length > 0) {
-                  var product = {};
+                  let product = {};
                   product["image"] = image;
                   product["name"] = name;
                   product["link"] = link;
@@ -521,23 +638,23 @@ Common::authen();
       }
 
       function show_loading() {
-          $("#create-product .overlay").removeClass("hidden");
+          // $("#create-product .overlay").removeClass("hidden");
       }
 
       function hide_loading() {
           $("#create-product .overlay").addClass("hidden");
       }
 
-      function formatNumber(num) {
-          return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-      }
+      // function formatNumber(num) {
+      //     return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+      // }
 
-      function replaceComma(value) {
-          return value.replace(/,/g, '');
-      }
+      // function replaceComma(value) {
+      //     return value.replace(/,/g, '');
+      // }
 
 
-      var size = [
+      let size = [
           {
               id: '60',
               text: '60 cm (3kg-6kg)'
@@ -759,7 +876,7 @@ Common::authen();
               text: '20T'
           }
       ];
-      var colors = [
+      let colors = [
           {
               id: 'Trắng',
               text: 'Trắng'
@@ -813,7 +930,7 @@ Common::authen();
               text: 'Kẻ'
           }
       ];
-      var qty = [
+      let qty = [
           {
               id: '0',
               text: '0'
@@ -875,7 +992,7 @@ Common::authen();
               text: '14'
           }
       ];
-      var types = [
+      let types = [
           {
               id: '-1',
               text: ''
@@ -893,7 +1010,7 @@ Common::authen();
               text: 'Trai gái'
           }
       ];
-      var cats = [
+      let cats = [
           {
               id: '-1',
               text: ''
