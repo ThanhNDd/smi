@@ -55,33 +55,44 @@ Common::authen();
             position: relative;
             top: 20px;
         }
+
         .card-body {
-          padding: 0;
+            padding: 0;
         }
+
         .table td, .table th {
-          padding: 5px;
-          border-top: none;
-          margin: 0 !important;
+            padding: 5px;
+            border-top: none;
+            margin: 0 !important;
         }
-        input[type=text],input[type=number], .select2-container--bootstrap4 .select2-selection {
-          border-radius: 0 !important;
-          margin: 0 !important;
+
+        input[type=text], input[type=number], .select2-container--bootstrap4 .select2-selection {
+            border-radius: 0 !important;
+            margin: 0 !important;
         }
-      .table-list td{
-        /*border-top: 1px solid #b3b3b3;*/
-      }
+
+        .table-list td {
+            /*border-top: 1px solid #b3b3b3;*/
+        }
+
         .select2-container {
-          display: inline-block;
-          float: left;
+            display: inline-block;
+            float: left;
         }
+
         .table-list tbody {
-          max-height: 440px !important;
-          display: block;
-          width: 100%;
-          overflow: auto;
+            /*max-height: 440px !important;*/
+            /*display: block;*/
+            /*width: 100%;*/
+            /*overflow: auto;*/
         }
+
         table.table.table-list {
-          display: inline-block;
+            /*display: inline-block;*/
+        }
+
+        .card.card-outline.card-danger {
+            min-height: 690px;
         }
     </style>
 </head>
@@ -93,11 +104,13 @@ Common::authen();
             <div class="card">
                 <div class="row col-12" style="display: inline-block;">
                     <section class="ml-4" style="display: inline-block;float: left;padding-top: 1.25rem;">
-                        <a class="btn btn-secondary btn-flat" href="<?php Common::getPath() ?>src/view/products/outofstock.php">
+                        <a class="btn btn-secondary btn-flat"
+                           href="<?php Common::getPath() ?>src/view/products/outofstock.php">
                             Hết hàng <span class="badge badge-light number_out_of_stock">0</span>
                         </a>
                         <div class="form-inline" style="display: inline-block">
-                            <input type="number" value="" name="discountAll" id="discountAll" min="0" placeholder="Giảm giá" class="form-control w110">
+                            <input type="number" value="" name="discountAll" id="discountAll" min="0"
+                                   placeholder="Giảm giá" class="form-control w110">
                             <button id="update_all" class="btn btn-primary btn-flat">Áp dụng</button>
                         </div>
                     </section>
@@ -148,7 +161,7 @@ Common::authen();
 <?php include 'createProducts.php'; ?>
 </div>
 <div class="iframeArea hidden"></div>
-<?php require_once ('../../common/footer.php'); ?>
+<?php require_once('../../common/footer.php'); ?>
 <script>
     $(document).ready(function () {
         set_title("Danh sách sản phẩm");
@@ -370,18 +383,20 @@ Common::authen();
 
                     let variations = arr[0].variations;
                     let count = 0;
-                    for(let i=0; i<variations.length; i++) {
+                    for (let i = 0; i < variations.length; i++) {
+                        let sku = variations[i].sku;
                         let image = variations[i].image;
                         let size = variations[i].size;
                         let color = variations[i].color;
                         let qty = variations[i].quantity;
                         count++;
-                        generate_variations(count, qty, color, size);
-                        if(image == null) {
-                          image = 'https://via.placeholder.com/100';
+                        generate_variations(count, qty, color, size, sku);
+                        let src = image;
+                        if (image == "") {
+                            src = 'https://via.placeholder.com/100';
                         }
-                        $("[id=img_"+count+"]").prop('src', image);
-                        $("[id=link_image_1"+count+"]").val(image);
+                        $("[id=img_" + count + "]").prop('src', src);
+                        $("[id=link_image_" + count + "]").val(image);
                     }
                     $(".create-new").text("Cập nhật");
                     $(".add-new-prod").prop("disabled", '');
@@ -620,10 +635,9 @@ Common::authen();
             let tr = $(this).closest('tr');
             let td = tr.find("td");
             let product_id = $(td[1]).text();
-            if ( $(this).hasClass('selected') ) {
+            if ($(this).hasClass('selected')) {
                 $(this).removeClass('selected');
-            }
-            else {
+            } else {
                 table.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
             }
@@ -795,14 +809,14 @@ Common::authen();
             },
             success: function (res) {
                 console.log(res);
-                if(res.response === "in_stock") {
+                if (res.response === "in_stock") {
                     Swal.fire({
                         type: 'error',
                         title: 'Số lượng sản phẩm vẫn còn',
                         text: "Bạn vui lòng kiểm tra lại trước khi cập nhật hết hàng."
                     });
                     return;
-                } else if(res.response === "success") {
+                } else if (res.response === "success") {
                     Swal.fire({
                         title: 'Bạn chắc chắn muốn cập nhật hết hàng cho sản phẩm này?',
                         text: "",
@@ -902,9 +916,8 @@ Common::authen();
             table += '<tr class="' + variations[i].sku + '">' +
                 '<td class="center"><input type="checkbox" id="' + variations[i].sku + '" onclick="check(this)"></td>' +
                 '<td>';
-              if(variations[i].image != null) {
-                  table += '<img src="'+ variations[i].image +'" width="100px">';
-              }
+            let image = variations[i].image == null || variations[i].image == "" ? 'https://via.placeholder.com/100' : variations[i].image;
+            table += '<img src="' + image + '" width="80px">';
             table += '</td>' +
                 '<input type="hidden" class="product-id-' + variations[i].sku + '" value="' + variations[i].product_id + '">' +
                 '<td>' + variations[i].sku + '</td>' +

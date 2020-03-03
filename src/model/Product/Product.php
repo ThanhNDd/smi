@@ -40,7 +40,7 @@ class Product {
      */ 
     public function getName()
     {
-        return "\"".$this->name."\"";    
+        return $this->name;
      
     }
 
@@ -61,7 +61,7 @@ class Product {
      */ 
     public function getImage()
     {
-        return "\"".$this->image."\"";    
+        return $this->image;
     }
 
     /**
@@ -81,12 +81,7 @@ class Product {
      */ 
     public function getLink()
     {
-        if(empty($this->link))
-        {
-            return "NULL";
-        } else {
-            return "\"".$this->link."\"";    
-        }
+        return $this->link;
     }
 
     /**
@@ -127,12 +122,7 @@ class Product {
      */ 
     public function getFee_transport()
     {
-        if(empty($this->fee_transport))
-        {
-            return "NULL";
-        } else {
-            return "\"".$this->fee_transport."\"";    
-        }
+        return $this->fee_transport;
     }
 
     /**
@@ -192,12 +182,7 @@ class Product {
      */ 
     public function getProfit()
     {
-        if(empty($this->profit))
-        {
-            return "NULL";
-        } else {
-            return "\"".$this->profit."\"";    
-        }
+        return $this->profit;
     }
 
     /**
@@ -248,7 +233,7 @@ class Product {
     /**
      * @param mixed $status
      */
-    public function setStatus($status): void
+    public function setStatus($status)
     {
         $this->status = $status;
     }
@@ -258,12 +243,7 @@ class Product {
      */ 
     public function getCategory_id()
     {
-        if(empty($this->category_id))
-        {
-            return "NULL";
-        } else {
-            return "\"".$this->category_id."\"";    
-        }
+        return $this->category_id;
     }
 
     /**
@@ -306,12 +286,7 @@ class Product {
      */ 
     public function getRetail()
     {
-        if(empty($this->retail))
-        {
-            return "NULL";
-        } else {
-            return $this->retail;    
-        }
+        return $this->retail;
     }
 
     /**

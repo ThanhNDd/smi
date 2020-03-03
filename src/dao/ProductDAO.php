@@ -4,6 +4,22 @@ class ProductDAO
 {
     private $conn;
 
+    function get_max_id()
+    {
+        try {
+            $sql = "select max(id) as max_id from smi_products";
+            $result = mysqli_query($this->conn, $sql);
+            $row = $result->fetch_assoc();
+            $max_id = $row['max_id'];
+            $max_id++;
+            $data = array();
+            array_push($data, $max_id);
+            return $data;
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
     function set_all_quantity_to_zero() {
         try {
             $stmt = $this->getConn()->prepare("UPDATE `smi_variations` SET `quantity`= 0");
@@ -336,20 +352,24 @@ class ProductDAO
     function update_product(Product $product)
     {
         try {
-            $sql = "update smi_products
-                    SET name = " . $product->getName() . ",
-                        image = " . $product->getImage() . ",
-                        LINK = " . $product->getLink() . ",
-                        price = " . $product->getPrice() . ",
-                        fee_transport = " . $product->getFee_transport() . ",
-                        profit = " . $product->getProfit() . ",
-                        retail = " . $product->getRetail() . ",
-                        percent = " . $product->getPercent() . ",
-                        TYPE = " . $product->getType() . ",
-                        category_id = " . $product->getCategory_id() . ",
-                        updated_at = NOW()
-                    WHERE id = " . $product->getId();
-            mysqli_query($this->conn, $sql);
+            $product_id = $product->getId();
+            $name = $product->getName();
+            $image = $product->getImage();
+            $link = $product->getLink();
+            $price = $product->getPrice();
+            $fee = $product->getFee_transport();
+            $profit = $product->getProfit();
+            $retail = $product->getRetail();
+            $percent = $product->getPercent();
+            $type = $product->getType();
+            $cat_id = $product->getCategory_id();
+
+
+            $stmt = $this->getConn()->prepare("update smi_products SET name = ?, image = ?, LINK = ?,price = ?, fee_transport = ?, profit = ?, retail = ?, percent = ?, TYPE = ?, category_id = ?, updated_at = NOW() WHERE id = ?");
+            $stmt->bind_param("sssddddiiii", $name, $image, $link, $price, $fee, $profit, $retail, $percent, $type, $cat_id, $product_id);
+            $stmt->execute();
+            $affect_row = $stmt->affected_rows;
+            return $affect_row;
         } catch (Exception $e) {
             echo $e->getMessage();
         }
@@ -428,11 +448,19 @@ class ProductDAO
         }
     }
 
-    function update_variation($sku, $color, $size, $qty)
+    function update_variation(Variations $variation)
     {
         try {
-            $sql = "update smi_variations set color = \"" . $color . "\", size = \"" . $size . "\", quantity = " . $qty . " where sku = " . $sku;
-            mysqli_query($this->conn, $sql);
+            $sku = $variation->getSku();
+            $color = $variation->getColor();
+            $size = $variation->getSize();
+            $qty = $variation->getQuantity();
+            $image = $variation->getImage();
+            $stmt = $this->getConn()->prepare("update smi_variations set color = ?, size = ?, quantity = ?, image = ? where sku = ?");
+            $stmt->bind_param("ssiss", $color, $size, $qty, $image, $sku);
+            $stmt->execute();
+            $nrows = $stmt->affected_rows;
+            return $nrows;
         } catch (Exception $e) {
             throw new Exception("update_variation >> " . $e);
         }
@@ -451,7 +479,17 @@ class ProductDAO
     function save_product(Product $product)
     {
         try {
-            $sql = "INSERT INTO smi_products (
+            $name = $product->getName();
+            $image = $product->getImage();
+            $link = $product->getLink().
+            $price = $product->getPrice();
+            $fee = $product->getFee_transport();
+            $profit = $product->getProfit();
+            $retail = $product->getRetail();
+            $percent = $product->getPercent();
+            $type = $product->getType();
+            $cat_id = $product->getCategory_id();
+            $stmt = $this->getConn()->prepare("INSERT INTO smi_products (
                     `name`,
                     `image`,
                     `link`,
@@ -463,53 +501,33 @@ class ProductDAO
                     `type`,
                     `category_id`,
                     `created_at`) 
-                VALUES (" .
-                $product->getName() . "," .
-                $product->getImage() . "," .
-                $product->getLink() . "," .
-                $product->getPrice() . "," .
-                $product->getFee_transport() . "," .
-                $product->getProfit() . "," .
-                $product->getRetail() . "," .
-                $product->getPercent() . "," .
-                $product->getType() . "," .
-                $product->getCategory_id() .
-                ", NOW())";
-            mysqli_query($this->conn, $sql);
-            $lastid = mysqli_insert_id($this->conn);
-            return $lastid;
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+            $stmt->bind_param("sssddddiii", $name, $image, $link, $price, $fee, $profit, $retail, $percent, $type, $cat_id);
+            $stmt->execute();
+            $affect_row = $stmt->affected_rows;
+            return $affect_row;
+//            $lastid = mysqli_insert_id($this->conn);
+//            return $lastid;
         } catch (Exception $e) {
             throw new Exception($e);
         }
     }
 
-    function save_variations(Array $variations)
+    function save_variation(Variations $variation)
     {
         try {
-            $sql = "INSERT INTO smi_variations (
-                `product_id`,
-                `size`,
-                `color`,
-                `quantity`,
-                `sku`,
-                `image`,
-                `created_at`) 
-            VALUES ";
-            for ($i = 0; $i < count($variations); $i++) {
-                $sql .= "(" .
-                    $variations[$i]->getProduct_id() . "," .
-                    $variations[$i]->getSize() . "," .
-                    $variations[$i]->getColor() . "," .
-                    $variations[$i]->getQuantity() . "," .
-                    $variations[$i]->getSku() . "," .
-                    $variations[$i]->getImage() . "," .
-                    "NOW()),";
-            }
-            $sql = substr($sql, 0, -1);
-//            print_r($sql);
-            mysqli_query($this->conn, $sql);
-            $lastid = mysqli_insert_id($this->conn);
-            return $lastid;
+            $product_id = $variation->getProduct_id();
+            $size = $variation->getSize();
+            $color = $variation->getColor();
+            $qty = $variation->getQuantity();
+            $sku = $variation->getSku();
+            $image = $variation->getImage();
+
+            $stmt = $this->getConn()->prepare("INSERT INTO smi_variations (`product_id`, `size`, `color`, `quantity`, `sku`, `image`, `created_at`) VALUES (?, ?, ?, ?, ?, ?, NOW())");
+            $stmt->bind_param("ississ", $product_id, $size, $color, $qty, $sku, $image);
+            $stmt->execute();
+            $affect_row = $stmt->affected_rows;
+            return $affect_row;
         } catch (Exception $e) {
             echo "Open connection database is error exception >> " . $e->getMessage();
         }

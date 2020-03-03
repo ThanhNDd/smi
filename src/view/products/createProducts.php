@@ -22,142 +22,151 @@ Common::authen();
                 <h3 class="card-title">Thông tin sản phẩm</h3>
               </div>
               <div class="card-body">
-                <input type="hidden" id="product_id" value="0">
-                <table class="table table-info-product">
-                  <tr>
-                    <td>Tên sản phẩm</td>
-                    <td>
-                      <input type="text" class="form-control ml-2 col-sm-10"
-                             id="name" placeholder="Nhập tên sản phẩm">
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Link sản phẩm</td>
-                    <td>
-                      <input type="text" class="form-control ml-2 col-sm-10" id="link"
-                             placeholder="Nhập link sản phẩm">
+                  <div class="table-responsive">
+                    <table class="table table-info-product">
+                        <tr>
+                            <td>Mã sản phẩm</td>
+                            <td>
+                                <input type="text" class="form-control ml-2 col-sm-10" id="product_id" disabled>
+                            </td>
+                        </tr>
+                      <tr>
+                        <td>Tên sản phẩm</td>
+                        <td>
+                          <input type="text" class="form-control ml-2 col-sm-10"
+                                 id="name" placeholder="Nhập tên sản phẩm">
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Link sản phẩm</td>
+                        <td>
+                          <input type="text" class="form-control ml-2 col-sm-10" id="link"
+                                 placeholder="Nhập link sản phẩm">
 
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Hình ảnh</td>
-                    <td>
-                      <input type="text" class="form-control" placeholder="Nhập link hình ảnh" onchange="onchange_image_link(0)" id="link_image_0" style="float: left;width: 167px;">
-                      <form id="form_0" action="" method="post" enctype="multipart/form-data">
-                          <input id="image_0" type="file" accept="image/*" name="image" class="hidden"/>
-                          <button type="button" class="btn btn-info btn-flat" id="btn_upload_0">
-                          <span class="spinner-border spinner-border-sm hidden" id="spinner_0"></span>
-                            <i class="fa fa-upload"></i>
-                          </button>
-                      </form>
-                      <img src="https://via.placeholder.com/200" width="208" id="img_0" class="hidden" style="justify-content: left;float: left;margin: 5px 0;">
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Phí vận chuyển</td>
-                    <td>
-                      <input type="text" class="form-control ml-2" style="float: left; width: 175px;" id="fee"
-                             value="0" placeholder="Nhập phí vận chuyển">
-                      <div class="input-group-append" style="float: left;">
-                        <span class="input-group-text" style="border-radius: 0;">đ</span>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Giới tính</td>
-                    <td>
-                      <select class="select-type form-control ml-2 col-sm-10" id="select_type"
-                              style="width: 208px;"></select>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Danh mục</td>
-                    <td>
-                      <select class="select-cat form-control ml-2 col-sm-10" id="select_cat"
-                              style="width: 208px;"></select>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Giá nhập</td>
-                    <td>
-                      <input type="text" class="form-control ml-2" style="float: left; width: 175px;" id="price" value="">
-                      <div class="input-group-append" style="float: left;">
-                        <span class="input-group-text" style="border-radius: 0;">đ</span>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Giá bán lẻ</td>
-                    <td>
-                      <div style="display: inline;vertical-align: top;">
-                        <input type="text" class="form-control ml-2 col-sm-10" id="retail" value=""
-                               style="width: 120px;vertical-align: top;float: left;">
-                        <input type="number" class="form-control ml-2" id="percent" value="100" min="0"
-                               style="width: 53px;padding-right: 5px;padding-left: 5px;vertical-align: top;float: left;">
-                        <div class="input-group-append" style="float: left;">
-                          <span class="input-group-text" style="border-radius: 0;">%</span>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr class="">
-                    <td></td>
-                    <td>
-                      <div style="display: inline;vertical-align: top;">
-                        <input type="text" class="form-control ml-2 col-sm-10" id="profit" value=""
-                               style="width: 120px;vertical-align: top;float: left;">
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Size</td>
-                    <td>
-                      <select class="select-size form-control ml-2 mr-2 col-sm-10" id="select_size"
-                              style="width: 167px;float: left;" multiple="multiple"></select>
-                      <button class="btn btn-info btn-flat" id="add_size" title="Thêm size"><i
-                          class="fa fa-plus-circle"></i></button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Màu sắc</td>
-                    <td>
-                      <select class="select-color form-control ml-2 mr-2 col-sm-10" id="select_color"
-                              style="width: 167px;float: left;" multiple="multiple"></select>
-                      <button class="btn btn-info btn-flat" id="add_color" title="Thêm màu sắc"><i
-                          class="fa fa-plus-circle"></i></button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Số lượng</td>
-                    <td>
-                      <div style="display: inline;vertical-align: top;">
-                        <input type="number" class="form-control ml-2 col-sm-10" id="qty" value="" min="1"
-                               style="vertical-align: top;float: left;">
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td colspan="2" style="text-align: center;">
-                      <button class="btn btn-secondary btn-flat" id="create_variation">Tạo biến thể</button>
-                    </td>
-                  </tr>
-                </table>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Hình ảnh</td>
+                        <td>
+                          <input type="text" class="form-control" placeholder="Nhập link hình ảnh" onchange="onchange_image_link(0)" id="link_image_0" style="float: left;width: 167px;">
+                          <form id="form_0" action="" method="post" enctype="multipart/form-data">
+                              <input id="image_0" type="file" accept="image/*" name="image" class="hidden"/>
+                              <button type="button" class="btn btn-info btn-flat" id="btn_upload_0">
+                              <span class="spinner-border spinner-border-sm hidden" id="spinner_0"></span>
+                                <i class="fa fa-upload"></i>
+                              </button>
+                          </form>
+                          <img src="https://via.placeholder.com/200" width="208" id="img_0" class="hidden" style="justify-content: left;float: left;margin: 5px 0;">
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Phí vận chuyển</td>
+                        <td>
+                          <input type="text" class="form-control ml-2" style="float: left; width: 175px;" id="fee"
+                                 value="0" placeholder="Nhập phí vận chuyển">
+                          <div class="input-group-append" style="float: left;">
+                            <span class="input-group-text" style="border-radius: 0;">đ</span>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Giới tính</td>
+                        <td>
+                          <select class="select-type form-control ml-2 col-sm-10" id="select_type"
+                                  style="width: 208px;"></select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Danh mục</td>
+                        <td>
+                          <select class="select-cat form-control ml-2 col-sm-10" id="select_cat"
+                                  style="width: 208px;"></select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Giá nhập</td>
+                        <td>
+                          <input type="text" class="form-control ml-2" style="float: left; width: 175px;" id="price" value="">
+                          <div class="input-group-append" style="float: left;">
+                            <span class="input-group-text" style="border-radius: 0;">đ</span>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Giá bán lẻ</td>
+                        <td>
+                          <div style="display: inline;vertical-align: top;">
+                            <input type="text" class="form-control ml-2 col-sm-10" id="retail" value=""
+                                   style="width: 120px;vertical-align: top;float: left;">
+                            <input type="number" class="form-control ml-2" id="percent" value="100" min="0"
+                                   style="width: 53px;padding-right: 5px;padding-left: 5px;vertical-align: top;float: left;">
+                            <div class="input-group-append" style="float: left;">
+                              <span class="input-group-text" style="border-radius: 0;">%</span>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr class="">
+                        <td></td>
+                        <td>
+                          <div style="display: inline;vertical-align: top;">
+                            <input type="text" class="form-control ml-2 col-sm-10" id="profit" value=""
+                                   style="width: 120px;vertical-align: top;float: left;">
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Size</td>
+                        <td>
+                          <select class="select-size form-control ml-2 mr-2 col-sm-10" id="select_size"
+                                  style="width: 167px;float: left;" multiple="multiple"></select>
+                          <button class="btn btn-info btn-flat" id="add_size" title="Thêm size"><i
+                              class="fa fa-plus-circle"></i></button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Màu sắc</td>
+                        <td>
+                          <select class="select-color form-control ml-2 mr-2 col-sm-10" id="select_color"
+                                  style="width: 167px;float: left;" multiple="multiple"></select>
+                          <button class="btn btn-info btn-flat" id="add_color" title="Thêm màu sắc"><i
+                              class="fa fa-plus-circle"></i></button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Số lượng</td>
+                        <td>
+                          <div style="display: inline;vertical-align: top;">
+                            <input type="number" class="form-control ml-2 col-sm-10" id="qty" value="" min="1"
+                                   style="vertical-align: top;float: left;">
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="2" style="text-align: center;">
+                          <button class="btn btn-secondary btn-flat" id="create_variation">Tạo biến thể</button>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
               </div>
             </div>
           </div>
           <div class="col-md-8">
-            <div class="card card-outline card-danger" style="min-height: 532px;">
+            <div class="card card-outline card-danger">
               <div class="card-header">
                 <h3 class="card-title">Danh sách biến thể sản phẩm</h3>
               </div>
               <div class="card-body">
-                <table class="table table-list">
+                  <div class="table-responsive">
+                    <table class="table table-list">
                   <thead>
                   <tr>
-                    <th width="50px">STT</th>
-                    <th width="425px">Hình ảnh</th>
-                    <th width="150px">Size</th>
-                    <th width="100px">Màu sắc</th>
+                    <th>STT</th>
+                    <th width="100px">SKU</th>
+                    <th>Hình ảnh</th>
+                    <th>Size</th>
+                    <th>Màu sắc</th>
                     <th width="100px">SL</th>
                     <th>*</th>
                   </tr>
@@ -166,6 +175,7 @@ Common::authen();
 
                   </tbody>
                 </table>
+                  </div>
               </div>
             </div>
           </div>
@@ -195,18 +205,10 @@ Common::authen();
 
       $(document).ready(function () {
           $('.product-create').click(function () {
-              // clear();
+              reset_modal();
+              get_max_id();
               open_modal();
-              // add_new_product();
           });
-
-          // $('.add-new-prod').click(function () {
-          //     // add_new_product();
-          // });
-
-          // $('.create-new').click(function () {
-          //     create_new();
-          // });
           $('#create-product').on('hidden.bs.modal', function () {
               // location.reload();
               let table = $('#example').DataTable();
@@ -217,7 +219,6 @@ Common::authen();
           generate_select2_colors('#select_color');
           generate_select2_types('#select_type');
           generate_select2_cats('#select_cat');
-
 
           $("#create_variation").click(function(){
               create_variation();
@@ -242,63 +243,95 @@ Common::authen();
           });
           
           $(".create-new").click(function () {
-              if(!validate_product()) {
-                  return;
-              }
-              if(!validate_variations()) {
-                  return;
-              }
-              Swal.fire({
-                  title: 'Bạn có chắc chắn muốn tạo các sản phẩm này?',
-                  text: "",
-                  type: 'warning',
-                  showCancelButton: true,
-                  confirmButtonColor: '#3085d6',
-                  cancelButtonColor: '#d33',
-                  confirmButtonText: 'Ok'
-              }).then((result) => {
-                  if (result.value) {
-                      show_loading();
-                      let product = get_data_inform();
-                      $.ajax({
-                          dataType: 'json',
-                          url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
-                          data: {
-                              method: 'add_new',
-                              data: product
-                          },
-                          type: 'POST',
-                          success: function (data) {
-                              console.log(data);
-                              Swal.fire(
-                                  'Thành công!',
-                                  'Các sản phẩm đã được tạo thành công.',
-                                  'success'
-                              );
-                              // reset_form();
-                              hide_loading();
-                          },
-                          error: function (data, errorThrown) {
-                              console.log(data.responseText);
-                              console.log(errorThrown);
-                              Swal.fire({
-                                  type: 'error',
-                                  title: 'Đã xảy ra lỗi',
-                                  text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-                              })
-                              hide_loading();
-                          }
-                      });
-
-                  }
-              })
+              create_product();
           });
           btn_upload(0);
           onpaste_image_link(0);
       });
 
+      function get_max_id() {
+          $.ajax({
+              dataType: 'json',
+              url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
+              data: {
+                  method: 'get_max_id'
+              },
+              type: 'POST',
+              success: function (response) {
+                  console.log(response.max_id);
+                  $("#product_id").val(response.max_id);
+              },
+              error: function (data, errorThrown) {
+                  console.log(data.responseText);
+                  console.log(errorThrown);
+                  Swal.fire({
+                      type: 'error',
+                      title: 'Đã xảy ra lỗi',
+                      text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                  });
+              }
+          });
+      }
+
+      function create_product() {
+          if(!validate_product()) {
+              return;
+          }
+          if(!validate_variations()) {
+              return;
+          }
+          Swal.fire({
+              title: 'Bạn có chắc chắn muốn tạo các sản phẩm này?',
+              text: "",
+              type: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Ok'
+          }).then((result) => {
+              if (result.value) {
+                  show_loading();
+                  let product = get_data_inform();
+                  $.ajax({
+                      dataType: 'json',
+                      url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
+                      data: {
+                          method: 'add_new',
+                          data: product
+                      },
+                      type: 'POST',
+                      success: function (data) {
+                          console.log(data);
+                          Swal.fire(
+                              'Thành công!',
+                              'Các sản phẩm đã được tạo thành công.',
+                              'success'
+                          ).then((result) => {
+                              if(result.value) {
+                                  reset_modal();
+                              }
+                          });
+                          hide_loading();
+                      },
+                      error: function (data, errorThrown) {
+                          console.log(data.responseText);
+                          console.log(errorThrown);
+                          Swal.fire({
+                              type: 'error',
+                              title: 'Đã xảy ra lỗi',
+                              text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                          });
+                          hide_loading();
+                      }
+                  });
+
+              }
+          });
+      }
+
       function reset_modal() {
-          $("#product_id").val(0);
+          let product_id = get_max_id();
+          $("#product_id").val(product_id);
           $("#name").val('');
           $("#link").val('');
           $("#link_image_0").val('');
@@ -348,12 +381,14 @@ Common::authen();
           let arr = [];
           $(".table-list > tbody > tr").each(function () {
               let no = $(this).attr('class');
+              let sku = $("[id=sku_"+no+"]").val();
               let image = $("[id=link_image_"+no+"]").val();
               let size = $("[id=select_size_"+no+"]").val();
               let color = $("[id=select_color_"+no+"]").val();
               let qty = $("[id=qty_"+no+"]").val();
 
               let variations = {};
+              variations['sku'] = sku;
               variations['image'] = image;
               variations['size'] = size;
               variations['color'] = color;
@@ -393,11 +428,18 @@ Common::authen();
           }).then((result) => {
               if (result.value) {
                   let count = 1;
+                  let product_id = $("#product_id").val();
                   for(let i=0; i < color.length; i++) {
                       for(let j=0; j < size.length; j++) {
                           console.log(size[j]);
                           console.log(color[i]);
-                          generate_variations(count, qty, color[i], size[j]);
+                          let sku = "";
+                          if(count < 10) {
+                              sku = product_id + "0" + count;
+                          } else {
+                              sku = product_id + count;
+                          }
+                          generate_variations(count, qty, color[i], size[j], sku);
                           count++;
                           $('.add-new-prod').prop('disabled','');
                       }
@@ -408,10 +450,13 @@ Common::authen();
 
       }
 
-      function generate_variations(no, qty, color, size) {
+      function generate_variations(no, qty, color, size, sku) {
           $(".table-list tbody").append('<tr class="'+no+'">\n' +
-              '                    <td width="50px" align="center">' +no+ '</td>\n' +
-              '                    <td width="425px">\n' +
+              '                    <td align="center">' +no+ '</td>\n' +
+              '                    <td align="center">' +
+              '                     <input type="text" class="form-control col-md-10" value="'+sku+'" id="sku_'+no+'" disabled>\n' +
+              '                    </td>\n' +
+              '                    <td >\n' +
               '                      <img src="https://via.placeholder.com/100" width="100" id="img_'+no+'" style="justify-content: left;float: left;">\n' +
               '                      <div class="input-group mb-3 col-md-8" style="float: left;">\n' +
               '                        <input type="text" class="form-control col-md-10" placeholder="Nhập link hình ảnh" onchange="onchange_image_link('+no+')" id="link_image_'+no+'">\n' +
@@ -426,13 +471,13 @@ Common::authen();
               '                        </div>\n' +
               '                      </div>\n' +
               '                    </td>\n' +
-              '                    <td width="150px">\n' +
+              '                    <td >\n' +
               '                       <select class="form-control ml-2 mr-2 col-sm-10" id="select_size_'+no+'" style="width: 150px;"></select>' +
               '                    </td>\n' +
-              '                    <td width="100px">\n' +
+              '                    <td >\n' +
               '                       <select class="form-control ml-2 mr-2 col-sm-10" id="select_color_'+no+'" ></select>' +
               '                    </td>\n' +
-              '                    <td width="100px">\n' +
+              '                    <td >\n' +
               '                       <input type="number" class="form-control " id="qty_'+no+'" value="'+qty+'">\n' +
               '                    </td>\n' +
               '                    <td>\n' +
@@ -704,79 +749,6 @@ Common::authen();
           });
       }
 
-      // function reset_form() {
-      //     clear();
-      //     add_new_product();
-      // }
-
-      // function clear() {
-      //     $('.count-row').val(0);
-      //     $(".product-area").html("");
-      // }
-
-      // function add_new_product() {
-      //     show_loading();
-      //     let noRow = $('.count-row').val();
-      //     for ($i = 0; $i < 10; $i++) {
-      //         noRow = Number(noRow) + 1;
-      //         $('.count-row').val(noRow);
-      //         let content = '<div class="row" id="product-' + noRow + '" row-index="' + noRow + '" style="padding-top: 10px;">' +
-      //             '<input type="hidden" id="product_id_' + noRow + '">' +
-      //             '<div class="w30 center">' +
-      //             '<span class="lineNo">' + noRow + '</span>' +
-      //             '</div>' +
-      //             '<div class="pd-l-5 pd-r-5 w110">' +
-      //             '<input type="text" value="https://via.placeholder.com/150" class="form-control" id="p_image_' + noRow + '">' +
-      //             '</div>' +
-      //             '<div class="pd-l-5 pd-r-5 w150">' +
-      //             '<input type="text" class="form-control" id="p_name_' + noRow + '">' +
-      //             '</div>' +
-      //             '<div class="pd-l-5 pd-r-5 w130">' +
-      //             '<input type="text" class="form-control" id="p_link_' + noRow + '">' +
-      //             '</div>' +
-      //             '<div class="pd-l-5 pd-r-5 w120">' +
-      //             '<select class="select-size-' + noRow + ' js-states form-control" id="select_size_' + noRow + '" multiple="multiple"></select>' +
-      //             '</div>' +
-      //             '<div class="pd-l-5 pd-r-5 w120">' +
-      //             '<select class="select-color-' + noRow + ' js-states form-control" id="select_color_' + noRow + '" multiple="multiple"></select>' +
-      //             '</div>' +
-      //             '<div class="pd-l-5 pd-r-5 w50">' +
-      //             '<input type="text" class="form-control" id="p_qty_' + noRow + '" min="1" value="1">' +
-      //             '</div>' +
-      //             '<div class="pd-l-5 pd-r-5 w100">' +
-      //             '<input type="text" class="form-control" id="p_price_' + noRow + '" min="1" onchange="onchange_price(this)">' +
-      //             '</div>' +
-      //             '<div class="pd-l-5 pd-r-5 w120">' +
-      //             '<input type="text" class="form-control" id="p_fee_' + noRow + '" onchange="onchange_price(this)">' +
-      //             '</div>' +
-      //             '<div class="pd-l-5 pd-r-5 w70 center">' +
-      //             '<input type="text" class="form-control" id="p_percent_' + noRow + '" value="80" onchange="onchange_percent(this)">' +
-      //             '</div>' +
-      //             '<div class="pd-l-5 pd-r-5 w70 center hidden">' +
-      //             '<input type="text" class="form-control" id="p_retail_temp_' + noRow + '" onchange="onchange_retail_tmp(this)">' +
-      //             '</div>' +
-      //             '<div class="pd-l-5 pd-r-5 w110">' +
-      //             '<input type="text" class="form-control" id="p_retail_' + noRow + '" onchange="onchange_retail(this)">' +
-      //             '</div>' +
-      //             '<div class="pd-l-5 pd-r-5 pd-t-5 w70">' +
-      //             '<span id="p_profit_' + noRow + '"></span>' +
-      //             '</div>' +
-      //             '<div class="pd-l-5 pd-r-5 w100">' +
-      //             '<select class="select-type-' + noRow + ' form-control" id="select_type_' + noRow + '"></select>' +
-      //             '</div>' +
-      //             '<div class="pd-l-5 pd-r-5 w130">' +
-      //             '<select class="select-cat-' + noRow + ' form-control" id="select_cat_' + noRow + '"></select>' +
-      //             '</div>' +
-      //             '</div>';
-      //         $(".product-area").append(content);
-      //         generate_select2_size('.select-size-' + noRow);
-      //         generate_select2_colors('.select-color-' + noRow);
-      //         generate_select2_types('.select-type-' + noRow);
-      //         generate_select2_cats('.select-cat-' + noRow);
-      //     }
-      //     hide_loading();
-      // }
-
       function generate_select2_size(el) {
           $(el).select2({
               data: size,
@@ -806,36 +778,6 @@ Common::authen();
               theme: 'bootstrap4',
           });
       }
-
-      // function onchange_retail_tmp(e) {
-      //     let rowIndex = $(e).parent().parent().attr("row-index");
-      //     let percent = $("[id=p_percent_" + rowIndex + "]").val();
-      //     let price = $("[id=p_price_" + rowIndex + "]").val();
-      //     price = replaceComma(price);
-      //     let fee = $("[id=fee_" + rowIndex + "]").val();
-      //     fee = replaceComma(fee);
-      //     if (price !== "" && !isNaN(price)) {
-      //         price = Number(price);
-      //     } else {
-      //         price = 0;
-      //     }
-      //     if (fee !== "" && !isNaN(fee)) {
-      //         fee = Number(fee);
-      //     } else {
-      //         fee = 0;
-      //     }
-      //     if (percent !== "" && !isNaN(percent)) {
-      //         percent = Number(percent);
-      //     } else {
-      //         percent = 0;
-      //     }
-      //     let retail = price + (price + fee) * percent / 100;
-      //     retail = formatNumber(retail);
-      //     if (retail === '0') {
-      //         retail = "";
-      //     }
-      //     $("[id=retail]").val(retail);
-      // }
 
       function onchange_price() {
           let val = $("#price").val();
@@ -1016,7 +958,7 @@ Common::authen();
       //}
 
       function show_loading() {
-          // $("#create-product .overlay").removeClass("hidden");
+          $("#create-product .overlay").removeClass("hidden");
       }
 
       function hide_loading() {

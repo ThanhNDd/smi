@@ -58,7 +58,7 @@ class Variations
    */
   public function getSize()
   {
-    return "\"" . $this->size . "\"";
+    return $this->size;
   }
 
   /**
@@ -78,7 +78,7 @@ class Variations
    */
   public function getColor()
   {
-    return "\"" . $this->color . "\"";
+    return $this->color;
   }
 
   /**
@@ -118,7 +118,7 @@ class Variations
    */
   public function getSku()
   {
-    return "\"" . $this->sku . "\"";
+    return $this->sku;
   }
 
   /**
@@ -138,7 +138,7 @@ class Variations
    */
   public function getImage()
   {
-    return "\"".$this->image."\"";
+    return $this->image;
   }
 
   /**
