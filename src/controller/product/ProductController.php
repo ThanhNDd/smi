@@ -11,6 +11,28 @@ $db = new DBConnect();
 $dao = new ProductDAO();
 $dao->setConn($db->getConn());
 
+if (isset($_POST) && !empty($_FILES['file'])) {
+  if ($_FILES["file"]["size"] > 100000) {//100kb
+    echo "file_too_large";
+    return;
+  }
+  $ext = explode('.', $_FILES['file']['name']);
+  $new_file_name = round(microtime(true)) . '.' . end($ext);
+  $ext = $ext[(count($ext) - 1)];
+  if ($ext === 'jpg' || $ext === 'png' || $ext === 'jpeg') {
+    if (move_uploaded_file($_FILES['file']['tmp_name'], '../../../dist/uploads/' . $new_file_name)) {
+      echo Common::path() . 'dist/uploads/' . $new_file_name;
+    } else {
+      $response_array['response'] = "error";
+      echo json_encode($response_array);
+    }
+  } else {
+    $response_array['response'] = "not_image";
+    echo json_encode($response_array);
+  }
+
+}
+
 $print_barcode = new PrinterBarcode();
 if (isset($_POST["method"]) && $_POST["method"] == "print_barcode") {
   try {
@@ -70,17 +92,17 @@ if (isset($_POST["method"]) && $_POST["method"] == "update_discount") {
 }
 
 if (isset($_POST["method"]) && $_POST["method"] == "update_discount_all") {
-    try {
-        Common::authen_get_data();
-        $discount = $_POST["discount"];
-        $dao->update_discount_all((int)$discount);
-        $response_array['response'] = "success";
-        echo json_encode($response_array);
-    } catch (Exception $e) {
-        $db->rollback();
-        throw new Exception("Update discount all error exception: " . $e);
-    }
-    $db->commit();
+  try {
+    Common::authen_get_data();
+    $discount = $_POST["discount"];
+    $dao->update_discount_all((int)$discount);
+    $response_array['response'] = "success";
+    echo json_encode($response_array);
+  } catch (Exception $e) {
+    $db->rollback();
+    throw new Exception("Update discount all error exception: " . $e);
+  }
+  $db->commit();
 }
 
 if (isset($_POST["method"]) && $_POST["method"] == "check_update_out_of_stock") {
@@ -243,67 +265,59 @@ if (isset($_POST["method"]) && $_POST["method"] == "find_detail") {
   }
 }
 
-if (isset($_POST["type"]) && $_POST["type"] == "addNew") {
+if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
   try {
     Common::authen_get_data();
     $data = $_POST["data"];
     $result = 0;
     $data = json_decode($data);
-    $products = $data->products;
-    for ($i = 0; $i < count($products); $i++) {
-      $product = new Product();
-      $product->setName($products[$i]->name);
-      $product->setImage($products[$i]->image);
-      $product->setLink($products[$i]->link);
-      $product->setPrice($products[$i]->price);
-      $product->setFee_transport($products[$i]->fee);
-      $product->setProfit($products[$i]->profit);
-      $product->setPercent($products[$i]->percent);
-      $product->setRetail($products[$i]->retail);
-      $product->setType($products[$i]->type);
-      $product->setCategory_id($products[$i]->catId);
-      $product_id = $products[$i]->product_id;
-      if (!empty($product_id)) {
-        $product->setId($product_id);
-        $dao->update_product($product);
-        $result++;
-      } else {
-        $prodId = $dao->save_product($product);
-        $count = 0;
-        if (!empty($prodId) && $prodId != 0) {
-          $size = $products[$i]->size;
-          $color = $products[$i]->color;
-          $arr_variations = array();
-          for ($j = 0; $j < count($color); $j++) {
-            for ($k = 0; $k < count($size); $k++) {
-              $count++;
-              if ($count < 10) {
-                $count = "0" . $count;
-              }
-              $variation = new Variations();
-              $variation->setProduct_id($prodId);
-              $variation->setSize($size[$k]);
-              $variation->setColor($color[$j]);
-              $variation->setQuantity($products[$i]->quantity);
-              $variation->setSku($prodId . "" . $count);
-              array_push($arr_variations, $variation);
-            }
-          }
-          $varId = $dao->save_variations($arr_variations);
-          if (!empty($varId) && $varId != 0) {
-            $result++;
-          } else {
-            throw new Exception("Insert variation is Failed!!!!");
-          }
-        } else {
-          throw new Exception("Insert product is Failed!!!!");
-        }
+
+    $product = new Product();
+    $prodId = $data->product_id;
+    $product->setName($data->name);
+    $product->setImage($data->image);
+    $product->setLink($data->link);
+    $product->setPrice($data->price);
+    $product->setFee_transport($data->fee);
+    $product->setProfit($data->profit);
+    $product->setPercent($data->percent);
+    $product->setRetail($data->retail);
+    $product->setType($data->type);
+    $product->setCategory_id($data->cat);
+    if (!empty($prodId)) {
+      $product->setId($prodId);
+      $dao->update_product($product);
+      $result++;
+    } else {
+      $prodId = $dao->save_product($product);
+      if (empty($prodId)) {
+        throw new Exception("Insert product has Failed!!!!");
       }
     }
-    if ($result > 0) {
-      $response_array['success'] = "successfully";
-      echo json_encode($response_array);
+    $variations = $data->variations;
+    $count = 0;
+    $arr_variations = array();
+    for ($i = 0; $i < count($variations); $i++) {
+      $count++;
+      if ($count < 10) {
+        $count = "0" . $count;
+      }
+      $variation = new Variations();
+      $variation->setProduct_id($prodId);
+      $variation->setSize($variations[$i]->size);
+      $variation->setColor($variations[$i]->color);
+      $variation->setQuantity($variations[$i]->qty);
+      $variation->setSku($prodId . "" . $count);
+      $variation->setImage($variations[$i]->image);
+      array_push($arr_variations, $variation);
     }
+    $varId = $dao->save_variations($arr_variations);
+
+    if (empty($varId)) {
+      throw new Exception("Insert variation has Failed!!!!");
+    }
+    $response_array['success'] = $prodId;
+    echo json_encode($response_array);
   } catch (Exception $e) {
     $db->rollback();
     echo 'Caught exception: ', $e->getMessage(), "\n";

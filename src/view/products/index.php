@@ -338,9 +338,9 @@ Common::authen();
             let tr = $(this).closest('tr');
             let td = tr.find("td");
             let product_id = $(td[1]).text();
-            clear();
+            // clear();
             open_modal();
-            add_new_product();
+            // add_new_product();
             $.ajax({
                 url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
                 type: "POST",
@@ -350,43 +350,41 @@ Common::authen();
                     product_id: product_id
                 },
                 success: function (res) {
+                    console.log(res);
                     let arr = res.data;
-                    $("#product_id_1").val(arr[0].product_id);
-                    $("#p_image_1").val(arr[0].image);
-                    $("#p_name_1").val(arr[0].name);
-                    $("#p_link_1").val(arr[0].link);
-                    $("#p_price_1").val(arr[0].price);
-                    $("#p_fee_1").val(arr[0].fee_transport);
-                    $("#p_percent_1").val(arr[0].percent);
-                    $("#p_retail_1").val(arr[0].retail);
-                    $("#p_retail_temp_1").val(arr[0].retail);
-                    $("#p_profit_1").text(arr[0].profit);
-                    $("#select_type_1").val(arr[0].type).trigger("change");
-                    $("#select_cat_1").val(arr[0].category_id).trigger("change");
-                    $("#select_size_1").attr("disabled", "disabled");
-                    $("#select_color_1").attr("disabled", "disabled");
-                    $("#p_qty_1").attr("disabled", "disabled");
+                    console.log(arr[0].product_id);
+                    $("#product_id").val(arr[0].product_id);
+                    $("#link_image_0").val(arr[0].image).trigger('change');
+                    $("[id=img_0]").removeClass('hidden');
+                    $("#name").val(arr[0].name);
+                    $("#link").val(arr[0].link);
+                    $("#price").val(arr[0].price);
+                    $("#fee").val(arr[0].fee_transport);
+                    $("#percent").val(arr[0].percent);
+                    $("#retail").val(arr[0].retail);
+                    $("#select_type").val(arr[0].type).trigger("change");
+                    $("#select_cat").val(arr[0].category_id).trigger("change");
+                    $("#select_size").attr("disabled", "disabled");
+                    $("#select_color").attr("disabled", "disabled");
+                    $("#qty").attr("disabled", "disabled");
 
-                    for (let i = 2; i <= 10; i++) {
-                        $("#p_image_" + i).attr("disabled", "disabled");
-                        $("#p_name_" + i).attr("disabled", "disabled");
-                        $("#p_link_" + i).attr("disabled", "disabled");
-                        $("#p_price_" + i).attr("disabled", "disabled");
-                        $("#p_fee_" + i).attr("disabled", "disabled");
-                        $("#p_percent_" + i).val("");
-                        $("#p_percent_" + i).attr("disabled", "disabled");
-                        $("#p_retail_" + i).attr("disabled", "disabled");
-                        $("#p_retail_temp_" + i).attr("disabled", "disabled");
-                        $("#p_profit_" + i).attr("disabled", "disabled");
-                        $("#select_type_" + i).attr("disabled", "disabled");
-                        $("#select_cat_" + i).attr("disabled", "disabled");
-                        $("#select_size_" + i).attr("disabled", "disabled");
-                        $("#select_color_" + i).attr("disabled", "disabled");
-                        $("#p_qty_" + i).val("");
-                        $("#p_qty_" + i).attr("disabled", "disabled");
+                    let variations = arr[0].variations;
+                    let count = 0;
+                    for(let i=0; i<variations.length; i++) {
+                        let image = variations[i].image;
+                        let size = variations[i].size;
+                        let color = variations[i].color;
+                        let qty = variations[i].quantity;
+                        count++;
+                        generate_variations(count, qty, color, size);
+                        if(image == null) {
+                          image = 'https://via.placeholder.com/100';
+                        }
+                        $("[id=img_"+count+"]").prop('src', image);
+                        $("[id=link_image_1"+count+"]").val(image);
                     }
-                    $(".add-new-prod").attr("disabled", "disabled");
                     $(".create-new").text("Cập nhật");
+                    $(".add-new-prod").prop("disabled", '');
 
                 },
                 error: function (data, errorThrown) {
@@ -891,6 +889,7 @@ Common::authen();
         table += '<thead>' +
             '<tr>' +
             '<th class="center"><input type="checkbox" id="selectall" onclick="checkAll(this)"></th>' +
+            '<th>Hình ảnh</th>' +
             '<th>Mã sản phẩm</th>' +
             '<th>Màu</th>' +
             '<th>Size</th>' +
@@ -902,6 +901,11 @@ Common::authen();
         for (let i = 0; i < variations.length; i++) {
             table += '<tr class="' + variations[i].sku + '">' +
                 '<td class="center"><input type="checkbox" id="' + variations[i].sku + '" onclick="check(this)"></td>' +
+                '<td>';
+              if(variations[i].image != null) {
+                  table += '<img src="'+ variations[i].image +'" width="100px">';
+              }
+            table += '</td>' +
                 '<input type="hidden" class="product-id-' + variations[i].sku + '" value="' + variations[i].product_id + '">' +
                 '<td>' + variations[i].sku + '</td>' +
                 '<td>' + variations[i].color + '</td>' +
@@ -909,7 +913,6 @@ Common::authen();
                 '<td id="qty">' + variations[i].quantity + '</td>' +
                 '<td>' +
                 '<button type="button" class="btn bg-gradient-info btn-sm edit_variation"><i class="fas fa-edit"></i> Sửa</button>&nbsp;' +
-                //'<button type="button" class="btn bg-gradient-danger btn-sm delete_variation"><i class="fas fa-trash"></i> Xóa</button>' +
                 '</td>' +
                 '</tr>';
         }

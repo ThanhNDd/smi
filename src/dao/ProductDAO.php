@@ -133,7 +133,8 @@ class ProductDAO
                            B.size,
                            B.color,
                            B.quantity,
-                           B.sku
+                           B.sku,
+                           B.image as 'image_variation'
                     FROM smi_products A
                     LEFT JOIN smi_variations B ON A.id = B.product_id
                     WHERE A.id = " . $id;
@@ -163,7 +164,8 @@ class ProductDAO
                         'color' => $row["color"],
                         'quantity' => $row["quantity"],
                         'sku' => $row["sku"],
-                        'product_id' => $row["product_id"]
+                        'product_id' => $row["product_id"],
+                        'image' => $row["image_variation"]
                     );
                     array_push($product['variations'], $variation);
                     array_push($data, $product);
@@ -176,7 +178,8 @@ class ProductDAO
                         'color' => $row["color"],
                         'quantity' => $row["quantity"],
                         'sku' => $row["sku"],
-                        'product_id' => $row["product_id"]
+                        'product_id' => $row["product_id"],
+                        'image' => $row["image_variation"]
                     );
                     array_push($data[$i - 1]['variations'], $variation);
                 }
@@ -260,7 +263,8 @@ class ProductDAO
                         B.quantity, 
                         B.sku, 
                         A.created_at,
-                        A.discount
+                        A.discount,
+                        B.image as 'variation_image'
                     from 
                         smi_products A left join smi_variations B on A.id = B.product_id    
                     where B.product_id = $productId 
@@ -290,7 +294,8 @@ class ProductDAO
                         'color' => $row["color"],
                         'quantity' => $row["quantity"],
                         'sku' => $row["sku"],
-                        'product_id' => $row["product_id"]
+                        'product_id' => $row["product_id"],
+                        'image' => $row["variation_image"]
                     );
                     array_push($product['variations'], $variation);
                     array_push($data, $product);
@@ -303,7 +308,8 @@ class ProductDAO
                         'color' => $row["color"],
                         'quantity' => $row["quantity"],
                         'sku' => $row["sku"],
-                        'product_id' => $row["product_id"]
+                        'product_id' => $row["product_id"],
+                      'image' => $row["variation_image"]
                     );
                     array_push($data[$i - 1]['variations'], $variation);
                 }
@@ -486,6 +492,7 @@ class ProductDAO
                 `color`,
                 `quantity`,
                 `sku`,
+                `image`,
                 `created_at`) 
             VALUES ";
             for ($i = 0; $i < count($variations); $i++) {
@@ -494,10 +501,12 @@ class ProductDAO
                     $variations[$i]->getSize() . "," .
                     $variations[$i]->getColor() . "," .
                     $variations[$i]->getQuantity() . "," .
-                    $variations[$i]->getSku() . "" .
-                    ",NOW()),";
+                    $variations[$i]->getSku() . "," .
+                    $variations[$i]->getImage() . "," .
+                    "NOW()),";
             }
             $sql = substr($sql, 0, -1);
+//            print_r($sql);
             mysqli_query($this->conn, $sql);
             $lastid = mysqli_insert_id($this->conn);
             return $lastid;
