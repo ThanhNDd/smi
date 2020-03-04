@@ -57,4 +57,9 @@ class Common
         throw new Exception("Forbidden! You don't have permission to access this resource.");
     }
   }
+
+    public static function image_error()
+    {
+        echo Common::path()."dist/img/img_err.png";
+    }
 }

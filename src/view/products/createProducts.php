@@ -57,7 +57,7 @@ Common::authen();
                                 <i class="fa fa-upload"></i>
                               </button>
                           </form>
-                          <img src="https://via.placeholder.com/200" width="208" id="img_0" class="hidden" style="justify-content: left;float: left;margin: 5px 0;">
+                          <img src="<?php Common::image_error()?>" onerror="this.onerror=null;this.src='<?php Common::image_error()?>'" width="208" id="img_0" class="hidden" style="justify-content: left;float: left;margin: 5px 0;">
                         </td>
                       </tr>
                       <tr>
@@ -466,9 +466,9 @@ Common::authen();
               '                     <input type="text" class="form-control col-md-10" value="'+sku+'" id="sku_'+no+'" disabled>\n' +
               '                    </td>\n' +
               '                    <td >\n' +
-              '                      <img src="https://via.placeholder.com/100" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/100\';" width="100" id="img_'+no+'" style="justify-content: left;float: left;">\n' +
+              '                      <img src="https://via.placeholder.com/100" onerror="this.onerror=null;this.src=\'<?php Common::image_error()?>\'" width="100" id="img_'+no+'" style="justify-content: left;float: left;">\n' +
               '                      <div class="input-group mb-3 col-md-8" style="float: left;">\n' +
-              '                        <input type="text" class="form-control col-md-10" placeholder="Nhập link hình ảnh" onchange="onchange_image_link('+no+')" id="link_image_'+no+'">\n' +
+              '                        <input type="text" class="form-control col-md-10" placeholder="Nhập link hình ảnh" onchange="onchange_image_link('+no+')" id="link_image_'+no+'" >\n' +
               '                        <div class="input-group-append">\n' +
               '                       <form id="form_'+no+'" action="" method="post" enctype="multipart/form-data">' +
               '                          <input id="image_'+no+'" type="file" accept="image/*" name="image" class="hidden"/>\n' +

@@ -394,11 +394,11 @@ Common::authen();
                         let qty = variations[i].quantity;
                         count++;
                         generate_variations(count, qty, id, color, size, sku);
-                        let src = image;
-                        if (image == "") {
-                            src = 'https://via.placeholder.com/100';
-                        }
-                        $("[id=img_" + count + "]").prop('src', src);
+                        // let src = image;
+                        // if (image == "") {
+                        //     src = 'https://via.placeholder.com/100';
+                        // }
+                        $("[id=img_" + count + "]").prop('src', image);
                         $("[id=link_image_" + count + "]").val(image);
                     }
                     $(".create-new").text("Cập nhật");
@@ -895,11 +895,15 @@ Common::authen();
     }
 
     function format_name(data) {
-        return "<a href='" + data.link + "' target='_blank'>" + data.name + "</a>";
+        if(data.link == null || data.link == "") {
+            return data.name;
+        } else {
+            return "<a href='" + data.link + "' target='_blank'>" + data.name + "</a>";
+        }
     }
 
     function format_image(data) {
-        return "<img src=" + data.image + " width='100px' id='thumbnail'>";
+        return "<img src='" + data.image + "' width='100px' id='thumbnail' onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"'>";
     }
 
     function format_variation(variations, isNew) {
@@ -920,8 +924,7 @@ Common::authen();
             table += '<tr class="' + variations[i].sku + '">' +
                 '<td class="center"><input type="checkbox" id="' + variations[i].sku + '" onclick="check(this)"></td>' +
                 '<td>';
-            let image = variations[i].image == null || variations[i].image == "" ? 'https://via.placeholder.com/100' : variations[i].image;
-            table += '<img src="' + image + '" width="80px">';
+            table += '<img src="' + variations[i].image + '" width="80px" onerror="this.onerror=null;this.src=\'<?php Common::image_error()?>\'">';
             table += '</td>' +
                 '<input type="hidden" class="product-id-' + variations[i].sku + '" value="' + variations[i].product_id + '">' +
                 '<td>' + variations[i].sku + '</td>' +
