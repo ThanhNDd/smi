@@ -365,7 +365,7 @@ Common::authen();
                 success: function (res) {
                     console.log(res);
                     let arr = res.data;
-                    console.log(arr[0].product_id);
+                    console.log(arr[0].profit);
                     $("#display_product_id").val(arr[0].product_id);
                     $("#product_id").val(arr[0].product_id);
                     $("#link_image_0").val(arr[0].image).trigger('change');
@@ -376,6 +376,7 @@ Common::authen();
                     $("#fee").val(arr[0].fee_transport);
                     $("#percent").val(arr[0].percent);
                     $("#retail").val(arr[0].retail);
+                    $("#profit").val(arr[0].profit);
                     $("#select_type").val(arr[0].type).trigger("change");
                     $("#select_cat").val(arr[0].category_id).trigger("change");
                     $("#select_size").attr("disabled", "disabled");

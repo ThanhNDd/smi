@@ -225,7 +225,12 @@ if (isset($_POST["type"]) && $_POST["type"] == "update_variation") {
         if (empty($sku) || $sku == 0) {
             throw new Exception("sku is empty or equal zero");
         }
-        $dao->update_variation($sku, $color, $size, $qty);
+        $variation = new Variations();
+        $variation->setSku($sku);
+        $variation->setColor($color);
+        $variation->setSize($size);
+        $variation->setQuantity($qty);
+        $dao->update_variation($variation);
         $response_array['success'] = "successfully";
         echo json_encode($response_array);
     } catch (Exception $e) {

@@ -618,7 +618,7 @@ Common::authen();
               }
 
               let qty = $("[id=qty_"+no+"]").val();
-              if(qty == '' || !regExp.test(qty) || qty < 1) {
+              if(qty == '' || !regExp.test(qty) || qty < 0) {
                   $("[id=qty_"+no+"]").addClass('is-invalid');
                   $("[id=qty_"+no+"]").focus();
                   toastr.error('Đã xảy ra lỗi');

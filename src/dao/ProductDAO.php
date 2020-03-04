@@ -218,7 +218,8 @@ class ProductDAO
                         A.image , 
                         A.link , 
                         A.retail,
-                        A.discount
+                        A.discount,
+                        A.profit
                     from 
                         smi_products A
                     where
@@ -233,7 +234,8 @@ class ProductDAO
                     'image' => $row["image"],
                     'link' => $row["link"],
                     'retail' => number_format($row["retail"]),
-                    'discount' => $row["discount"]
+                    'discount' => $row["discount"],
+                    'profit' => number_format($row["profit"]),
                 );
                 array_push($data, $product);
             }
