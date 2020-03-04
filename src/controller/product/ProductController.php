@@ -295,12 +295,13 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $product->setType($data->type);
         $product->setCategory_id($data->cat);
 
-        $affect_row = $dao->update_product($product);
-        if (empty($affect_row)) {
-            $affect_row = $dao->save_product($product);
-            if (empty($affect_row)) {
+        if (empty($prodId)) {
+            $prodId = $dao->save_product($product);
+            if (empty($prodId)) {
                 throw new Exception("Insert product has Failed!!!!");
             }
+        } else {
+          $affect_row = $dao->update_product($product);
         }
         $variations = $data->variations;
         for ($i = 0; $i < count($variations); $i++) {
@@ -311,12 +312,14 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
             $variation->setQuantity($variations[$i]->qty);
             $variation->setSku($variations[$i]->sku);
             $variation->setImage($variations[$i]->image);
-            $affected_rows = $dao->update_variation($variation);
-            if(empty($affected_rows)) {
+            $variation_id = $variations[$i]->id;
+            if(empty($variation_id)) {
                 $affected_rows = $dao->save_variation($variation);
                 if (empty($affected_rows)) {
-                    throw new Exception("Insert variation has Failed!!!!");
+                  throw new Exception("Insert variation has Failed!!!!");
                 }
+            } else {
+              $dao->update_variation($variation);
             }
         }
         $response_array['success'] = $prodId;

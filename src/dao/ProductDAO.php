@@ -504,10 +504,8 @@ class ProductDAO
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
             $stmt->bind_param("sssddddiii", $name, $image, $link, $price, $fee, $profit, $retail, $percent, $type, $cat_id);
             $stmt->execute();
-            $affect_row = $stmt->affected_rows;
-            return $affect_row;
-//            $lastid = mysqli_insert_id($this->conn);
-//            return $lastid;
+            $lastid = mysqli_insert_id($this->conn);
+            return $lastid;
         } catch (Exception $e) {
             throw new Exception($e);
         }

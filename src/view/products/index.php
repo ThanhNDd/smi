@@ -366,6 +366,7 @@ Common::authen();
                     console.log(res);
                     let arr = res.data;
                     console.log(arr[0].product_id);
+                    $("#display_product_id").val(arr[0].product_id);
                     $("#product_id").val(arr[0].product_id);
                     $("#link_image_0").val(arr[0].image).trigger('change');
                     $("[id=img_0]").removeClass('hidden');
@@ -384,13 +385,14 @@ Common::authen();
                     let variations = arr[0].variations;
                     let count = 0;
                     for (let i = 0; i < variations.length; i++) {
+                        let id = variations[i].id;
                         let sku = variations[i].sku;
                         let image = variations[i].image;
                         let size = variations[i].size;
                         let color = variations[i].color;
                         let qty = variations[i].quantity;
                         count++;
-                        generate_variations(count, qty, color, size, sku);
+                        generate_variations(count, qty, id, color, size, sku);
                         let src = image;
                         if (image == "") {
                             src = 'https://via.placeholder.com/100';
@@ -400,6 +402,7 @@ Common::authen();
                     }
                     $(".create-new").text("Cập nhật");
                     $(".add-new-prod").prop("disabled", '');
+                    $("#create_variation").prop("disabled", true);
 
                 },
                 error: function (data, errorThrown) {
@@ -874,8 +877,8 @@ Common::authen();
     }
 
     function format_action() {
-        return '<button type="button" class="btn bg-gradient-success btn-sm add_variation" title="Thêm biến thể sản phẩm"><i class="fas fa-plus-circle"></i></button>&nbsp;'
-            + '<button type="button" class="btn bg-gradient-info btn-sm edit_product" title="Sửa sản phẩm"><i class="fas fa-edit"></i></button>&nbsp;'
+        // '<button type="button" class="btn bg-gradient-success btn-sm add_variation" title="Thêm biến thể sản phẩm"><i class="fas fa-plus-circle"></i></button>&nbsp;'
+        return  '<button type="button" class="btn bg-gradient-info btn-sm edit_product" title="Sửa sản phẩm"><i class="fas fa-edit"></i></button>&nbsp;'
             + '<button type="button" class="btn bg-gradient-danger btn-sm out_of_stock" title="Cập nhật hết hàng"><i class="fas fa-eye-slash"></i></button>';
     }
 
@@ -908,7 +911,7 @@ Common::authen();
             '<th>Màu</th>' +
             '<th>Size</th>' +
             '<th>Số lượng</th>' +
-            '<th>Hành động</th>' +
+            // '<th>Hành động</th>' +
             '</tr>' +
             '</thead>' +
             '<tbody>';
@@ -924,9 +927,9 @@ Common::authen();
                 '<td>' + variations[i].color + '</td>' +
                 '<td>' + variations[i].size + '</td>' +
                 '<td id="qty">' + variations[i].quantity + '</td>' +
-                '<td>' +
-                '<button type="button" class="btn bg-gradient-info btn-sm edit_variation"><i class="fas fa-edit"></i> Sửa</button>&nbsp;' +
-                '</td>' +
+                // '<td>' +
+                // '<button type="button" class="btn bg-gradient-info btn-sm edit_variation"><i class="fas fa-edit"></i> Sửa</button>&nbsp;' +
+                // '</td>' +
                 '</tr>';
         }
         if (isNew === "isNew") {
@@ -936,9 +939,9 @@ Common::authen();
                 '<td><select class="select-color-' + new_sku + ' form-control w100" id="select_color_' + new_sku + '"><option value="-1"></option></select></td>' +
                 '<td><select class="select-size-' + new_sku + ' form-control w100" id="select_size_' + new_sku + '"><option value="-1"></option></select></td>' +
                 '<td><select class="select-qty-' + new_sku + ' form-control w100" id="select_qty_' + new_sku + '"><option value="-1"></option></select></td>' +
-                '<td>' +
-                '<button type="button" class="btn bg-gradient-primary btn-sm save_variation"><i class="fas fa-save"></i> Lưu</button>&nbsp;' +
-                '</td>' +
+                // '<td>' +
+                // '<button type="button" class="btn bg-gradient-primary btn-sm save_variation"><i class="fas fa-save"></i> Lưu</button>&nbsp;' +
+                // '</td>' +
                 '<input type="hidden" class="product-id-' + new_sku + '" value="' + variations[variations.length - 1].product_id + '">' +
                 '</tr>';
         }

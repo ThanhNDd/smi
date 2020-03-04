@@ -27,7 +27,8 @@ Common::authen();
                         <tr>
                             <td>Mã sản phẩm</td>
                             <td>
-                                <input type="text" class="form-control ml-2 col-sm-10" id="product_id" disabled>
+                                <input type="text" class="form-control ml-2 col-sm-10" id="display_product_id" value="" disabled>
+                                <input type="hidden" class="form-control ml-2 col-sm-10" id="product_id" value="0">
                             </td>
                         </tr>
                       <tr>
@@ -166,7 +167,7 @@ Common::authen();
                     <th width="100px">SKU</th>
                     <th>Hình ảnh</th>
                     <th>Size</th>
-                    <th>Màu sắc</th>
+                    <th width="80px">Màu sắc</th>
                     <th width="100px">SL</th>
                     <th>*</th>
                   </tr>
@@ -206,7 +207,7 @@ Common::authen();
       $(document).ready(function () {
           $('.product-create').click(function () {
               reset_modal();
-              get_max_id();
+              // get_max_id();
               open_modal();
           });
           $('#create-product').on('hidden.bs.modal', function () {
@@ -238,8 +239,10 @@ Common::authen();
           
           $(".add-new-prod").click(function () {
               let no_row = $('.table-list tr:last').attr('class');
+              let sku = $('.table-list tr:last').find('[id=sku_'+no_row+']').val();
+              sku = Number(sku) + 1;
               no_row++;
-              generate_variations(no_row, 1);
+              generate_variations(no_row, 1, 0, '', '', sku);
           });
           
           $(".create-new").click(function () {
@@ -259,7 +262,7 @@ Common::authen();
               type: 'POST',
               success: function (response) {
                   console.log(response.max_id);
-                  $("#product_id").val(response.max_id);
+                  $("#display_product_id").val(response.max_id);
               },
               error: function (data, errorThrown) {
                   console.log(data.responseText);
@@ -292,6 +295,7 @@ Common::authen();
               if (result.value) {
                   show_loading();
                   let product = get_data_inform();
+
                   $.ajax({
                       dataType: 'json',
                       url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
@@ -330,8 +334,9 @@ Common::authen();
       }
 
       function reset_modal() {
-          let product_id = get_max_id();
-          $("#product_id").val(product_id);
+          $("#display_product_id").val('');
+          get_max_id();
+          $("#product_id").val(0);
           $("#name").val('');
           $("#link").val('');
           $("#link_image_0").val('');
@@ -343,13 +348,14 @@ Common::authen();
           $("#retail").val('');
           $("#percent").val(100);
           $("#profit").val('');
-          $("#select_size").val(null).trigger('change');
-          $("#select_color").val(null).trigger('change');
-          $("#qty").val('');
+          $("#select_size").val(null).prop('disabled', '').trigger('change');
+          $("#select_color").val(null).prop('disabled', '').trigger('change');
+          $("#qty").val('').prop('disabled', '');
           $("#create_variation").prop('disabled', '');
           $(".add-new-prod").prop('disabled', true);
           $(".table-info-product > tbody > tr").find('input').removeClass('is-invalid');
           $(".table-list > tbody").html('');
+
       }
 
       function get_data_inform() {
@@ -381,6 +387,7 @@ Common::authen();
           let arr = [];
           $(".table-list > tbody > tr").each(function () {
               let no = $(this).attr('class');
+              let id = $("[id=variation_id_"+no+"]").val();
               let sku = $("[id=sku_"+no+"]").val();
               let image = $("[id=link_image_"+no+"]").val();
               let size = $("[id=select_size_"+no+"]").val();
@@ -388,6 +395,7 @@ Common::authen();
               let qty = $("[id=qty_"+no+"]").val();
 
               let variations = {};
+              variations['id'] = id;
               variations['sku'] = sku;
               variations['image'] = image;
               variations['size'] = size;
@@ -428,7 +436,7 @@ Common::authen();
           }).then((result) => {
               if (result.value) {
                   let count = 1;
-                  let product_id = $("#product_id").val();
+                  let product_id = $("#display_product_id").val();
                   for(let i=0; i < color.length; i++) {
                       for(let j=0; j < size.length; j++) {
                           console.log(size[j]);
@@ -439,7 +447,7 @@ Common::authen();
                           } else {
                               sku = product_id + count;
                           }
-                          generate_variations(count, qty, color[i], size[j], sku);
+                          generate_variations(count, qty, 0, color[i], size[j], sku);
                           count++;
                           $('.add-new-prod').prop('disabled','');
                       }
@@ -450,14 +458,15 @@ Common::authen();
 
       }
 
-      function generate_variations(no, qty, color, size, sku) {
+      function generate_variations(no, qty, id, color, size, sku) {
           $(".table-list tbody").append('<tr class="'+no+'">\n' +
+              '                     <input type="hidden" class="form-control col-md-10" value="'+id+'" id="variation_id_'+no+'">\n' +
               '                    <td align="center">' +no+ '</td>\n' +
               '                    <td align="center">' +
               '                     <input type="text" class="form-control col-md-10" value="'+sku+'" id="sku_'+no+'" disabled>\n' +
               '                    </td>\n' +
               '                    <td >\n' +
-              '                      <img src="https://via.placeholder.com/100" width="100" id="img_'+no+'" style="justify-content: left;float: left;">\n' +
+              '                      <img src="https://via.placeholder.com/100" onerror="this.onerror=null;this.src=\'https://via.placeholder.com/100\';" width="100" id="img_'+no+'" style="justify-content: left;float: left;">\n' +
               '                      <div class="input-group mb-3 col-md-8" style="float: left;">\n' +
               '                        <input type="text" class="form-control col-md-10" placeholder="Nhập link hình ảnh" onchange="onchange_image_link('+no+')" id="link_image_'+no+'">\n' +
               '                        <div class="input-group-append">\n' +
@@ -481,7 +490,7 @@ Common::authen();
               '                       <input type="number" class="form-control " id="qty_'+no+'" value="'+qty+'">\n' +
               '                    </td>\n' +
               '                    <td>\n' +
-              '                       <button type="button" class="btn btn-danger btn-flat" id="delete_product_'+no+'">\n' +
+              '                       <button type="button" class="btn btn-danger btn-flat" id="delete_product_'+no+'" '+ (id != '' ? 'disabled' : '') +'>\n' +
               '                            <i class="fa fa-trash"></i>\n' +
               '                          </button>' +
               '                    </td>\n' +
@@ -871,92 +880,6 @@ Common::authen();
           $("[id=profit]").val(formatNumber(profit));
       }
 
-      //function create_new() {
-      //    show_loading();
-      //    let data = {};
-      //    let rowProductNumber = $(".count-row").val();
-      //    let products = [];
-      //    for (let i = 1; i <= rowProductNumber.length; i++) {
-      //        let product_id = $("#product_id_" + i).val();
-      //        let image = $("#p_image_" + i).val();
-      //        let name = $("#p_name_" + i).val();
-      //        let link = $("#p_link_" + i).val();
-      //        let size = $("#select_size_" + i).val();
-      //        let color = $("#select_color_" + i).val();
-      //        let qty = $("#p_qty_" + i).val();
-      //        let price = $("#p_price_" + i).val();
-      //        let fee = $("#p_fee_" + i).val();
-      //        let percent = $("#p_percent_" + i).val();
-      //        let retail = $("#p_retail_" + i).val();
-      //        let profit = $("#p_profit_" + i).text();
-      //        let type = $("#select_type_" + i).val();
-      //        let catId = $("#select_cat_" + i).val();
-      //        if (image !== "" && name !== "" && price !== "" && type.length > 0 && catId.length > 0) {
-      //            let product = {};
-      //            product["image"] = image;
-      //            product["name"] = name;
-      //            product["link"] = link;
-      //            product["size"] = size;
-      //            product["color"] = color;
-      //            product["quantity"] = qty;
-      //            product["price"] = replaceComma(price);
-      //            product["fee"] = replaceComma(fee);
-      //            product["retail"] = replaceComma(retail);
-      //            product["percent"] = percent.replace("%", "");
-      //            product["profit"] = replaceComma(profit);
-      //            product["type"] = type;
-      //            product["catId"] = catId;
-      //            product["product_id"] = product_id;
-      //            products.push(product);
-      //        }
-      //    }
-      //    data["products"] = products;
-      //    console.log(JSON.stringify(data));
-      //    hide_loading();
-      //    Swal.fire({
-      //        title: 'Bạn có chắc chắn muốn tạo các sản phẩm này?',
-      //        text: "",
-      //        type: 'warning',
-      //        showCancelButton: true,
-      //        confirmButtonColor: '#3085d6',
-      //        cancelButtonColor: '#d33',
-      //        confirmButtonText: 'Ok'
-      //    }).then((result) => {
-      //        if (result.value) {
-      //            show_loading();
-      //            $.ajax({
-      //                dataType: 'json',
-      //                url: '<?php //Common::getPath() ?>//src/controller/product/ProductController.php',
-      //                data: {
-      //                    type: 'addNew',
-      //                    data: JSON.stringify(data)
-      //                },
-      //                type: 'POST',
-      //                success: function (data) {
-      //                    Swal.fire(
-      //                        'Thành công!',
-      //                        'Các sản phẩm đã được tạo thành công.',
-      //                        'success'
-      //                    )
-      //                    reset_form();
-      //                    hide_loading();
-      //                },
-      //                error: function (data, errorThrown) {
-      //                    console.log(data.responseText);
-      //                    console.log(errorThrown);
-      //                    Swal.fire({
-      //                        type: 'error',
-      //                        title: 'Đã xảy ra lỗi',
-      //                        text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-      //                    })
-      //                    hide_loading();
-      //                }
-      //            });
-      //
-      //        }
-      //    })
-      //}
-
       function show_loading() {
           $("#create-product .overlay").removeClass("hidden");
       }
@@ -965,14 +888,9 @@ Common::authen();
           $("#create-product .overlay").addClass("hidden");
       }
 
-      // function formatNumber(num) {
-      //     return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-      // }
-
-      // function replaceComma(value) {
-      //     return value.replace(/,/g, '');
-      // }
-
+      function onerror_img() {
+          return '';
+      }
 
       let size = [
           {
