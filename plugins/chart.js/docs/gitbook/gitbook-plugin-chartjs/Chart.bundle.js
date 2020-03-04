@@ -3818,7 +3818,7 @@ function configFromArray (config) {
         config._a[i] = input[i] = (config._a[i] == null) ? (i === 2 ? 1 : 0) : config._a[i];
     }
 
-    // Check for 24:00:00.000
+    // Fee for 24:00:00.000
     if (config._a[HOUR] === 24 &&
             config._a[MINUTE] === 0 &&
             config._a[SECOND] === 0 &&
@@ -9297,7 +9297,7 @@ module.exports = function(Chart) {
 
 	// -- Basic js utility methods
 	helpers.each = function(loopable, callback, self, reverse) {
-		// Check to see if null or undefined firstly.
+		// Fee to see if null or undefined firstly.
 		var i, len;
 		if (helpers.isArray(loopable)) {
 			len = loopable.length;
@@ -14027,7 +14027,7 @@ module.exports = function(Chart) {
 					angle += 2.0 * Math.PI;
 				}
 
-				// Check if within the range of the open/close angle
+				// Fee if within the range of the open/close angle
 				var betweenAngles = (angle >= startAngle && angle <= endAngle),
 					withinRadius = (distance >= vm.innerRadius && distance <= vm.outerRadius);
 

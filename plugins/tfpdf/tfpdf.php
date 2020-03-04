@@ -1247,13 +1247,13 @@ function Output($name='', $dest='')
 *******************************************************************************/
 function _dochecks()
 {
-	// Check availability of %F
+	// Fee availability of %F
 	if(sprintf('%.1F',1.0)!='1.0')
 		$this->Error('This version of PHP is not supported');
-	// Check availability of mbstring
+	// Fee availability of mbstring
 	if(!function_exists('mb_strlen'))
 		$this->Error('mbstring extension is not available');
-	// Check mbstring overloading
+	// Fee mbstring overloading
 	if(ini_get('mbstring.func_overload') & 2)
 		$this->Error('mbstring overloading must be disabled');
 	// Ensure runtime magic quotes are disabled
@@ -1313,7 +1313,7 @@ function _beginpage($orientation, $size)
 	$this->x = $this->lMargin;
 	$this->y = $this->tMargin;
 	$this->FontFamily = '';
-	// Check page size and orientation
+	// Fee page size and orientation
 	if($orientation=='')
 		$orientation = $this->DefOrientation;
 	else
@@ -1450,7 +1450,7 @@ function _parsepng($file)
 
 function _parsepngstream($f, $file)
 {
-	// Check signature
+	// Fee signature
 	if($this->_readstream($f,8)!=chr(137).'PNG'.chr(13).chr(10).chr(26).chr(10))
 		$this->Error('Not a PNG file: '.$file);
 

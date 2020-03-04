@@ -1,6 +1,5 @@
 <?php
 require_once("common.php");
-//Common::authen();
 ?>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
@@ -30,17 +29,11 @@ require_once("common.php");
                     <a href="#" class="nav-link active">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>
-                            Dashboard
+                            Bán hàng
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="<?php Common::getPath() ?>src/view/products/" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Sản phẩm</p>
-                            </a>
-                        </li>
                         <li class="nav-item">
                             <a href="<?php Common::getPath() ?>src/view/sales/" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
@@ -54,9 +47,26 @@ require_once("common.php");
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="<?php Common::getPath() ?>src/view/voucher/" class="nav-link">
+                            <a href="<?php Common::getPath() ?>src/view/exchange/" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Vouchers</p>
+                                <p>Đổi hàng</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item has-treeview menu-open">
+                    <a href="#" class="nav-link active">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>
+                            Kho
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="<?php Common::getPath() ?>src/view/products/" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Sản phẩm</p>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -65,10 +75,44 @@ require_once("common.php");
                                 <p>Kiểm hàng</p>
                             </a>
                         </li>
+                    </ul>
+                </li>
+                <li class="nav-item has-treeview menu-open">
+                    <a href="#" class="nav-link active">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>
+                            Kế toán
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="<?php Common::getPath() ?>src/view/exchange/" class="nav-link">
+                            <a href="<?php Common::getPath() ?>src/view/fee/" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Đổi hàng</p>
+                                <p>Chi phí</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?php Common::getPath() ?>src/view/voucher/" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Khoản thu</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item has-treeview menu-open">
+                    <a href="#" class="nav-link active">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>
+                            Marketing
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="<?php Common::getPath() ?>src/view/voucher/" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Vouchers</p>
                             </a>
                         </li>
                     </ul>

@@ -10,14 +10,11 @@ class UserDAO
         try {
             $sql = "SELECT password FROM smi_user WHERE username = '$username'";
             $pwd = mysqli_query($this->conn, $sql);
-//            print_r($this->conn->error);
             $pwd = mysqli_fetch_array($pwd)['password'];
             if($pwd == null) {
               return "error";
             }
-//            print_r($pwd);
             $check = crypt($password, $pwd);
-//            print_r($check);
             if (hash_equals($check, $pwd)) {
                 return "success";
             } else {
@@ -30,7 +27,7 @@ class UserDAO
 
     function generate_password($password_plain) {
         $salt = strtr(base64_encode(random_bytes(16)), '+', '.');
-        $salt = sprintf("$2y$%02d$", 10) . $salt; //$2y$ là thuật toán BlowFish, 10 là độ dài của key mã hóa.
+        $salt = sprintf("$2y$%02d$", 10) . $salt;
         $password = crypt($password_plain, $salt);
         return $password;
     }

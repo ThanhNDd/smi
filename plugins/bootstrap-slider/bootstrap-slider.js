@@ -223,7 +223,7 @@ var windowIsDefined = (typeof window === "undefined" ? "undefined" : _typeof(win
 			formatInvalidInputErrorMsg: function formatInvalidInputErrorMsg(input) {
 				return "Invalid input value '" + input + "' passed in";
 			},
-			callingContextNotSliderInstance: "Calling context element does not have instance of Slider bound to it. Check your code to make sure the JQuery object returned from the call to the slider() initializer is calling the method"
+			callingContextNotSliderInstance: "Calling context element does not have instance of Slider bound to it. Fee your code to make sure the JQuery object returned from the call to the slider() initializer is calling the method"
 		};
 
 		var SliderScale = {
@@ -391,7 +391,7 @@ var windowIsDefined = (typeof window === "undefined" ? "undefined" : _typeof(win
 				this.options.lock_to_ticks = false;
 			}
 
-			// Check options.rtl
+			// Fee options.rtl
 			if (this.options.rtl === 'auto') {
 				var computedStyle = window.getComputedStyle(this.element);
 				if (computedStyle != null) {

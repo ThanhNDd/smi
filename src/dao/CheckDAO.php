@@ -10,14 +10,16 @@ class CheckDAO
             $stmt = $this->getConn()->prepare("update smi_variations a
                 INNER JOIN (SELECT sku, quantity FROM smi_check_detail) AS b ON a.sku = b.sku
                 SET a.quantity = b.quantity");
-            $stmt->execute();
-            print_r($this->getConn()->error);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
         } catch (Exception $e) {
             throw new Exception($e);
         }
     }
 
-    function save_check(Check $check)
+    function save_check(Fee $check)
     {
         try {
             $status = $check->getStatus();
@@ -41,12 +43,10 @@ class CheckDAO
                 VALUES
                 (?, ?, ?, ?, NOW(), ?, ?, ?, NOW())");
             $stmt->bind_param("iiiisdd", $seq, $status, $total_products, $products_checked, $finished_date, $total_money, $money_checked);
-            $stmt->execute();
-            print_r($this->getConn()->error);
-            $nrows = $stmt->affected_rows;
-            if (!$nrows) {
-                throw new Exception("save_check has failure");
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
             }
+            $stmt->close();
             $lastid = mysqli_insert_id($this->conn);
             $data = array();
             $data["checkId"] = $lastid;
@@ -86,12 +86,10 @@ class CheckDAO
             $stmt = $this->getConn()->prepare("INSERT INTO smi_check_detail (`check_id`,`seq`,`product_id`,`variation_id`,`sku`,`quantity`,`size`,`color`,`name`,`price`,`created_date`) 
                     VALUES (?,?,?,?,?,?,?,?,?,?,NOW())");
             $stmt->bind_param("iiiisisssd", $check_id, $seq, $product_id, $variation_id, $sku, $qty, $size, $color, $name, $price);
-            $stmt->execute();
-            print_r($this->getConn()->error);
-            $nrows = $stmt->affected_rows;
-            if (!$nrows) {
-                throw new Exception("save_check_detail has failure");
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
             }
+            $stmt->close();
             $lastid = mysqli_insert_id($this->conn);
             return $lastid;
         } catch (Exception $e) {
@@ -104,11 +102,10 @@ class CheckDAO
         try {
             $stmt = $this->getConn()->prepare("UPDATE `smi_check_detail` SET `quantity` = `quantity` + 1 WHERE `sku` = ?");
             $stmt->bind_param("i", $sku);
-            $stmt->execute();
-            $nrows = $stmt->affected_rows;
-            if (!$nrows) {
-                throw new Exception("update_qty_by_sku has failure");
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
             }
+            $stmt->close();
         } catch (Exception $e) {
             throw new Exception($e);
         }
@@ -119,11 +116,10 @@ class CheckDAO
         try {
             $stmt = $this->getConn()->prepare("UPDATE `smi_check` SET `status` = ? WHERE `id` = ?");
             $stmt->bind_param("ii", $id, $status);
-            $stmt->execute();
-            $nrows = $stmt->affected_rows;
-            if (!$nrows) {
-                throw new Exception("update_status has failure");
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
             }
+            $stmt->close();
         } catch (Exception $e) {
             throw new Exception($e);
         }
@@ -134,12 +130,10 @@ class CheckDAO
         try {
             $stmt = $this->getConn()->prepare("UPDATE `smi_check_detail` SET `quantity` = ? WHERE `seq` = ? and `sku` = ?");
             $stmt->bind_param("iis", $qty, $seq, $sku);
-            $stmt->execute();
-
-            $nrows = $stmt->affected_rows;
-            if (!$nrows) {
-                throw new Exception("onchange_qty has failure");
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
             }
+            $stmt->close();
         } catch (Exception $e) {
             throw new Exception($e);
         }
@@ -150,23 +144,21 @@ class CheckDAO
         try {
             $stmt = $this->getConn()->prepare("DELETE FROM `smi_check_detail` WHERE `seq` = ? and `sku` = ?");
             $stmt->bind_param("is", $seq, $sku);
-            $stmt->execute();
-            $nrows = $stmt->affected_rows;
-            if (!$nrows) {
-                throw new Exception("delete_product has failure");
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
             }
+            $stmt->close();
         } catch (Exception $e) {
             throw new Exception($e);
         }
     }
 
-    function checking_finish(Check $check)
+    function checking_finish(Fee $check)
     {
         $id = $check->getId();
         $status = $check->getStatus();
         $product_checked = $check->getProductsChecked();
         $money_checked = $check->getMoneyChecked();
-
         try {
             $stmt = $this->getConn()->prepare("UPDATE `smi_check`
                 SET
@@ -177,12 +169,10 @@ class CheckDAO
                 `updated_date` = NOW()
                 WHERE `id` = ?");
             $stmt->bind_param("iidi", $status, $product_checked, $money_checked, $id);
-            $stmt->execute();
-            print_r($this->getConn()->error);
-            $nrows = $stmt->affected_rows;
-            if (!$nrows) {
-                throw new Exception("checking_finish has failure");
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
             }
+            $stmt->close();
             $this->update_qty_variations();
         } catch (Exception $e) {
             throw new Exception($e);

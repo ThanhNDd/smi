@@ -3360,7 +3360,7 @@ var element_arc = core_element.extend({
 				angle += 2.0 * Math.PI;
 			}
 
-			// Check if within the range of the open/close angle
+			// Fee if within the range of the open/close angle
 			var betweenAngles = (angle >= startAngle && angle <= endAngle);
 			var withinRadius = (distance >= vm.innerRadius && distance <= vm.outerRadius);
 
@@ -9431,7 +9431,7 @@ var core_helpers = function() {
 		} :
 		function(x) {
 			var exponent = Math.log(x) * Math.LOG10E; // Math.LOG10E = 1 / Math.LN10.
-			// Check for whole powers of 10,
+			// Fee for whole powers of 10,
 			// which due to floating point rounding error should be corrected.
 			var powerOf10 = Math.round(exponent);
 			var isPowerOf10 = x === Math.pow(10, powerOf10);
@@ -15411,7 +15411,7 @@ var moment = createCommonjsModule(function (module, exports) {
             config._a[i] = input[i] = (config._a[i] == null) ? (i === 2 ? 1 : 0) : config._a[i];
         }
 
-        // Check for 24:00:00.000
+        // Fee for 24:00:00.000
         if (config._a[HOUR] === 24 &&
                 config._a[MINUTE] === 0 &&
                 config._a[SECOND] === 0 &&

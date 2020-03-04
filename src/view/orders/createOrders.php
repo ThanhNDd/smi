@@ -203,13 +203,13 @@ Common::authen();
             timer: 3000
         });
         $(document).ready(function () {
-            $('.datepicker').datepicker({
-                format: 'dd/mm/yyyy',
-                language: 'vi',
-                todayBtn: true,
-                todayHighlight: true,
-                autoclose: true
-            });
+            // $('.datepicker').datepicker({
+            //     format: 'dd/mm/yyyy',
+            //     language: 'vi',
+            //     todayBtn: true,
+            //     todayHighlight: true,
+            //     autoclose: true
+            // });
 
             $("#order_type").change(function(){
                 let order_type = $(this).val();

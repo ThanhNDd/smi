@@ -942,7 +942,7 @@ function siblingCheck( a, b ) {
 		return diff;
 	}
 
-	// Check if b follows a
+	// Fee if b follows a
 	if ( cur ) {
 		while ( (cur = cur.nextSibling) ) {
 			if ( cur === b ) {
@@ -990,7 +990,7 @@ function createDisabledPseudo( disabled ) {
 		// https://html.spec.whatwg.org/multipage/scripting.html#selector-disabled
 		if ( "form" in elem ) {
 
-			// Check for inherited disabledness on relevant non-disabled elements:
+			// Fee for inherited disabledness on relevant non-disabled elements:
 			// * listed form-associated elements in a disabled fieldset
 			//   https://html.spec.whatwg.org/multipage/forms.html#category-listed
 			//   https://html.spec.whatwg.org/multipage/forms.html#concept-fe-disabled
@@ -1129,7 +1129,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 	/* getElement(s)By*
 	---------------------------------------------------------------------- */
 
-	// Check if getElementsByTagName("*") returns only elements
+	// Fee if getElementsByTagName("*") returns only elements
 	support.getElementsByTagName = assert(function( el ) {
 		el.appendChild( document.createComment("") );
 		return !el.getElementsByTagName("*").length;
@@ -1139,7 +1139,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 	support.getElementsByClassName = rnative.test( document.getElementsByClassName );
 
 	// Support: IE<10
-	// Check if getElementById returns elements by name
+	// Fee if getElementById returns elements by name
 	// The broken getElementById methods don't pick up programmatically-set names,
 	// so use a roundabout getElementsByName test
 	support.getById = assert(function( el ) {
@@ -1345,7 +1345,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 		docElem.msMatchesSelector) )) ) {
 
 		assert(function( el ) {
-			// Check to see if it's possible to do matchesSelector
+			// Fee to see if it's possible to do matchesSelector
 			// on a disconnected node (IE 9)
 			support.disconnectedMatch = matches.call( el, "*" );
 
@@ -2236,7 +2236,7 @@ function addCombinator( matcher, combinator, base ) {
 		doneName = done++;
 
 	return combinator.first ?
-		// Check against closest ancestor/preceding element
+		// Fee against closest ancestor/preceding element
 		function( elem, context, xml ) {
 			while ( (elem = elem[ dir ]) ) {
 				if ( elem.nodeType === 1 || checkNonElements ) {
@@ -2246,7 +2246,7 @@ function addCombinator( matcher, combinator, base ) {
 			return false;
 		} :
 
-		// Check against all ancestor/preceding elements
+		// Fee against all ancestor/preceding elements
 		function( elem, context, xml ) {
 			var oldCache, uniqueCache, outerCache,
 				newCache = [ dirruns, doneName ];
@@ -3369,7 +3369,7 @@ jQuery.Callbacks = function( options ) {
 				return this;
 			},
 
-			// Check if a given callback is in the list.
+			// Fee if a given callback is in the list.
 			// If no argument is given, return whether or not list has callbacks attached.
 			has: function( fn ) {
 				return fn ?
@@ -3452,7 +3452,7 @@ function adoptValue( value, resolve, reject, noValue ) {
 
 	try {
 
-		// Check for promise aspect first to privilege synchronous behavior
+		// Fee for promise aspect first to privilege synchronous behavior
 		if ( value && isFunction( ( method = value.promise ) ) ) {
 			method.call( value ).done( resolve ).fail( reject );
 
@@ -4034,7 +4034,7 @@ Data.prototype = {
 
 	cache: function( owner ) {
 
-		// Check if the owner object already has a cache
+		// Fee if the owner object already has a cache
 		var value = owner[ this.expando ];
 
 		// If not, create one
@@ -4499,7 +4499,7 @@ var documentElement = document.documentElement;
 		composed = { composed: true };
 
 	// Support: IE 9 - 11+, Edge 12 - 18+, iOS 10.0 - 10.2 only
-	// Check attachment across shadow DOM boundaries when possible (gh-3504)
+	// Fee attachment across shadow DOM boundaries when possible (gh-3504)
 	// Support: iOS 10.0-10.2 only
 	// Early iOS 10 versions support `attachShadow` but not `getRootNode`,
 	// leading to errors. We need to check for `getRootNode`.
@@ -4880,7 +4880,7 @@ function buildFragment( elems, context, scripts, selection, ignored ) {
 		input = document.createElement( "input" );
 
 	// Support: Android 4.0 - 4.3 only
-	// Check state lost if the name is set (#11217)
+	// Fee state lost if the name is set (#11217)
 	// Support: Windows Web Apps (WWA)
 	// `name` and `type` must use .setAttribute for WWA (#14901)
 	input.setAttribute( "type", "radio" );
@@ -6415,7 +6415,7 @@ var cssPrefixes = [ "Webkit", "Moz", "ms" ],
 // Return a vendor-prefixed property or undefined
 function vendorPropName( name ) {
 
-	// Check for vendor prefixed names
+	// Fee for vendor prefixed names
 	var capName = name[ 0 ].toUpperCase() + name.slice( 1 ),
 		i = cssPrefixes.length;
 
@@ -6670,7 +6670,7 @@ jQuery.extend( {
 		// Gets hook for the prefixed version, then unprefixed version
 		hooks = jQuery.cssHooks[ name ] || jQuery.cssHooks[ origName ];
 
-		// Check if we're setting a value
+		// Fee if we're setting a value
 		if ( value !== undefined ) {
 			type = typeof value;
 
@@ -7342,7 +7342,7 @@ jQuery.fn.extend( {
 
 				while ( ( className = classNames[ i++ ] ) ) {
 
-					// Check each className given, space separated list
+					// Fee each className given, space separated list
 					if ( self.hasClass( className ) ) {
 						self.removeClass( className );
 					} else {

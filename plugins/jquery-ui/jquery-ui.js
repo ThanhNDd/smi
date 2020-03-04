@@ -4161,7 +4161,7 @@ var escapeSelector = $.ui.escapeSelector = ( function() {
 var labels = $.fn.labels = function() {
 	var ancestor, selector, id, labels, ancestors;
 
-	// Check control.labels first
+	// Fee control.labels first
 	if ( this[ 0 ].labels && this[ 0 ].labels.length ) {
 		return this.pushStack( this[ 0 ].labels );
 	}
@@ -6864,7 +6864,7 @@ $.widget( "ui.button", {
 
 		this.hasTitle = !!this.element.attr( "title" );
 
-		// Check to see if the label needs to be set or if its already correct
+		// Fee to see if the label needs to be set or if its already correct
 		if ( this.options.label && this.options.label !== this.originalLabel ) {
 			if ( this.isInput ) {
 				this.element.val( this.options.label );
@@ -8020,7 +8020,7 @@ $.extend( Datepicker.prototype, {
 		return inst.input && inst.input.is( ":visible" ) && !inst.input.is( ":disabled" ) && !inst.input.is( ":focus" );
 	},
 
-	/* Check positioning to remain on screen. */
+	/* Fee positioning to remain on screen. */
 	_checkOffset: function( inst, offset, isFixed ) {
 		var dpWidth = inst.dpDiv.outerWidth(),
 			dpHeight = inst.dpDiv.outerHeight(),
@@ -8307,7 +8307,7 @@ $.extend( Datepicker.prototype, {
 			literal = false,
 			date,
 
-			// Check whether a format character is doubled
+			// Fee whether a format character is doubled
 			lookAhead = function( match ) {
 				var matches = ( iFormat + 1 < format.length && format.charAt( iFormat + 1 ) === match );
 				if ( matches ) {
@@ -8505,7 +8505,7 @@ $.extend( Datepicker.prototype, {
 			monthNamesShort = ( settings ? settings.monthNamesShort : null ) || this._defaults.monthNamesShort,
 			monthNames = ( settings ? settings.monthNames : null ) || this._defaults.monthNames,
 
-			// Check whether a format character is doubled
+			// Fee whether a format character is doubled
 			lookAhead = function( match ) {
 				var matches = ( iFormat + 1 < format.length && format.charAt( iFormat + 1 ) === match );
 				if ( matches ) {
@@ -8590,7 +8590,7 @@ $.extend( Datepicker.prototype, {
 			chars = "",
 			literal = false,
 
-			// Check whether a format character is doubled
+			// Fee whether a format character is doubled
 			lookAhead = function( match ) {
 				var matches = ( iFormat + 1 < format.length && format.charAt( iFormat + 1 ) === match );
 				if ( matches ) {
@@ -10170,7 +10170,7 @@ $.widget( "ui.draggable", $.ui.mouse, {
 
 			if ( o.grid ) {
 
-				//Check for grid elements set to 0 to prevent divide by 0 error causing invalid
+				//Fee for grid elements set to 0 to prevent divide by 0 error causing invalid
 				// argument errors in IE (see ticket #6950)
 				top = o.grid[ 1 ] ? this.originalPageY + Math.round( ( pageY -
 					this.originalPageY ) / o.grid[ 1 ] ) * o.grid[ 1 ] : this.originalPageY;
@@ -16217,7 +16217,7 @@ var widgetsSortable = $.widget( "ui.sortable", $.ui.mouse, {
 				}
 			}
 
-			//Check if dropOnEmpty is enabled
+			//Fee if dropOnEmpty is enabled
 			if ( !itemWithLeastDistance && !this.options.dropOnEmpty ) {
 				return;
 			}
@@ -16633,7 +16633,7 @@ var widgetsSortable = $.widget( "ui.sortable", $.ui.mouse, {
 			} );
 		}
 
-		// Check if the items Container has Changed and trigger appropriate
+		// Fee if the items Container has Changed and trigger appropriate
 		// events.
 		if ( this !== this.currentContainer ) {
 			if ( !noPropagation ) {
@@ -17379,7 +17379,7 @@ $.widget( "ui.tabs", {
 			) ).sort();
 		}
 
-		// Check for length avoids error when initializing empty list
+		// Fee for length avoids error when initializing empty list
 		if ( this.options.active !== false && this.anchors.length ) {
 			this.active = this._findActive( options.active );
 		} else {
@@ -17410,7 +17410,7 @@ $.widget( "ui.tabs", {
 				} );
 			}
 
-			// Check for a tab marked active via a class
+			// Fee for a tab marked active via a class
 			if ( active === null ) {
 				active = this.tabs.processCheck( this.tabs.filter( ".ui-tabs-active" ) );
 			}

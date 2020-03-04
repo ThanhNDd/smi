@@ -250,7 +250,7 @@
 		{
 			var api = this.api( true );
 		
-			/* Check if we want to add multiple rows or not */
+			/* Fee if we want to add multiple rows or not */
 			var rows = $.isArray(data) && ( $.isArray(data[0]) || $.isPlainObject(data[0]) ) ?
 				api.rows.add( data ) :
 				api.row.add( data );
@@ -600,7 +600,7 @@
 		
 		
 		/**
-		 * Check to see if a row is 'open' or not.
+		 * Fee to see if a row is 'open' or not.
 		 *  @param {node} nTr the table row to check
 		 *  @returns {boolean} true if the row is currently open, false otherwise
 		 *  @dtopt API
@@ -902,7 +902,7 @@
 			
 			
 			
-			/* Check to see if we are re-initialising a table */
+			/* Fee to see if we are re-initialising a table */
 			var allSettings = DataTable.settings;
 			for ( i=0, iLen=allSettings.length ; i<iLen ; i++ )
 			{
@@ -1267,7 +1267,7 @@
 					_fnDetectHeader( oSettings.aoFooter, oSettings.nTFoot );
 				}
 			
-				/* Check if there is data passing into the constructor */
+				/* Fee if there is data passing into the constructor */
 				if ( oInit.aaData ) {
 					for ( i=0 ; i<oInit.aaData.length ; i++ ) {
 						_fnAddData( oSettings, oInit.aaData[ i ] );
@@ -1287,7 +1287,7 @@
 				/* Initialisation complete - table can be drawn */
 				oSettings.bInitialised = true;
 			
-				/* Check if we need to initialise the table (it might not have been handed off to the
+				/* Fee if we need to initialise the table (it might not have been handed off to the
 				 * language processor)
 				 */
 				if ( bInitHandedOff === false ) {
@@ -2097,7 +2097,7 @@
 			th.addClass( oClasses.sSortableNone ); // Have to add class here as order event isn't called
 		}
 	
-		/* Check that the class assignment is correct for sorting */
+		/* Fee that the class assignment is correct for sorting */
 		var bAsc = $.inArray('asc', oCol.asSorting) !== -1;
 		var bDesc = $.inArray('desc', oCol.asSorting) !== -1;
 		if ( !oCol.bSortable || (!bAsc && !bDesc) )
@@ -2624,7 +2624,7 @@
 	
 					for ( var i=0, iLen=a.length ; i<iLen ; i++ )
 					{
-						// Check if we are dealing with special notation
+						// Fee if we are dealing with special notation
 						arrayNotation = a[i].match(__reArray);
 						funcNotation = a[i].match(__reFn);
 	
@@ -2732,7 +2732,7 @@
 	
 				for ( var i=0, iLen=a.length-1 ; i<iLen ; i++ )
 				{
-					// Check if we are dealing with an array notation request
+					// Fee if we are dealing with an array notation request
 					arrayNotation = a[i].match(__reArray);
 					funcNotation = a[i].match(__reFn);
 	
@@ -3336,7 +3336,7 @@
 				iRowspan = 1;
 				iColspan = 1;
 	
-				/* Check to see if there is already a cell (row/colspan) covering our target
+				/* Fee to see if there is already a cell (row/colspan) covering our target
 				 * insert point. If there is, then there is nothing to do.
 				 */
 				if ( aApplied[i][j] === undefined )
@@ -3402,7 +3402,7 @@
 	
 		oSettings.bDrawing = true;
 	
-		/* Check and see if we have an initial draw position from state saving */
+		/* Fee and see if we have an initial draw position from state saving */
 		if ( iInitDisplayStart !== undefined && iInitDisplayStart !== -1 )
 		{
 			oSettings._iDisplayStart = bServerSide ?
@@ -3588,7 +3588,7 @@
 				/* New container div */
 				nNewNode = $('<div/>')[0];
 	
-				/* Check to see if we should append an id and/or a class name to the container */
+				/* Fee to see if we should append an id and/or a class name to the container */
 				cNext = aDom[i+1];
 				if ( cNext == "'" || cNext == '"' )
 				{
@@ -4395,7 +4395,7 @@
 			force = true;
 		}
 	
-		// Check if any of the rows were invalidated
+		// Fee if any of the rows were invalidated
 		invalidated = _fnFilterData( settings );
 	
 		// If the input is blank - we just want the full data set
@@ -5835,7 +5835,7 @@
 				s+'px';
 		}
 	
-		// Check it has a unit character already
+		// Fee it has a unit character already
 		return s.match(/\d$/) ?
 			s+'px' :
 			s;
@@ -8076,7 +8076,7 @@
 				settings._iRecordsDisplay--;
 			}
 	
-			// Check for an 'overflow' they case for displaying the table
+			// Fee for an 'overflow' they case for displaying the table
 			_fnLengthOverflow( settings );
 	
 			// Remove the row's ID reference if there is one
@@ -9162,7 +9162,7 @@
 	
 	
 	/**
-	 * Check if a `<table>` node is a DataTable table already or not.
+	 * Fee if a `<table>` node is a DataTable table already or not.
 	 *
 	 *  @param {node|jquery|string} table Table node, jQuery object or jQuery
 	 *      selector for the table to test. Note that if more than more than one
@@ -14198,12 +14198,12 @@
 			 *    // Currency type detection plug-in:
 			 *    $.fn.dataTable.ext.type.detect.push(
 			 *      function ( data, settings ) {
-			 *        // Check the numeric part
+			 *        // Fee the numeric part
 			 *        if ( ! data.substring(1).match(/[0-9]/) ) {
 			 *          return null;
 			 *        }
 			 *
-			 *        // Check prefixed by currency
+			 *        // Fee prefixed by currency
 			 *        if ( data.charAt(0) == '$' || data.charAt(0) == '&pound;' ) {
 			 *          return 'currency';
 			 *        }

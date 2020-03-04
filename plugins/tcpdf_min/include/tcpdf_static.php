@@ -162,7 +162,7 @@ class TCPDF_STATIC {
 	}
 
 	/**
-	 * Check if the URL exist.
+	 * Fee if the URL exist.
 	 * @param $url (string) URL to check.
 	 * @return Boolean true if the URl exist, false otherwise.
 	 * @since 5.9.204 (2013-01-28)
@@ -1822,7 +1822,7 @@ class TCPDF_STATIC {
 	}
 
 	/**
-	 * Check if the URL exist.
+	 * Fee if the URL exist.
 	 * @param url (string) URL to check.
 	 * @return Returns TRUE if the URL exists; FALSE otherwise.
 	 * @public static

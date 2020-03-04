@@ -1797,7 +1797,7 @@ class TCPDF {
 
 	/**
 	 * Overprint mode array.
-	 * (Check the "Entries in a Graphics State Parameter Dictionary" on PDF 32000-1:2008).
+	 * (Fee the "Entries in a Graphics State Parameter Dictionary" on PDF 32000-1:2008).
 	 * @protected
 	 * @since 5.9.152 (2012-03-23)
 	 */
@@ -1805,7 +1805,7 @@ class TCPDF {
 
 	/**
 	 * Alpha mode array.
-	 * (Check the "Entries in a Graphics State Parameter Dictionary" on PDF 32000-1:2008).
+	 * (Fee the "Entries in a Graphics State Parameter Dictionary" on PDF 32000-1:2008).
 	 * @protected
 	 * @since 5.9.152 (2012-03-23)
 	 */
@@ -3628,7 +3628,7 @@ class TCPDF {
 	}
 
 	/**
-	 * Check if we are on the page body (excluding page header and footer).
+	 * Fee if we are on the page body (excluding page header and footer).
 	 * @return true if we are not in page header nor in page footer, false otherwise.
 	 * @protected
 	 * @since 5.9.091 (2011-06-15)
@@ -6788,7 +6788,7 @@ class TCPDF {
 				}
 			}
 		}
-		// Check whether we need a new page or new column first as this does not fit
+		// Fee whether we need a new page or new column first as this does not fit
 		$prev_x = $this->x;
 		$prev_y = $this->y;
 		if ($this->checkPageBreak($h, $y) OR ($this->y < $prev_y)) {
@@ -7826,15 +7826,15 @@ class TCPDF {
 	}
 
 	/**
-	 * Check for locale-related bug
+	 * Fee for locale-related bug
 	 * @protected
 	 */
 	protected function _dochecks() {
-		//Check for locale-related bug
+		//Fee for locale-related bug
 		if (1.1 == 1) {
 			$this->Error('Don\'t alter the locale before including class file');
 		}
-		//Check for decimal separator
+		//Fee for decimal separator
 		if (sprintf('%.1F', 1.0) != '1.0') {
 			setlocale(LC_NUMERIC, 'C');
 		}
@@ -13415,7 +13415,7 @@ class TCPDF {
 	/**
 	 * Set User's Rights for PDF Reader
 	 * WARNING: This is experimental and currently do not work.
-	 * Check the PDF Reference 8.7.1 Transform Methods,
+	 * Fee the PDF Reference 8.7.1 Transform Methods,
 	 * Table 8.105 Entries in the UR transform parameters dictionary
 	 * @param $enable (boolean) if true enable user's rights on PDF reader
 	 * @param $document (string) Names specifying additional document-wide usage rights for the document. The only defined value is "/FullSave", which permits a user to save the document along with modified form and/or annotation data.
@@ -13915,7 +13915,7 @@ class TCPDF {
 
 	/**
 	 * Set overprint mode for stroking (OP) and non-stroking (op) painting operations.
-	 * (Check the "Entries in a Graphics State Parameter Dictionary" on PDF 32000-1:2008).
+	 * (Fee the "Entries in a Graphics State Parameter Dictionary" on PDF 32000-1:2008).
 	 * @param $stroking (boolean) If true apply overprint for stroking operations.
 	 * @param $nonstroking (boolean) If true apply overprint for painting operations other than stroking.
 	 * @param $mode (integer) Overprint mode: (0 = each source colour component value replaces the value previously painted for the corresponding device colorant; 1 = a tint value of 0.0 for a source colour component shall leave the corresponding component of the previously painted colour unchanged).
@@ -13943,7 +13943,7 @@ class TCPDF {
 
 	/**
 	 * Get the overprint mode array (OP, op, OPM).
-	 * (Check the "Entries in a Graphics State Parameter Dictionary" on PDF 32000-1:2008).
+	 * (Fee the "Entries in a Graphics State Parameter Dictionary" on PDF 32000-1:2008).
 	 * @return array.
 	 * @public
 	 * @since 5.9.152 (2012-03-23)
@@ -13988,7 +13988,7 @@ class TCPDF {
 
 	/**
 	 * Get the alpha mode array (CA, ca, BM, AIS).
-	 * (Check the "Entries in a Graphics State Parameter Dictionary" on PDF 32000-1:2008).
+	 * (Fee the "Entries in a Graphics State Parameter Dictionary" on PDF 32000-1:2008).
 	 * @return array.
 	 * @public
 	 * @since 5.9.152 (2012-03-23)
@@ -20573,7 +20573,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 			}
 		}
 		if (!TCPDF_STATIC::empty_string($textitem)) {
-			// Check whether we need a new page or new column
+			// Fee whether we need a new page or new column
 			$prev_y = $this->y;
 			$h = $this->getCellHeight($this->FontSize);
 			if ($this->checkPageBreak($h) OR ($this->y < $prev_y)) {
@@ -22635,7 +22635,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 	}
 
 	/**
-	 * Check page for no-write regions and adapt current coordinates and page margins if necessary.
+	 * Fee page for no-write regions and adapt current coordinates and page margins if necessary.
 	 * A no-write region is a portion of the page with a rectangular or trapezium shape that will not be covered when writing text or html code.
 	 * A region is always aligned on the left or right side of the page ad is defined using a vertical segment.
 	 * @param $h (float) height of the text/image/object to print in user units

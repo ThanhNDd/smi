@@ -50,6 +50,7 @@ Common::authen();
                         <td>Hình ảnh</td>
                         <td>
                           <input type="text" class="form-control" placeholder="Nhập link hình ảnh" onchange="onchange_image_link(0)" id="link_image_0" style="float: left;width: 167px;">
+                            <input type="hidden" class="form-control" id="image_type_0" value="">
                           <form id="form_0" action="" method="post" enctype="multipart/form-data">
                               <input id="image_0" type="file" accept="image/*" name="image" class="hidden"/>
                               <button type="button" class="btn btn-info btn-flat" id="btn_upload_0">
@@ -196,7 +197,7 @@ Common::authen();
   <?php require_once('../../common/js.php'); ?>
   <script>
       let flagError = 0;
-      let regExp = /^\d*$|^\d*[,]?\d+$/;
+      // let regExp = /^\d*$|^\d*[,]?\d+$/;
       const Toast = Swal.mixin({
           toast: true,
           position: 'top-end',
@@ -206,8 +207,6 @@ Common::authen();
 
       $(document).ready(function () {
           $('.product-create').click(function () {
-              reset_modal();
-              // get_max_id();
               open_modal();
           });
           $('#create-product').on('hidden.bs.modal', function () {
@@ -340,6 +339,7 @@ Common::authen();
           $("#name").val('');
           $("#link").val('');
           $("#link_image_0").val('');
+          $("#image_type_0").val('');
           $("#img_0").val('').addClass('hidden');
           $("#fee").val('');
           $("#select_type").val(null).trigger('change');
@@ -363,6 +363,7 @@ Common::authen();
           let name = $("#name").val();
           let link = $("#link").val();
           let image = $("#link_image_0").val();
+          let image_type = $("#image_type_0").val();
           let fee = $("#fee").val();
           let type = $("#select_type").val();
           let cat = $("#select_cat").val();
@@ -376,6 +377,7 @@ Common::authen();
           product['name'] = name;
           product['link'] = link;
           product['image'] = image;
+          product['image_type'] = image_type;
           product['fee'] = replaceComma(fee);
           product['type'] = type;
           product['cat'] = cat;
@@ -390,6 +392,7 @@ Common::authen();
               let id = $("[id=variation_id_"+no+"]").val();
               let sku = $("[id=sku_"+no+"]").val();
               let image = $("[id=link_image_"+no+"]").val();
+              let image_type = $("[id=image_type_"+no+"]").val();
               let size = $("[id=select_size_"+no+"]").val();
               let color = $("[id=select_color_"+no+"]").val();
               let qty = $("[id=qty_"+no+"]").val();
@@ -398,6 +401,7 @@ Common::authen();
               variations['id'] = id;
               variations['sku'] = sku;
               variations['image'] = image;
+              variations['image_type'] = image_type;
               variations['size'] = size;
               variations['color'] = color;
               variations['qty'] = qty;
@@ -469,6 +473,7 @@ Common::authen();
               '                      <img src="https://via.placeholder.com/100" onerror="this.onerror=null;this.src=\'<?php Common::image_error()?>\'" width="100" id="img_'+no+'" style="justify-content: left;float: left;">\n' +
               '                      <div class="input-group mb-3 col-md-8" style="float: left;">\n' +
               '                        <input type="text" class="form-control col-md-10" placeholder="Nhập link hình ảnh" onchange="onchange_image_link('+no+')" id="link_image_'+no+'" >\n' +
+              '                          <input id="image_type_'+no+'" type="hidden" value=""/>\n' +
               '                        <div class="input-group-append">\n' +
               '                       <form id="form_'+no+'" action="" method="post" enctype="multipart/form-data">' +
               '                          <input id="image_'+no+'" type="file" accept="image/*" name="image" class="hidden"/>\n' +
@@ -555,6 +560,8 @@ Common::authen();
                       type: 'post',
                       success: function (res) {
                           console.log(res);
+                          $("[id=btn_upload_"+no+"]").prop('disabled', '');
+                          $("[id=spinner_"+no+"]").addClass('hidden');
                           if(res === 'file_too_large') {
                               toastr.error('File có dung lượng quá lớn.');
                               return;
@@ -562,10 +569,10 @@ Common::authen();
                               toastr.error('Chỉ được upload file ảnh');
                               return;
                           }
-                          $("[id=btn_upload_"+no+"]").prop('disabled', '');
                           $("[id=img_"+no+"]").prop('src', res).removeClass('hidden');
                           $("[id=link_image_"+no+"]").val(res);
-                          $("[id=spinner_"+no+"]").addClass('hidden');
+                          $("[id=image_type_"+no+"]").val('upload');
+
                       }
                   });
               } else {
@@ -647,15 +654,15 @@ Common::authen();
           let link_image = $("#link_image_0").val();
           if(link_image == "") {
               toastr.error("Hình ảnh sản phẩm không được để trống");
-              $("#link_image").focus();
-              $("#link_image").addClass("is-invalid");
+              $("#link_image_0").focus();
+              $("#link_image_0").addClass("is-invalid");
               return false;
           } else {
-              $("#link_image").removeClass("is-invalid");
+              $("#link_image_0").removeClass("is-invalid");
           }
 
           let fee = $("#fee").val();
-          if(fee != "" && !regExp.test(fee)) {
+          if(!validate_number(fee)) {
               toastr.error("Phí vận chuyển phải là số");
               $("#fee").focus();
               $("#fee").addClass("is-invalid");
@@ -691,7 +698,7 @@ Common::authen();
               $("#price").focus();
               $("#price").addClass("is-invalid");
               return false;
-          } else if (!regExp.test(price_import)) {
+          } else if(!validate_number(price_import)) {
               toastr.error("Giá nhập phải là số");
               $("#price").focus();
               $("#price").addClass("is-invalid");
@@ -707,7 +714,7 @@ Common::authen();
               $("#retail").focus();
               $("#retail").addClass("is-invalid");
               return false;
-          } else if (!regExp.test(price_retail)) {
+          } else if(!validate_number(price_retail)) {
               toastr.error("Giá bán lẻ phải là số");
               $("#retail").focus();
               $("#retail").addClass("is-invalid");
@@ -737,7 +744,7 @@ Common::authen();
           }
 
           let qty = $("#qty").val();
-          if(product_id == 0 && qty != "" && !regExp.test(qty)) {
+          if(product_id == 0 && qty != "" && !validate_number(qty)) {
               toastr.error("Số lượng phải là số");
               $("#qty").focus();
               $("#qty").addClass("is-invalid");

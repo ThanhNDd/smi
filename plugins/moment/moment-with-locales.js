@@ -2086,7 +2086,7 @@
             config._a[i] = input[i] = (config._a[i] == null) ? (i === 2 ? 1 : 0) : config._a[i];
         }
 
-        // Check for 24:00:00.000
+        // Fee for 24:00:00.000
         if (config._a[HOUR] === 24 &&
                 config._a[MINUTE] === 0 &&
                 config._a[SECOND] === 0 &&

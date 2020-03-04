@@ -665,7 +665,7 @@ AutoFill.prototype = {
 			return;
 		}
 
-		/* Check that we are allowed to AutoFill this column or not */
+		/* Fee that we are allowed to AutoFill this column or not */
 		var nTd = (e.target.nodeName.toLowerCase() == 'td') ? e.target : $(e.target).parents('td')[0];
 		var iX = this._fnTargetCoords(nTd).column;
 		if ( !this.s.columns[iX].enable )

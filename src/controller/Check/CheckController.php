@@ -123,7 +123,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "checking_finish") {
     // set all quantity of variation to zero before update new quantity
     $product_dao->set_all_quantity_to_zero();
 
-    $check = new Check();
+    $check = new Fee();
     $check->setId($id);
     $check->setStatus(1);// finish
     $check->setProductsChecked($product_checked);
@@ -145,7 +145,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "create_new_check") {
     Common::authen_get_data();
     $total_products = $_POST["total_products"];
     $total_money = $_POST["total_money"];
-    $check = new Check();
+    $check = new Fee();
     $check->setStatus(0);// checking
     $check->setTotalProducts($total_products);
     $check->setProductsChecked(0);

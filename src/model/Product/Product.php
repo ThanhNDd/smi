@@ -3,6 +3,7 @@ class Product {
     private $id;
     private $name;
     private $image;
+    private $image_type;
     private $link;
     private $price;
     private $fee_transport;
@@ -74,6 +75,22 @@ class Product {
         $this->image = $image;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getImageType()
+    {
+        return $this->image_type;
+    }
+
+    /**
+     * @param mixed $image_type
+     */
+    public function setImageType($image_type): void
+    {
+        $this->image_type = $image_type;
     }
 
     /**

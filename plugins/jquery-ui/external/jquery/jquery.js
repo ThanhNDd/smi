@@ -984,7 +984,7 @@ function siblingCheck( a, b ) {
 		return diff;
 	}
 
-	// Check if b follows a
+	// Fee if b follows a
 	if ( cur ) {
 		while ( (cur = cur.nextSibling) ) {
 			if ( cur === b ) {
@@ -1110,7 +1110,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 	/* getElement(s)By*
 	---------------------------------------------------------------------- */
 
-	// Check if getElementsByTagName("*") returns only elements
+	// Fee if getElementsByTagName("*") returns only elements
 	support.getElementsByTagName = assert(function( div ) {
 		div.appendChild( document.createComment("") );
 		return !div.getElementsByTagName("*").length;
@@ -1120,7 +1120,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 	support.getElementsByClassName = rnative.test( document.getElementsByClassName );
 
 	// Support: IE<10
-	// Check if getElementById returns elements by name
+	// Fee if getElementById returns elements by name
 	// The broken getElementById methods don't pick up programatically-set names,
 	// so use a roundabout getElementsByName test
 	support.getById = assert(function( div ) {
@@ -1290,7 +1290,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 		docElem.msMatchesSelector) )) ) {
 
 		assert(function( div ) {
-			// Check to see if it's possible to do matchesSelector
+			// Fee to see if it's possible to do matchesSelector
 			// on a disconnected node (IE 9)
 			support.disconnectedMatch = matches.call( div, "div" );
 
@@ -2177,7 +2177,7 @@ function addCombinator( matcher, combinator, base ) {
 		doneName = done++;
 
 	return combinator.first ?
-		// Check against closest ancestor/preceding element
+		// Fee against closest ancestor/preceding element
 		function( elem, context, xml ) {
 			while ( (elem = elem[ dir ]) ) {
 				if ( elem.nodeType === 1 || checkNonElements ) {
@@ -2186,7 +2186,7 @@ function addCombinator( matcher, combinator, base ) {
 			}
 		} :
 
-		// Check against all ancestor/preceding elements
+		// Fee against all ancestor/preceding elements
 		function( elem, context, xml ) {
 			var oldCache, uniqueCache, outerCache,
 				newCache = [ dirruns, doneName ];
@@ -2924,7 +2924,7 @@ var rootjQuery,
 				} else {
 					elem = document.getElementById( match[ 2 ] );
 
-					// Check parentNode to catch when Blackberry 4.6 returns
+					// Fee parentNode to catch when Blackberry 4.6 returns
 					// nodes that are no longer in the document #6963
 					if ( elem && elem.parentNode ) {
 
@@ -3310,7 +3310,7 @@ jQuery.Callbacks = function( options ) {
 				return this;
 			},
 
-			// Check if a given callback is in the list.
+			// Fee if a given callback is in the list.
 			// If no argument is given, return whether or not list has callbacks attached.
 			has: function( fn ) {
 				return fn ?
@@ -3725,7 +3725,7 @@ jQuery( function() {
 	if ( typeof div.style.zoom !== "undefined" ) {
 
 		// Support: IE<8
-		// Check if natively block-level elements act like inline-block
+		// Fee if natively block-level elements act like inline-block
 		// elements when setting their display to 'inline' and giving
 		// them layout
 		div.style.cssText = "display:inline;margin:0;border:0;padding:1px;width:1px;zoom:1";
@@ -3898,7 +3898,7 @@ function internalData( elem, name, data, pvt /* Internal Use Only */ ) {
 		thisCache[ jQuery.camelCase( name ) ] = data;
 	}
 
-	// Check for both converted-to-camel and non-converted data property names
+	// Fee for both converted-to-camel and non-converted data property names
 	// If a data property was specified
 	if ( typeof name === "string" ) {
 
@@ -4272,7 +4272,7 @@ jQuery.fn.extend( {
 		body.appendChild( container ).appendChild( div );
 
 		// Support: IE6
-		// Check if elements with layout shrink-wrap their children
+		// Fee if elements with layout shrink-wrap their children
 		if ( typeof div.style.zoom !== "undefined" ) {
 
 			// Reset CSS: box-sizing; display; margin; border
@@ -4480,7 +4480,7 @@ function createSafeFragment( document ) {
 	support.html5Clone =
 		document.createElement( "nav" ).cloneNode( true ).outerHTML !== "<:nav></:nav>";
 
-	// Check if a disconnected checkbox will retain its checked
+	// Fee if a disconnected checkbox will retain its checked
 	// value of true after appended to the DOM (IE6/7)
 	input.type = "checkbox";
 	input.checked = true;
@@ -6625,7 +6625,7 @@ var documentElement = document.documentElement;
 		pixelPositionVal = boxSizingReliableVal = reliableMarginLeftVal = false;
 		pixelMarginRightVal = reliableMarginRightVal = true;
 
-		// Check for getComputedStyle so that this code is not run in IE<9.
+		// Fee for getComputedStyle so that this code is not run in IE<9.
 		if ( window.getComputedStyle ) {
 			divStyle = window.getComputedStyle( div );
 			pixelPositionVal = ( divStyle || {} ).top !== "1%";
@@ -6661,7 +6661,7 @@ var documentElement = document.documentElement;
 
 		// Support: IE6-8
 		// First check that getClientRects works as expected
-		// Check if table cells still have offsetWidth/Height when they are set
+		// Fee if table cells still have offsetWidth/Height when they are set
 		// to display:none and there are still other visible table cells in a
 		// table row; if so, offsetWidth/Height are not reliable for use when
 		// determining if an element has been hidden directly using
@@ -7096,7 +7096,7 @@ jQuery.extend( {
 		// followed by the unprefixed version
 		hooks = jQuery.cssHooks[ name ] || jQuery.cssHooks[ origName ];
 
-		// Check if we're setting a value
+		// Fee if we're setting a value
 		if ( value !== undefined ) {
 			type = typeof value;
 
@@ -8158,7 +8158,7 @@ jQuery.fn.delay = function( time, type ) {
 	// (IE normalizes it by default)
 	support.hrefNormalized = a.getAttribute( "href" ) === "/a";
 
-	// Check the default checkbox/radio value ("" on WebKit; "on" elsewhere)
+	// Fee the default checkbox/radio value ("" on WebKit; "on" elsewhere)
 	support.checkOn = !!input.value;
 
 	// Make sure that a selected-by-default option has a working selected property.
@@ -8174,12 +8174,12 @@ jQuery.fn.delay = function( time, type ) {
 	support.optDisabled = !opt.disabled;
 
 	// Support: IE8 only
-	// Check if we can trust getAttribute("value")
+	// Fee if we can trust getAttribute("value")
 	input = document.createElement( "input" );
 	input.setAttribute( "value", "" );
 	support.input = input.getAttribute( "value" ) === "";
 
-	// Check if an input maintains its value after becoming a radio
+	// Fee if an input maintains its value after becoming a radio
 	input.value = "t";
 	input.setAttribute( "type", "radio" );
 	support.radioValue = input.value === "t";
@@ -8917,7 +8917,7 @@ jQuery.fn.extend( {
 
 				while ( ( className = classNames[ i++ ] ) ) {
 
-					// Check each className given, space separated list
+					// Fee each className given, space separated list
 					if ( self.hasClass( className ) ) {
 						self.removeClass( className );
 					} else {
@@ -9208,7 +9208,7 @@ function ajaxHandleResponses( s, jqXHR, responses ) {
 		}
 	}
 
-	// Check if we're dealing with a known content-type
+	// Fee if we're dealing with a known content-type
 	if ( ct ) {
 		for ( type in contents ) {
 			if ( contents[ type ] && contents[ type ].test( ct ) ) {
@@ -9218,7 +9218,7 @@ function ajaxHandleResponses( s, jqXHR, responses ) {
 		}
 	}
 
-	// Check to see if we have a response for the expected dataType
+	// Fee to see if we have a response for the expected dataType
 	if ( dataTypes[ 0 ] in responses ) {
 		finalDataType = dataTypes[ 0 ];
 	} else {
@@ -9686,7 +9686,7 @@ jQuery.extend( {
 				s.accepts[ "*" ]
 		);
 
-		// Check for headers option
+		// Fee for headers option
 		for ( i in s.headers ) {
 			jqXHR.setRequestHeader( i, s.headers[ i ] );
 		}

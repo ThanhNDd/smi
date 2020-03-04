@@ -111,8 +111,6 @@ class VoucherDAO
                 );
                 array_push($data, $voucher);
             }
-            // $arr = array();
-            // $arr['data'] = $data;
             return $data;
         } catch (Exception $e) {
             throw new Exception($e);
@@ -137,11 +135,10 @@ class VoucherDAO
                 (`code`,`value`,`type`,`start_date`,`expired_date`,`status`,`created_date`)
                 VALUES (?, ?, ?, ?, ?, ?, NOW())");
             $stmt->bind_param("sidssd", $code, $value, $type, date('Y/m/d H:i:s', strtotime($startDate)), date('Y/m/d H:i:s', strtotime($expiredDate)), $status);
-            $stmt->execute();
-            $nrows = $stmt->affected_rows;
-            if (!$nrows) {
-                throw new Exception("Save voucher has failure!!!");
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
             }
+            $stmt->close();
             $lastid = mysqli_insert_id($this->conn);
             return $lastid;
         } catch (Exception $e) {
@@ -167,12 +164,10 @@ class VoucherDAO
                 (`code`,`value`,`type`,`start_date`,`expired_date`,`status`,`updated_date`)
                 VALUES (?, ?, ?, ?, ?, ?, NOW())");
             $stmt->bind_param("sidssd", $code, $value, $type, date('Y/m/d H:i:s', strtotime($startDate)), date('Y/m/d H:i:s', strtotime($expiredDate)), $status);
-            $stmt->execute();
-            $nrows = $stmt->affected_rows;
-            if (!$nrows) {
-                throw new Exception("Update voucher has failure!!!");
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
             }
-            return $nrows;
+            $stmt->close();
         } catch (Exception $e) {
             throw new Exception($e);
         }
@@ -187,11 +182,10 @@ class VoucherDAO
         try {
             $stmt = $this->getConn()->prepare("DELETE FROM `smi_voucher` WHERE id = ?");
             $stmt->bind_param("i", $id);
-            $stmt->execute();
-            $nrows = $stmt->affected_rows;
-            if (!$nrows) {
-                throw new Exception("Delete voucher has failure!!!");
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
             }
+            $stmt->close();
         } catch (Exception $e) {
             throw new Exception($e);
         }
@@ -212,34 +206,14 @@ class VoucherDAO
             } else {
                 $stmt->bind_param("ii", $status, $value);
             }
-            $stmt->execute();
-            // print_r($this->getConn()->error);
-            $nrows = $stmt->affected_rows;
-            if (!$nrows) {
-                throw new Exception("update status voucher has failure!!!");
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
             }
+            $stmt->close();
         } catch (Exception $e) {
             throw new Exception($e);
         }
     }
-
-
-    // function active_voucher($id)
-    // {
-    //     try {
-    //         $stmt = $this->getConn()->prepare("UPDATE `smi_voucher` SET `status` = 2 WHERE `id` = ?");
-    //         $stmt->bind_param("i", $id);
-    //         $stmt->execute();
-    //         // print_r($this->getConn()->error);
-    //         $nrows = $stmt->affected_rows;
-    //         if (!$nrows) {
-    //             throw new Exception("Active voucher has failure!!!");
-    //         }
-    //     } catch (Exception $e) {
-    //         throw new Exception($e);
-    //     }
-    // }
-
     /**
      * Get the value of conn
      */

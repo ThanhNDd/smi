@@ -368,7 +368,13 @@ Common::authen();
                     console.log(arr[0].profit);
                     $("#display_product_id").val(arr[0].product_id);
                     $("#product_id").val(arr[0].product_id);
-                    $("#link_image_0").val(arr[0].image).trigger('change');
+                    let image_type = arr[0].image_type;
+                    let image = arr[0].image;
+                    if(image_type == "upload") {
+                        image = '<?php Common::getPath()?>' + image;
+                    }
+                    $("#link_image_0").val(image).trigger('change');
+                    $("#image_type_0").val(image_type);
                     $("[id=img_0]").removeClass('hidden');
                     $("#name").val(arr[0].name);
                     $("#link").val(arr[0].link);
@@ -394,12 +400,15 @@ Common::authen();
                         let qty = variations[i].quantity;
                         count++;
                         generate_variations(count, qty, id, color, size, sku);
-                        // let src = image;
-                        // if (image == "") {
-                        //     src = 'https://via.placeholder.com/100';
-                        // }
+                        let image_type = variations[i].image_type;
+                        console.log(image_type);
+                        if(image_type == "upload") {
+                            image = '<?php Common::getPath()?>' + image;
+                        }
+                        console.log(image);
                         $("[id=img_" + count + "]").prop('src', image);
                         $("[id=link_image_" + count + "]").val(image);
+                        $("[id=image_type_" + count + "]").val(image_type);
                     }
                     $(".create-new").text("Cập nhật");
                     $(".add-new-prod").prop("disabled", '');
@@ -903,7 +912,12 @@ Common::authen();
     }
 
     function format_image(data) {
-        return "<img src='" + data.image + "' width='100px' id='thumbnail' onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"'>";
+        let image_type = data.image_type;
+        let image = data.image;
+        if(image_type == 'upload') {
+            image = '<?php Common::getPath() ?>' + image;
+        }
+        return "<img src='" + image + "' width='100px' id='thumbnail' onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"'>";
     }
 
     function format_variation(variations, isNew) {
@@ -924,7 +938,12 @@ Common::authen();
             table += '<tr class="' + variations[i].sku + '">' +
                 '<td class="center"><input type="checkbox" id="' + variations[i].sku + '" onclick="check(this)"></td>' +
                 '<td>';
-            table += '<img src="' + variations[i].image + '" width="80px" onerror="this.onerror=null;this.src=\'<?php Common::image_error()?>\'">';
+            let image_type = variations[i].image_type;
+            let image = variations[i].image;
+            if(image_type == 'upload') {
+                image = '<?php Common::getPath() ?>' + image;
+            }
+            table += '<img src="' + image + '" width="80px" onerror="this.onerror=null;this.src=\'<?php Common::image_error()?>\'">';
             table += '</td>' +
                 '<input type="hidden" class="product-id-' + variations[i].sku + '" value="' + variations[i].product_id + '">' +
                 '<td>' + variations[i].sku + '</td>' +
@@ -974,18 +993,18 @@ Common::authen();
         countAllChecked();
     }
 
-    function formatNumber(num) {
-        return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-    }
-
-    function replaceComma(value) {
-        value = value.trim();
-        return value.replace(/,/g, '');
-    }
-
-    function replacePercent(value) {
-        return value.replace(/%/g, '');
-    }
+    // function formatNumber(num) {
+    //     return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    // }
+    //
+    // function replaceComma(value) {
+    //     value = value.trim();
+    //     return value.replace(/,/g, '');
+    // }
+    //
+    // function replacePercent(value) {
+    //     return value.replace(/%/g, '');
+    // }
 
     function generate_select2(el, data, value) {
         $(el).select2({

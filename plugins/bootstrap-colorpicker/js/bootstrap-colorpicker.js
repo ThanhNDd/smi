@@ -23,7 +23,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/
-/******/ 		// Check if module is in cache
+/******/ 		// Fee if module is in cache
 /******/ 		if(installedModules[moduleId]) {
 /******/ 			return installedModules[moduleId].exports;
 /******/ 		}
@@ -1919,7 +1919,7 @@ convert.rgb.keyword = function (rgb) {
 			// Compute comparative distance
 			var distance = comparativeDistance(rgb, value);
 
-			// Check if its less, if so set as closest
+			// Fee if its less, if so set as closest
 			if (distance < currentClosestDistance) {
 				currentClosestDistance = distance;
 				currentClosestKeyword = keyword;

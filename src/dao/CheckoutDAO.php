@@ -221,12 +221,10 @@ class CheckoutDAO
         try {
             $stmt = $this->getConn()->prepare("update smi_orders set deleted = 1, updated_date = NOW() WHERE id = ?");
             $stmt->bind_param("i", $order_id);
-            $stmt->execute();
-            //You can get the number of rows affected by your query
-            $nrows = $stmt->affected_rows;
-            if (!$nrows) {
-                throw new Exception("Delete Order has failure!!!");
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
             }
+            $stmt->close();
         } catch (Exception $e) {
             throw new Exception($e);
         }
@@ -243,11 +241,10 @@ class CheckoutDAO
                                                 WHERE order_id = ?) AS b ON a.id = b.variant_id
                                                 SET a.quantity = a.quantity + b.quantity");
             $stmt->bind_param("i", $order_id);
-            $stmt->execute();
-            $nrows = $stmt->affected_rows;
-            if (!$nrows) {
-                throw new Exception("Delete Order Detail has failure!!!");
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
             }
+            $stmt->close();
         } catch (Exception $e) {
             throw new Exception($e);
         }
@@ -258,12 +255,10 @@ class CheckoutDAO
         try {
             $stmt = $this->getConn()->prepare("delete from smi_order_detail where order_id =  ?");
             $stmt->bind_param("i", $order_id);
-            $stmt->execute();
-            //You can get the number of rows affected by your query
-            $nrows = $stmt->affected_rows;
-            if (!$nrows) {
-                throw new Exception("Delete Order Detail has failure!!!");
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
             }
+            $stmt->close();
         } catch (Exception $e) {
             throw new Exception($e);
         }
@@ -303,31 +298,6 @@ class CheckoutDAO
     function get_info_total_checkout($start_date, $end_date)
     {
         try {
-//            $sql = "select
-//                        sum(tmp.total_checkout) as total_checkout,
-//                        sum(tmp.profit - tmp.discount) as total_profit,
-//                        count(tmp.type) as count_type,
-//                        tmp.type,
-//                        tmp.payment_type
-//                    from (
-//                        SELECT A.id, A.discount,
-//                            sum(D.profit * B.quantity - B.reduce) as profit,
-//                            A.total_amount - A.total_reduce  as 'total_checkout',
-//                            A.type,  A.payment_type
-//                        FROM smi_orders A
-//                            LEFT JOIN smi_order_detail B ON A.id = B.order_id
-//                            LEFT JOIN smi_customers C ON A.customer_id = C.id
-//                            LEFT JOIN smi_variations E ON B.variant_id = E.id
-//                            LEFT JOIN smi_products D ON E.product_id = D.id
-//                        where DATE(order_date) between DATE('" . $start_date . "') and DATE('" . $end_date . "')
-//                        and A.deleted = 0
-//                        group by A.id, A.type,  A.payment_type
-//                        ) tmp
-//                    group by
-//                        tmp.type,
-//                        tmp.payment_type
-//                    order by
-//                        tmp.type";
             $sql = "select 
                       sum(tmp.total_checkout) as total_checkout, 
                       sum(tmp.profit - tmp.discount) as total_profit,
@@ -739,13 +709,10 @@ class CheckoutDAO
                     `created_date`) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(),NOW())");
             $stmt->bind_param("ddddddidiisddsisdii", $total_reduce, $total_reduce_percent, $discount, $total_amount, $total_checkout, $customer_payment, $payment_type, $repay, $customer_id, $type, $bill, $shipping_fee, $shipping, $shipping_unit, $status, $voucher_code, $voucher_value, $orderRefer, $paymentExchangeType);
-            $stmt->execute();
-            print_r($this->getConn()->error);
-            //You can get the number of rows affected by your query
-            $nrows = $stmt->affected_rows;
-            if (!$nrows) {
-                throw new Exception("saveOrder has failure!!!");
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
             }
+            $stmt->close();
             $lastid = mysqli_insert_id($this->conn);
             return $lastid;
         } catch (Exception $e) {
@@ -778,17 +745,12 @@ class CheckoutDAO
                 $order_date = date('Y-m-d H:i:s', strtotime($date));
             }
             $id = $order->getId();
-
             $stmt = $this->getConn()->prepare("update `smi_orders` SET `total_reduce` = ?, `total_reduce_percent` = ?, `discount` = ?, `total_amount` = ?, `total_checkout` = ?, `customer_payment` = ?, `repay` = ?, `customer_id` = ?, `type` = ?, `bill_of_lading_no` = ?, `shipping_fee` = ?, `shipping` = ?, `shipping_unit` = ?, `status` = ?, `updated_date` = NOW(), `deleted` = b'0', `payment_type` = ?, `order_date` = ?  WHERE `id` = ?");
-
             $stmt->bind_param("dddddddiisddsiisi", $total_reduce, $total_reduce_percent, $discount, $total_amount, $total_checkout, $customer_payment, $repay, $customer_id, $type, $bill, $shipping_fee, $shipping, $shipping_unit, $status, $payment_type, $order_date, $id);
-            $stmt->execute();
-            print_r($this->getConn()->error);
-            //You can get the number of rows affected by your query
-            $nrows = $stmt->affected_rows;
-            if (!$nrows) {
-                throw new Exception("Update  has failure!!!");
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
             }
+            $stmt->close();
             return $id;
         } catch (Exception $e) {
             throw new Exception($e);
@@ -817,12 +779,10 @@ class CheckoutDAO
                     `type`) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             $stmt->bind_param("iiisdidi", $order_id, $product_id, $variant_id, $sku, $price, $qty, $reduce, $type);
-            $stmt->execute();
-            print_r($this->getConn()->error);
-            $nrows = $stmt->affected_rows;
-            if (!$nrows) {
-                throw new Exception("saveOrderDetail  has failure!!!");
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
             }
+            $stmt->close();
             $lastid = mysqli_insert_id($this->conn);
             return $lastid;
         } catch (Exception $e) {
@@ -833,20 +793,23 @@ class CheckoutDAO
     function updateOrderDetail(OrderDetail $detail)
     {
         try {
-            $sql = "update `smi_order_detail`
-                    SET
-                    `order_id` = " . $detail->getOrder_id() . ",
-                    `product_id` = " . $detail->getProduct_id() . ",
-                    `variant_id` = " . $detail->getVariant_id() . ",
-                    `sku` = " . $detail->getSku() . ",
-                    `price` = " . $detail->getPrice() . ",
-                    `quantity` = " . $detail->getQuantity() . ",
-                    `reduce` = " . $detail->getReduce() . "
-                    WHERE `id` = " . $detail->getId();
-            $result = mysqli_query($this->conn, $sql);
-            if (!$result) {
-                throw new Exception(mysql_error());
+            $order_id = $detail->getOrder_id();
+            $product_id = $detail->getProduct_id();
+            $variant_id = $detail->getVariant_id();
+            $sku = $detail->getSku();
+            $price = $detail->getPrice();
+            $qty = $detail->getQuantity();
+            $reduce = $detail->getReduce();
+            $type = $detail->getType();
+            $id = $detail->getId();
+            $stmt = $this->getConn()->prepare("update `smi_order_detail`
+                    SET `order_id` = ?, `product_id` = ?, `variant_id` = ?,
+                    `sku` = ?, `price` = ?, `quantity` = ?, `reduce` = ? WHERE `id` = ?");
+            $stmt->bind_param("iiisdidii", $order_id, $product_id, $variant_id, $sku, $price, $qty, $reduce, $type, $id);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
             }
+            $stmt->close();
         } catch (Exception $e) {
             throw new Exception($e);
         }

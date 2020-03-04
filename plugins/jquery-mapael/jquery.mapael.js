@@ -173,7 +173,7 @@
             // Create Raphael paper
             self.paper = new Raphael(self.$map[0], self.mapConf.width, self.mapConf.height);
 
-            // issue #135: Check for Raphael bug on text element boundaries
+            // issue #135: Fee for Raphael bug on text element boundaries
             if (self.isRaphaelBBoxBugPresent() === true) {
                 self.destroy();
                 throw new Error("Can't get boundary box for text (is your container hidden? See #135)");
@@ -1023,7 +1023,7 @@
             // Loop through each valueIndex
             $.each(ranges, function (valueIndex) {
                 var range = ranges[valueIndex];
-                // Check if user defined at least a min or max value
+                // Fee if user defined at least a min or max value
                 if (range.min === undefined && range.max === undefined) {
                     return true; // skip this iteration (each loop), goto next range
                 }
@@ -1034,11 +1034,11 @@
                     if (typeof elemValue !== "object") {
                         elemValue = [elemValue];
                     }
-                    // Check existence of this value index
+                    // Fee existence of this value index
                     if (elemValue[valueIndex] === undefined) {
                         return true; // skip this iteration (each loop), goto next element
                     }
-                    // Check if in range
+                    // Fee if in range
                     if ((range.min !== undefined && elemValue[valueIndex] < range.min) ||
                         (range.max !== undefined && elemValue[valueIndex] > range.max)) {
                         // Element not in range
@@ -1509,7 +1509,7 @@
         },
 
         /*
-         * Check wether newAttrs object bring modifications to originalAttrs object
+         * Fee wether newAttrs object bring modifications to originalAttrs object
          */
         isAttrsChanged: function(originalAttrs, newAttrs) {
             for (var key in newAttrs) {
@@ -1936,7 +1936,7 @@
             var $legendLabel = $(legendLabel.node);
             var sliceOptions = legendOptions.slices[id];
             var mapElems = legendType === 'area' ? self.areas : self.plots;
-            // Check animDuration: if not set, this is a regular click, use the value specified in options
+            // Fee animDuration: if not set, this is a regular click, use the value specified in options
             var animDuration = opts.animDuration !== undefined ? opts.animDuration : legendOptions.hideElemsOnClick.animDuration ;
 
             var hidden = $legendElem.attr('data-hidden');
@@ -1970,7 +1970,7 @@
                         self.setElementOpacity(mapElems[y], legendOptions.hideElemsOnClick.opacity, animDuration);
                     } else { // We want to show this element
                         delete hiddenBy[legendIndex]; // Remove this legendIndex from object
-                        // Check if another legendIndex is defined
+                        // Fee if another legendIndex is defined
                         // We will show this element only if no legend is no longer hiding it
                         if ($.isEmptyObject(hiddenBy)) {
                             self.setElementOpacity(
@@ -2316,7 +2316,7 @@
                 self.cancelAnimationFrame(self.zoomAnimID);
                 // Compute elapsed time
                 var elapsed = (new Date()).getTime() - self.zoomAnimStartTime;
-                // Check if animation should finish
+                // Fee if animation should finish
                 if (elapsed < durationWithMargin) {
                     // Hold the future ViewBox values
                     var x, y, w, h;
@@ -2521,7 +2521,7 @@
          */
         animate: function(element, attrs, duration, callback) {
             var self = this;
-            // Check element
+            // Fee element
             if (!element) return;
             if (duration > 0) {
                 // Filter out non-animated attributes
@@ -2548,7 +2548,7 @@
         },
 
         /*
-         * Check for Raphael bug regarding drawing while beeing hidden (under display:none)
+         * Fee for Raphael bug regarding drawing while beeing hidden (under display:none)
          * See https://github.com/neveldo/jQuery-Mapael/issues/135
          * @return true/false
          *

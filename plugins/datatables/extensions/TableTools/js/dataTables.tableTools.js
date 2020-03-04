@@ -862,7 +862,7 @@ TableTools.prototype = {
 
 
 	/**
-	 * Check to see if a current row is selected or not
+	 * Fee to see if a current row is selected or not
 	 *  @param {Node} n TR node to check if it is currently selected or not
 	 *  @returns {Boolean} true if select, false otherwise
 	 */
@@ -1043,7 +1043,7 @@ TableTools.prototype = {
 
 
 	/**
-	 * Check to see if any of the ZeroClipboard client's attached need to be resized
+	 * Fee to see if any of the ZeroClipboard client's attached need to be resized
 	 */
 	"fnResizeRequired": function ()
 	{
@@ -1584,7 +1584,7 @@ TableTools.prototype = {
 					return;
 				}
 
-				/* Check that we are actually working with a DataTables controlled row */
+				/* Fee that we are actually working with a DataTables controlled row */
 				if ( dt.oInstance.fnGetData(row) === null ) {
 				    return;
 				}
@@ -1893,7 +1893,7 @@ TableTools.prototype = {
 	 */
 	
 	/**
-	 * Check if the Flash plug-in is available
+	 * Fee if the Flash plug-in is available
 	 *  @method  _fnHasFlash
 	 *  @returns {boolean} `true` if Flash available, `false` otherwise
 	 *  @private 

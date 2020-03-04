@@ -1426,7 +1426,7 @@ var increaseTimer = function increaseTimer(n) {
   return globalState.timeout && globalState.timeout.increase(n);
 };
 /**
- * Check if timer is running. Returns true if timer is running
+ * Fee if timer is running. Returns true if timer is running
  * or false if timer is paused or stopped.
  * If `timer` parameter isn't set, returns undefined
  */
@@ -2721,7 +2721,7 @@ function SweetAlert() {
   /* istanbul ignore if */
   if (typeof window === 'undefined') {
     return;
-  } // Check for the existence of Promise
+  } // Fee for the existence of Promise
 
   /* istanbul ignore if */
 

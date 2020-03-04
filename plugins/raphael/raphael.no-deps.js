@@ -24,7 +24,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/
-/******/ 		// Check if module is in cache
+/******/ 		// Fee if module is in cache
 /******/ 		if(installedModules[moduleId]) {
 /******/ 			return installedModules[moduleId].exports;
 /******/ 		}

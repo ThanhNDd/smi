@@ -23,11 +23,10 @@ class ProductDAO
     function set_all_quantity_to_zero() {
         try {
             $stmt = $this->getConn()->prepare("UPDATE `smi_variations` SET `quantity`= 0");
-            $stmt->execute();
-            $nrows = $stmt->affected_rows;
-            if (!$nrows) {
-                throw new Exception("set_all_quantity_to_zero has failure");
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
             }
+            $stmt->close();
         } catch (Exception $e) {
             throw new Exception($e);
         }
@@ -137,6 +136,7 @@ class ProductDAO
             $sql = "select A.id AS product_id,
                            A.name,
                            A.image,
+                           A.image_type,
                            A.link,
                            A.price,
                            A.fee_transport,
@@ -150,7 +150,8 @@ class ProductDAO
                            B.color,
                            B.quantity,
                            B.sku,
-                           B.image as 'image_variation'
+                           B.image as 'image_variation',
+                           B.image_type as 'image_type_variation'
                     FROM smi_products A
                     LEFT JOIN smi_variations B ON A.id = B.product_id
                     WHERE A.id = " . $id;
@@ -164,6 +165,7 @@ class ProductDAO
                         'product_id' => $row["product_id"],
                         'name' => $row["name"],
                         'image' => $row["image"],
+                        'image_type' => $row["image_type"],
                         'link' => $row["link"],
                         'type' => $row["type"],
                         'percent' => $row["percent"],
@@ -181,7 +183,8 @@ class ProductDAO
                         'quantity' => $row["quantity"],
                         'sku' => $row["sku"],
                         'product_id' => $row["product_id"],
-                        'image' => $row["image_variation"]
+                        'image' => $row["image_variation"],
+                        'image_type' => $row["image_type_variation"]
                     );
                     array_push($product['variations'], $variation);
                     array_push($data, $product);
@@ -195,7 +198,8 @@ class ProductDAO
                         'quantity' => $row["quantity"],
                         'sku' => $row["sku"],
                         'product_id' => $row["product_id"],
-                        'image' => $row["image_variation"]
+                        'image' => $row["image_variation"],
+                        'image_type' => $row["image_type_variation"]
                     );
                     array_push($data[$i - 1]['variations'], $variation);
                 }
@@ -216,6 +220,7 @@ class ProductDAO
                         A.id as product_id, 
                         A.name , 
                         A.image , 
+                        A.image_type , 
                         A.link , 
                         A.retail,
                         A.discount,
@@ -232,6 +237,7 @@ class ProductDAO
                     'product_id' => $row["product_id"],
                     'name' => $row["name"],
                     'image' => $row["image"],
+                    'image_type' => $row["image_type"],
                     'link' => $row["link"],
                     'retail' => number_format($row["retail"]),
                     'discount' => $row["discount"],
@@ -282,7 +288,8 @@ class ProductDAO
                         B.sku, 
                         A.created_at,
                         A.discount,
-                        B.image as 'variation_image'
+                        B.image as 'variation_image',
+                        B.image_type
                     from 
                         smi_products A left join smi_variations B on A.id = B.product_id    
                     where B.product_id = $productId 
@@ -313,7 +320,8 @@ class ProductDAO
                         'quantity' => $row["quantity"],
                         'sku' => $row["sku"],
                         'product_id' => $row["product_id"],
-                        'image' => $row["variation_image"]
+                        'image' => $row["variation_image"],
+                        'image_type' => $row["image_type"]
                     );
                     array_push($product['variations'], $variation);
                     array_push($data, $product);
@@ -327,7 +335,8 @@ class ProductDAO
                         'quantity' => $row["quantity"],
                         'sku' => $row["sku"],
                         'product_id' => $row["product_id"],
-                      'image' => $row["variation_image"]
+                        'image' => $row["variation_image"],
+                        'image_type' => $row["image_type"]
                     );
                     array_push($data[$i - 1]['variations'], $variation);
                 }
@@ -344,10 +353,14 @@ class ProductDAO
     function delete_product($product_id)
     {
         try {
-            $sql = "delete from smi_products where id = " . $product_id;
-            mysqli_query($this->conn, $sql);
+            $stmt = $this->getConn()->prepare("delete from smi_products where id = ?");
+            $stmt->bind_param("i", $product_id);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
         } catch (Exception $e) {
-            echo "Open connection database is error exception >> " . $e->getMessage();
+            throw new Exception ($e->getMessage());
         }
     }
 
@@ -357,6 +370,7 @@ class ProductDAO
             $product_id = $product->getId();
             $name = $product->getName();
             $image = $product->getImage();
+            $image_type = $product->getImageType();
             $link = $product->getLink();
             $price = $product->getPrice();
             $fee = $product->getFee_transport();
@@ -365,15 +379,14 @@ class ProductDAO
             $percent = $product->getPercent();
             $type = $product->getType();
             $cat_id = $product->getCategory_id();
-
-
-            $stmt = $this->getConn()->prepare("update smi_products SET name = ?, image = ?, LINK = ?,price = ?, fee_transport = ?, profit = ?, retail = ?, percent = ?, TYPE = ?, category_id = ?, updated_at = NOW() WHERE id = ?");
-            $stmt->bind_param("sssddddiiii", $name, $image, $link, $price, $fee, $profit, $retail, $percent, $type, $cat_id, $product_id);
-            $stmt->execute();
-            $affect_row = $stmt->affected_rows;
-            return $affect_row;
+            $stmt = $this->getConn()->prepare("update smi_products SET name = ?, image = ?, image_type = ?, LINK = ?,price = ?, fee_transport = ?, profit = ?, retail = ?, percent = ?, TYPE = ?, category_id = ?, updated_at = NOW() WHERE id = ?");
+            $stmt->bind_param("ssssddddiiii", $name, $image, $image_type, $link, $price, $fee, $profit, $retail, $percent, $type, $cat_id, $product_id);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
         } catch (Exception $e) {
-            echo $e->getMessage();
+            throw new Exception($e->getMessage());
         }
     }
 
@@ -382,11 +395,10 @@ class ProductDAO
         try {
             $stmt = $this->getConn()->prepare("update smi_products SET discount = ? where id = ?");
             $stmt->bind_param("ii", $discount, $product_id);
-            $stmt->execute();
-//            $nrows = $stmt->affected_rows;
-//            if (!$nrows) {
-//                throw new Exception("Update discount has failure!!!");
-//            }
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
         } catch (Exception $e) {
             throw new Exception($e);
         }
@@ -397,12 +409,10 @@ class ProductDAO
         try {
             $stmt = $this->getConn()->prepare("update smi_products SET discount = ?");
             $stmt->bind_param("i", $discount);
-            $stmt->execute();
-//            print_r($this->getConn()->error);
-//            $nrows = $stmt->affected_rows;
-//            if (!$nrows) {
-//                throw new Exception("Update discount all product has failure!!!");
-//            }
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
         } catch (Exception $e) {
             throw new Exception($e);
         }
@@ -440,11 +450,10 @@ class ProductDAO
         try {
             $stmt = $this->getConn()->prepare("update smi_products SET status = ?, updated_at = NOW() where id = ?");
             $stmt->bind_param("ii", $status, $product_id);
-            $stmt->execute();
-            $nrows = $stmt->affected_rows;
-            if (!$nrows) {
-                throw new Exception("update_out_of_stock has failure!!!");
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
             }
+            $stmt->close();
         } catch (Exception $e) {
             throw new Exception($e);
         }
@@ -458,11 +467,13 @@ class ProductDAO
             $size = $variation->getSize();
             $qty = $variation->getQuantity();
             $image = $variation->getImage();
-            $stmt = $this->getConn()->prepare("update smi_variations set color = ?, size = ?, quantity = ?, image = ? where sku = ?");
-            $stmt->bind_param("ssiss", $color, $size, $qty, $image, $sku);
-            $stmt->execute();
-            $nrows = $stmt->affected_rows;
-            return $nrows;
+            $image_type = $variation->getImageType();
+            $stmt = $this->getConn()->prepare("update smi_variations set color = ?, size = ?, quantity = ?, image = ?, image_type = ? where sku = ?");
+            $stmt->bind_param("ssisss", $color, $size, $qty, $image, $image_type, $sku);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
         } catch (Exception $e) {
             throw new Exception("update_variation >> " . $e);
         }
@@ -471,10 +482,14 @@ class ProductDAO
     function delete_variation($sku)
     {
         try {
-            $sql = "delete from smi_variations where sku = " . $sku;
-            mysqli_query($this->conn, $sql);
+            $stmt = $this->getConn()->prepare("delete from smi_variations where sku = ?");
+            $stmt->bind_param("s", $sku);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
         } catch (Exception $e) {
-            echo "delete_variation >> " . $e->getMessage();
+            throw new Exception($e);
         }
     }
 
@@ -483,7 +498,8 @@ class ProductDAO
         try {
             $name = $product->getName();
             $image = $product->getImage();
-            $link = $product->getLink().
+            $image_type = $product->getImageType();
+            $link = $product->getLink();
             $price = $product->getPrice();
             $fee = $product->getFee_transport();
             $profit = $product->getProfit();
@@ -491,21 +507,12 @@ class ProductDAO
             $percent = $product->getPercent();
             $type = $product->getType();
             $cat_id = $product->getCategory_id();
-            $stmt = $this->getConn()->prepare("INSERT INTO smi_products (
-                    `name`,
-                    `image`,
-                    `link`,
-                    `price`,
-                    `fee_transport`,
-                    `profit`,
-                    `retail`,
-                    `percent`,
-                    `type`,
-                    `category_id`,
-                    `created_at`) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-            $stmt->bind_param("sssddddiii", $name, $image, $link, $price, $fee, $profit, $retail, $percent, $type, $cat_id);
-            $stmt->execute();
+            $stmt = $this->getConn()->prepare("INSERT INTO smi_products (`name`,`image`,`image_type`,`link`,`price`,`fee_transport`,`profit`,`retail`,`percent`,`type`,`category_id`,`created_at`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+            $stmt->bind_param("ssssddddiii", $name, $image, $image_type, $link, $price, $fee, $profit, $retail, $percent, $type, $cat_id);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
             $lastid = mysqli_insert_id($this->conn);
             return $lastid;
         } catch (Exception $e) {
@@ -522,35 +529,26 @@ class ProductDAO
             $qty = $variation->getQuantity();
             $sku = $variation->getSku();
             $image = $variation->getImage();
+            $image_type = $variation->getImageType();
 
-            $stmt = $this->getConn()->prepare("INSERT INTO smi_variations (`product_id`, `size`, `color`, `quantity`, `sku`, `image`, `created_at`) VALUES (?, ?, ?, ?, ?, ?, NOW())");
-            $stmt->bind_param("ississ", $product_id, $size, $color, $qty, $sku, $image);
-            $stmt->execute();
-            $affect_row = $stmt->affected_rows;
-            return $affect_row;
+            $stmt = $this->getConn()->prepare("INSERT INTO smi_variations (`product_id`, `size`, `color`, `quantity`, `sku`, `image`, `image_type`, `created_at`) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
+            $stmt->bind_param("ississs", $product_id, $size, $color, $qty, $sku, $image, $image_type);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
         } catch (Exception $e) {
-            echo "Open connection database is error exception >> " . $e->getMessage();
+            throw new Exception($e->getMessage());
         }
     }
 
     function find_by_sku($sku)
     {
         try {
-            $sql = "select 
-                        A.id as product_id, 
-                        B.id as variant_id,  
-                        A.name , 
-                        A.retail, 
-                        B.size, 
-                        B.color, 
-                        B.quantity, 
-                        B.sku,
-                        A.discount,
-                        A.price 
-                    from 
-                        smi_products A left join smi_variations B on A.id = B.product_id 
-                        where B.sku = " . $sku . "
-                        order by A.id, B.id, B.color, B.size";
+            $sql = "select A.id as product_id, B.id as variant_id, A.name, A.retail, B.size, B.color, B.quantity, B.sku, A.discount, A.price 
+                    from smi_products A left join smi_variations B on A.id = B.product_id 
+                    where B.sku = " . $sku . "
+                    order by A.id, B.id, B.color, B.size";
             $result = mysqli_query($this->conn, $sql);
             $data = array();
             if (!empty($result)) {
@@ -599,14 +597,12 @@ class ProductDAO
                 $stmt = $this->getConn()->prepare("update smi_variations set quantity = quantity + $qty where sku = ?");
                 $stmt->bind_param("s", $sku);
             }
-            print_r($this->getConn()->error);
-            $stmt->execute();
-            $nrows = $stmt->affected_rows;
-            if (!$nrows) {
-                throw new Exception("Update Qty for variations has failure");
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
             }
+            $stmt->close();
         } catch (Exception $e) {
-            throw new Exception($e->getMessage());
+            throw new Exception($e);
         }
     }
 
@@ -615,7 +611,6 @@ class ProductDAO
         try {
             $sql = "select `id`, `product_id`, `size`, `color`, `quantity`, `sku`, `created_at`, `updated_at` from smi_variations where product_id = " . $product_id;
             $result = mysqli_query($this->conn, $sql);
-
             return $result;
         } catch (Exception $e) {
             throw new Exception("find_variation_by_product_id >> " . $e);
@@ -632,9 +627,6 @@ class ProductDAO
             throw new Exception("find_variation_by_sku >> " . $e);
         }
     }
-
-
-
     /**
      * Get the value of conn
      */

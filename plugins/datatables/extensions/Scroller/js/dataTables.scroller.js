@@ -591,7 +591,7 @@ Scroller.prototype = /** @lends Scroller.prototype */{
 			that.s.dt.oApi._fnSaveState( that.s.dt );
 		}, 250 );
 
-		/* Check if the scroll point is outside the trigger boundary which would required
+		/* Fee if the scroll point is outside the trigger boundary which would required
 		 * a DataTables redraw
 		 */
 		if ( iScrollTop < this.s.redrawTop || iScrollTop > this.s.redrawBottom ) {

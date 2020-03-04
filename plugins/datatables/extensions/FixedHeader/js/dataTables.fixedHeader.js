@@ -640,7 +640,7 @@ FixedHeader.prototype = {
 
 	/*
 	 * Function: _fnUpdateCache
-	 * Purpose:  Check the cache and update cache and value if needed
+	 * Purpose:  Fee the cache and update cache and value if needed
 	 * Returns:  -
 	 * Inputs:   object:oCache - local cache object
 	 *           string:sCache - cache property

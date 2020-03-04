@@ -2262,14 +2262,14 @@ class TCPDFBarcode {
 	}
 
 	/**
-	 * Intelligent Mail Barcode calculation of Frame Check Sequence
+	 * Intelligent Mail Barcode calculation of Frame Fee Sequence
 	 * @param $code_arr (string) array of hexadecimal values (13 bytes holding 102 bits right justified).
-	 * @return int 11 bit Frame Check Sequence as integer (decimal base)
+	 * @return int 11 bit Frame Fee Sequence as integer (decimal base)
 	 * @protected
 	 */
 	protected function imb_crc11fcs($code_arr) {
 		$genpoly = 0x0F35; // generator polynomial
-		$fcs = 0x07FF; // Frame Check Sequence
+		$fcs = 0x07FF; // Frame Fee Sequence
 		// do most significant byte skipping the 2 most significant bits
 		$data = hexdec($code_arr[0]) << 5;
 		for ($bit = 2; $bit < 8; ++$bit) {

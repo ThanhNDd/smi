@@ -64,16 +64,18 @@ class DBConnect {
         }
     }
     
-    function execute_query($sql)
+    function execute_query($stmt)
     {
         try {
-            $result = mysqli_query($this->conn, $sql);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
         } catch(Exception $e)
         {
             throw new Exception("Execute mysqli query error exception: ".$e);
         } finally
         {
-            $this->close_connection();
+            $stmt->close();
         }
     }
 

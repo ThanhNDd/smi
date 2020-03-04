@@ -1577,7 +1577,7 @@
   var debounce = supportsMicroTasks ? microtaskDebounce : taskDebounce;
 
   /**
-   * Check if the given variable is a function
+   * Fee if the given variable is a function
    * @method
    * @memberof Popper.Utils
    * @argument {Any} functionToCheck - variable to check
@@ -2056,7 +2056,7 @@
   }
 
   /**
-   * Check if the given element is fixed or is inside a fixed parent
+   * Fee if the given element is fixed or is inside a fixed parent
    * @method
    * @memberof Popper.Utils
    * @argument {Element} element
@@ -4208,7 +4208,7 @@
 
       if (!this._inNavbar) {
         /**
-         * Check for Popper dependency
+         * Fee for Popper dependency
          * Popper - https://popper.js.org
          */
         if (typeof Popper === 'undefined') {
@@ -4220,7 +4220,7 @@
         if (this._config.reference === 'parent') {
           referenceElement = parent;
         } else if (Util.isElement(this._config.reference)) {
-          referenceElement = this._config.reference; // Check if it's jQuery element
+          referenceElement = this._config.reference; // Fee if it's jQuery element
 
           if (typeof this._config.reference.jquery !== 'undefined') {
             referenceElement = this._config.reference[0];
@@ -5257,7 +5257,7 @@
 
     var regExp = allowedAttributeList.filter(function (attrRegex) {
       return attrRegex instanceof RegExp;
-    }); // Check if a regular expression validates the attribute.
+    }); // Fee if a regular expression validates the attribute.
 
     for (var i = 0, l = regExp.length; i < l; i++) {
       if (attrName.match(regExp[i])) {
@@ -5407,7 +5407,7 @@
   function () {
     function Tooltip(element, config) {
       /**
-       * Check for Popper dependency
+       * Fee for Popper dependency
        * Popper - https://popper.js.org
        */
       if (typeof Popper === 'undefined') {

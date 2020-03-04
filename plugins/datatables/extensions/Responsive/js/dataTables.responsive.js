@@ -83,7 +83,7 @@ var Responsive = function ( settings, opts ) {
 		columns: []
 	};
 
-	// Check if responsive has already been initialised on this table
+	// Fee if responsive has already been initialised on this table
 	if ( this.s.dt.settings()[0].responsive ) {
 		return;
 	}
@@ -446,7 +446,7 @@ Responsive.prototype = {
 				return;
 			}
 
-			// Check that the row is actually a DataTable's controlled node
+			// Fee that the row is actually a DataTable's controlled node
 			if ( ! dt.row( $(this).closest('tr') ).length ) {
 				return;
 			}

@@ -23,7 +23,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "get_max_id") {
 }
 
 if (isset($_POST) && !empty($_FILES['file'])) {
-    if ($_FILES["file"]["size"] > 100000) {//100kb
+    if ($_FILES["file"]["size"] > 200000) {//200kb
         echo "file_too_large";
         return;
     }
@@ -179,7 +179,7 @@ if (isset($_POST["type"]) && $_POST["type"] == "edit_product") {
         $lists = $dao->find_by_id($product_id);
         echo json_encode($lists);
     } catch (Exception $e) {
-        throw new Exception("update_out_of_stock error exception: " . $e);
+        throw new Exception($e);
     }
 }
 
@@ -290,7 +290,6 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $prodId = $data->product_id;
         $product->setId($data->product_id);
         $product->setName($data->name);
-        $product->setImage($data->image);
         $product->setLink($data->link);
         $product->setPrice($data->price);
         $product->setFee_transport($data->fee);
@@ -300,13 +299,20 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $product->setType($data->type);
         $product->setCategory_id($data->cat);
 
+        $image = $data->image;
+        if($data->image_type == "upload") {
+            $image = str_replace(Common::path(), '', $image);
+        }
+        $product->setImage($image);
+        $product->setImageType($data->image_type);
+
         if (empty($prodId)) {
             $prodId = $dao->save_product($product);
             if (empty($prodId)) {
                 throw new Exception("Insert product has Failed!!!!");
             }
         } else {
-          $affect_row = $dao->update_product($product);
+          $dao->update_product($product);
         }
         $variations = $data->variations;
         for ($i = 0; $i < count($variations); $i++) {
@@ -316,13 +322,15 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
             $variation->setColor($variations[$i]->color);
             $variation->setQuantity($variations[$i]->qty);
             $variation->setSku($variations[$i]->sku);
-            $variation->setImage($variations[$i]->image);
+            $image = $variations[$i]->image;
+            if($variations[$i]->image_type == "upload") {
+                $image = str_replace(Common::path(), '', $image);
+            }
+            $variation->setImage($image);
+            $variation->setImageType($variations[$i]->image_type);
             $variation_id = $variations[$i]->id;
             if(empty($variation_id)) {
-                $affected_rows = $dao->save_variation($variation);
-                if (empty($affected_rows)) {
-                  throw new Exception("Insert variation has Failed!!!!");
-                }
+                $dao->save_variation($variation);
             } else {
               $dao->update_variation($variation);
             }
@@ -331,7 +339,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         echo json_encode($response_array);
     } catch (Exception $e) {
         $db->rollback();
-        echo 'Caught exception: ', $e->getMessage(), "\n";
+        throw new Exception('Caught exception: '. $e->getMessage());
     }
     $db->commit();
 }

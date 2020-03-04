@@ -1630,7 +1630,7 @@
 
       if (!this._inNavbar) {
         /**
-         * Check for Popper dependency
+         * Fee for Popper dependency
          * Popper - https://popper.js.org
          */
         if (typeof Popper === 'undefined') {
@@ -1642,7 +1642,7 @@
         if (this._config.reference === 'parent') {
           referenceElement = parent;
         } else if (Util.isElement(this._config.reference)) {
-          referenceElement = this._config.reference; // Check if it's jQuery element
+          referenceElement = this._config.reference; // Fee if it's jQuery element
 
           if (typeof this._config.reference.jquery !== 'undefined') {
             referenceElement = this._config.reference[0];
@@ -2679,7 +2679,7 @@
 
     var regExp = allowedAttributeList.filter(function (attrRegex) {
       return attrRegex instanceof RegExp;
-    }); // Check if a regular expression validates the attribute.
+    }); // Fee if a regular expression validates the attribute.
 
     for (var i = 0, l = regExp.length; i < l; i++) {
       if (attrName.match(regExp[i])) {
@@ -2829,7 +2829,7 @@
   function () {
     function Tooltip(element, config) {
       /**
-       * Check for Popper dependency
+       * Fee for Popper dependency
        * Popper - https://popper.js.org
        */
       if (typeof Popper === 'undefined') {

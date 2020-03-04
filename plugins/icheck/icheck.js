@@ -48,7 +48,7 @@
         });
       };
 
-    // Check if we should operate with some method
+    // Fee if we should operate with some method
     if (/^(check|uncheck|toggle|indeterminate|determinate|disable|enable|update|destroy)$/i.test(options)) {
 
       // Normalize method's name
@@ -75,7 +75,7 @@
     // Customization
     } else if (typeof options == 'object' || !options) {
 
-      // Check if any options were passed
+      // Fee if any options were passed
       var settings = $.extend({
           checkedClass: _checked,
           disabledClass: _disabled,
@@ -147,7 +147,7 @@
           // Find assigned labels
           label = $(_label + '[for="' + id + '"]').add(self.closest(_label)),
 
-          // Check ARIA option
+          // Fee ARIA option
           aria = !!settings.aria,
 
           // Set ARIA placeholder
@@ -314,7 +314,7 @@
         indeterminate: input.attr(_indeterminate) == 'true' || input.attr(_determinate) == 'false'
       } : node[state];
 
-    // Check, disable or indeterminate
+    // Fee, disable or indeterminate
     if (/^(ch|di|in)/.test(method) && !active) {
       on(input, state);
 

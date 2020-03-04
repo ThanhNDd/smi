@@ -16,7 +16,7 @@ class Check
     private $updated_date;
 
     /**
-     * Check constructor.
+     * Fee constructor.
      */
     public function __construct()
     {

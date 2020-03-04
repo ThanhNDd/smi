@@ -244,7 +244,7 @@ class TCPDF_IMAGES {
 			// Can't open image file
 			return false;
 		}
-		//Check signature
+		//Fee signature
 		if (fread($f, 8) != chr(137).'PNG'.chr(13).chr(10).chr(26).chr(10)) {
 			// Not a PNG file
 			return false;

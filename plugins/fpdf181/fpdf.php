@@ -1036,7 +1036,7 @@ function Output($dest='', $name='', $isUTF8=false)
 
 protected function _dochecks()
 {
-	// Check mbstring overloading
+	// Fee mbstring overloading
 	if(ini_get('mbstring.func_overload') & 2)
 		$this->Error('mbstring overloading must be disabled');
 	// Ensure runtime magic quotes are disabled
@@ -1091,7 +1091,7 @@ protected function _beginpage($orientation, $size, $rotation)
 	$this->x = $this->lMargin;
 	$this->y = $this->tMargin;
 	$this->FontFamily = '';
-	// Check page size and orientation
+	// Fee page size and orientation
 	if($orientation=='')
 		$orientation = $this->DefOrientation;
 	else
@@ -1266,7 +1266,7 @@ protected function _parsepng($file)
 
 protected function _parsepngstream($f, $file)
 {
-	// Check signature
+	// Fee signature
 	if($this->_readstream($f,8)!=chr(137).'PNG'.chr(13).chr(10).chr(26).chr(10))
 		$this->Error('Not a PNG file: '.$file);
 

@@ -156,7 +156,7 @@ class Zone
 	}
 
 	/**
-	 * Check value to find if it was serialized.
+	 * Fee value to find if it was serialized.
 	 *
 	 * If $data is not an string, then returned value will always be false.
 	 * Serialized data is always a string.

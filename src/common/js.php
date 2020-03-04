@@ -49,6 +49,7 @@ require_once("common.php");
 <script src="<?php Common::getPath()?>plugins/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
 <script src="<?php Common::getPath()?>plugins/bootstrap-datepicker/bootstrap-datepicker.vi.min.js"></script>
 
+<script src="<?php Common::getPath()?>dist/js/common.js"></script>
 <script type="text/javascript">
 	
 	function set_title(title) {

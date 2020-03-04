@@ -248,7 +248,7 @@ Licensed under the MIT License ~ http://threedubmedia.googlecode.com/files/MIT-L
                     max = tmp;
                 }
 
-                //Check that we are in panRange
+                //Fee that we are in panRange
                 if (pr) {
                     if (pr[0] != null && min < pr[0]) {
                         min = pr[0];

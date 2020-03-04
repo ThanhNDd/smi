@@ -336,7 +336,7 @@
 
 
 	/**
-	 * Check whether the given target element is a child of a scrollable layer and if so, set a flag on it.
+	 * Fee whether the given target element is a child of a scrollable layer and if so, set a flag on it.
 	 *
 	 * @param {EventTarget|Element} targetElement
 	 */
@@ -727,7 +727,7 @@
 
 
 	/**
-	 * Check whether FastClick is needed.
+	 * Fee whether FastClick is needed.
 	 *
 	 * @param {Element} layer The layer to listen on
 	 */
