@@ -39,6 +39,15 @@ function get_current_date() {
     let dd = String(today.getDate()).padStart(2, '0');
     let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
     let yyyy = today.getFullYear();
-    today = mm + '/' + dd + '/' + yyyy;
+    today = dd + '/' + mm + '/' + yyyy;
     return today;
+}
+
+function custom_select2(el, data) {
+    $(el) . select2({
+        data: data,
+        theme: 'bootstrap4',
+        closeOnSelect: true,
+        // width: '100%'
+    });
 }

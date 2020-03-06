@@ -31,8 +31,8 @@ if (isset($_POST) && !empty($_FILES['file'])) {
     $new_file_name = round(microtime(true)) . '.' . end($ext);
     $ext = $ext[(count($ext) - 1)];
     if ($ext === 'jpg' || $ext === 'png' || $ext === 'jpeg') {
-        if (move_uploaded_file($_FILES['file']['tmp_name'], '../../../dist/uploads/' . $new_file_name)) {
-            echo Common::path() . 'dist/uploads/' . $new_file_name;
+        if (move_uploaded_file($_FILES['file']['tmp_name'], Common::dir_upload_img() . $new_file_name)) {
+            echo Common::path_img() . $new_file_name;
         } else {
             $response_array['response'] = "error";
             echo json_encode($response_array);
@@ -298,13 +298,13 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $product->setRetail($data->retail);
         $product->setType($data->type);
         $product->setCategory_id($data->cat);
-
-        $image = $data->image;
-        if($data->image_type == "upload") {
-            $image = str_replace(Common::path(), '', $image);
-        }
-        $product->setImage($image);
-        $product->setImageType($data->image_type);
+        $product->setImage($data->image);
+//        $image = $data->image;
+//        if($data->image_type == "upload") {
+//            $image = str_replace(Common::path(), '', $image);
+//        }
+//        $product->setImage($image);
+//        $product->setImageType($data->image_type);
 
         if (empty($prodId)) {
             $prodId = $dao->save_product($product);
@@ -322,12 +322,12 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
             $variation->setColor($variations[$i]->color);
             $variation->setQuantity($variations[$i]->qty);
             $variation->setSku($variations[$i]->sku);
-            $image = $variations[$i]->image;
-            if($variations[$i]->image_type == "upload") {
-                $image = str_replace(Common::path(), '', $image);
-            }
-            $variation->setImage($image);
-            $variation->setImageType($variations[$i]->image_type);
+//            $image = $variations[$i]->image;
+//            if($variations[$i]->image_type == "upload") {
+//                $image = str_replace(Common::path(), '', $image);
+//            }
+//            $variation->setImage($image);
+//            $variation->setImageType($variations[$i]->image_type);
             $variation_id = $variations[$i]->id;
             if(empty($variation_id)) {
                 $dao->save_variation($variation);

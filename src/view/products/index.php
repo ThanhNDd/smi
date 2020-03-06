@@ -368,14 +368,19 @@ Common::authen();
                     console.log(arr[0].profit);
                     $("#display_product_id").val(arr[0].product_id);
                     $("#product_id").val(arr[0].product_id);
-                    let image_type = arr[0].image_type;
+
                     let image = arr[0].image;
-                    if(image_type == "upload") {
-                        image = '<?php Common::getPath()?>' + image;
+                    let json = JSON.parse(image);
+                    for(let i=0; i<json.length; i++) {
+                        let src = json[i].src;
+                        let type = json[i].type;
+                        if(type === "upload") {
+                            src = '<?php echo Common::path_img() ?>' + src;
+                        }
+                        $("#link_image_"+i).val(src).trigger('change');
+                        $("#image_type_"+i).val(type);
+                        $("[id=img_"+i+"]").removeClass('hidden');
                     }
-                    $("#link_image_0").val(image).trigger('change');
-                    $("#image_type_0").val(image_type);
-                    $("[id=img_0]").removeClass('hidden');
                     $("#name").val(arr[0].name);
                     $("#link").val(arr[0].link);
                     $("#price").val(arr[0].price);
@@ -385,30 +390,21 @@ Common::authen();
                     $("#profit").val(arr[0].profit);
                     $("#select_type").val(arr[0].type).trigger("change");
                     $("#select_cat").val(arr[0].category_id).trigger("change");
-                    $("#select_size").attr("disabled", "disabled");
-                    $("#select_color").attr("disabled", "disabled");
-                    $("#qty").attr("disabled", "disabled");
+                    $("#select_size").prop("disabled", "disabled");
+                    $("#select_color").prop("disabled", "disabled");
+                    $("#qty").prop("disabled", "disabled");
 
                     let variations = arr[0].variations;
                     let count = 0;
                     for (let i = 0; i < variations.length; i++) {
                         let id = variations[i].id;
                         let sku = variations[i].sku;
-                        let image = variations[i].image;
+                        // let image = variations[i].image;
                         let size = variations[i].size;
                         let color = variations[i].color;
                         let qty = variations[i].quantity;
                         count++;
                         generate_variations(count, qty, id, color, size, sku);
-                        let image_type = variations[i].image_type;
-                        console.log(image_type);
-                        if(image_type == "upload") {
-                            image = '<?php Common::getPath()?>' + image;
-                        }
-                        console.log(image);
-                        $("[id=img_" + count + "]").prop('src', image);
-                        $("[id=link_image_" + count + "]").val(image);
-                        $("[id=image_type_" + count + "]").val(image_type);
                     }
                     $(".create-new").text("Cập nhật");
                     $(".add-new-prod").prop("disabled", '');
@@ -442,9 +438,9 @@ Common::authen();
             tdi.first().removeClass('fa-plus-square');
             tdi.first().addClass('fa-minus-square');
 
-            generate_select2(".select-qty-" + new_sku, qty, "");
-            generate_select2(".select-color-" + new_sku, colors, "");
-            generate_select2(".select-size-" + new_sku, size, "");
+            generate_select2(".select-qty-" + new_sku, select_qty, "");
+            generate_select2(".select-color-" + new_sku, select_colors, "");
+            generate_select2(".select-size-" + new_sku, select_size, "");
             //  }
         });
 
@@ -462,9 +458,9 @@ Common::authen();
                 size_value = size_text.split("m")[0];
             }
             let qty_text = $(td[4]).text();
-            let input_color = '<select class="select-color-' + sku + ' form-control w100" id="select_color_' + sku + '"></select>';
-            let input_size = '<select class="select-size-' + sku + ' form-control w200" id="select_size_' + sku + '"></select>';
-            let input_qty = '<select class="select-qty-' + sku + ' form-control w100" id="select_qty_' + sku + '"></select>';
+            let input_color = '<select class="select-color-' + sku + ' form-control" id="select_color_' + sku + '"></select>';
+            let input_size = '<select class="select-size-' + sku + ' form-control" id="select_size_' + sku + '"></select>';
+            let input_qty = '<select class="select-qty-' + sku + ' form-control" id="select_qty_' + sku + '"></select>';
             let btn_gr = '<button type="button" class="btn bg-gradient-primary btn-sm update_variation"><i class="fas fa-save"></i> Lưu</button>&nbsp;' +
                 '<button type="button" class="btn bg-gradient-danger btn-sm cancel_variation" "><i class="fas fa-trash"></i> Hủy</button>';
             let gr_input_hidden = '<input type="hidden" id="curr_color_' + sku + '" value="' + color_text + '">' +
@@ -475,9 +471,9 @@ Common::authen();
             $(td[4]).html(input_qty);
             $(td[5]).html(btn_gr);
             $(tr).append(gr_input_hidden);
-            generate_select2(".select-qty-" + sku, qty, qty_text);
-            generate_select2(".select-color-" + sku, colors, color_text);
-            generate_select2(".select-size-" + sku, size, size_value);
+            generate_select2(".select-qty-" + sku, select_qty, qty_text);
+            generate_select2(".select-color-" + sku, select_colors, color_text);
+            generate_select2(".select-size-" + sku, select_size, size_value);
         });
 
         // Event click Save new variation
@@ -912,12 +908,14 @@ Common::authen();
     }
 
     function format_image(data) {
-        let image_type = data.image_type;
         let image = data.image;
-        if(image_type == 'upload') {
-            image = '<?php Common::getPath() ?>' + image;
+        let json = JSON.parse(image);
+        let src = json[0].src;
+        let type = json[0].type;
+        if(type === "upload") {
+            src = '<?php Common::path_img() ?>' + src;
         }
-        return "<img src='" + image + "' width='100px' id='thumbnail' onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"'>";
+        return "<img src='" + src + "' width='100px' id='thumbnail' onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"'>";
     }
 
     function format_variation(variations, isNew) {
@@ -925,7 +923,7 @@ Common::authen();
         table += '<thead>' +
             '<tr>' +
             '<th class="center"><input type="checkbox" id="selectall" onclick="checkAll(this)"></th>' +
-            '<th>Hình ảnh</th>' +
+            // '<th>Hình ảnh</th>' +
             '<th>Mã sản phẩm</th>' +
             '<th>Màu</th>' +
             '<th>Size</th>' +
@@ -936,16 +934,32 @@ Common::authen();
             '<tbody>';
         for (let i = 0; i < variations.length; i++) {
             table += '<tr class="' + variations[i].sku + '">' +
-                '<td class="center"><input type="checkbox" id="' + variations[i].sku + '" onclick="check(this)"></td>' +
-                '<td>';
-            let image_type = variations[i].image_type;
-            let image = variations[i].image;
-            if(image_type == 'upload') {
-                image = '<?php Common::getPath() ?>' + image;
-            }
-            table += '<img src="' + image + '" width="80px" onerror="this.onerror=null;this.src=\'<?php Common::image_error()?>\'">';
-            table += '</td>' +
-                '<input type="hidden" class="product-id-' + variations[i].sku + '" value="' + variations[i].product_id + '">' +
+                '<td class="center"><input type="checkbox" id="' + variations[i].sku + '" onclick="check(this)"></td>';
+                // '<td>';
+            // let image_type = variations[i].image_type;
+            //if(image.indexOf("|") > -1) {
+            //    let img = image.split("|");
+            //    for(let i=0; i<img.length; i++) {
+            //        let image1 = img[i].split("_");
+            //        let type = image1[1];
+            //        if(type == "upload") {
+            //            image = '<?php //Common::path_img() ?>//' + image1[0];
+            //        } else {
+            //            image = image1[0];
+            //        }
+            //    }
+            //} else if(image.indexOf("_") > -1) {
+            //    let img = image.split("_");
+            //    let type = img[1];
+            //    if(type == "upload") {
+            //        image = '<?php //Common::path_img() ?>//' + img[0];
+            //    } else {
+            //        image = img[0];
+            //    }
+            //}
+            //table += '<img src="' + image + '" width="80px" onerror="this.onerror=null;this.src=\'<?php //Common::image_error()?>//\'">';
+            // table += '</td>';
+            table += '<input type="hidden" class="product-id-' + variations[i].sku + '" value="' + variations[i].product_id + '">' +
                 '<td>' + variations[i].sku + '</td>' +
                 '<td>' + variations[i].color + '</td>' +
                 '<td>' + variations[i].size + '</td>' +
@@ -993,22 +1007,12 @@ Common::authen();
         countAllChecked();
     }
 
-    // function formatNumber(num) {
-    //     return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-    // }
-    //
-    // function replaceComma(value) {
-    //     value = value.trim();
-    //     return value.replace(/,/g, '');
-    // }
-    //
-    // function replacePercent(value) {
-    //     return value.replace(/%/g, '');
-    // }
-
     function generate_select2(el, data, value) {
         $(el).select2({
-            data: data
+            data: data,
+            theme: 'bootstrap4',
+            closeOnSelect: true,
+            width: '100%'
         });
         if (value !== "") {
             $(el).val(value).trigger('change');

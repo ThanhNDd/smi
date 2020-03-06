@@ -65,7 +65,7 @@ Common::authen();
                 <span class="info-box-icon bg-info"><i class="far fa-money-bill-alt"></i></span>
                 <div class="info-box-content">
                     <span class="info-box-text">Tổng chi phí</span>
-                    <span class="info-box-number" id="total_fee">1,410</span>
+                    <span class="info-box-number" id="total_fee">0</span>
                 </div>
                 <!-- /.info-box-content -->
             </div>
@@ -77,7 +77,7 @@ Common::authen();
                 <span class="info-box-icon bg-warning"><i class="fas fa-dollar-sign"></i></span>
                 <div class="info-box-content">
                     <span class="info-box-text">Chi phí cố định</span>
-                    <span class="info-box-number" id="total_fixed_fee">410</span>
+                    <span class="info-box-number" id="total_fixed_fee">0</span>
                 </div>
                 <!-- /.info-box-content -->
             </div>
@@ -89,7 +89,18 @@ Common::authen();
                 <span class="info-box-icon bg-secondary"><i class="fas fa-hand-holding-usd"></i></span>
                 <div class="info-box-content">
                     <span class="info-box-text">Chi phí khả biến</span>
-                    <span class="info-box-number" id="total_variable_fee">13,648</span>
+                    <span class="info-box-number" id="total_variable_fee">0</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+        </div>
+        <div class="col-md-3 col-sm-6 col-12">
+            <div class="info-box">
+                <span class="info-box-icon bg-info"><i class="fas fa-hand-holding-usd"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Tiền nhà</span>
+                    <span class="info-box-number" id="total_home_fee">0</span>
                 </div>
                 <!-- /.info-box-content -->
             </div>
@@ -182,6 +193,7 @@ Common::authen();
                     <select class="form-control" id="type">
                         <option value="0" selected>Chi phí khả biến</option>
                         <option value="1">Chi phí cố định</option>
+                        <option value="2">Tiền nhà</option>
                     </select>
                 </div>
             </div>
@@ -330,8 +342,10 @@ Common::authen();
         let type = data.type;
         if(type == 0) {
             return '<span class="badge badge-secondary">Khả biến</span>';
-        } else {
+        } else if(type == 1) {
             return '<span class="badge badge-warning">Cố định</span>';
+        } else if(type == 2) {
+            return '<span class="badge badge-info">Tiền nhà</span>';
         }
     }
 
@@ -529,6 +543,7 @@ Common::authen();
                 $("#total_fee").text(res.total_fee);
                 $("#total_fixed_fee").text(res.total_fixed_fee);
                 $("#total_variable_fee").text(res.total_variable_fee);
+                $("#total_home_fee").text(res.total_home_fee);
             },
             error: function (data, errorThrown) {
                 console.log(data.responseText);

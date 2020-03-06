@@ -12,6 +12,7 @@ class Common
         $path .= "://{$_SERVER['HTTP_HOST']}/smi/";
         return $path;
     }
+
     public static function getPath()
     {
         echo Common::path();
@@ -28,7 +29,7 @@ class Common
 
     public static function redirect_login_page()
     {
-        $path = Common::path()."/src/view/login";
+        $path = Common::path() . "/src/view/login";
         header("location:$path");
         exit;
     }
@@ -49,6 +50,16 @@ class Common
 
     public static function image_error()
     {
-        echo Common::path()."dist/img/img_err.png";
+        echo Common::path() . "dist/img/img_err.jpg";
     }
+
+    public static function path_img()
+    {
+        echo Common::path() . "dist/uploads/";
+    }
+    public static function dir_upload_img()
+    {
+        return '../../../dist/uploads/';
+    }
+
 }

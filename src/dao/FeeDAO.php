@@ -11,21 +11,24 @@ class FeeDAO
                     from smi_fees where DATE(fee_date) between DATE('" . $start_date . "') and DATE('" . $end_date . "')
                     group by type";
             $result = mysqli_query($this->conn, $sql);
-            $total_fee = 0;
             $total_fixed_fee = 0;
             $total_variable_fee = 0;
+            $total_home_fee = 0;
             foreach ($result as $k => $row) {
-                $total_fee += $row["amount"];
                 if ($row["type"] == 0) {
                     $total_variable_fee += $row["amount"];
-                } else {
+                } else if ($row["type"] == 1) {
                     $total_fixed_fee += $row["amount"];
+                } else if ($row["type"] == 2) {
+                    $total_home_fee += $row["amount"];
                 }
             }
             $arr = array();
+            $total_fee = $total_fixed_fee + $total_variable_fee;
             $arr["total_fee"] = number_format($total_fee);
             $arr["total_fixed_fee"] = number_format($total_fixed_fee);
             $arr["total_variable_fee"] = number_format($total_variable_fee);
+            $arr["total_home_fee"] = number_format($total_home_fee);
             return $arr;
         } catch (Exception $e) {
             throw new Exception($e);
