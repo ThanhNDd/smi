@@ -45,6 +45,7 @@ class FeeDAO
             if(!empty($start_date) && !empty($end_date)) {
                 $sql .= " and DATE(fee_date) between DATE('" . $start_date . "') and DATE('" . $end_date . "')";
             }
+            $sql .= " order by fee_date desc";
             $result = mysqli_query($this->conn, $sql);
             $data = array();
             $no = 1;

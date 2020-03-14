@@ -343,7 +343,7 @@ Common::authen();
                         })
                         hide_loading();
                     }
-                });
+                });<div class="col-40">
             }
         });
 

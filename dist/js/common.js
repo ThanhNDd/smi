@@ -24,7 +24,8 @@ function replacePercent(value) {
     return value.replace(/%/g, '');
 }
 
-let regExp = /^\d*$|^\d*[,]?\d+$/;
+// let regExp = /^\d*$|^\d*[,]?\d+$/;
+let regExp = /^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$/;
 function validate_number(val) {
     return regExp.test(val);
 }
