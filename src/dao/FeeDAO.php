@@ -14,6 +14,7 @@ class FeeDAO
             $total_fixed_fee = 0;
             $total_variable_fee = 0;
             $total_home_fee = 0;
+            $total_import_product = 0;
             foreach ($result as $k => $row) {
                 if ($row["type"] == 0) {
                     $total_variable_fee += $row["amount"];
@@ -21,6 +22,8 @@ class FeeDAO
                     $total_fixed_fee += $row["amount"];
                 } else if ($row["type"] == 2) {
                     $total_home_fee += $row["amount"];
+                } else if ($row["type"] == 3) {
+                    $total_import_product += $row["amount"];
                 }
             }
             $arr = array();
@@ -29,6 +32,7 @@ class FeeDAO
             $arr["total_fixed_fee"] = number_format($total_fixed_fee);
             $arr["total_variable_fee"] = number_format($total_variable_fee);
             $arr["total_home_fee"] = number_format($total_home_fee);
+            $arr["total_import_product"] = number_format($total_import_product);
             return $arr;
         } catch (Exception $e) {
             throw new Exception($e);

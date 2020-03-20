@@ -60,7 +60,7 @@ Common::authen();
 <?php require_once('../../common/menu.php'); ?>
 <section class="content">
     <div class="row">
-        <div class="col-md-3 col-sm-6 col-12">
+        <div class="col-md-2 col-sm-6 col-12">
             <div class="info-box">
                 <span class="info-box-icon bg-info"><i class="far fa-money-bill-alt"></i></span>
                 <div class="info-box-content">
@@ -72,7 +72,7 @@ Common::authen();
             <!-- /.info-box -->
         </div>
         <!-- /.col -->
-        <div class="col-md-3 col-sm-6 col-12">
+        <div class="col-md-2 col-sm-6 col-12">
             <div class="info-box">
                 <span class="info-box-icon bg-warning"><i class="fas fa-dollar-sign"></i></span>
                 <div class="info-box-content">
@@ -84,7 +84,7 @@ Common::authen();
             <!-- /.info-box -->
         </div>
         <!-- /.col -->
-        <div class="col-md-3 col-sm-6 col-12">
+        <div class="col-md-2 col-sm-6 col-12">
             <div class="info-box">
                 <span class="info-box-icon bg-secondary"><i class="fas fa-hand-holding-usd"></i></span>
                 <div class="info-box-content">
@@ -95,7 +95,18 @@ Common::authen();
             </div>
             <!-- /.info-box -->
         </div>
-        <div class="col-md-3 col-sm-6 col-12">
+        <div class="col-md-2 col-sm-6 col-12">
+            <div class="info-box">
+                <span class="info-box-icon bg-success"><i class="fas fa-hand-holding-usd"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Tiền hàng</span>
+                    <span class="info-box-number" id="total_import_product">0</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+        </div>
+        <div class="col-md-2 col-sm-6 col-12">
             <div class="info-box">
                 <span class="info-box-icon bg-info"><i class="fas fa-hand-holding-usd"></i></span>
                 <div class="info-box-content">
@@ -194,6 +205,7 @@ Common::authen();
                         <option value="0" selected>Chi phí khả biến</option>
                         <option value="1">Chi phí cố định</option>
                         <option value="2">Tiền nhà</option>
+                        <option value="3">Nhập hàng</option>
                     </select>
                 </div>
             </div>
@@ -248,16 +260,16 @@ Common::authen();
             }
         });
 
-        let startDate = moment().startOf('month').format("YYYY-MM-DD");
-        let endDate = moment().endOf('month').format("YYYY-MM-DD");
+        let startDate = moment().startOf('day').format("YYYY-MM-DD");
+        let endDate = moment().startOf('day').format("YYYY-MM-DD");
         $("#startDate").val(startDate);
         $("#endDate").val(endDate);
         generate_datatable();
         get_total_fee();
 
         $('#reservation').daterangepicker({
-            startDate: moment().startOf('month'),
-            endDate: moment().endOf('month'),
+            startDate: moment().startOf('day'),
+            endDate: moment().startOf('day'),
             locale: {
                 format: 'DD/MM/YYYY',
             }
@@ -286,7 +298,7 @@ Common::authen();
             ordering: false,
             scrollCollapse: true,
             "language": {
-                "emptyTable": "Không có dữ liệu"
+                "emptyTable": "Tuyệt vời, không có chi phí nào!!!"
             },
             select: "single",
             "columns": [
@@ -346,6 +358,8 @@ Common::authen();
             return '<span class="badge badge-warning">Cố định</span>';
         } else if(type == 2) {
             return '<span class="badge badge-info">Tiền nhà</span>';
+        } else if(type == 3) {
+            return '<span class="badge badge-success">Nhập hàng</span>';
         }
     }
 
@@ -544,6 +558,7 @@ Common::authen();
                 $("#total_fixed_fee").text(res.total_fixed_fee);
                 $("#total_variable_fee").text(res.total_variable_fee);
                 $("#total_home_fee").text(res.total_home_fee);
+                $("#total_import_product").text(res.total_import_product);
             },
             error: function (data, errorThrown) {
                 console.log(data.responseText);
