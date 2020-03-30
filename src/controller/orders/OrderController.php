@@ -131,7 +131,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "delete_order") {
  */
 if (isset($_GET["orders"]) && $_GET["orders"] == "loadDataCity") {
   try {
-    Common::authen_get_data();
+//    Common::authen_get_data();
     echo $zone->get_list_city();
   } catch (Exception $ex) {
     throw new Exception($ex);
@@ -140,7 +140,7 @@ if (isset($_GET["orders"]) && $_GET["orders"] == "loadDataCity") {
 
 if (isset($_GET["orders"]) && $_GET["orders"] == "loadDataDistrict") {
   try {
-    Common::authen_get_data();
+//    Common::authen_get_data();
     if (isset($_GET["cityId"])) {
       $cityId = $_GET["cityId"];
       echo $zone->get_list_district($cityId);
@@ -153,7 +153,7 @@ if (isset($_GET["orders"]) && $_GET["orders"] == "loadDataDistrict") {
 }
 if (isset($_GET["orders"]) && $_GET["orders"] == "loadDataVillage") {
   try {
-    Common::authen_get_data();
+//    Common::authen_get_data();
     if (isset($_GET["districtId"])) {
       $districtId = $_GET["districtId"];
       echo $zone->get_list_village($districtId);
@@ -230,10 +230,10 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
       $customer->setVillage_id($data->villageId);
       if ($data->customer_id > 0) {
         $customer->setId($data->customer_id);
-        $cusId = $customerDAO->update_customer($customer);
-        if (empty($cusId)) {
-          throw new Exception("update customer is failure", 1);
-        }
+        $customerDAO->update_customer($customer);
+//        if (empty($cusId)) {
+//          throw new Exception("update customer is failure", 1);
+//        }
       } else {
         $cusId = $customerDAO->save_customer($customer);
         if (empty($cusId)) {
@@ -256,7 +256,6 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
     $order->setType($order_type);
     $order->setStatus($data->order_status);
     $order->setPayment_type($data->payment_type);
-    $order->setOrder_date($data->order_date);
     $order->setVoucherValue(0);
     $order->setOrder_date($data->order_date);
     if (isset($data->order_id) && $data->order_id > 0) {
