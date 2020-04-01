@@ -89,10 +89,15 @@ class CheckoutDAO
                         a.shipping,
                         a.discount,
                         a.total_checkout,
-                        a.payment_type
+                        a.payment_type,
+                        e.size,
+                        e.color,
+                        a.order_date,
+                        a.source
                     from smi_orders a left join smi_order_detail b on a.id = b.order_id
                     inner join smi_customers c on a.customer_id = c.id
                     inner join smi_products d on b.product_id = d.id
+                    inner join smi_variations e on b.variant_id = e.id
                     where a.id = " . $order_id;
             } else if ($order_type == 0) {
                 // on shop
@@ -115,13 +120,14 @@ class CheckoutDAO
                             a.repay,
                             e.size,
                             e.color,
-                            a.order_date
+                            a.order_date,
+                            a.source
                         from smi_orders a left join smi_order_detail b on a.id = b.order_id
                         inner join smi_products d on b.product_id = d.id
                         inner join smi_variations e on b.variant_id = e.id
                         where a.id = " . $order_id;
             } else {
-                throw new Exception("Order Type is null");
+                throw new Exception("Order Type is null or is invalid: $order_type");
             }
 
             $result = mysqli_query($this->conn, $sql);
@@ -149,6 +155,8 @@ class CheckoutDAO
                             'discount' => number_format($row["discount"]),
                             'total_checkout' => number_format($row["total_checkout"]),
                             'payment_type' => $row["payment_type"],
+                            'order_date' => date_format(date_create($row["order_date"]), "d/m/Y"),
+                            'source' => $row["source"],
                             'details' => array()
                         );
                     } else {
@@ -162,6 +170,7 @@ class CheckoutDAO
                             'customer_payment' => number_format($row["customer_payment"]),
                             'repay' => number_format($row["repay"]),
                             'order_date' => date_format(date_create($row["order_date"]), "d/m/Y"),
+                            'source' => $row["source"],
                             'details' => array()
                         );
                     }
@@ -401,7 +410,8 @@ class CheckoutDAO
                         A.status,
                         A.payment_type,
                         A.payment_exchange_type,
-                        A.order_refer
+                        A.order_refer,
+                        A.source
                     from smi_orders A 
                     where 
                     DATE(order_date) between DATE('" . $start_date . "') and DATE('" . $end_date . "')
@@ -418,7 +428,8 @@ class CheckoutDAO
                     'status' => $row["status"],
                     'payment_type' => $row["payment_type"],
                     'payment_exchange_type' => $row["payment_exchange_type"],
-                    'order_refer' => $row["order_refer"]
+                    'order_refer' => $row["order_refer"],
+                    'source' => $row["source"]
                 );
                 array_push($data, $order);
             }
@@ -685,6 +696,7 @@ class CheckoutDAO
             $voucher_value = $order->getVoucherValue();
             $orderRefer = $order->getOrderRefer();
             $paymentExchangeType = $order->getPaymentExchangeType();
+            $source = $order->getSource();
             $stmt = $this->getConn()->prepare("insert into smi_orders (
                     `total_reduce`,
                     `total_reduce_percent`,
@@ -706,9 +718,10 @@ class CheckoutDAO
                     `order_refer`,
                     `payment_exchange_type`,
                     `order_date`,
+                    `source`,
                     `created_date`) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(),NOW())");
-            $stmt->bind_param("ddddddidiisddsisdii", $total_reduce, $total_reduce_percent, $discount, $total_amount, $total_checkout, $customer_payment, $payment_type, $repay, $customer_id, $type, $bill, $shipping_fee, $shipping, $shipping_unit, $status, $voucher_code, $voucher_value, $orderRefer, $paymentExchangeType);
+            $stmt->bind_param("ddddddidiisddsisdiii", $total_reduce, $total_reduce_percent, $discount, $total_amount, $total_checkout, $customer_payment, $payment_type, $repay, $customer_id, $type, $bill, $shipping_fee, $shipping, $shipping_unit, $status, $voucher_code, $voucher_value, $orderRefer, $paymentExchangeType, $source);
             if(!$stmt->execute()) {
                 throw new Exception($stmt->error);
             }
@@ -739,14 +752,15 @@ class CheckoutDAO
             $status = $order->getStatus();
             $payment_type = $order->getPayment_type();
             $order_date = $order->getOrder_date();
+            $source = $order->getSource();
             if(!empty($order->getOrder_date())) {
                 $date = $order->getOrder_date();
                 $date = str_replace('/', '-', $date);
                 $order_date = date('Y-m-d H:i:s', strtotime($date));
             }
             $id = $order->getId();
-            $stmt = $this->getConn()->prepare("update `smi_orders` SET `total_reduce` = ?, `total_reduce_percent` = ?, `discount` = ?, `total_amount` = ?, `total_checkout` = ?, `customer_payment` = ?, `repay` = ?, `customer_id` = ?, `type` = ?, `bill_of_lading_no` = ?, `shipping_fee` = ?, `shipping` = ?, `shipping_unit` = ?, `status` = ?, `updated_date` = NOW(), `deleted` = b'0', `payment_type` = ?, `order_date` = ?  WHERE `id` = ?");
-            $stmt->bind_param("dddddddiisddsiisi", $total_reduce, $total_reduce_percent, $discount, $total_amount, $total_checkout, $customer_payment, $repay, $customer_id, $type, $bill, $shipping_fee, $shipping, $shipping_unit, $status, $payment_type, $order_date, $id);
+            $stmt = $this->getConn()->prepare("update `smi_orders` SET `total_reduce` = ?, `total_reduce_percent` = ?, `discount` = ?, `total_amount` = ?, `total_checkout` = ?, `customer_payment` = ?, `repay` = ?, `customer_id` = ?, `type` = ?, `bill_of_lading_no` = ?, `shipping_fee` = ?, `shipping` = ?, `shipping_unit` = ?, `status` = ?, `updated_date` = NOW(), `deleted` = b'0', `payment_type` = ?, `order_date` = ?, `source` = ?  WHERE `id` = ?");
+            $stmt->bind_param("dddddddiisddsiisii", $total_reduce, $total_reduce_percent, $discount, $total_amount, $total_checkout, $customer_payment, $repay, $customer_id, $type, $bill, $shipping_fee, $shipping, $shipping_unit, $status, $payment_type, $order_date, $id);
             if(!$stmt->execute()) {
                 throw new Exception($stmt->error);
             }

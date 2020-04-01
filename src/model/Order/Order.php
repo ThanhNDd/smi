@@ -23,6 +23,7 @@ class Order {
     private $voucher_value;
     private $order_refer;
     private $payment_exchange_type;
+    private $source;
     private $created_date;
     private $updated_date;
 
@@ -507,5 +508,21 @@ class Order {
     {
         $this->payment_exchange_type = $payment_exchange_type;
     }
+
+  /**
+   * @return mixed
+   */
+  public function getSource()
+  {
+    return $this->source;
+  }
+
+  /**
+   * @param mixed $source
+   */
+  public function setSource($source): void
+  {
+    $this->source = $source;
+  }
 
 }

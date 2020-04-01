@@ -77,6 +77,7 @@ Common::authen();
                 <th class="center">Ngày mua hàng</th>
                 <th class="left">Loại đơn</th>
                 <th class="left">Thanh toán</th>
+                <th class="left">Nguồn</th>
                 <th class="left">Hành động</th>
               </tr>
               </thead>
@@ -327,6 +328,10 @@ Common::authen();
                     width: "30px"
                 },
                 {
+                    "data": format_source,
+                    width: "30px"
+                },
+                {
                     "data": format_action,
                     width: "50px"
                 }
@@ -526,20 +531,18 @@ Common::authen();
                     $("#customer_id").val(value[0].customer_id);
                     $("#bill_of_lading_no").val(value[0].bill_of_lading_no);
                     $("#shipping_fee").val(value[0].shipping_fee);
-                    $("#customerName").val(value[0].customerName);
-                    $("#phoneNumber").val(value[0].phone);
+                    $("#customer_name").val(value[0].customerName);
+                    $("#phone_number").val(value[0].phone);
                     $("#email").val(value[0].email);
                     generate_select2_city(value[0].city_id);
-                    generate_select2_district(value[0].city_id);
-                    $(".select-district").val(value[0].district_id).trigger("change");
-                    generate_select2_village(value[0].district_id);
-                    $(".select-village").val(value[0].village_id).trigger("change");
+                    generate_select2_district(value[0].city_id, value[0].district_id);
+                    generate_select2_village(value[0].district_id, value[0].village_id);
                     $("#address").val(value[0].address);
                     $("#shipping").val(value[0].shipping).trigger("change");
                     $("#bill_of_lading_no").prop("disabled", false);
                     $("#shipping_fee").prop("disabled", false);
-                    $("#customerName").prop("disabled", false);
-                    $("#phoneNumber").prop("disabled", false);
+                    $("#customer_name").prop("disabled", false);
+                    $("#phone_number").prop("disabled", false);
                     $("#email").prop("disabled", false);
                     $(".select-shipping-unit").prop("disabled", false);
                     $(".select-city").prop("disabled", false);
@@ -552,8 +555,8 @@ Common::authen();
                     // on shop
                     $("#bill_of_lading_no").prop("disabled", true);
                     $("#shipping_fee").prop("disabled", true);
-                    $("#customerName").prop("disabled", true);
-                    $("#phoneNumber").prop("disabled", true);
+                    $("#customer_name").prop("disabled", true);
+                    $("#phone_number").prop("disabled", true);
                     $("#email").prop("disabled", true);
                     $(".select-shipping-unit").prop("disabled", true);
                     $(".select-city").prop("disabled", true);
@@ -589,10 +592,6 @@ Common::authen();
                 toastr.error('Đã xảy ra lỗi.');
             }
         });
-    }
-
-    function find_detail() {
-
     }
 
     function format_order_detail(data, row_data) {
@@ -752,6 +751,24 @@ Common::authen();
                 break;
             default:
                 return '';
+                break;
+        }
+    }
+
+    function format_source(data) {
+        let source = data.source;
+        switch (source) {
+            case '0' :
+                return '<span class="badge badge-success">Website</span>';
+                break;
+            case '1':
+                return '<span class="badge badge-primary">Facebook</span>';
+                break;
+            case '2':
+                return '<span class="badge badge-danger">Shopee</span>';
+                break;
+            default:
+                return '<span class="badge badge-warning">Cửa hàng</span>';
                 break;
         }
     }

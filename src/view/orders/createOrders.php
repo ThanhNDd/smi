@@ -908,7 +908,7 @@ Common::authen();
             });
         }
 
-        function generate_select2_city() {
+        function generate_select2_city(city_id) {
             $("#create-order .overlay").removeClass("hidden");
             $.ajax({
                 dataType: "json",
@@ -923,6 +923,9 @@ Common::authen();
                         theme: 'bootstrap4',
                     });
                     $("#create-order .overlay").addClass("hidden");
+                    if(city_id !== '') {
+                        $(".select-city").val(city_id).trigger("change");
+                    }
                 },
                 error: function (data, errorThrown) {
                     console.log(data.responseText);
@@ -932,7 +935,7 @@ Common::authen();
             });
         }
 
-        function generate_select2_district(cityId) {
+        function generate_select2_district(cityId, districtId) {
             $("#create-order .overlay").removeClass("hidden");
             $('.select-district').empty();
             $.ajax({
@@ -944,6 +947,7 @@ Common::authen();
                 },
                 type: 'GET',
                 success: function (data) {
+                    console.log(data.results);
                     $('.select-district').select2({
                         data: data.results,
                         theme: 'bootstrap4',
@@ -956,6 +960,11 @@ Common::authen();
                         val(-1);
                     option.prependTo(select);
                     select.trigger('change');
+
+                    if(districtId !== '') {
+                        districtId = districtId.padStart(3,'0');
+                        $(".select-district").val(districtId).trigger("change");
+                    }
                 },
                 error: function (data, errorThrown) {
                     console.log(data.responseText);
@@ -965,7 +974,7 @@ Common::authen();
             });
         }
 
-        function generate_select2_village(districtId) {
+        function generate_select2_village(districtId, villageId) {
             $("#create-order .overlay").removeClass("hidden");
             $('.select-village').empty();
             $.ajax({
@@ -989,7 +998,10 @@ Common::authen();
                     option.prependTo(select);
                     select.trigger('change');
                     $("#create-order .overlay").addClass("hidden");
-
+                    if(villageId !== '') {
+                        villageId = villageId.padStart(5,'0');
+                        $(".select-village").val(villageId).trigger("change");
+                    }
                 },
                 error: function (data, errorThrown) {
                     console.log(data.responseText);
