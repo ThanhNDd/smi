@@ -87,20 +87,6 @@ Common::authen();
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>Giới tính</td>
-                                            <td>
-                                                <select class="select-type form-control ml-2 col-sm-10" id="select_type"
-                                                        style="width: 100%;"></select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Danh mục</td>
-                                            <td>
-                                                <select class="select-cat form-control ml-2 col-sm-10" id="select_cat"
-                                                        style="width: 100%;"></select>
-                                            </td>
-                                        </tr>
-                                        <tr>
                                             <td>Giá nhập</td>
                                             <td>
                                                 <div class="input-group mb-1">
@@ -128,6 +114,20 @@ Common::authen();
                                             <td></td>
                                             <td>
                                                 <input type="text" class="form-control ml-2" id="profit">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Giới tính</td>
+                                            <td>
+                                                <select class="select-type form-control ml-2 col-sm-10" id="select_type"
+                                                      style="width: 100%;"></select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Danh mục</td>
+                                            <td>
+                                                <select class="select-cat form-control ml-2 col-sm-10" id="select_cat"
+                                                      style="width: 100%;"></select>
                                             </td>
                                         </tr>
                                         <tr>
@@ -199,6 +199,12 @@ Common::authen();
                                 </div>
                             </div>
                         </div>
+                        <div class="card-body pad">
+                            <div class="mb-3">
+                                <textarea class="textarea" placeholder="Mô tả sản phẩm" id="description"
+                                      style="width: 100%; height: 400px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                                    </div>
+                            </div>
                     </div>
                 </div>
             </div>
@@ -226,6 +232,9 @@ Common::authen();
         });
 
         $(document).ready(function () {
+            $('.textarea').summernote({
+                placeholder: 'Mô tả sản phẩm...'
+            });
             $('.product-create').click(function () {
                 open_modal();
             });
@@ -412,6 +421,7 @@ Common::authen();
             let retail = $("#retail").val();
             let percent = $("#percent").val();
             let profit = $("#profit").val();
+            let description = $("#description").val();
 
             let product = {};
             product['product_id'] = product_id;
@@ -425,6 +435,7 @@ Common::authen();
             product['retail'] = replaceComma(retail);
             product['profit'] = replaceComma(profit);
             product['percent'] = percent;
+            product['description'] = description;
 
             let arr = [];
             $(".table-list > tbody > tr").each(function () {
@@ -640,6 +651,7 @@ Common::authen();
         }
 
         function validate_variations() {
+
             let valid = true;
             $(".table-list > tbody > tr").each(function () {
                 let no = $(this).attr('class');

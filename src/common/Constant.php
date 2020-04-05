@@ -17,4 +17,8 @@ class Constant
     const COMPLETED = 3;
     const CANCELLED = 4;
     const FAILED = 5;
+
+    // social publish
+    const PUBLISHED = 1;
+    const UNPUBLISH = 0;
 }

@@ -149,7 +149,8 @@ class ProductDAO
                            B.color,
                            B.quantity,
                            B.sku,
-                           B.image as 'image_variation'
+                           B.image as 'image_variation',
+                           A.description
                     FROM smi_products A
                     LEFT JOIN smi_variations B ON A.id = B.product_id
                     WHERE A.id = " . $id;
@@ -171,6 +172,7 @@ class ProductDAO
                         'fee_transport' => number_format($row["fee_transport"]),
                         'retail' => number_format($row["retail"]),
                         'profit' => number_format($row["profit"]),
+                        'description' => $row["description"],
                         'variations' => array()
                     );
                     $variation = array(
@@ -218,13 +220,15 @@ class ProductDAO
                         A.link , 
                         A.retail,
                         A.discount,
-                        A.profit
+                        A.profit,
+                        A.social_publish
                     from 
                         smi_products A
                     where
                         A.status = $status
                     order by A.created_at desc, A.id";
             $result = mysqli_query($this->conn, $sql);
+//            print_r($this->getConn()->error);
             $data = array();
             foreach ($result as $k => $row) {
                 $product = array(
@@ -235,6 +239,7 @@ class ProductDAO
                     'retail' => number_format($row["retail"]),
                     'discount' => $row["discount"],
                     'profit' => number_format($row["profit"]),
+                    'social_publish' => $row["social_publish"],
                 );
                 array_push($data, $product);
             }
@@ -368,8 +373,10 @@ class ProductDAO
             $percent = $product->getPercent();
             $type = $product->getType();
             $cat_id = $product->getCategory_id();
-            $stmt = $this->getConn()->prepare("update smi_products SET name = ?, image = ?, LINK = ?,price = ?, fee_transport = ?, profit = ?, retail = ?, percent = ?, TYPE = ?, category_id = ?, updated_at = NOW() WHERE id = ?");
-            $stmt->bind_param("sssddddiiii", $name, $image, $link, $price, $fee, $profit, $retail, $percent, $type, $cat_id, $product_id);
+//            $social_publish = $product->getSocialPublish();
+            $description = $product->getDescription();
+            $stmt = $this->getConn()->prepare("update smi_products SET name = ?, image = ?, LINK = ?,price = ?, fee_transport = ?, profit = ?, retail = ?, percent = ?, TYPE = ?, category_id = ?, description = ?, updated_at = NOW() WHERE id = ?");
+            $stmt->bind_param("sssddddiiisi", $name, $image, $link, $price, $fee, $profit, $retail, $percent, $type, $cat_id, $description, $product_id);
             if(!$stmt->execute()) {
                 throw new Exception($stmt->error);
             }
@@ -467,19 +474,19 @@ class ProductDAO
         }
     }
 
-    function delete_variation($sku)
-    {
-        try {
-            $stmt = $this->getConn()->prepare("delete from smi_variations where sku = ?");
-            $stmt->bind_param("s", $sku);
-            if(!$stmt->execute()) {
-                throw new Exception($stmt->error);
-            }
-            $stmt->close();
-        } catch (Exception $e) {
-            throw new Exception($e);
-        }
-    }
+//    function delete_variation($sku)
+//    {
+//        try {
+//            $stmt = $this->getConn()->prepare("delete from smi_variations where sku = ?");
+//            $stmt->bind_param("s", $sku);
+//            if(!$stmt->execute()) {
+//                throw new Exception($stmt->error);
+//            }
+//            $stmt->close();
+//        } catch (Exception $e) {
+//            throw new Exception($e);
+//        }
+//    }
 
     function save_product(Product $product)
     {
@@ -494,8 +501,10 @@ class ProductDAO
             $percent = $product->getPercent();
             $type = $product->getType();
             $cat_id = $product->getCategory_id();
-            $stmt = $this->getConn()->prepare("INSERT INTO smi_products (`name`,`image`,`link`,`price`,`fee_transport`,`profit`,`retail`,`percent`,`type`,`category_id`,`created_at`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-            $stmt->bind_param("sssddddiii", $name, $image, $link, $price, $fee, $profit, $retail, $percent, $type, $cat_id);
+            $social_publish = '{"shopee": 0, "website": 0, "facebook": 0}';
+            $description = $product->getDescription();
+            $stmt = $this->getConn()->prepare("INSERT INTO smi_products (`name`,`image`,`link`,`price`,`fee_transport`,`profit`,`retail`,`percent`,`type`,`category_id`,`social_publish`,`description`,`created_at`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,NOW())");
+            $stmt->bind_param("sssddddiiis", $name, $image, $link, $price, $fee, $profit, $retail, $percent, $type, $cat_id, $social_publish, $description);
             if(!$stmt->execute()) {
                 throw new Exception($stmt->error);
             }
@@ -602,16 +611,31 @@ class ProductDAO
         }
     }
 
-    function find_variation_by_sku($sku)
-    {
-        try {
-            $sql = "select `id`, `product_id`, `size`, `color`, `quantity`, `sku`, `created_at`, `updated_at` from smi_variations where sku = " . $sku;
-            $result = mysqli_query($this->conn, $sql);
-            return $result;
-        } catch (Exception $e) {
-            throw new Exception("find_variation_by_sku >> " . $e);
+  function social_publish($product_id, $type, $status)
+  {
+    try {
+        $stmt = $this->getConn()->prepare("update smi_products set social_publish = JSON_SET(social_publish, '$.".$type."', ?) where id = ?");
+        $stmt->bind_param("ii", $status, $product_id);
+        if(!$stmt->execute()) {
+          print_r($this->getConn()->error);
+          throw new Exception($stmt->error);
         }
+        $stmt->close();
+    } catch (Exception $e) {
+      throw new Exception($e);
     }
+  }
+
+//    function find_variation_by_sku($sku)
+//    {
+//        try {
+//            $sql = "select `id`, `product_id`, `size`, `color`, `quantity`, `sku`, `created_at`, `updated_at` from smi_variations where sku = " . $sku;
+//            $result = mysqli_query($this->conn, $sql);
+//            return $result;
+//        } catch (Exception $e) {
+//            throw new Exception("find_variation_by_sku >> " . $e);
+//        }
+//    }
     /**
      * Get the value of conn
      */

@@ -299,6 +299,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $product->setType($data->type);
         $product->setCategory_id($data->cat);
         $product->setImage($data->image);
+        $product->setDescription($data->description);
 //        $image = $data->image;
 //        if($data->image_type == "upload") {
 //            $image = str_replace(Common::path(), '', $image);
@@ -342,5 +343,21 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         throw new Exception('Caught exception: '. $e->getMessage());
     }
     $db->commit();
+
 }
 
+if (isset($_POST["method"]) && $_POST["method"] == "social_publish") {
+    try {
+        Common::authen_get_data();
+        $product_id = $_POST["product_id"];
+        $type = $_POST["type"];
+        $status = $_POST["status"];
+        $dao->social_publish($product_id, $type, $status);
+        $response_array['success'] = 'success';
+        echo json_encode($response_array);
+    } catch (Exception $e) {
+        $db->rollback();
+        throw new Exception($e);
+    }
+    $db->commit();
+}

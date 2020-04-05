@@ -699,7 +699,7 @@ Common::authen();
     }
 
     function format_customer_name(data) {
-        if (data.customer_name == "" || data.customer_name == null) {
+        if (data.customer_name === "" || data.customer_name == null) {
             return "Khách lẻ";
         } else {
             return "<a href='javascript:void(0)'>" + data.customer_name + "</a>";
@@ -714,7 +714,7 @@ Common::authen();
         content += '<a href="javascript:void(0);" class="print_receipt mr-1 text-info" title="In hoá đơn"><i class="fa fa-print"></i></a>';
 
         // }
-        if (order_type != 2) {
+        if (order_type !== 2) {
             content += '<a href="javascript:void(0);" class="edit_order mr-1 text-primary" title="Sửa đơn hàng"><i class="fa fa-edit"></i></a>';
         }
         content += '<a href="javascript:void(0);" class="delete_order mr-1 text-danger" title="Xoá đơn hàng"><i class="fa fa-trash"></i></a>';
@@ -727,13 +727,10 @@ Common::authen();
         switch (payment_exchange_type) {
             case '1':
                 return total_checkout;
-                break;
             case '2':
                 return '-' + total_checkout;
-                break;
             default:
                 return total_checkout;
-                break;
         }
     }
 
@@ -742,34 +739,26 @@ Common::authen();
         switch (type) {
             case '0' :
                 return '<span class="badge badge-warning">Shop</span>';
-                break;
             case '1':
                 return '<span class="badge badge-success">Online</span>';
-                break;
             case '2':
                 return '<span class="badge badge-danger">Đổi hàng</span>';
-                break;
             default:
                 return '';
-                break;
         }
     }
 
     function format_source(data) {
         let source = data.source;
         switch (source) {
-            case '0' :
+            case '1' :
                 return '<span class="badge badge-success">Website</span>';
-                break;
-            case '1':
-                return '<span class="badge badge-primary">Facebook</span>';
-                break;
             case '2':
+                return '<span class="badge badge-primary">Facebook</span>';
+            case '3':
                 return '<span class="badge badge-danger">Shopee</span>';
-                break;
             default:
                 return '<span class="badge badge-warning">Cửa hàng</span>';
-                break;
         }
     }
 

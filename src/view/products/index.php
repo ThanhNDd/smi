@@ -141,6 +141,7 @@ Common::authen();
                             <th>Giá bán lẻ</th>
                             <th>Giảm giá</th>
                             <th></th>
+                            <th>Publish</th>
                             <th>Hành động</th>
                         </tr>
                         </thead>
@@ -292,6 +293,10 @@ Common::authen();
                     width: "50px"
                 },
                 {
+                    "data": format_publish,
+                    width: "50px"
+                },
+                {
                     "data": format_action,
                     width: "50px"
                 }
@@ -343,7 +348,7 @@ Common::authen();
                         })
                         hide_loading();
                     }
-                });<div class="col-40">
+                });
             }
         });
 
@@ -393,6 +398,9 @@ Common::authen();
                     $("#select_size").prop("disabled", "disabled");
                     $("#select_color").prop("disabled", "disabled");
                     $("#qty").prop("disabled", "disabled");
+                    if(arr[0].description !== "") {
+                        $('#description').summernote('pasteHTML', arr[0].description);
+                    }
 
                     let variations = arr[0].variations;
                     let count = 0;
@@ -652,6 +660,69 @@ Common::authen();
             }
             check_stock($(this), product_id);
         });
+
+        $('#example tbody').on('click', '.website-publish', function () {
+            let tr = $(this).closest('tr');
+            let td = tr.find("td");
+            let product_id = $(td[1]).text();
+            let checked = $(this).parent().children('input').prop('checked');
+            let status = 0;
+            if(checked) {
+                status = 1;
+            }
+            social_publish(product_id, 'website', status);
+        });
+
+        $('#example tbody').on('click', '.facebook-publish', function () {
+            let tr = $(this).closest('tr');
+            let td = tr.find("td");
+            let product_id = $(td[1]).text();
+            let checked = $(this).parent().children('input').prop('checked');
+            let status = 0;
+            if(checked) {
+                status = 1;
+            }
+            social_publish(product_id, 'facebook', status);
+        });
+
+        $('#example tbody').on('click', '.shopee-publish', function () {
+            let tr = $(this).closest('tr');
+            let td = tr.find("td");
+            let product_id = $(td[1]).text();
+            let checked = $(this).parent().children('input').prop('checked');
+            let status = 0;
+            if(checked) {
+                status = 1;
+            }
+            social_publish(product_id, 'shopee', status);
+        });
+    }
+
+    function social_publish(product_id, type, status) {
+        $.ajax({
+            url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
+            type: "POST",
+            dataType: "json",
+            data: {
+                method: "social_publish",
+                product_id: product_id,
+                type: type,
+                status: status
+            },
+            success: function (res) {
+                toastr.success('Cập nhật thành công!');
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                });
+                hide_loading();
+            }
+        });
     }
 
     function format_discount_display(data) {
@@ -882,10 +953,32 @@ Common::authen();
         });
     }
 
-    function format_action() {
-        // '<button type="button" class="btn bg-gradient-success btn-sm add_variation" title="Thêm biến thể sản phẩm"><i class="fas fa-plus-circle"></i></button>&nbsp;'
-        return  '<button type="button" class="btn bg-gradient-info btn-sm edit_product" title="Sửa sản phẩm"><i class="fas fa-edit"></i></button>&nbsp;'
+    function format_publish(data) {
+        let product_id = data.product_id;
+        let social_publish = JSON.parse(data.social_publish);
+        let websiteChecked = social_publish.website == 0 ? '' : 'checked';
+        let btn = '<div class="custom-control custom-switch">' +
+            '<input type="checkbox" class="custom-control-input website-publish" id="Website_'+product_id+'" '+websiteChecked+'>' +
+            '<label class="custom-control-label" for="Website_'+product_id+'">Website</label>' +
+            '</div>';
+        let facebookChecked = social_publish.facebook == 0 ? '' : 'checked';
+        btn += '<div class="custom-control custom-switch">' +
+            '<input type="checkbox" class="custom-control-input facebook-publish" id="facebook_'+product_id+'" '+facebookChecked+'>' +
+            '<label class="custom-control-label" for="facebook_'+product_id+'">Facebook</label>' +
+            '</div>';
+        let shopeeChecked = social_publish.shopee == 0 ? '' : 'checked';
+        btn += '<div class="custom-control custom-switch">' +
+            '<input type="checkbox" class="custom-control-input shopee-publish" id="shopee_'+product_id+'" '+shopeeChecked+'>' +
+            '<label class="custom-control-label" for="shopee_'+product_id+'">Shopee</label>' +
+            '</div>';
+
+        return btn;
+    }
+
+    function format_action(data) {
+        let btn =  '<button type="button" class="btn bg-gradient-info btn-sm edit_product" title="Sửa sản phẩm"><i class="fas fa-edit"></i></button>&nbsp;'
             + '<button type="button" class="btn bg-gradient-danger btn-sm out_of_stock" title="Cập nhật hết hàng"><i class="fas fa-eye-slash"></i></button>';
+        return btn;
     }
 
     function format_intomoney(data) {

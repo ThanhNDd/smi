@@ -45,4 +45,5 @@ require_once("common.php");
   <link rel="stylesheet" href="<?php Common::getPath()?>plugins/sweetalert2/sweetalert2.min.css">
   <link rel="stylesheet" href="<?php Common::getPath()?>plugins/toastr/toastr.min.css">
 
-<link rel="stylesheet" href="<?php Common::getPath()?>plugins/bootstrap-datepicker/bootstrap-datepicker.min.css">
+  <link rel="stylesheet" href="<?php Common::getPath()?>plugins/bootstrap-datepicker/bootstrap-datepicker.min.css">
+  <link rel="stylesheet" href="<?php Common::getPath()?>plugins/summernote/summernote-bs4.css">
