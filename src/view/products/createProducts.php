@@ -345,6 +345,7 @@ Common::authen();
                                 'success'
                             ).then((result) => {
                                 if (result.value) {
+                                    $('#create-product').modal('hide');
                                     reset_modal();
                                 }
                             });
@@ -392,7 +393,7 @@ Common::authen();
             $(".add-new-prod").prop('disabled', true);
             $(".table-info-product > tbody > tr").find('input').removeClass('is-invalid');
             $(".table-list > tbody").html('');
-
+            $('#description').summernote('code', '');
         }
 
         function get_data_inform() {
@@ -421,7 +422,7 @@ Common::authen();
             let retail = $("#retail").val();
             let percent = $("#percent").val();
             let profit = $("#profit").val();
-            let description = $("#description").val();
+            let description = $("#description").summernote('code');
 
             let product = {};
             product['product_id'] = product_id;

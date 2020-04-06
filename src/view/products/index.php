@@ -399,7 +399,9 @@ Common::authen();
                     $("#select_color").prop("disabled", "disabled");
                     $("#qty").prop("disabled", "disabled");
                     if(arr[0].description !== "") {
-                        $('#description').summernote('pasteHTML', arr[0].description);
+                        $('#description').summernote('code', arr[0].description);
+                    } else {
+                        $('#description').summernote('code', '');
                     }
 
                     let variations = arr[0].variations;
