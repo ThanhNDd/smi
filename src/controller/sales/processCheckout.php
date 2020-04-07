@@ -71,6 +71,7 @@ if (isset($_POST["type"]) && $_POST["type"] == "checkout") {
     $order->setVoucherValue($data->voucher_value);
     $order->setOrderRefer($data->current_order_id);
     $order->setPaymentExchangeType($data->payment_exchange_type);
+    $order->setSource($data->source);
     $orderId = $checkout_dao->saveOrder($order);
     $order->setId($orderId);
     if (empty($orderId)) {

@@ -698,6 +698,19 @@ Common::authen();
             }
             social_publish(product_id, 'shopee', status);
         });
+
+
+        $('#example tbody').on('click', '.lazada-publish', function () {
+            let tr = $(this).closest('tr');
+            let td = tr.find("td");
+            let product_id = $(td[1]).text();
+            let checked = $(this).parent().children('input').prop('checked');
+            let status = 0;
+            if(checked) {
+                status = 1;
+            }
+            social_publish(product_id, 'lazada', status);
+        });
     }
 
     function social_publish(product_id, type, status) {
@@ -711,7 +724,7 @@ Common::authen();
                 type: type,
                 status: status
             },
-            success: function (res) {
+            success: function () {
                 toastr.success('Cập nhật thành công!');
             },
             error: function (data, errorThrown) {
@@ -725,6 +738,32 @@ Common::authen();
                 hide_loading();
             }
         });
+    }
+
+    function format_publish(data) {
+        let product_id = data.product_id;
+        let social_publish = JSON.parse(data.social_publish);
+        let website = social_publish.website === 0 ? '' : 'checked';
+        let btn = '<div class="custom-control custom-switch">' +
+            '<input type="checkbox" class="custom-control-input website-publish" id="Website_'+product_id+'" '+website+'>' +
+            '<label class="custom-control-label" for="Website_'+product_id+'">Website</label>' +
+            '</div>';
+        let facebook = social_publish.facebook === 0 ? '' : 'checked';
+        btn += '<div class="custom-control custom-switch">' +
+            '<input type="checkbox" class="custom-control-input facebook-publish" id="facebook_'+product_id+'" '+facebook+'>' +
+            '<label class="custom-control-label" for="facebook_'+product_id+'">Facebook</label>' +
+            '</div>';
+        let shopee = social_publish.shopee === 0 ? '' : 'checked';
+        btn += '<div class="custom-control custom-switch">' +
+            '<input type="checkbox" class="custom-control-input shopee-publish" id="shopee_'+product_id+'" '+shopee+'>' +
+            '<label class="custom-control-label" for="shopee_'+product_id+'">Shopee</label>' +
+            '</div>';
+        let lazada = social_publish.lazada === 0 ? '' : 'checked';
+        btn += '<div class="custom-control custom-switch">' +
+            '<input type="checkbox" class="custom-control-input lazada-publish" id="lazada_'+product_id+'" '+lazada+'>' +
+            '<label class="custom-control-label" for="lazada_'+product_id+'">Lazada</label>' +
+            '</div>';
+        return btn;
     }
 
     function format_discount_display(data) {
@@ -953,28 +992,6 @@ Common::authen();
                 })
             }
         });
-    }
-
-    function format_publish(data) {
-        let product_id = data.product_id;
-        let social_publish = JSON.parse(data.social_publish);
-        let websiteChecked = social_publish.website == 0 ? '' : 'checked';
-        let btn = '<div class="custom-control custom-switch">' +
-            '<input type="checkbox" class="custom-control-input website-publish" id="Website_'+product_id+'" '+websiteChecked+'>' +
-            '<label class="custom-control-label" for="Website_'+product_id+'">Website</label>' +
-            '</div>';
-        let facebookChecked = social_publish.facebook == 0 ? '' : 'checked';
-        btn += '<div class="custom-control custom-switch">' +
-            '<input type="checkbox" class="custom-control-input facebook-publish" id="facebook_'+product_id+'" '+facebookChecked+'>' +
-            '<label class="custom-control-label" for="facebook_'+product_id+'">Facebook</label>' +
-            '</div>';
-        let shopeeChecked = social_publish.shopee == 0 ? '' : 'checked';
-        btn += '<div class="custom-control custom-switch">' +
-            '<input type="checkbox" class="custom-control-input shopee-publish" id="shopee_'+product_id+'" '+shopeeChecked+'>' +
-            '<label class="custom-control-label" for="shopee_'+product_id+'">Shopee</label>' +
-            '</div>';
-
-        return btn;
     }
 
     function format_action(data) {

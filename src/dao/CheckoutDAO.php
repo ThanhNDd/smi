@@ -717,10 +717,10 @@ class CheckoutDAO
                     `voucher_value`,
                     `order_refer`,
                     `payment_exchange_type`,
-                    `order_date`,
                     `source`,
+                    `order_date`,
                     `created_date`) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(),NOW())");
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(),NOW())");
             $stmt->bind_param("ddddddidiisddsisdiii", $total_reduce, $total_reduce_percent, $discount, $total_amount, $total_checkout, $customer_payment, $payment_type, $repay, $customer_id, $type, $bill, $shipping_fee, $shipping, $shipping_unit, $status, $voucher_code, $voucher_value, $orderRefer, $paymentExchangeType, $source);
             if(!$stmt->execute()) {
                 throw new Exception($stmt->error);

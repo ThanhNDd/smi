@@ -548,6 +548,7 @@ Common::authen();
         data["voucher_value"] = voucher_value;
         data["current_order_id"] = 0;
         data["payment_exchange_type"] = 0;
+        data["source"] = 0;// shop
 
         //order detail information
         let details = [];
