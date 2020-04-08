@@ -361,3 +361,19 @@ if (isset($_POST["method"]) && $_POST["method"] == "social_publish") {
     }
     $db->commit();
 }
+
+if (isset($_POST["method"]) && $_POST["method"] == "updated_qty") {
+  try {
+      Common::authen_get_data();
+      $sku = $_POST["sku"];
+      $type = $_POST["type"];
+      $status = $_POST["status"];
+      $dao->updated_qty($sku, $type, $status);
+      $response_array['success'] = 'success';
+      echo json_encode($response_array);
+  } catch (Exception $e) {
+      $db->rollback();
+      throw new Exception($e);
+  }
+  $db->commit();
+}

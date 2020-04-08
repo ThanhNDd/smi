@@ -711,6 +711,7 @@ Common::authen();
             }
             social_publish(product_id, 'lazada', status);
         });
+
     }
 
     function social_publish(product_id, type, status) {
@@ -1035,50 +1036,34 @@ Common::authen();
         table += '<thead>' +
             '<tr>' +
             '<th class="center"><input type="checkbox" id="selectall" onclick="checkAll(this)"></th>' +
-            // '<th>Hình ảnh</th>' +
             '<th>Mã sản phẩm</th>' +
             '<th>Màu</th>' +
             '<th>Size</th>' +
             '<th>Số lượng</th>' +
-            // '<th>Hành động</th>' +
+            '<th>Shopee</th>' +
+            '<th>Lazada</th>' +
             '</tr>' +
             '</thead>' +
             '<tbody>';
         for (let i = 0; i < variations.length; i++) {
+            let updated_qty = JSON.parse(variations[i].updated_qty);
+            let shopee = updated_qty.shopee === 0 ? '' : 'checked';
+            let lazada = updated_qty.lazada === 0 ? '' : 'checked';
             table += '<tr class="' + variations[i].sku + '">' +
                 '<td class="center"><input type="checkbox" id="' + variations[i].sku + '" onclick="check(this)"></td>';
-                // '<td>';
-            // let image_type = variations[i].image_type;
-            //if(image.indexOf("|") > -1) {
-            //    let img = image.split("|");
-            //    for(let i=0; i<img.length; i++) {
-            //        let image1 = img[i].split("_");
-            //        let type = image1[1];
-            //        if(type == "upload") {
-            //            image = '<?php //Common::path_img() ?>//' + image1[0];
-            //        } else {
-            //            image = image1[0];
-            //        }
-            //    }
-            //} else if(image.indexOf("_") > -1) {
-            //    let img = image.split("_");
-            //    let type = img[1];
-            //    if(type == "upload") {
-            //        image = '<?php //Common::path_img() ?>//' + img[0];
-            //    } else {
-            //        image = img[0];
-            //    }
-            //}
-            //table += '<img src="' + image + '" width="80px" onerror="this.onerror=null;this.src=\'<?php //Common::image_error()?>//\'">';
-            // table += '</td>';
             table += '<input type="hidden" class="product-id-' + variations[i].sku + '" value="' + variations[i].product_id + '">' +
                 '<td>' + variations[i].sku + '</td>' +
                 '<td>' + variations[i].color + '</td>' +
                 '<td>' + variations[i].size + '</td>' +
                 '<td id="qty">' + variations[i].quantity + '</td>' +
-                // '<td>' +
-                // '<button type="button" class="btn bg-gradient-info btn-sm edit_variation"><i class="fas fa-edit"></i> Sửa</button>&nbsp;' +
-                // '</td>' +
+                '<td><div class="custom-control custom-switch">' +
+                '<input type="checkbox" class="custom-control-input upd-qty-shopee" id="shopee_'+variations[i].sku+'" '+shopee+' onchange="updatedQty(this, \'shopee\', '+variations[i].sku+')">' +
+                '<label class="custom-control-label" for="shopee_'+variations[i].sku+'"></label>' +
+                '</div></td>' +
+                '<td><div class="custom-control custom-switch">' +
+                '<input type="checkbox" class="custom-control-input upd-qty-lazada" id="lazada_'+variations[i].sku+'" '+lazada+' onchange="updatedQty(this, \'lazada\', '+variations[i].sku+')">' +
+                '<label class="custom-control-label" for="lazada_'+variations[i].sku+'"></label>' +
+                '</div></td>' +
                 '</tr>';
         }
         if (isNew === "isNew") {
@@ -1088,15 +1073,44 @@ Common::authen();
                 '<td><select class="select-color-' + new_sku + ' form-control w100" id="select_color_' + new_sku + '"><option value="-1"></option></select></td>' +
                 '<td><select class="select-size-' + new_sku + ' form-control w100" id="select_size_' + new_sku + '"><option value="-1"></option></select></td>' +
                 '<td><select class="select-qty-' + new_sku + ' form-control w100" id="select_qty_' + new_sku + '"><option value="-1"></option></select></td>' +
-                // '<td>' +
-                // '<button type="button" class="btn bg-gradient-primary btn-sm save_variation"><i class="fas fa-save"></i> Lưu</button>&nbsp;' +
-                // '</td>' +
                 '<input type="hidden" class="product-id-' + new_sku + '" value="' + variations[variations.length - 1].product_id + '">' +
                 '</tr>';
         }
         table += '</tbody>';
         table += '</table>';
         return table;
+    }
+
+    function updatedQty(e, type, sku) {
+        let checked = $(e).prop('checked');
+        let status = 0;
+        if(checked) {
+            status = 1;
+        }
+        $.ajax({
+            url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
+            type: "POST",
+            dataType: "json",
+            data: {
+                method: "updated_qty",
+                sku: sku,
+                type: type,
+                status: status
+            },
+            success: function (res) {
+                console.log(res);
+                toastr.success('Cập nhật thành công!');
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                })
+            }
+        });
     }
 
     function check(e) {

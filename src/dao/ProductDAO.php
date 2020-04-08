@@ -286,7 +286,8 @@ class ProductDAO
                         B.sku, 
                         A.created_at,
                         A.discount,
-                        B.image as 'variation_image'
+                        B.image as 'variation_image',
+                        B.updated_qty
                     from 
                         smi_products A left join smi_variations B on A.id = B.product_id    
                     where B.product_id = $productId 
@@ -317,7 +318,8 @@ class ProductDAO
                         'quantity' => $row["quantity"],
                         'sku' => $row["sku"],
                         'product_id' => $row["product_id"],
-                        'image' => $row["variation_image"]
+                        'image' => $row["variation_image"],
+                        'updated_qty' => $row["updated_qty"]
                     );
                     array_push($product['variations'], $variation);
                     array_push($data, $product);
@@ -331,7 +333,8 @@ class ProductDAO
                         'quantity' => $row["quantity"],
                         'sku' => $row["sku"],
                         'product_id' => $row["product_id"],
-                        'image' => $row["variation_image"]
+                        'image' => $row["variation_image"],
+                      'updated_qty' => $row["updated_qty"]
                     );
                     array_push($data[$i - 1]['variations'], $variation);
                 }
@@ -611,19 +614,34 @@ class ProductDAO
         }
     }
 
-  function social_publish($product_id, $type, $status)
-  {
-    try {
-        $stmt = $this->getConn()->prepare("update smi_products set social_publish = JSON_SET(social_publish, '$.".$type."', ?) where id = ?");
-        $stmt->bind_param("ii", $status, $product_id);
-        if(!$stmt->execute()) {
-          print_r($this->getConn()->error);
-          throw new Exception($stmt->error);
-        }
-        $stmt->close();
-    } catch (Exception $e) {
-      throw new Exception($e);
+    function social_publish($product_id, $type, $status)
+    {
+      try {
+          $stmt = $this->getConn()->prepare("update smi_products set social_publish = JSON_SET(social_publish, '$.".$type."', ?) where id = ?");
+          $stmt->bind_param("ii", $status, $product_id);
+          if(!$stmt->execute()) {
+            print_r($this->getConn()->error);
+            throw new Exception($stmt->error);
+          }
+          $stmt->close();
+      } catch (Exception $e) {
+        throw new Exception($e);
+      }
     }
+
+  function updated_qty($sku, $type, $status)
+  {
+      try {
+          $stmt = $this->getConn()->prepare("update smi_variations set updated_qty = JSON_SET(updated_qty, '$.".$type."', ?) where sku = ?");
+          $stmt->bind_param("ii", $status, $sku);
+          if(!$stmt->execute()) {
+            print_r($this->getConn()->error);
+            throw new Exception($stmt->error);
+          }
+          $stmt->close();
+      } catch (Exception $e) {
+          throw new Exception($e);
+      }
   }
 
 //    function find_variation_by_sku($sku)
