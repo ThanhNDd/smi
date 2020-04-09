@@ -521,22 +521,6 @@ Common::authen();
                 '                    <td align="center">' +
                 '                     <input type="text" class="form-control col-md-10" value="' + sku + '" id="sku_' + no + '" disabled>\n' +
                 '                    </td>\n' +
-                //'                    <td >\n' +
-                //'                      <img src="https://via.placeholder.com/100" onerror="this.onerror=null;this.src=\'<?php //Common::image_error()?>//\'" width="100" id="img_' + no + '" style="justify-content: left;float: left;">\n' +
-                //'                      <div class="input-group mb-3 col-md-8" style="float: left;">\n' +
-                //'                        <input type="text" class="form-control col-md-10" placeholder="Nhập link hình ảnh" onchange="onchange_image_link(' + no + ')" id="link_image_' + no + '" >\n' +
-                //'                          <input id="image_type_' + no + '" type="hidden" value=""/>\n' +
-                //'                        <div class="input-group-append">\n' +
-                //'                       <form id="form_' + no + '" action="" method="post" enctype="multipart/form-data">' +
-                //'                          <input id="image_' + no + '" type="file" accept="image/*" name="image" class="hidden"/>\n' +
-                //'                          <button type="button" class="btn btn-info btn-flat" id="btn_upload_' + no + '">\n' +
-                //'                            <span class="spinner-border spinner-border-sm hidden" id="spinner_' + no + '"></span>\n' +
-                //'                            <i class="fa fa-upload"></i> Upload\n' +
-                //'                          </button>\n' +
-                //'                        </form>\n' +
-                //'                        </div>\n' +
-                //'                      </div>\n' +
-                //'                    </td>\n' +
                 '                    <td >\n' +
                 '                       <select class="form-control ml-2 mr-2 col-sm-10" id="select_size_' + no + '" style="width: 100%"></select>' +
                 '                    </td>\n' +
@@ -556,8 +540,6 @@ Common::authen();
             custom_select2("[id=select_color_" + no + "]", select_colors);
             $("[id=select_size_" + no + "]").val(size).trigger('change');
             $("[id=select_color_" + no + "]").val(color).trigger('change');
-            // onpaste_image_link(no);
-            // btn_upload(no);
             delete_product(no);
         }
 

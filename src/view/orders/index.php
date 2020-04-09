@@ -612,7 +612,9 @@ Common::authen();
             '<th class="right">Giá</th>' +
             '<th class="right">Giảm trừ</th>' +
             '<th class="right">Thành tiền</th>' +
-            '<th class="right" style="display: block;">Profit</th>' +
+            '<th class="right" style="display: none;">Profit</th>' +
+            '<th class="center">Shopee</th>' +
+            '<th class="center">Lazada</th>' +
             '</tr>' +
             '</thead>';
         let total_reduce = 0;
@@ -623,19 +625,22 @@ Common::authen();
             intoMoney += Number(replaceComma(details[i].intoMoney));
             let type = details[i].type;
             let style = "color: black;";
-            if (type == '1') {
+            if (type === '1') {
                 style = "color: red;";
-            } else if (type == '2') {
+            } else if (type === '2') {
                 style = "color: green;";
             }
             let detail_profit = 0;
-            if (type == '1') {
+            if (type === '1') {
                 profit += 0 - Number(replaceComma(details[i].profit));
                 detail_profit = 0 - Number(replaceComma(details[i].profit));
             } else {
                 profit += Number(replaceComma(details[i].profit));
                 detail_profit = Number(replaceComma(details[i].profit));
             }
+            let updated_qty = JSON.parse(details[i].updated_qty);
+            let shopee = updated_qty.shopee === 0 ? '' : 'checked';
+            let lazada = updated_qty.lazada === 0 ? '' : 'checked';
             table += '<tr style="' + style + '">' +
                 '<input type="hidden" id="product_id_' + i + '" value="' + details[i].product_id + '"/>' +
                 '<input type="hidden" id="variant_id_' + i + '" value="' + details[i].variant_id + '"/>' +
@@ -647,7 +652,15 @@ Common::authen();
                 '<td class="right">' + details[i].price + ' <small>đ</small></td>' +
                 '<td class="right">' + details[i].reduce + ' <small>đ</small></td>' +
                 '<td class="right">' + details[i].intoMoney + ' <small>đ</small></td>' +
-                '<td class="right" style="display: block;">' + formatNumber(detail_profit) + ' <small>đ</small></td>' +
+                '<td class="right" style="display: none;">' + formatNumber(detail_profit) + ' <small>đ</small></td>' +
+                '<td class="center"><div class="custom-control custom-switch">' +
+                '<input type="checkbox" class="custom-control-input upd-qty-shopee" id="shopee_'+details[i].sku+'" '+shopee+' onchange="updatedQty(this, \'shopee\', '+details[i].sku+')">' +
+                '<label class="custom-control-label" for="shopee_'+details[i].sku+'"></label>' +
+                '</div></td>' +
+                '<td class="center"><div class="custom-control custom-switch">' +
+                '<input type="checkbox" class="custom-control-input upd-qty-lazada" id="lazada_'+details[i].sku+'" '+lazada+' onchange="updatedQty(this, \'lazada\', '+details[i].sku+')">' +
+                '<label class="custom-control-label" for="lazada_'+details[i].sku+'"></label>' +
+                '</div></td>' +
                 '</tr>';
         }
         table += '</table>';
@@ -658,7 +671,7 @@ Common::authen();
         // let order_type = data.type;
         let d = '<div class="card">' +
             '<div class="card-body">';
-        if (order_type == 1) {
+        if (order_type === 1) {
             // online
             d += '<div class="row">' +
                 '<div class="col-3 col-sm-3 col-md-3"><small>Mã khách hàng</small> <h5>' + data.customer_id + '</h5></div>' +
@@ -669,11 +682,11 @@ Common::authen();
         } else {
             d += '<div class="row">' +
                 '<div class="col-3 col-sm-3 col-md-3"><small>Khách hàng</small> <h5>Khách lẻ</h5></div>';
-            if (data.voucher_code != null && data.voucher_code != "") {
+            if (data.voucher_code != null && data.voucher_code !== "") {
                 voucher_value = Number((intoMoney * 10) / 100);
                 d += '<div class="col-3 col-sm-3 col-md-3"><small>Mã giảm giá</small> <h5>' + data.voucher_code + ' <small>(-10%)(' + formatNumber(voucher_value) + ' đ)</small></h5></div>';
             }
-            if (order_refer != null && order_refer != "" && order_refer != 0) {
+            if (order_refer != null && order_refer !== "" && order_refer !== 0) {
                 d += '<div class="col-3 col-sm-3 col-md-3"><small>Mã đơn đổi</small> <h5>' + order_refer + '</h5></div>';
             }
             d += '</div>';
@@ -686,7 +699,7 @@ Common::authen();
             '<div class="col-3 col-sm-3 col-md-3"><small>Chiết khấu trên tổng đơn hàng</small> <h5>' + data.discount + ' <small>đ</small></h5></div>' +
             '<div class="col-3 col-sm-3 col-md-3"><small>Tổng giảm trừ</small> <h5>' + data.total_reduce + ' <small>đ</small></h5></div>';
         let total_checkout = data.total_checkout;
-        if (payment_exchange_type == '2') {
+        if (payment_exchange_type === '2') {
             total_checkout = '-' + total_checkout;
         }
         d += '<div class="col-3 col-sm-3 col-md-3"><small>Tổng tiền thanh toán</small> <h5>' + total_checkout + ' <small>đ</small></h5></div>' +
@@ -696,6 +709,38 @@ Common::authen();
             '</div>' +
             '</div>';
         return d + table;
+    }
+
+    function updatedQty(e, type, sku) {
+        let checked = $(e).prop('checked');
+        let status = 0;
+        if(checked) {
+            status = 1;
+        }
+        $.ajax({
+            url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
+            type: "POST",
+            dataType: "json",
+            data: {
+                method: "updated_qty",
+                sku: sku,
+                type: type,
+                status: status
+            },
+            success: function (res) {
+                console.log(res);
+                toastr.success('Cập nhật thành công!');
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                })
+            }
+        });
     }
 
     function format_customer_name(data) {

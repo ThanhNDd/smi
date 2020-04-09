@@ -473,7 +473,8 @@ class CheckoutDAO
                         E.color,
                         A.payment_type,
                         D.profit,
-                        B.type
+                        B.type,
+                        E.updated_qty
                     from smi_orders A 
                         left join smi_order_detail B on A.id = B.order_id
                         left join smi_customers C on A.customer_id = C.id
@@ -523,7 +524,8 @@ class CheckoutDAO
                         'reduce' => number_format($qty * $reduce),
                         'intoMoney' => number_format($intoMoney),
                         'profit' => number_format($row["profit"] * $qty - $reduce),
-                        'type' => $row["type"]
+                        'type' => $row["type"],
+                        'updated_qty' => $row["updated_qty"]
                     );
                     array_push($order['details'], $detail);
                     array_push($data, $order);
@@ -546,7 +548,8 @@ class CheckoutDAO
                         'reduce' => number_format($qty * $reduce),
                         'intoMoney' => number_format($intoMoney),
                         'profit' => number_format($row["profit"] * $qty - $reduce),
-                        'type' => $row["type"]
+                        'type' => $row["type"],
+                        'updated_qty' => $row["updated_qty"]
                     );
                     array_push($data[$i - 1]['details'], $detail);
                 }
