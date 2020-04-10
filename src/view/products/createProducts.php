@@ -559,7 +559,7 @@ Common::authen();
                 $(this).addClass("" + no + "");
                 $(this).find("td:first").text(no);
             });
-            if (no == 0) {
+            if (no === 0) {
                 $("#create_variation").prop('disabled', '');
             } else {
                 $("#create_variation").prop('disabled', true);
