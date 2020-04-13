@@ -527,9 +527,10 @@ class ProductDAO
             $color = $variation->getColor();
             $qty = $variation->getQuantity();
             $sku = $variation->getSku();
+            $updated_qty = '{"lazada": 0, "shopee": 0}';
 
-            $stmt = $this->getConn()->prepare("INSERT INTO smi_variations (`product_id`, `size`, `color`, `quantity`, `sku`, `created_at`) VALUES (?, ?, ?, ?, ?, NOW())");
-            $stmt->bind_param("issis", $product_id, $size, $color, $qty, $sku);
+            $stmt = $this->getConn()->prepare("INSERT INTO smi_variations (`product_id`, `size`, `color`, `quantity`, `sku`, `updated_qty`,`created_at`) VALUES (?, ?, ?, ?, ?, ?, NOW())");
+            $stmt->bind_param("ississ", $product_id, $size, $color, $qty, $sku, $updated_qty);
             if(!$stmt->execute()) {
                 throw new Exception($stmt->error);
             }

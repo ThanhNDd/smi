@@ -211,7 +211,7 @@ Common::authen();
 
     function countAllChecked() {
         let count = 0;
-        $.each($("#example tbody td input[type='checkbox']:checked"), function () {
+        $.each($("#example tbody td:first-child input[type='checkbox']:checked"), function () {
             let id = $(this).attr("id");
             if (id != "selectall") {
                 count++;
@@ -1028,7 +1028,7 @@ Common::authen();
         if(type === "upload") {
             src = '<?php Common::path_img() ?>' + src;
         }
-        return "<img src='" + src + "' width='100px' id='thumbnail' onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"'>";
+        return "<a href='"+src+"' target='_blank'><img src='" + src + "' width='100px' id='thumbnail' onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"'></a>";
     }
 
     function format_variation(variations, isNew) {
@@ -1126,9 +1126,9 @@ Common::authen();
     function checkAll(e) {
         let isCheck = $(e).prop('checked');
         if (isCheck) {
-            $(e).parent().parent().parent().parent().find('td input:checkbox').prop("checked", "checked");
+            $(e).parent().parent().parent().parent().find('td:first-child input:checkbox').prop("checked", "checked");
         } else {
-            $(e).parent().parent().parent().parent().find('td input:checkbox').prop("checked", "");
+            $(e).parent().parent().parent().parent().find('td:first-child input:checkbox').prop("checked", "");
         }
         countAllChecked();
     }
