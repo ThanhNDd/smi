@@ -96,7 +96,7 @@ Common::authen();
                             <input class="form-control datepicker" id="orderDate" data-date-format="dd/mm/yyyy"
                                    value="<?php echo date('d/m/Y'); ?>">
                         </div>
-                        
+
                     </div>
                 </div>
                 <div class="form-group">
@@ -172,7 +172,7 @@ Common::authen();
                                 <option value="2">Nợ</option>
                             </select>
                             <input type="text" class="form-control mt-2 hidden" name="payment" id="payment"
-                                    width="100px" style="text-align: right;">
+                                   width="100px" style="text-align: right;">
                         </div>
                     </div>
                     <div class="row pd-t-5">
@@ -192,7 +192,7 @@ Common::authen();
         <!-- /.modal-content -->
     </div>
     <!-- /.modal-dialog -->
-  <?php require_once ('../../common/js.php'); ?>
+    <?php require_once ('../../common/js.php'); ?>
     <script>
         let data_products;
         let flagError = 0;
@@ -347,7 +347,7 @@ Common::authen();
                 $(".add-new-prod").prop("disabled", true);
                 add_new_product();
             });
-            
+
             $(".print_receipt_popup").on("click", function () {
                 let order_id = $("#order_id").val();
                 let order_type = $("#order_type").val();
@@ -430,7 +430,7 @@ Common::authen();
                     $("#payment").removeClass("is-invalid");
                     check_products_list();
                 }
-            } 
+            }
             return true;
         }
 
@@ -505,6 +505,7 @@ Common::authen();
             data["order_date"] = $("#orderDate").val();
             data["order_status"] = $("#order_status").val();
             data["customer_payment"] = replaceComma($("#payment").val());
+            data["source"] = 0;// shop
             let rowProductNumber = $(".count-row").val();
 
             let products = [];
@@ -908,7 +909,7 @@ Common::authen();
             });
         }
 
-        function generate_select2_city() {
+        function generate_select2_city(city_id) {
             $("#create-order .overlay").removeClass("hidden");
             $.ajax({
                 dataType: "json",
@@ -923,6 +924,9 @@ Common::authen();
                         theme: 'bootstrap4',
                     });
                     $("#create-order .overlay").addClass("hidden");
+                    if(city_id !== '') {
+                        $(".select-city").val(city_id).trigger("change");
+                    }
                 },
                 error: function (data, errorThrown) {
                     console.log(data.responseText);
@@ -932,7 +936,7 @@ Common::authen();
             });
         }
 
-        function generate_select2_district(cityId) {
+        function generate_select2_district(cityId, districtId) {
             $("#create-order .overlay").removeClass("hidden");
             $('.select-district').empty();
             $.ajax({
@@ -944,6 +948,7 @@ Common::authen();
                 },
                 type: 'GET',
                 success: function (data) {
+                    console.log(data.results);
                     $('.select-district').select2({
                         data: data.results,
                         theme: 'bootstrap4',
@@ -951,11 +956,16 @@ Common::authen();
                     $("#create-order .overlay").addClass("hidden");
                     let select = $('.select-district');
                     let option = $('<option></option>').
-                        attr('selected', true).
-                        text("Lựa chọn").
-                        val(-1);
+                    attr('selected', true).
+                    text("Lựa chọn").
+                    val(-1);
                     option.prependTo(select);
                     select.trigger('change');
+
+                    if(typeof districtId != "undefined" && districtId !== '') {
+                        districtId = districtId.padStart(3,'0');
+                        $(".select-district").val(districtId).trigger("change");
+                    }
                 },
                 error: function (data, errorThrown) {
                     console.log(data.responseText);
@@ -965,7 +975,7 @@ Common::authen();
             });
         }
 
-        function generate_select2_village(districtId) {
+        function generate_select2_village(districtId, villageId) {
             $("#create-order .overlay").removeClass("hidden");
             $('.select-village').empty();
             $.ajax({
@@ -983,13 +993,16 @@ Common::authen();
                     });
                     let select = $('.select-village');
                     let option = $('<option></option>').
-                        attr('selected', true).
-                        text("Lựa chọn").
-                        val(-1);
+                    attr('selected', true).
+                    text("Lựa chọn").
+                    val(-1);
                     option.prependTo(select);
                     select.trigger('change');
                     $("#create-order .overlay").addClass("hidden");
-
+                    if(typeof villageId != "undefined" && villageId !== '') {
+                        villageId = villageId.padStart(5,'0');
+                        $(".select-village").val(villageId).trigger("change");
+                    }
                 },
                 error: function (data, errorThrown) {
                     console.log(data.responseText);

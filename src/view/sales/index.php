@@ -116,7 +116,7 @@ Common::authen();
           </table>
           <div class="row">
             <div class="left skin-line">
-              <input type="checkbox" id="flag_print_receipt">
+              <input type="checkbox" id="flag_print_receipt" checked>
               <label for="flat-checkbox-1">In hóa đơn</label>
             </div>
           </div>

@@ -23,6 +23,7 @@ class Order {
     private $voucher_value;
     private $order_refer;
     private $payment_exchange_type;
+    private $source;
     private $created_date;
     private $updated_date;
 
@@ -36,7 +37,7 @@ class Order {
 
     /**
      * Get the value of id
-     */ 
+     */
     public function getId()
     {
         return $this->id;
@@ -46,7 +47,7 @@ class Order {
      * Set the value of id
      *
      * @return  self
-     */ 
+     */
     public function setId($id)
     {
         $this->id = $id;
@@ -54,9 +55,9 @@ class Order {
         return $this;
     }
 
-   /**
+    /**
      * Get the value of total_reduce
-     */ 
+     */
     public function getTotal_reduce()
     {
         return $this->total_reduce;
@@ -66,7 +67,7 @@ class Order {
      * Set the value of total_reduce
      *
      * @return  self
-     */ 
+     */
     public function setTotal_reduce($total_reduce)
     {
         $this->total_reduce = $total_reduce;
@@ -76,7 +77,7 @@ class Order {
 
     /**
      * Get the value of total_reduce_percent
-     */ 
+     */
     public function getTotal_reduce_percent()
     {
         return $this->total_reduce_percent;
@@ -86,7 +87,7 @@ class Order {
      * Set the value of total_reduce_percent
      *
      * @return  self
-     */ 
+     */
     public function setTotal_reduce_percent($total_reduce_percent)
     {
         $this->total_reduce_percent = $total_reduce_percent;
@@ -96,7 +97,7 @@ class Order {
 
     /**
      * Get the value of discount
-     */ 
+     */
     public function getDiscount()
     {
         return $this->discount;
@@ -106,7 +107,7 @@ class Order {
      * Set the value of discount
      *
      * @return  self
-     */ 
+     */
     public function setDiscount($discount)
     {
         $this->discount = $discount;
@@ -116,7 +117,7 @@ class Order {
 
     /**
      * Get the value of total_amount
-     */ 
+     */
     public function getTotal_amount()
     {
         return $this->total_amount;
@@ -126,7 +127,7 @@ class Order {
      * Set the value of total_amount
      *
      * @return  self
-     */ 
+     */
     public function setTotal_amount($total_amount)
     {
         $this->total_amount = $total_amount;
@@ -136,7 +137,7 @@ class Order {
 
     /**
      * Get the value of total_checkout
-     */ 
+     */
     public function getTotal_checkout()
     {
         return $this->total_checkout;
@@ -146,7 +147,7 @@ class Order {
      * Set the value of total_checkout
      *
      * @return  self
-     */ 
+     */
     public function setTotal_checkout($total_checkout)
     {
         $this->total_checkout = $total_checkout;
@@ -156,7 +157,7 @@ class Order {
 
     /**
      * Get the value of customer_payment
-     */ 
+     */
     public function getCustomer_payment()
     {
         return $this->customer_payment;
@@ -166,7 +167,7 @@ class Order {
      * Set the value of customer_payment
      *
      * @return  self
-     */ 
+     */
     public function setCustomer_payment($customer_payment)
     {
         $this->customer_payment = $customer_payment;
@@ -175,7 +176,7 @@ class Order {
     }
     /**
      * Get the value of customer_payment
-     */ 
+     */
     public function getPayment_type()
     {
         return $this->payment_type;
@@ -185,7 +186,7 @@ class Order {
      * Set the value of Payment_type
      *
      * @return  self
-     */ 
+     */
     public function setPayment_type($payment_type)
     {
         $this->payment_type = $payment_type;
@@ -194,7 +195,7 @@ class Order {
     }
     /**
      * Get the value of repay
-     */ 
+     */
     public function getRepay()
     {
         return $this->repay;
@@ -204,7 +205,7 @@ class Order {
      * Set the value of repay
      *
      * @return  self
-     */ 
+     */
     public function setRepay($repay)
     {
         $this->repay = $repay;
@@ -214,7 +215,7 @@ class Order {
 
     /**
      * Get the value of customer_id
-     */ 
+     */
     public function getCustomer_id()
     {
         return $this->customer_id;
@@ -224,7 +225,7 @@ class Order {
      * Set the value of customer_id
      *
      * @return  self
-     */ 
+     */
     public function setCustomer_id($customer_id)
     {
         $this->customer_id = $customer_id;
@@ -234,7 +235,7 @@ class Order {
 
     /**
      * Get the value of created_date
-     */ 
+     */
     public function getCreated_date()
     {
         return $this->created_date;
@@ -244,7 +245,7 @@ class Order {
      * Set the value of created_date
      *
      * @return  self
-     */ 
+     */
     public function setCreated_date($created_date)
     {
         $this->created_date = $created_date;
@@ -254,7 +255,7 @@ class Order {
 
     /**
      * Get the value of updated_date
-     */ 
+     */
     public function getUpdated_date()
     {
         return $this->updated_date;
@@ -264,7 +265,7 @@ class Order {
      * Set the value of updated_date
      *
      * @return  self
-     */ 
+     */
     public function setUpdated_date($updated_date)
     {
         $this->updated_date = $updated_date;
@@ -276,7 +277,7 @@ class Order {
      * Get the value of type
      * 0: shop
      * 1: online
-     */ 
+     */
     public function getType()
     {
         return $this->type;
@@ -286,7 +287,7 @@ class Order {
      * Set the value of type
      *
      * @return  self
-     */ 
+     */
     public function setType($type)
     {
         $this->type = $type;
@@ -296,7 +297,7 @@ class Order {
 
     /**
      * Get the value of bill_of_lading_no
-     */ 
+     */
     public function getBill_of_lading_no()
     {
         return $this->bill_of_lading_no;
@@ -306,7 +307,7 @@ class Order {
      * Set the value of bill_of_lading_no
      *
      * @return  self
-     */ 
+     */
     public function setBill_of_lading_no($bill_of_lading_no)
     {
         $this->bill_of_lading_no = $bill_of_lading_no;
@@ -316,7 +317,7 @@ class Order {
 
     /**
      * Get the value of shipping
-     */ 
+     */
     public function getShipping()
     {
         return $this->shipping;
@@ -326,7 +327,7 @@ class Order {
      * Set the value of shipping
      *
      * @return  self
-     */ 
+     */
     public function setShipping($shipping)
     {
         $this->shipping = $shipping;
@@ -336,7 +337,7 @@ class Order {
 
     /**
      * Get the value of shipping_unit
-     */ 
+     */
     public function getShipping_unit()
     {
         return $this->shipping_unit;
@@ -346,7 +347,7 @@ class Order {
      * Set the value of shipping_unit
      *
      * @return  self
-     */ 
+     */
     public function setShipping_unit($shipping_unit)
     {
         $this->shipping_unit = $shipping_unit;
@@ -356,7 +357,7 @@ class Order {
 
     /**
      * Get the value of shipping_fee
-     */ 
+     */
     public function getShipping_fee()
     {
         if(empty($this->shipping_fee))
@@ -371,7 +372,7 @@ class Order {
      * Set the value of shipping_fee
      *
      * @return  self
-     */ 
+     */
     public function setShipping_fee($shipping_fee)
     {
         $this->shipping_fee = $shipping_fee;
@@ -387,7 +388,7 @@ class Order {
      * 3: completed
      * 4: cancelled
      * 5: failed
-     */ 
+     */
     public function getStatus()
     {
         return $this->status;
@@ -397,7 +398,7 @@ class Order {
      * Set the value of deleted
      *
      * @return  self
-     */ 
+     */
     public function setStatus($status)
     {
         $this->status = $status;
@@ -407,7 +408,7 @@ class Order {
     /**
      * 0: none delete
      * 1: deleted
-     */ 
+     */
     public function getDeleted()
     {
         return $this->deleted;
@@ -417,7 +418,7 @@ class Order {
      * Set the value of deleted
      *
      * @return  self
-     */ 
+     */
     public function setDeleted($deleted)
     {
         $this->deleted = $deleted;
@@ -426,7 +427,7 @@ class Order {
     }
     /**
      * Get the value of order_date
-     */ 
+     */
     public function getOrder_date()
     {
         return $this->order_date;
@@ -436,7 +437,7 @@ class Order {
      * Set the value of order_date
      *
      * @return  self
-     */ 
+     */
     public function setOrder_date($order_date)
     {
         $this->order_date = $order_date;
@@ -506,6 +507,23 @@ class Order {
     public function setPaymentExchangeType($payment_exchange_type): void
     {
         $this->payment_exchange_type = $payment_exchange_type;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSource()
+    {
+        return $this->source;
+    }
+
+    /**
+     * @param mixed $source
+     * 0: shop, 1: website, 2: facebook, 3: shopee
+     */
+    public function setSource($source): void
+    {
+        $this->source = $source;
     }
 
 }

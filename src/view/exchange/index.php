@@ -180,8 +180,6 @@ Common::authen();
                         <tr>
                             <td class="left p-0">Giảm trừ</td>
                             <td class="right pt-2 pr-0">
-<!--                                <input type="text" class="form-control" name="discount_new" id="discount_new"-->
-<!--                                       placeholder="Số tiền" width="100px" disabled>-->
                                 <div class="input-group mb-3">
                                     <input type="text" class="form-control" name="discount_new" id="discount_new" disabled>
                                     <div class="input-group-append">
@@ -206,8 +204,6 @@ Common::authen();
                                     <option value="1">Chuyển khoản</option>
                                     <option value="2">Nợ</option>
                                 </select>
-<!--                                <input type="text" class="form-control mt-2" name="payment_new" id="payment_new" width="100px" disabled-->
-<!--                                       style="text-align: right;">-->
                                 <div class="input-group mb-3 mt-2">
                                     <input type="text" class="form-control right" name="payment_new" id="payment_new" disabled>
                                     <div class="input-group-append">
@@ -219,8 +215,6 @@ Common::authen();
                         <tr>
                             <td class="right">Trả lại</td>
                             <td class="right">
-<!--                                <input type="text" class="form-control" name="repay_new" id="repay_new" width="100px" disabled-->
-<!--                                       style="text-align: right;"><span> đ</span>-->
                                 <div class="input-group mb-3">
                                     <input type="text" class="form-control right" name="repay_new" id="repay_new" disabled>
                                     <div class="input-group-append">
@@ -233,7 +227,7 @@ Common::authen();
                     </table>
                     <div class="row">
                         <div class="left skin-line">
-                            <input type="checkbox" id="flag_print_receipt" checked>
+                            <input type="checkbox" id="flag_print_receipt">
                             <label for="flat-checkbox-1">In hóa đơn</label>
                         </div>
                     </div>
@@ -297,12 +291,6 @@ Common::authen();
             onchange_discount(discount, event);
             event.preventDefault();
         });
-        // $("#discount").blur(function(event){
-        // 	console.log('blur');
-        // 	let discount = $(this).val();
-        // 	onchange_discount(discount);
-        // 	event.preventDefault();
-        // });
         $('#discount').keypress(function (event) {
             let keycode = (event.keyCode ? event.keyCode : event.which);
             if (keycode == '13') {
@@ -344,7 +332,6 @@ Common::authen();
                 paymentChange(payment);
             }
         });
-
         $("#checkout").click(function () {
             Swal.fire({
                 title: 'Bạn có chắc chắn muốn tạo đơn hàng này?',
@@ -360,32 +347,24 @@ Common::authen();
                 }
             });
         });
-
-
         $("#sel_payment").change(function () {
             if ($(this).val() == 0) {
                 $("#payment").show();
                 $("#payment").focus();
-                // disableCheckOutBtn();
                 validate_form();
             } else {
                 $("#payment").val("");
                 $("#payment").hide();
-                // enableCheckOutBtn();
                 validate_form();
             }
         });
         $("#sel_discount").change(function () {
             $("#discount").focus();
         });
-
         $("#repay_new").on("change", function(){
             let val = $(this).val();
-            // val = val + "000";
             $(this).val(formatNumber(val));
         });
-
-        // end document ready
     });
 
     function exchangeBtn(e, noRow) {
@@ -421,7 +400,6 @@ Common::authen();
                         $("#orderId").addClass("hidden");
                         let details = value[0].details;
                         for (let i = 0; i < details.length; i++) {
-                            // let price = replaceComma(details[i].price);
                             let reduce = details[i].reduce;
                             if (reduce == 0) {
                                 reduce = "";
@@ -468,8 +446,6 @@ Common::authen();
                         $("#productId").removeClass("hidden");
                         $("#productId").prev("label").removeClass("hidden");
                         $("#cancel_exchange").removeClass("hidden");
-
-
                         $("#totalAmount").text(value[0].total_amount);
                         $("#discount").text(value[0].discount);
                         $("#totalReduce").text(value[0].total_reduce);
@@ -501,8 +477,6 @@ Common::authen();
                         return;
                     }
                 });
-
-                // $('[id=qty_' + noRow + ']').trigger("change");
             },
             error: function (data, errorThrown) {
                 console.log(data.responseText);
@@ -522,16 +496,6 @@ Common::authen();
         $.each($("#tableProd tbody").find("input[name=sku]"), function(k, v) {
             if(v["value"] === sku) {
                 count_sku_old++;
-                // let noId = v["id"];
-                // noId = noId.split("_")[1];
-                // let qty = $("[id=qty_"+noId+"]").val();
-                // qty++;
-                // $("[id=qty_"+noId+"]").val(qty);
-                // $("[id=qty_"+noId+"]").trigger("change");
-                // if(typeof calculateTotal  === 'function')
-                // {
-                //     calculateTotal();
-                // }
                 Swal.fire({
                     type: 'error',
                     title: 'Sản phẩm đã tồn tại',
@@ -544,16 +508,6 @@ Common::authen();
         $.each($("#tableProd tbody").find("input[name=skuNew]"), function(k, v) {
             count_sku_new++;
             if(v["value"] === sku) {
-                // let noId = v["id"];
-                // noId = noId.split("_")[1];
-                // let qty = $("[id=qty_"+noId+"]").val();
-                // qty++;
-                // $("[id=qty_"+noId+"]").val(qty);
-                // $("[id=qty_"+noId+"]").trigger("change");
-                // if(typeof calculateTotal  === 'function')
-                // {
-                //     calculateTotal();
-                // }
                 Swal.fire({
                     type: 'error',
                     title: 'Sản phẩm đã tồn tại',
@@ -781,20 +735,6 @@ Common::authen();
         let discountNew = $("#discount_new").val();
         discountNew = replaceComma(discountNew);
         let totalCheckout = Number(totalAmount) - Number(discountNew) + Number(discountOld);
-
-        //
-        // // use cash
-        // let discount = $("#discount_new").val();
-        // if (discount.indexOf("%") > -1) {
-        //     discount = replacePercent(discount);
-        //     discount = Number(totalCheckout * discount / 100);
-        // } else {
-        //     discount = replaceComma(discount);
-        //     discount = discount == "" ? 0 : Number(discount);
-        // }
-        // totalReduce += Number(discount);
-        // totalCheckout = Number(totalAmount) - Number(totalReduce);
-        //
         if(totalCheckout > 0) {
             let payment = replaceComma($("#payment_new").val());
             let repay = 0;
@@ -805,20 +745,17 @@ Common::authen();
             $("#discount_new").prop("disabled", "");
             $("#sel_payment_new").prop("disabled", "");
             $("#payment_new").prop("disabled", "");
-            disableCheckOutBtn();
+            // disableCheckOutBtn();
         } else {
             $("#repay_new").val(formatNumber(Math.abs(totalCheckout)));
             $("#discount_new").prop("disabled", true);
             $("#sel_payment_new").prop("disabled", true);
             $("#payment_new").prop("disabled", true);
-            enableCheckOutBtn();
+            // enableCheckOutBtn();
         }
         $("#repay_new").prop("disabled", "");
         $("#surcharge").text(formatNumber(totalAmount));
-
         $("#total_checkout_new").text(formatNumber(totalCheckout));
-
-        // validate_form();
     }
 
     function del_product_new(e, noRow) {
@@ -858,82 +795,11 @@ Common::authen();
             if (result.value) {
                 $(e).closest("[id='" + p + "']").remove();
                 toastr.success('Sản phẩm đã được xóa.');
-                // reloadData(calculateTotal, find_product);
                 calculateTotal();
             }
         })
     }
-
-    // function reloadData(calculateTotal, find_product) {
-    //     $("#noRow").val(0);
-    //     let arr = [];
-    //     let qty = [];
-    //     $.each($("#tableProd tbody").find("input[name=sku_new]"), function (k, v) {
-    //         arr.push(v["value"]);
-    //     });
-    //     $.each($("#tableProd tbody").find("input[name=qty_new]"), function (k, v) {
-    //         qty.push(v["value"]);
-    //     });
-    //     validate_form();
-    //     $("#tableProd tbody").html("");
-    //     if (typeof find_product === 'function') {
-    //         for (let i = 0; i < arr.length; i++) {
-    //             find_new_product(arr[i], qty[i]);
-    //         }
-    //     }
-    //     if (typeof calculateTotal === 'function') {
-    //         calculateTotal();
-    //     }
-    // }
-    // function validate_form() {
-    //     let noRow = $("#noRow").val();
-    //     if (noRow == 0) {
-    //         disableCheckOutBtn();
-    //         return;
-    //     }
-    //     let select_payment = $("#sel_payment").val();
-    //     if (select_payment == 0) {
-    //         let payment = $("#payment").val();
-    //         if (payment == "") {
-    //             disableCheckOutBtn();
-    //             return;
-    //         }
-    //     }
-    //     enableCheckOutBtn();
-    // }
-    //
-    // function onchange_voucher(voucher, event) {
-    //     $("#voucher").removeClass("is-invalid");
-    //     let c = voucher.substring(0, 2);
-    //     c = c.toUpperCase();
-    //     if (c == 'VC') {
-    //         // voucher
-    //         ues_voucher(voucher);
-    //         event.preventDefault();
-    //     } else {
-    //         disableCheckOutBtn();
-    //         $("#voucher").addClass("is-invalid");
-    //     }
-    // }
-
     function onchange_discount(discount, event) {
-        // let c = discount.substring(0, 2);
-        // c = c.toUpperCase();
-        // if(c == 'VC') {
-        // 	// voucher
-        // 	console.log('VC');
-        // 	$("#flag_discount").val("VC");
-        // 	$("#voucher_value").val(discount);
-        //     $("#discount").val("");
-        // 	ues_voucher();
-        //     event.preventDefault();
-        // } else if(c == 'QT') {
-        // 	// gift
-        // 	console.log('QT');
-        //     $("#flag_discount").val("QT");
-        //     event.preventDefault();
-        // } else {
-        // diccount
         if (!validate_discount(discount)) {
             event.preventDefault();
             return;
@@ -941,161 +807,7 @@ Common::authen();
         $("#discount_new").val(formatNumber(discount));
         calculateTotal();
         event.preventDefault();
-        // }
     }
-
-    //function ues_voucher(voucher_code) {
-    //    $.ajax({
-    //        dataType: 'json',
-    //        url: '<?php //echo __PATH__ . 'src/controller/voucher/VoucherController.php' ?>//',
-    //        data: {
-    //            method: "find_by_code",
-    //            code: voucher_code
-    //        },
-    //        type: 'POST',
-    //        success: function (res) {
-    //            console.log(res);
-    //            if (res.length > 0) {
-    //                let status = res[0].status;
-    //                if (status !== "undefined") {
-    //                    switch (status) {
-    //                        case '1':
-    //                            Swal.fire({
-    //                                type: 'error',
-    //                                title: 'Đã xảy ra lỗi',
-    //                                text: "Mã khuyến mãi chưa được kích hoạt"
-    //                            }).then((result) => {
-    //                                if (result.value) {
-    //                                    $("#voucher").val("");
-    //                                    $("#voucher").trigger("change");
-    //                                }
-    //                            });
-    //                            break;
-    //                        case '2':
-    //                            if (res[0].valid_date === "expired") {
-    //                                Swal.fire({
-    //                                    type: 'error',
-    //                                    title: 'Đã xảy ra lỗi',
-    //                                    text: "Mã khuyến mãi đã hết hạn"
-    //                                }).then((result) => {
-    //                                    if (result.value) {
-    //                                        $("#voucher").val("");
-    //                                        $("#voucher").trigger("change");
-    //                                    }
-    //                                });
-    //
-    //                            } else {
-    //                                let value;
-    //                                if (res[0].type == 0) {
-    //                                    // cash
-    //                                    value = formatNumber(res[0].value);
-    //                                } else if (res[0].type == 1) {
-    //                                    // percent
-    //                                    value = res[0].value + "%";
-    //                                }
-    //                                $("#voucher_value").val(value);
-    //                                let msg = '<div class="alert alert-success alert-dismissible">' +
-    //                                    '<button type="button" class="close" aria-hidden="true" onclick="removeVC()">×</button>' +
-    //                                    'Mã ' + voucher_code + ' có giá trị giảm ' + value + ' trên tổng đơn hàng!' +
-    //                                    '</div>'
-    //                                $(".msg").html(msg);
-    //                                $("#vcFlag").val(1);
-    //                                $("#vcCode").val(voucher_code);
-    //                                // $("#voucher").val(value).trigger("change");
-    //                                $(".voucher_info").removeClass("hidden");
-    //                                calculateTotal();
-    //                                $("#voucher").val(voucher_code);
-    //                                $("#voucher").prop("disabled", true);
-    //                            }
-    //                            break;
-    //                        case '3':
-    //                            Swal.fire({
-    //                                type: 'error',
-    //                                title: 'Đã xảy ra lỗi',
-    //                                text: "Mã khuyến mãi đã được sử dụng"
-    //                            }).then((result) => {
-    //                                if (result.value) {
-    //                                    $("#voucher").val("");
-    //                                    $("#voucher").trigger("change");
-    //                                }
-    //                            });
-    //                            break;
-    //                        case '4':
-    //                            Swal.fire({
-    //                                type: 'error',
-    //                                title: 'Đã xảy ra lỗi',
-    //                                text: "Mã khuyến mãi đã bị khoá"
-    //                            }).then((result) => {
-    //                                if (result.value) {
-    //                                    $("#voucher").val("");
-    //                                    $("#voucher").trigger("change");
-    //                                }
-    //                            });
-    //                            break;
-    //                    }
-    //                } else {
-    //                    Swal.fire({
-    //                        type: 'error',
-    //                        title: 'Đã xảy ra lỗi',
-    //                        text: "Mã khuyến mãi không tồn tại"
-    //                    }).then((result) => {
-    //                        if (result.value) {
-    //                            $("#voucher").val("");
-    //                            $("#voucher").trigger("change");
-    //                        }
-    //                    });
-    //                }
-    //            } else {
-    //                Swal.fire({
-    //                    type: 'error',
-    //                    title: 'Đã xảy ra lỗi',
-    //                    text: "Mã khuyến mãi không tồn tại"
-    //                }).then((result) => {
-    //                    if (result.value) {
-    //                        $("#voucher").val("");
-    //                        $("#voucher").trigger("change");
-    //                    }
-    //                });
-    //            }
-    //            $("#create-order .overlay").addClass("hidden");
-    //        },
-    //        error: function (data, errorThrown) {
-    //            console.log(data.responseText);
-    //            console.log(errorThrown);
-    //            Swal.fire({
-    //                type: 'error',
-    //                title: 'Đã xảy ra lỗi',
-    //                text: ""
-    //            })
-    //            $("#create-order .overlay").addClass("hidden");
-    //        }
-    //    });
-    //}
-
-    // function removeVC() {
-    //     Swal.fire({
-    //         title: 'Bạn có chắc chắn muốn xoá?',
-    //         text: "",
-    //         type: 'warning',
-    //         showCancelButton: true,
-    //         confirmButtonColor: '#3085d6',
-    //         cancelButtonColor: '#d33',
-    //         confirmButtonText: 'Ok'
-    //     }).then((result) => {
-    //         if (result.value) {
-    //             $(".msg").html("");
-    //             $("#vcFlag").val(0);
-    //             $("#vcCode").val("");
-    //             $("#voucher").val("");
-    //             $("#voucher_value").val("");
-    //             $("#voucher").prop("disabled", "");
-    //             calculateTotal();
-    //             toastr.warning('Mã giảm giá đã được xoá.');
-    //             $(".voucher_info").addClass("hidden");
-    //         }
-    //     });
-    // }
-
     function validate_discount(discount) {
         let discount1 = replaceComma(discount);
         if (discount1.indexOf("%") > -1) {
@@ -1103,40 +815,21 @@ Common::authen();
             if (discount1 < 1 || discount1 > 50) {
                 $("#discount_new").addClass("is-invalid");
                 disableCheckOutBtn();
-                // validate_form();
                 return false;
             } else {
                 $("#discount_new").removeClass("is-invalid");
-                // $("#cash_value").val(discount);
             }
         } else {
             if (!validateNumber(discount1, 'discount_new')) {
                 disableCheckOutBtn();
-                // validate_form();
                 return false;
             }
-            // $("#cash_value").val(discount);
-            // let totalCheckout = replaceComma($("#totalCheckout").text());
-            // if(discount !== "" && discount < 1000)
-            // {
-            // 	discount += "000";
-            // }
-            // $("#discount").val(formatNumber(discount));
-            // if(vcFlag == 0 && discount != "" && (discount > totalCheckout/2)) {
-            // 	$("#discount").addClass("is-invalid");
-            // 	disableCheckOutBtn();
-            // 	// validate_form();
-            // 	return false;
-            // } else {
-            // 	$("#discount").removeClass("is-invalid");
-            // }
         }
         return true;
     }
 
     function paymentChange(payment) {
         if (!validateNumber(payment, 'payment_new')) {
-            // disableCheckOutBtn();
             validate_form();
             return;
         }
@@ -1150,21 +843,16 @@ Common::authen();
         if (payment != "" && Number(totalCheckout) > 0 && Number(payment) < Number(totalCheckout)) {
             $("#payment_new").addClass("is-invalid");
             disableCheckOutBtn();
-            // validate_form();
             return;
         } else {
             $("#payment_new").removeClass("is-invalid");
             enableCheckOutBtn();
         }
-
         let repay = 0;
         if (payment != 0 && totalCheckout > 0) {
             repay = Number(payment) - Number(totalCheckout);
         }
         $("#repay_new").val(formatNumber(repay));
-
-        //  validate_form();
-        // calculateTotal();
     }
 
     function processDataCheckout() {
@@ -1207,6 +895,7 @@ Common::authen();
         data["voucher_value"] = "";
         data["current_order_id"] = currentOrderId;
         data["payment_exchange_type"] = paymentExchangeType;
+        data["source"] = 0;// shop
 
         //order detail information
         let curr_products = [];
@@ -1422,8 +1111,6 @@ Common::authen();
         $("[id=" + intoMoneyId + "]").text(formatNumber(intoMoney));
         //calculateTotal();
 
-        // let intoMoney = price * qty;
-        // $("[id=" + intoMoneyId + "]").text(formatNumber(intoMoney));
         $("[id=" + reduceId + "]").trigger("change");
         let oldIntoMoney = 0;
         if(oldIntoMoneyId != "") {
@@ -1438,14 +1125,9 @@ Common::authen();
     function validateNumber(value, id) {
         if (isNaN(value)) {
             $("[id=" + id + "]").addClass("is-invalid");
-            // disableCheckOutBtn();
-            //  validate_form();
             return false;
         } else {
             $("[id=" + id + "]").removeClass("is-invalid");
-            //$("[id="+id+"]").val(formatNumber(value));
-            // enableCheckOutBtn();
-            //  validate_form();
             return true;
         }
     }
@@ -1455,11 +1137,8 @@ Common::authen();
         let qty = get_qty(qtyId);
         if (!validateQty(qty, qtyId)) {
             disableCheckOutBtn();
-            //  validate_form();
             return;
         }
-        // enableCheckOutBtn();
-        //  validate_form();
         let intoMoney = price * qty;
         $("[id=" + intoMoneyId + "]").text(formatNumber(intoMoney));
         $("[id=" + reduceId + "]").trigger("change");
@@ -1469,7 +1148,6 @@ Common::authen();
         $("[id=" + diffMoneyId + "]").text(formatNumber(diff_money));
         calculateTotal();
     }
-
 
     function get_qty(qtyId) {
         let qty = $("[id=" + qtyId + "]").val();
@@ -1486,13 +1164,9 @@ Common::authen();
     function validateQty(qty, qtyId) {
         if (qty <= 0 || !Number.isInteger(qty)) {
             $("[id=" + qtyId + "]").addClass("is-invalid");
-            // disableCheckOutBtn();
-            // validate_form();
             return false;
         } else {
             $("[id=" + qtyId + "]").removeClass("is-invalid");
-            // enableCheckOutBtn();
-            // validate_form();
             return true;
         }
     }
