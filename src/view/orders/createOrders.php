@@ -961,7 +961,6 @@ Common::authen();
                     val(-1);
                     option.prependTo(select);
                     select.trigger('change');
-
                     if(typeof districtId != "undefined" && districtId !== '') {
                         districtId = districtId.padStart(3,'0');
                         $(".select-district").val(districtId).trigger("change");

@@ -519,7 +519,6 @@ class Order {
 
     /**
      * @param mixed $source
-     * 0: shop, 1: website, 2: facebook, 3: shopee
      */
     public function setSource($source): void
     {

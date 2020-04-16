@@ -98,10 +98,10 @@ Common::authen();
                                 <div class="col-8">
                                     <span class="info-box-text">Tổng tiền</span>
                                     <span class="info-box-number">
-                    <h5 class="total_money">
-                      <small>đ</small>
-                    </h5>
-                  </span>
+                                        <h5 class="total_money">
+                                          <small>đ</small>
+                                        </h5>
+                                     </span>
                                 </div>
                                 <div class="col-4">
                                     <h1 class="display-5 text-danger text-right total_orders"></h1>
@@ -118,11 +118,10 @@ Common::authen();
                                 <div class="col-8">
                                     <span class="info-box-text">Shop</span>
                                     <span class="info-box-number">
-                    <h5 class="total_on_shop">
-                      <small>đ</small>
-                    </h5>
-
-                  </span>
+                                        <h5 class="total_on_shop">
+                                            <small>đ</small>
+                                        </h5>
+                                    </span>
                                 </div>
                                 <div class="col-4">
                                     <h1 class="display-5 text-right count_on_shop">12</h1>
@@ -142,10 +141,10 @@ Common::authen();
                                 <div class="col-8">
                                     <span class="info-box-text">Online</span>
                                     <span class="info-box-number">
-                    <h5 class="total_online">
-                      <small>đ</small>
-                    </h5>
-                  </span>
+                                        <h5 class="total_online">
+                                          <small>đ</small>
+                                        </h5>
+                                    </span>
                                 </div>
                                 <div class="col-4">
                                     <h1 class="display-5 text-right count_online"></h1>
@@ -163,10 +162,10 @@ Common::authen();
                                 <div class="col-8">
                                     <span class="info-box-text">Đổi hàng</span>
                                     <span class="info-box-number">
-                    <h5 class="total_exchange">
-                      <small>đ</small>
-                    </h5>
-                  </span>
+                                        <h5 class="total_exchange">
+                                          <small>đ</small>
+                                        </h5>
+                                    </span>
                                 </div>
                                 <div class="col-4">
                                     <h1 class="display-5 text-right count_exchange"></h1>
@@ -187,10 +186,10 @@ Common::authen();
                             <div class="info-box-content">
                                 <span class="info-box-text">Tiền mặt</span>
                                 <span class="info-box-number">
-                    <h5 class="total_cash">
-                      <small>đ</small>
-                    </h5>
-                  </span>
+                                    <h5 class="total_cash">
+                                      <small>đ</small>
+                                    </h5>
+                                </span>
                             </div>
                         </div>
                         <!-- /.info-box -->
@@ -202,11 +201,10 @@ Common::authen();
                             <div class="info-box-content">
                                 <span class="info-box-text">Chuyển khoản</span>
                                 <span class="info-box-number">
-                    <h5 class="total_transfer">
-                      <small>đ</small>
-                    </h5>
-
-                  </span>
+                                    <h5 class="total_transfer">
+                                        <small>đ</small>
+                                    </h5>
+                                </span>
                             </div>
                             <!-- /.info-box-content -->
                         </div>
@@ -218,11 +216,10 @@ Common::authen();
                             <div class="info-box-content">
                                 <span class="info-box-text">Profit</span>
                                 <span class="info-box-number">
-                    <h5 class="total_profit">
-                      <small>đ</small>
-                    </h5>
-
-                  </span>
+                                    <h5 class="total_profit">
+                                      <small>đ</small>
+                                    </h5>
+                                </span>
                             </div>
                             <!-- /.info-box-content -->
                         </div>

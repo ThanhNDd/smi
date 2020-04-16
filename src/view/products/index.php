@@ -141,6 +141,7 @@ Common::authen();
                             <th>Giá bán lẻ</th>
                             <th>Giảm giá</th>
                             <th></th>
+                            <th>Publish</th>
                             <th>Hành động</th>
                         </tr>
                         </thead>
@@ -210,7 +211,7 @@ Common::authen();
 
     function countAllChecked() {
         let count = 0;
-        $.each($("#example tbody td input[type='checkbox']:checked"), function () {
+        $.each($("#example tbody td:first-child input[type='checkbox']:checked"), function () {
             let id = $(this).attr("id");
             if (id != "selectall") {
                 count++;
@@ -289,6 +290,10 @@ Common::authen();
                 },
                 {
                     "data": format_discount_display,
+                    width: "50px"
+                },
+                {
+                    "data": format_publish,
                     width: "50px"
                 },
                 {
@@ -393,6 +398,11 @@ Common::authen();
                     $("#select_size").prop("disabled", "disabled");
                     $("#select_color").prop("disabled", "disabled");
                     $("#qty").prop("disabled", "disabled");
+                    if(arr[0].description !== "") {
+                        $('#description').summernote('code', arr[0].description);
+                    } else {
+                        $('#description').summernote('code', '');
+                    }
 
                     let variations = arr[0].variations;
                     let count = 0;
@@ -652,6 +662,109 @@ Common::authen();
             }
             check_stock($(this), product_id);
         });
+
+        $('#example tbody').on('click', '.website-publish', function () {
+            let tr = $(this).closest('tr');
+            let td = tr.find("td");
+            let product_id = $(td[1]).text();
+            let checked = $(this).parent().children('input').prop('checked');
+            let status = 0;
+            if(checked) {
+                status = 1;
+            }
+            social_publish(product_id, 'website', status);
+        });
+
+        $('#example tbody').on('click', '.facebook-publish', function () {
+            let tr = $(this).closest('tr');
+            let td = tr.find("td");
+            let product_id = $(td[1]).text();
+            let checked = $(this).parent().children('input').prop('checked');
+            let status = 0;
+            if(checked) {
+                status = 1;
+            }
+            social_publish(product_id, 'facebook', status);
+        });
+
+        $('#example tbody').on('click', '.shopee-publish', function () {
+            let tr = $(this).closest('tr');
+            let td = tr.find("td");
+            let product_id = $(td[1]).text();
+            let checked = $(this).parent().children('input').prop('checked');
+            let status = 0;
+            if(checked) {
+                status = 1;
+            }
+            social_publish(product_id, 'shopee', status);
+        });
+
+
+        $('#example tbody').on('click', '.lazada-publish', function () {
+            let tr = $(this).closest('tr');
+            let td = tr.find("td");
+            let product_id = $(td[1]).text();
+            let checked = $(this).parent().children('input').prop('checked');
+            let status = 0;
+            if(checked) {
+                status = 1;
+            }
+            social_publish(product_id, 'lazada', status);
+        });
+
+    }
+
+    function social_publish(product_id, type, status) {
+        $.ajax({
+            url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
+            type: "POST",
+            dataType: "json",
+            data: {
+                method: "social_publish",
+                product_id: product_id,
+                type: type,
+                status: status
+            },
+            success: function () {
+                toastr.success('Cập nhật thành công!');
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                });
+                hide_loading();
+            }
+        });
+    }
+
+    function format_publish(data) {
+        let product_id = data.product_id;
+        let social_publish = JSON.parse(data.social_publish);
+        let website = social_publish.website === 0 ? '' : 'checked';
+        let btn = '<div class="custom-control custom-switch">' +
+            '<input type="checkbox" class="custom-control-input website-publish" id="Website_'+product_id+'" '+website+'>' +
+            '<label class="custom-control-label" for="Website_'+product_id+'">Website</label>' +
+            '</div>';
+        let facebook = social_publish.facebook === 0 ? '' : 'checked';
+        btn += '<div class="custom-control custom-switch">' +
+            '<input type="checkbox" class="custom-control-input facebook-publish" id="facebook_'+product_id+'" '+facebook+'>' +
+            '<label class="custom-control-label" for="facebook_'+product_id+'">Facebook</label>' +
+            '</div>';
+        let shopee = social_publish.shopee === 0 ? '' : 'checked';
+        btn += '<div class="custom-control custom-switch">' +
+            '<input type="checkbox" class="custom-control-input shopee-publish" id="shopee_'+product_id+'" '+shopee+'>' +
+            '<label class="custom-control-label" for="shopee_'+product_id+'">Shopee</label>' +
+            '</div>';
+        let lazada = social_publish.lazada === 0 ? '' : 'checked';
+        btn += '<div class="custom-control custom-switch">' +
+            '<input type="checkbox" class="custom-control-input lazada-publish" id="lazada_'+product_id+'" '+lazada+'>' +
+            '<label class="custom-control-label" for="lazada_'+product_id+'">Lazada</label>' +
+            '</div>';
+        return btn;
     }
 
     function format_discount_display(data) {
@@ -882,10 +995,10 @@ Common::authen();
         });
     }
 
-    function format_action() {
-        // '<button type="button" class="btn bg-gradient-success btn-sm add_variation" title="Thêm biến thể sản phẩm"><i class="fas fa-plus-circle"></i></button>&nbsp;'
-        return  '<button type="button" class="btn bg-gradient-info btn-sm edit_product" title="Sửa sản phẩm"><i class="fas fa-edit"></i></button>&nbsp;'
+    function format_action(data) {
+        let btn =  '<button type="button" class="btn bg-gradient-info btn-sm edit_product" title="Sửa sản phẩm"><i class="fas fa-edit"></i></button>&nbsp;'
             + '<button type="button" class="btn bg-gradient-danger btn-sm out_of_stock" title="Cập nhật hết hàng"><i class="fas fa-eye-slash"></i></button>';
+        return btn;
     }
 
     function format_intomoney(data) {
@@ -915,7 +1028,7 @@ Common::authen();
         if(type === "upload") {
             src = '<?php Common::path_img() ?>' + src;
         }
-        return "<img src='" + src + "' width='100px' id='thumbnail' onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"'>";
+        return "<a href='"+src+"' target='_blank'><img src='" + src + "' width='100px' id='thumbnail' onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"'></a>";
     }
 
     function format_variation(variations, isNew) {
@@ -923,50 +1036,34 @@ Common::authen();
         table += '<thead>' +
             '<tr>' +
             '<th class="center"><input type="checkbox" id="selectall" onclick="checkAll(this)"></th>' +
-            // '<th>Hình ảnh</th>' +
             '<th>Mã sản phẩm</th>' +
             '<th>Màu</th>' +
             '<th>Size</th>' +
             '<th>Số lượng</th>' +
-            // '<th>Hành động</th>' +
+            '<th>Shopee</th>' +
+            '<th>Lazada</th>' +
             '</tr>' +
             '</thead>' +
             '<tbody>';
         for (let i = 0; i < variations.length; i++) {
+            let updated_qty = JSON.parse(variations[i].updated_qty);
+            let shopee = updated_qty.shopee === 0 ? '' : 'checked';
+            let lazada = updated_qty.lazada === 0 ? '' : 'checked';
             table += '<tr class="' + variations[i].sku + '">' +
                 '<td class="center"><input type="checkbox" id="' + variations[i].sku + '" onclick="check(this)"></td>';
-                // '<td>';
-            // let image_type = variations[i].image_type;
-            //if(image.indexOf("|") > -1) {
-            //    let img = image.split("|");
-            //    for(let i=0; i<img.length; i++) {
-            //        let image1 = img[i].split("_");
-            //        let type = image1[1];
-            //        if(type == "upload") {
-            //            image = '<?php //Common::path_img() ?>//' + image1[0];
-            //        } else {
-            //            image = image1[0];
-            //        }
-            //    }
-            //} else if(image.indexOf("_") > -1) {
-            //    let img = image.split("_");
-            //    let type = img[1];
-            //    if(type == "upload") {
-            //        image = '<?php //Common::path_img() ?>//' + img[0];
-            //    } else {
-            //        image = img[0];
-            //    }
-            //}
-            //table += '<img src="' + image + '" width="80px" onerror="this.onerror=null;this.src=\'<?php //Common::image_error()?>//\'">';
-            // table += '</td>';
             table += '<input type="hidden" class="product-id-' + variations[i].sku + '" value="' + variations[i].product_id + '">' +
                 '<td>' + variations[i].sku + '</td>' +
                 '<td>' + variations[i].color + '</td>' +
                 '<td>' + variations[i].size + '</td>' +
                 '<td id="qty">' + variations[i].quantity + '</td>' +
-                // '<td>' +
-                // '<button type="button" class="btn bg-gradient-info btn-sm edit_variation"><i class="fas fa-edit"></i> Sửa</button>&nbsp;' +
-                // '</td>' +
+                '<td><div class="custom-control custom-switch">' +
+                '<input type="checkbox" class="custom-control-input upd-qty-shopee" id="shopee_'+variations[i].sku+'" '+shopee+' onchange="updatedQty(this, \'shopee\', '+variations[i].sku+')">' +
+                '<label class="custom-control-label" for="shopee_'+variations[i].sku+'"></label>' +
+                '</div></td>' +
+                '<td><div class="custom-control custom-switch">' +
+                '<input type="checkbox" class="custom-control-input upd-qty-lazada" id="lazada_'+variations[i].sku+'" '+lazada+' onchange="updatedQty(this, \'lazada\', '+variations[i].sku+')">' +
+                '<label class="custom-control-label" for="lazada_'+variations[i].sku+'"></label>' +
+                '</div></td>' +
                 '</tr>';
         }
         if (isNew === "isNew") {
@@ -976,15 +1073,44 @@ Common::authen();
                 '<td><select class="select-color-' + new_sku + ' form-control w100" id="select_color_' + new_sku + '"><option value="-1"></option></select></td>' +
                 '<td><select class="select-size-' + new_sku + ' form-control w100" id="select_size_' + new_sku + '"><option value="-1"></option></select></td>' +
                 '<td><select class="select-qty-' + new_sku + ' form-control w100" id="select_qty_' + new_sku + '"><option value="-1"></option></select></td>' +
-                // '<td>' +
-                // '<button type="button" class="btn bg-gradient-primary btn-sm save_variation"><i class="fas fa-save"></i> Lưu</button>&nbsp;' +
-                // '</td>' +
                 '<input type="hidden" class="product-id-' + new_sku + '" value="' + variations[variations.length - 1].product_id + '">' +
                 '</tr>';
         }
         table += '</tbody>';
         table += '</table>';
         return table;
+    }
+
+    function updatedQty(e, type, sku) {
+        let checked = $(e).prop('checked');
+        let status = 0;
+        if(checked) {
+            status = 1;
+        }
+        $.ajax({
+            url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
+            type: "POST",
+            dataType: "json",
+            data: {
+                method: "updated_qty",
+                sku: sku,
+                type: type,
+                status: status
+            },
+            success: function (res) {
+                console.log(res);
+                toastr.success('Cập nhật thành công!');
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                })
+            }
+        });
     }
 
     function check(e) {
@@ -1000,9 +1126,9 @@ Common::authen();
     function checkAll(e) {
         let isCheck = $(e).prop('checked');
         if (isCheck) {
-            $(e).parent().parent().parent().parent().find('td input:checkbox').prop("checked", "checked");
+            $(e).parent().parent().parent().parent().find('td:first-child input:checkbox').prop("checked", "checked");
         } else {
-            $(e).parent().parent().parent().parent().find('td input:checkbox').prop("checked", "");
+            $(e).parent().parent().parent().parent().find('td:first-child input:checkbox').prop("checked", "");
         }
         countAllChecked();
     }

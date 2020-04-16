@@ -140,7 +140,6 @@ if (isset($_GET["orders"]) && $_GET["orders"] == "loadDataCity") {
 
 if (isset($_GET["orders"]) && $_GET["orders"] == "loadDataDistrict") {
     try {
-//    Common::authen_get_data();
         if (isset($_GET["cityId"])) {
             $cityId = $_GET["cityId"];
             echo $zone->get_list_district($cityId);
@@ -153,7 +152,6 @@ if (isset($_GET["orders"]) && $_GET["orders"] == "loadDataDistrict") {
 }
 if (isset($_GET["orders"]) && $_GET["orders"] == "loadDataVillage") {
     try {
-//    Common::authen_get_data();
         if (isset($_GET["districtId"])) {
             $districtId = $_GET["districtId"];
             echo $zone->get_list_village($districtId);
@@ -215,7 +213,6 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $data = json_decode($data);
 
         $order = new Order();
-
         $order_type = $data->order_type;
         $cusId = 0;
         if ($order_type == 1) {
@@ -231,9 +228,6 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
             if ($data->customer_id > 0) {
                 $customer->setId($data->customer_id);
                 $customerDAO->update_customer($customer);
-//        if (empty($cusId)) {
-//          throw new Exception("update customer is failure", 1);
-//        }
             } else {
                 $cusId = $customerDAO->save_customer($customer);
                 if (empty($cusId)) {

@@ -87,20 +87,6 @@ Common::authen();
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>Giới tính</td>
-                                            <td>
-                                                <select class="select-type form-control ml-2 col-sm-10" id="select_type"
-                                                        style="width: 100%;"></select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Danh mục</td>
-                                            <td>
-                                                <select class="select-cat form-control ml-2 col-sm-10" id="select_cat"
-                                                        style="width: 100%;"></select>
-                                            </td>
-                                        </tr>
-                                        <tr>
                                             <td>Giá nhập</td>
                                             <td>
                                                 <div class="input-group mb-1">
@@ -128,6 +114,20 @@ Common::authen();
                                             <td></td>
                                             <td>
                                                 <input type="text" class="form-control ml-2" id="profit">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Giới tính</td>
+                                            <td>
+                                                <select class="select-type form-control ml-2 col-sm-10" id="select_type"
+                                                      style="width: 100%;"></select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Danh mục</td>
+                                            <td>
+                                                <select class="select-cat form-control ml-2 col-sm-10" id="select_cat"
+                                                      style="width: 100%;"></select>
                                             </td>
                                         </tr>
                                         <tr>
@@ -199,6 +199,12 @@ Common::authen();
                                 </div>
                             </div>
                         </div>
+                        <div class="card-body pad">
+                            <div class="mb-3">
+                                <textarea class="textarea" placeholder="Mô tả sản phẩm" id="description"
+                                      style="width: 100%; height: 400px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                                    </div>
+                            </div>
                     </div>
                 </div>
             </div>
@@ -226,6 +232,9 @@ Common::authen();
         });
 
         $(document).ready(function () {
+            $('.textarea').summernote({
+                placeholder: 'Mô tả sản phẩm...'
+            });
             $('.product-create').click(function () {
                 open_modal();
             });
@@ -336,6 +345,7 @@ Common::authen();
                                 'success'
                             ).then((result) => {
                                 if (result.value) {
+                                    $('#create-product').modal('hide');
                                     reset_modal();
                                 }
                             });
@@ -383,7 +393,7 @@ Common::authen();
             $(".add-new-prod").prop('disabled', true);
             $(".table-info-product > tbody > tr").find('input').removeClass('is-invalid');
             $(".table-list > tbody").html('');
-
+            $('#description').summernote('code', '');
         }
 
         function get_data_inform() {
@@ -412,6 +422,7 @@ Common::authen();
             let retail = $("#retail").val();
             let percent = $("#percent").val();
             let profit = $("#profit").val();
+            let description = $("#description").summernote('code');
 
             let product = {};
             product['product_id'] = product_id;
@@ -425,6 +436,7 @@ Common::authen();
             product['retail'] = replaceComma(retail);
             product['profit'] = replaceComma(profit);
             product['percent'] = percent;
+            product['description'] = description;
 
             let arr = [];
             $(".table-list > tbody > tr").each(function () {
@@ -509,22 +521,6 @@ Common::authen();
                 '                    <td align="center">' +
                 '                     <input type="text" class="form-control col-md-10" value="' + sku + '" id="sku_' + no + '" disabled>\n' +
                 '                    </td>\n' +
-                //'                    <td >\n' +
-                //'                      <img src="https://via.placeholder.com/100" onerror="this.onerror=null;this.src=\'<?php //Common::image_error()?>//\'" width="100" id="img_' + no + '" style="justify-content: left;float: left;">\n' +
-                //'                      <div class="input-group mb-3 col-md-8" style="float: left;">\n' +
-                //'                        <input type="text" class="form-control col-md-10" placeholder="Nhập link hình ảnh" onchange="onchange_image_link(' + no + ')" id="link_image_' + no + '" >\n' +
-                //'                          <input id="image_type_' + no + '" type="hidden" value=""/>\n' +
-                //'                        <div class="input-group-append">\n' +
-                //'                       <form id="form_' + no + '" action="" method="post" enctype="multipart/form-data">' +
-                //'                          <input id="image_' + no + '" type="file" accept="image/*" name="image" class="hidden"/>\n' +
-                //'                          <button type="button" class="btn btn-info btn-flat" id="btn_upload_' + no + '">\n' +
-                //'                            <span class="spinner-border spinner-border-sm hidden" id="spinner_' + no + '"></span>\n' +
-                //'                            <i class="fa fa-upload"></i> Upload\n' +
-                //'                          </button>\n' +
-                //'                        </form>\n' +
-                //'                        </div>\n' +
-                //'                      </div>\n' +
-                //'                    </td>\n' +
                 '                    <td >\n' +
                 '                       <select class="form-control ml-2 mr-2 col-sm-10" id="select_size_' + no + '" style="width: 100%"></select>' +
                 '                    </td>\n' +
@@ -544,8 +540,6 @@ Common::authen();
             custom_select2("[id=select_color_" + no + "]", select_colors);
             $("[id=select_size_" + no + "]").val(size).trigger('change');
             $("[id=select_color_" + no + "]").val(color).trigger('change');
-            // onpaste_image_link(no);
-            // btn_upload(no);
             delete_product(no);
         }
 
@@ -565,7 +559,7 @@ Common::authen();
                 $(this).addClass("" + no + "");
                 $(this).find("td:first").text(no);
             });
-            if (no == 0) {
+            if (no === 0) {
                 $("#create_variation").prop('disabled', '');
             } else {
                 $("#create_variation").prop('disabled', true);
@@ -640,6 +634,7 @@ Common::authen();
         }
 
         function validate_variations() {
+
             let valid = true;
             $(".table-list > tbody > tr").each(function () {
                 let no = $(this).attr('class');

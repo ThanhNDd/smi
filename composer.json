@@ -28,7 +28,8 @@
     "mike42/escpos-php": "^3.0",
     "mpdf/mpdf": "^8.0",
     "ext-mysqli": "*",
-    "ext-mcrypt": "*"
+    "ext-mcrypt": "*",
+    "ext-json": "*"
   },
   "autoload": {
         "psr-4": {

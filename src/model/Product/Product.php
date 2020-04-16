@@ -13,6 +13,8 @@ class Product {
     private $type;
     private $status;
     private $category_id;
+    private $social_publish;
+    private $description;
     private $created_at;
     private $updated_at;
 
@@ -317,4 +319,37 @@ class Product {
 
         return $this;
     }
+
+  /**
+   * @return mixed
+   */
+  public function getSocialPublish()
+  {
+    return $this->social_publish;
+  }
+
+  /**
+   * @param mixed $social_publish
+   */
+  public function setSocialPublish($social_publish): void
+  {
+    $this->social_publish = $social_publish;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getDescription()
+  {
+    return $this->description;
+  }
+
+  /**
+   * @param mixed $description
+   */
+  public function setDescription($description): void
+  {
+    $this->description = $description;
+  }
+
 }
