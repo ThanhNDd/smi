@@ -728,7 +728,6 @@ class CheckoutDAO
             if(!$stmt->execute()) {
                 throw new Exception($stmt->error);
             }
-            $stmt->close();
             $lastid = mysqli_insert_id($this->conn);
             return $lastid;
         } catch (Exception $e) {
