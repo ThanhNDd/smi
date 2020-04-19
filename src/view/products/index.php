@@ -135,12 +135,11 @@ Common::authen();
                             <th class="hidden">Id</th>
                             <th>Hình ảnh</th>
                             <th>Tên sản phẩm</th>
-                            <!-- <th>Giá nhập</th>
-                            <th>Phí vận chuyển</th>
-                            <th>Thành tiền</th> -->
                             <th>Giá bán lẻ</th>
                             <th>Giảm giá</th>
                             <th></th>
+                            <th>Chất liệu</th>
+                            <th>Xuất xứ</th>
                             <th>Publish</th>
                             <th>Hành động</th>
                         </tr>
@@ -256,6 +255,9 @@ Common::authen();
             select: "single",
             deferRender: true,
             rowId: 'extn',
+            "initComplete": function() {
+                init_select2();
+            },
             "columns": [
                 {
                     "className": 'details-control',
@@ -290,6 +292,14 @@ Common::authen();
                 },
                 {
                     "data": format_discount_display,
+                    width: "50px"
+                },
+                {
+                    "data": format_material,
+                    width: "50px"
+                },
+                {
+                    "data": format_origin,
                     width: "50px"
                 },
                 {
@@ -398,12 +408,14 @@ Common::authen();
                     $("#select_size").prop("disabled", "disabled");
                     $("#select_color").prop("disabled", "disabled");
                     $("#qty").prop("disabled", "disabled");
+                    $("#select_material").val(arr[0].material).trigger("change");
+                    $("#select_origin").val(arr[0].origin).trigger("change");
                     if(arr[0].description !== "") {
                         $('#description').summernote('code', arr[0].description);
                     } else {
                         $('#description').summernote('code', '');
                     }
-
+                    $('#short_description').val(arr[0].short_description);
                     let variations = arr[0].variations;
                     let count = 0;
                     for (let i = 0; i < variations.length; i++) {
@@ -511,7 +523,7 @@ Common::authen();
                 success: function () {
                     toastr.success('Sản phẩm đã được tạo thành công.');
                     hide_loading();
-                    table.ajax.reload();
+                    table.ajax.reload(init_select2, false);
                 },
                 error: function (data, errorThrown) {
                     console.log(data.responseText);
@@ -767,6 +779,40 @@ Common::authen();
         return btn;
     }
 
+    function format_material(data) {
+        let material = "";
+        if(data.material != null) {
+            select_material.forEach(function(item) {
+                if(data.material === item.id) {
+                    material = item.text;
+                    return false;
+                }
+            });
+        } else {
+            let productId = data.product_id;
+            material = "<select class='select-material form-control ml-2 col-sm-10' style='width: 70%;'></select>" +
+                "<button type=\"button\" class=\"btn bg-gradient-info btn-sm mt-1 ml-1\" onclick=\"update_material(this, "+productId+")\"><i class=\"fas fa-save\"></i></button>";
+        }
+        return material;
+    }
+
+    function format_origin(data) {
+        let origin = "";
+        if(data.origin != null) {
+            select_origin.forEach(function(item) {
+                if(data.origin === item.id) {
+                    origin = item.text;
+                    return false;
+                }
+            });
+        } else {
+            let productId = data.product_id;
+            origin = "<select class='select-origin form-control ml-2 col-sm-10' style='width: 70%;'></select>" +
+                "<button type=\"button\" class=\"btn bg-gradient-info btn-sm mt-1 ml-1\" onclick=\"update_origin(this, "+productId+")\"><i class=\"fas fa-save\"></i></button>";
+        }
+        return origin;
+    }
+
     function format_discount_display(data) {
         let discount = data.discount;
         if (typeof discount == "undefined" || discount == 0) {
@@ -886,7 +932,7 @@ Common::authen();
                 console.log(res);
                 toastr.success('Cập nhật thành công!');
                 let table = $('#example').DataTable();
-                table.ajax.reload();
+                table.ajax.reload(init_select2, false);
             },
             error: function (data, errorThrown) {
                 console.log(data.responseText);
@@ -898,6 +944,59 @@ Common::authen();
                 })
             }
         });
+    }
+
+    function update_material(e, product_id) {
+        let material = $(e).parent().find("select").val();
+        console.log(material);
+        if (typeof material === "undefined" || material < 0) {
+           toastr.error('Bạn chưa chọn Chất liệu!');
+           return false;
+        }
+        update_attr(product_id, material, 'material');
+    }
+
+    function update_origin(e, product_id) {
+        let origin = $(e).parent().find("select").val();
+        console.log(origin);
+        if (typeof origin === "undefined" || origin < 0) {
+            toastr.error('Bạn chưa chọn Xuất xứ!');
+            return false;
+        }
+        update_attr(product_id, origin, 'origin');
+    }
+
+    function update_attr(product_id, data, type) {
+        $.ajax({
+            url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
+            type: "POST",
+            dataType: "json",
+            data: {
+                method: "update_attr",
+                product_id: product_id,
+                data: data,
+                type: type
+            },
+            success: function (res) {
+                console.log(res);
+                toastr.success('Cập nhật thành công!');
+                $("#example").DataTable().ajax.reload(init_select2, false);
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                });
+            }
+        });
+    }
+
+    function init_select2() {
+        custom_select2('.select-origin', select_origin);
+        custom_select2('.select-material', select_material);
     }
 
     function count_out_of_stock() {

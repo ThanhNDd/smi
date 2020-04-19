@@ -17,6 +17,9 @@ class Product {
     private $description;
     private $created_at;
     private $updated_at;
+    private $material;
+    private $origin;
+    private $short_description;
 
     /**
      * Get the value of id
@@ -351,5 +354,53 @@ class Product {
   {
     $this->description = $description;
   }
+
+    /**
+     * @return mixed
+     */
+    public function getMaterial()
+    {
+        return $this->material;
+    }
+
+    /**
+     * @param mixed $material
+     */
+    public function setMaterial($material): void
+    {
+        $this->material = $material;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOrigin()
+    {
+        return $this->origin;
+    }
+
+    /**
+     * @param mixed $origin
+     */
+    public function setOrigin($origin): void
+    {
+        $this->origin = $origin;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getShortDescription()
+    {
+        return $this->short_description;
+    }
+
+    /**
+     * @param mixed $short_description
+     */
+    public function setShortDescription($short_description): void
+    {
+        $this->short_description = $short_description;
+    }
 
 }

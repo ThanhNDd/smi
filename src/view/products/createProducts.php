@@ -163,6 +163,20 @@ Common::authen();
                                             </td>
                                         </tr>
                                         <tr>
+                                            <td>Chất liệu</td>
+                                            <td>
+                                                <select class="select-material form-control ml-2 col-sm-10" id="select_material"
+                                                        style="width: 100%;"></select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Xuất xứ</td>
+                                            <td>
+                                                <select class="select-origin form-control ml-2 col-sm-10" id="select_origin"
+                                                        style="width: 100%;"></select>
+                                            </td>
+                                        </tr>
+                                        <tr>
                                             <td colspan="2" style="text-align: center;">
                                                 <button class="btn btn-secondary btn-flat" id="create_variation">Tạo
                                                     biến thể
@@ -203,8 +217,12 @@ Common::authen();
                             <div class="mb-3">
                                 <textarea class="textarea" placeholder="Mô tả sản phẩm" id="description"
                                       style="width: 100%; height: 400px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
-                                    </div>
                             </div>
+                            <div class="form-group">
+                                <label for="short_description">Mô tả ngắn</label>
+                                <input type="text" class="form-control" placeholder="Mô tả ngắn" id="short_description" maxlength="255">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -240,13 +258,15 @@ Common::authen();
             });
             $('#create-product').on('hidden.bs.modal', function () {
                 let table = $('#example').DataTable();
-                table.ajax.reload();
+                table.ajax.reload(init_select2, false);
             });
 
             custom_select2('#select_size', select_size);
             custom_select2('#select_color', select_colors);
             custom_select2('#select_type', select_types);
             custom_select2('#select_cat', select_cats);
+            custom_select2('#select_material', select_material);
+            custom_select2('#select_origin', select_origin);
 
             $("#create_variation").click(function () {
                 create_variation();
@@ -394,6 +414,7 @@ Common::authen();
             $(".table-info-product > tbody > tr").find('input').removeClass('is-invalid');
             $(".table-list > tbody").html('');
             $('#description').summernote('code', '');
+            $('#short_description').val('');
         }
 
         function get_data_inform() {
@@ -423,6 +444,9 @@ Common::authen();
             let percent = $("#percent").val();
             let profit = $("#profit").val();
             let description = $("#description").summernote('code');
+            let material = $("#select_material").val();
+            let origin = $("#select_origin").val();
+            let short_description = $('#short_description').val();
 
             let product = {};
             product['product_id'] = product_id;
@@ -437,6 +461,9 @@ Common::authen();
             product['profit'] = replaceComma(profit);
             product['percent'] = percent;
             product['description'] = description;
+            product['material'] = material;
+            product['origin'] = origin;
+            product['short_description'] = short_description;
 
             let arr = [];
             $(".table-list > tbody > tr").each(function () {
@@ -927,403 +954,6 @@ Common::authen();
         function onerror_img() {
             return '';
         }
-
-        let select_size = [
-            {
-                id: '60',
-                text: '60 cm (3kg-6kg)'
-            },
-            {
-                id: '73',
-                text: '73 cm (6kg-8kg)'
-            },
-            {
-                id: '80',
-                text: '80 cm (8kg-10kg)'
-            },
-            {
-                id: '90',
-                text: '90 cm (11kg-13kg)'
-            },
-            {
-                id: '100',
-                text: '100 cm (14kg-16kg)'
-            },
-            {
-                id: '110',
-                text: '110 cm (17kg-18kg)'
-            },
-            {
-                id: '120',
-                text: '120 cm (19kg-20kg)'
-            },
-            {
-                id: '130',
-                text: '130 cm (21kg-23kg)'
-            },
-            {
-                id: '140',
-                text: '140 cm (24kg-27kg)'
-            },
-            {
-                id: '150',
-                text: '150 cm (28kg-32kg)'
-            },
-            {
-                id: '160',
-                text: '160 cm (33kg-40kg)'
-            },
-            {
-                id: '3m',
-                text: '3m'
-            },
-            {
-                id: '6m',
-                text: '6m'
-            },
-            {
-                id: '9m',
-                text: '9m'
-            },
-            {
-                id: 'Free Size',
-                text: 'Free Size'
-            },
-            {
-                id: '1',
-                text: '1'
-            },
-            {
-                id: '2',
-                text: '2'
-            },
-            {
-                id: '3',
-                text: '3'
-            },
-            {
-                id: '4',
-                text: '4'
-            },
-            {
-                id: '5',
-                text: '5'
-            },
-            {
-                id: '6',
-                text: '6'
-            },
-            {
-                id: '7',
-                text: '7'
-            },
-            {
-                id: '8',
-                text: '8'
-            },
-            {
-                id: '9',
-                text: '9'
-            },
-            {
-                id: '10',
-                text: '10'
-            },
-            {
-                id: '11',
-                text: '11'
-            },
-            {
-                id: '12',
-                text: '12'
-            },
-            {
-                id: '13',
-                text: '13'
-            },
-            {
-                id: '14',
-                text: '14'
-            },
-            {
-                id: '15',
-                text: '15'
-            },
-            {
-                id: '16',
-                text: '16'
-            },
-            {
-                id: '17',
-                text: '17'
-            },
-            {
-                id: '18',
-                text: '18'
-            },
-            {
-                id: '19',
-                text: '19'
-            },
-            {
-                id: '20',
-                text: '20'
-            },
-            {
-                id: '1T',
-                text: '1T'
-            },
-            {
-                id: '2T',
-                text: '2T'
-            },
-            {
-                id: '3T',
-                text: '3T'
-            },
-            {
-                id: '4T',
-                text: '4T'
-            },
-            {
-                id: '5T',
-                text: '5T'
-            },
-            {
-                id: '6T',
-                text: '6T'
-            },
-            {
-                id: '7T',
-                text: '7T'
-            },
-            {
-                id: '8T',
-                text: '8T'
-            },
-            {
-                id: '9T',
-                text: '9T'
-            },
-            {
-                id: '10T',
-                text: '10T'
-            },
-            {
-                id: '11T',
-                text: '11T'
-            },
-            {
-                id: '12T',
-                text: '12T'
-            },
-            {
-                id: '13T',
-                text: '13T'
-            },
-            {
-                id: '14T',
-                text: '14T'
-            },
-            {
-                id: '15T',
-                text: '15T'
-            },
-            {
-                id: '16T',
-                text: '16T'
-            },
-            {
-                id: '17T',
-                text: '17T'
-            },
-            {
-                id: '18T',
-                text: '18T'
-            },
-            {
-                id: '19T',
-                text: '19T'
-            },
-            {
-                id: '20T',
-                text: '20T'
-            }
-        ];
-        let select_colors = [
-            {
-                id: 'Trắng',
-                text: 'Trắng'
-            },
-            {
-                id: 'Xanh',
-                text: 'Xanh'
-            },
-            {
-                id: 'Đỏ',
-                text: 'Đỏ'
-            },
-            {
-                id: 'Tím',
-                text: 'Tím'
-            },
-            {
-                id: 'Vàng',
-                text: 'Vàng'
-            },
-            {
-                id: 'Xám',
-                text: 'Xám'
-            },
-            {
-                id: 'Hồng',
-                text: 'Hồng'
-            },
-            {
-                id: 'Đen',
-                text: 'Đen'
-            },
-            {
-                id: 'Nâu',
-                text: 'Nâu'
-            },
-            {
-                id: 'Kem',
-                text: 'Kem'
-            },
-            {
-                id: 'Bạc',
-                text: 'Bạc'
-            },
-            {
-                id: 'Cam',
-                text: 'Cam'
-            },
-            {
-                id: 'Kẻ',
-                text: 'Kẻ'
-            }
-        ];
-        let select_qty = [
-            {
-                id: '0',
-                text: '0'
-            },
-            {
-                id: '1',
-                text: '1'
-            },
-            {
-                id: '2',
-                text: '2'
-            },
-            {
-                id: '3',
-                text: '3'
-            },
-            {
-                id: '4',
-                text: '4'
-            },
-            {
-                id: '5',
-                text: '5'
-            },
-            {
-                id: '6',
-                text: '6'
-            },
-            {
-                id: '7',
-                text: '7'
-            },
-            {
-                id: '8',
-                text: '8'
-            },
-            {
-                id: '9',
-                text: '9'
-            },
-            {
-                id: '10',
-                text: '10'
-            },
-            {
-                id: '11',
-                text: '11'
-            },
-            {
-                id: '12',
-                text: '12'
-            },
-            {
-                id: '13',
-                text: '13'
-            },
-            {
-                id: '14',
-                text: '14'
-            }
-        ];
-        let select_types = [
-            {
-                id: '-1',
-                text: ''
-            },
-            {
-                id: '0',
-                text: 'Bé trai'
-            },
-            {
-                id: '1',
-                text: 'Bé gái'
-            },
-            {
-                id: '2',
-                text: 'Trai gái'
-            },
-            {
-                id: '3',
-                text: 'Sơ sinh'
-            }
-        ];
-        let select_cats = [
-            {
-                id: '-1',
-                text: ''
-            },
-            {
-                id: '1',
-                text: 'Bộ quần áo'
-            },
-            {
-                id: '2',
-                text: 'Áo'
-            },
-            {
-                id: '3',
-                text: 'Quần'
-            },
-            {
-                id: '4',
-                text: 'Váy'
-            },
-            {
-                id: '5',
-                text: 'Giày'
-            },
-            {
-                id: '6',
-                text: 'Dép'
-            },
-            {
-                id: '7',
-                text: 'Mũ'
-            },
-            {
-                id: '8',
-                text: 'Phụ kiện'
-            }
-        ];
     </script>
+    <?php require_once('attribute.php'); ?>
+

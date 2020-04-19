@@ -45,10 +45,9 @@ function get_current_date() {
 }
 
 function custom_select2(el, data) {
-    $(el) . select2({
+    $(el).select2({
         data: data,
         theme: 'bootstrap4',
         closeOnSelect: true,
-        // width: '100%'
     });
 }

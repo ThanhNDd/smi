@@ -100,6 +100,22 @@ if (isset($_POST["method"]) && $_POST["method"] == "update_discount") {
     $db->commit();
 }
 
+if (isset($_POST["method"]) && $_POST["method"] == "update_attr") {
+    try {
+        Common::authen_get_data();
+        $product_id = $_POST["product_id"];
+        $data = $_POST["data"];
+        $type = $_POST["type"];
+        $response_array['response'] = "success";
+        $dao->update_attr((int)$product_id, (int)$data, $type);
+        echo json_encode($response_array);
+    } catch (Exception $e) {
+        $db->rollback();
+        throw new Exception("Update discount error exception: " . $e);
+    }
+    $db->commit();
+}
+
 if (isset($_POST["method"]) && $_POST["method"] == "update_discount_all") {
     try {
         Common::authen_get_data();
@@ -300,12 +316,9 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $product->setCategory_id($data->cat);
         $product->setImage($data->image);
         $product->setDescription($data->description);
-//        $image = $data->image;
-//        if($data->image_type == "upload") {
-//            $image = str_replace(Common::path(), '', $image);
-//        }
-//        $product->setImage($image);
-//        $product->setImageType($data->image_type);
+        $product->setMaterial($data->material);
+        $product->setOrigin($data->origin);
+        $product->setShortDescription($data->short_description);
 
         if (empty($prodId)) {
             $prodId = $dao->save_product($product);
@@ -323,12 +336,6 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
             $variation->setColor($variations[$i]->color);
             $variation->setQuantity($variations[$i]->qty);
             $variation->setSku($variations[$i]->sku);
-//            $image = $variations[$i]->image;
-//            if($variations[$i]->image_type == "upload") {
-//                $image = str_replace(Common::path(), '', $image);
-//            }
-//            $variation->setImage($image);
-//            $variation->setImageType($variations[$i]->image_type);
             $variation_id = $variations[$i]->id;
             if(empty($variation_id)) {
                 $dao->save_variation($variation);

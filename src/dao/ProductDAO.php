@@ -150,7 +150,10 @@ class ProductDAO
                            B.quantity,
                            B.sku,
                            B.image as 'image_variation',
-                           A.description
+                           A.description,
+                           A.material,
+                           A.origin,
+                           A.short_description
                     FROM smi_products A
                     LEFT JOIN smi_variations B ON A.id = B.product_id
                     WHERE A.id = " . $id;
@@ -173,6 +176,9 @@ class ProductDAO
                         'retail' => number_format($row["retail"]),
                         'profit' => number_format($row["profit"]),
                         'description' => $row["description"],
+                        'material' => $row["material"],
+                        'origin' => $row["origin"],
+                        'short_description' => $row["short_description"],
                         'variations' => array()
                     );
                     $variation = array(
@@ -221,7 +227,10 @@ class ProductDAO
                         A.retail,
                         A.discount,
                         A.profit,
-                        A.social_publish
+                        A.social_publish,
+                        A.material,
+                        A.origin,
+                        A.short_description
                     from 
                         smi_products A
                     where
@@ -240,6 +249,9 @@ class ProductDAO
                     'discount' => $row["discount"],
                     'profit' => number_format($row["profit"]),
                     'social_publish' => $row["social_publish"],
+                    'material' => $row["material"],
+                    'origin' => $row["origin"],
+                    'short_description' => $row["short_description"],
                 );
                 array_push($data, $product);
             }
@@ -264,6 +276,7 @@ class ProductDAO
                         A.fee_transport,
                         A.retail,
                         A.profit,
+                        A.short_description,
                         case 
                             when B.size = '3' then concat(B.size, 'm')
                             when B.size = '6' then concat(B.size, 'm')
@@ -308,6 +321,7 @@ class ProductDAO
                         'retail' => number_format($row["retail"]),
                         'profit' => number_format($row["profit"]),
                         'discount' => $row["discount"],
+                        'short_description' => $row["short_description"],
                         'created_at' => date_format(date_create($row["created_at"]), "d/m/Y"),
                         'variations' => array()
                     );
@@ -362,38 +376,31 @@ class ProductDAO
         }
     }
 
-    function update_product(Product $product)
-    {
-        try {
-            $product_id = $product->getId();
-            $name = $product->getName();
-            $image = $product->getImage();
-            $link = $product->getLink();
-            $price = $product->getPrice();
-            $fee = $product->getFee_transport();
-            $profit = $product->getProfit();
-            $retail = $product->getRetail();
-            $percent = $product->getPercent();
-            $type = $product->getType();
-            $cat_id = $product->getCategory_id();
-//            $social_publish = $product->getSocialPublish();
-            $description = $product->getDescription();
-            $stmt = $this->getConn()->prepare("update smi_products SET name = ?, image = ?, LINK = ?,price = ?, fee_transport = ?, profit = ?, retail = ?, percent = ?, TYPE = ?, category_id = ?, description = ?, updated_at = NOW() WHERE id = ?");
-            $stmt->bind_param("sssddddiiisi", $name, $image, $link, $price, $fee, $profit, $retail, $percent, $type, $cat_id, $description, $product_id);
-            if(!$stmt->execute()) {
-                throw new Exception($stmt->error);
-            }
-            $stmt->close();
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage());
-        }
-    }
-
     function update_discount($discount, $product_id)
     {
         try {
             $stmt = $this->getConn()->prepare("update smi_products SET discount = ? where id = ?");
             $stmt->bind_param("ii", $discount, $product_id);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function update_attr($product_id, $data, $type)
+    {
+        try {
+
+            if($type == "material") {
+                $sql = "update smi_products SET material = ? where id = ?";
+            } else {
+                $sql = "update smi_products SET origin = ? where id = ?";
+            }
+            $stmt = $this->getConn()->prepare($sql);
+            $stmt->bind_param("ii", $data, $product_id);
             if(!$stmt->execute()) {
                 throw new Exception($stmt->error);
             }
@@ -506,8 +513,43 @@ class ProductDAO
             $cat_id = $product->getCategory_id();
             $social_publish = '{"shopee": 0, "website": 0, "facebook": 0}';
             $description = $product->getDescription();
-            $stmt = $this->getConn()->prepare("INSERT INTO smi_products (`name`,`image`,`link`,`price`,`fee_transport`,`profit`,`retail`,`percent`,`type`,`category_id`,`social_publish`,`description`,`created_at`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,NOW())");
-            $stmt->bind_param("sssddddiiis", $name, $image, $link, $price, $fee, $profit, $retail, $percent, $type, $cat_id, $social_publish, $description);
+            $material = $product->getMaterial();
+            $origin = $product->getOrigin();
+            $short_description = $product->getShortDescription();
+            $stmt = $this->getConn()->prepare("INSERT INTO smi_products (
+                                `name`,
+                                `image`,
+                                `link`,
+                                `price`,
+                                `fee_transport`,
+                                `profit`,
+                                `retail`,
+                                `percent`,
+                                `type`,
+                                `category_id`,
+                                `social_publish`,
+                                `description`,
+                                `material`,
+                                `origin`,
+                                `short_description`,
+                                `created_at`) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+            $stmt->bind_param("sssddddiiisiis",
+                                $name,
+                                $image,
+                                $link,
+                                $price,
+                                $fee,
+                                $profit,
+                                $retail,
+                                $percent,
+                                $type,
+                                $cat_id,
+                                $social_publish,
+                                $description,
+                                $material,
+                                $origin,
+                                $short_description);
             if(!$stmt->execute()) {
                 throw new Exception($stmt->error);
             }
@@ -516,6 +558,66 @@ class ProductDAO
             return $lastid;
         } catch (Exception $e) {
             throw new Exception($e);
+        }
+    }
+
+    function update_product(Product $product)
+    {
+        try {
+            $product_id = $product->getId();
+            $name = $product->getName();
+            $image = $product->getImage();
+            $link = $product->getLink();
+            $price = $product->getPrice();
+            $fee = $product->getFee_transport();
+            $profit = $product->getProfit();
+            $retail = $product->getRetail();
+            $percent = $product->getPercent();
+            $type = $product->getType();
+            $cat_id = $product->getCategory_id();
+            $description = $product->getDescription();
+            $material = $product->getMaterial();
+            $origin = $product->getOrigin();
+            $short_description = $product->getShortDescription();
+            $stmt = $this->getConn()->prepare("update smi_products SET 
+                name = ?, 
+                image = ?, 
+                LINK = ?,
+                price = ?, 
+                fee_transport = ?, 
+                profit = ?, 
+                retail = ?, 
+                percent = ?, 
+                TYPE = ?, 
+                category_id = ?, 
+                description = ?,
+                material = ?, 
+                origin = ?,  
+                short_description = ?,
+                updated_at = NOW() 
+                WHERE id = ?");
+            $stmt->bind_param("sssddddiiisiisi",
+                $name,
+                $image,
+                $link,
+                $price,
+                $fee,
+                $profit,
+                $retail,
+                $percent,
+                $type,
+                $cat_id,
+                $description,
+                $material,
+                $origin,
+                $short_description,
+                $product_id);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
         }
     }
 
