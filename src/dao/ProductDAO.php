@@ -511,7 +511,7 @@ class ProductDAO
             $percent = $product->getPercent();
             $type = $product->getType();
             $cat_id = $product->getCategory_id();
-            $social_publish = '{"shopee": 0, "website": 0, "facebook": 0}';
+            $social_publish = '{"shopee": 0, "website": 0, "facebook": 0, "lazada": 0}';
             $description = $product->getDescription();
             $material = $product->getMaterial();
             $origin = $product->getOrigin();
@@ -534,7 +534,7 @@ class ProductDAO
                                 `short_description`,
                                 `created_at`) 
                             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-            $stmt->bind_param("sssddddiiisiis",
+            $stmt->bind_param("sssddddiiisiiis",
                                 $name,
                                 $image,
                                 $link,
