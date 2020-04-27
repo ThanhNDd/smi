@@ -31,18 +31,18 @@ if (isset($_POST["method"]) && $_POST["method"] == "exchange") {
         Common::authen_get_data();
         $exchanges = $_POST["data"];
         $data = json_decode($exchanges);
-        $total_amount = 0;
-        if (!empty($data->total_amount)) {
-            $total_amount = $data->total_amount;
-        } else {
-            throw new Exception("total_amount is null");
-        }
-        $total_checkout = 0;
-        if (!empty($data->total_checkout)) {
-            $total_checkout = $data->total_checkout;
-        } else {
-            throw new Exception("Total_Checkout is null");
-        }
+        $total_amount = $data->total_amount;
+//        if (!empty($data->total_amount)) {
+//            $total_amount = $data->total_amount;
+//        } else {
+//            throw new Exception("total_amount is null");
+//        }
+        $total_checkout = $data->total_checkout;
+//        if (!empty($data->total_checkout)) {
+//            $total_checkout = $data->total_checkout;
+//        } else {
+//            throw new Exception("Total_Checkout is null");
+//        }
         $total_reduce = 0;
         $total_reduce_percent = 0;
         if (!empty($data->total_reduce)) {
