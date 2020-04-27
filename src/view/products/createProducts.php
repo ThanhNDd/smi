@@ -838,7 +838,7 @@ Common::authen();
 
         function onchange_price() {
             let val = $("#price").val();
-            val = replaceComma(val);
+            val = format_money(val);
             if (isNaN(val)) {
                 $("#price").addClass("is-invalid");
             } else {
@@ -856,14 +856,14 @@ Common::authen();
 
         function onchange_retail() {
             let val = $("#retail").val();
-            val = replaceComma(val);
+            val = format_money(val);
             if (isNaN(val) || val < 10) {
                 $("#retail").addClass("is-invalid");
             } else {
                 $("#retail").removeClass("is-invalid");
-                if (val.indexOf(",") == -1) {
-                    val = val + "000";
-                }
+                // if (val.indexOf(",") == -1) {
+                //     val = val + "000";
+                // }
                 $("#retail").val(formatNumber(val));
                 calc_percent();
                 calc_profit();
@@ -890,7 +890,7 @@ Common::authen();
 
         function onchange_fee() {
             let val = $("#fee").val();
-            val = replaceComma(val);
+            val = format_money(val);
             if (isNaN(val)) {
                 $("#fee").addClass("is-invalid");
             } else {
@@ -941,6 +941,19 @@ Common::authen();
             fee = replaceComma(fee);
             let profit = Number(retail) - Number(price) - Number(fee);
             $("[id=profit]").val(formatNumber(profit));
+        }
+
+        function format_money(val) {
+            if(val.indexOf('k') > -1 || val.indexOf('K') > -1) {
+                val = val.replace('k','000');
+                val = val.replace('K','000');
+            } else if(val.indexOf('m') > -1 || val.indexOf('M') > -1) {
+                val = val.replace('m','000000');
+                val = val.replace('M','000000');
+            } else {
+                val = replaceComma(val);
+            }
+            return val;
         }
 
         function show_loading() {
