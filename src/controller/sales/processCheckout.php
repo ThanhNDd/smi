@@ -145,9 +145,12 @@ if (isset($_POST["type"]) && $_POST["type"] == "checkout") {
       // printer receipt
       if ($data->flag_print_receipt) {
         $printer = new PrinterReceipt();
-
-        $filename = $printer->print($order, $detailsObj);
-        $response_array['fileName'] = $filename;
+        try {
+          $filename = $printer->print($order, $detailsObj);
+          $response_array['fileName'] = $filename;
+        } catch (Exception $ex) {
+          $response_array['fileName'] = '';
+        }
       }
       $response_array['orderId'] = $orderId;
       echo json_encode($response_array);

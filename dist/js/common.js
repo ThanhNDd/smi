@@ -16,8 +16,11 @@ function formatNumber(num) {
 }
 
 function replaceComma(value) {
-    value = value.trim();
-    return value.replace(/,/g, '');
+    if(value) {
+      value = value.trim();
+      return value.replace(/,/g, '');
+    }
+    return value;
 }
 
 function replacePercent(value) {
@@ -50,4 +53,18 @@ function custom_select2(el, data) {
         theme: 'bootstrap4',
         closeOnSelect: true,
     });
+}
+
+function format_money(value) {
+  if(value.indexOf('k') > -1 || value.indexOf('K') > -1) {
+      value = value.replace('k','000');
+      value = value.replace('K','000');
+      return value;
+  } else if(value.indexOf('m') > -1 || value.indexOf('M') > -1) {
+    value = value.replace('m','000000');
+    value = value.replace('M','000000');
+    return value;
+  } else {
+    return value;
+  }
 }

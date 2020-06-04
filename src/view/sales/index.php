@@ -289,6 +289,7 @@ Common::authen();
         //     event.preventDefault();
         // } else {
         // diccount
+        discount = format_money(discount);
         if (!validate_discount(discount)) {
             event.preventDefault();
             return;
@@ -452,20 +453,21 @@ Common::authen();
     }
 
     function validate_discount(discount) {
-        let discount1 = replaceComma(discount);
-        if (discount1.indexOf("%") > -1) {
-            discount1 = replacePercent(discount1);
-            if (discount1 < 1 || discount1 > 50) {
-                $("#discount").addClass("is-invalid");
-                disableCheckOutBtn();
-                // validate_form();
-                return false;
-            } else {
-                $("#discount").removeClass("is-invalid");
-                // $("#cash_value").val(discount);
-            }
+        discount = replaceComma(discount);
+        discount = replacePercent(discount);
+        if (discount.indexOf("%") > -1) {
+
+            // if (discount1 < 1 || discount1 > 50) {
+            //     $("#discount").addClass("is-invalid");
+            //     disableCheckOutBtn();
+            //     // validate_form();
+            //     return false;
+            // } else {
+            //     $("#discount").removeClass("is-invalid");
+            //     // $("#cash_value").val(discount);
+            // }
         } else {
-            if (!validateNumber(discount1, 'discount')) {
+            if (!validateNumber(discount, 'discount')) {
                 disableCheckOutBtn();
                 // validate_form();
                 return false;
@@ -490,6 +492,8 @@ Common::authen();
     }
 
     function paymentChange(payment) {
+        payment = replaceComma(payment);
+        payment = format_money(payment);
         if (!validateNumber(payment, 'payment')) {
             // disableCheckOutBtn();
             validate_form();
@@ -723,6 +727,7 @@ Common::authen();
             discount = Number(totalCheckout * discount / 100);
         } else {
             discount = replaceComma(discount);
+            discount = format_money(discount);
             discount = discount == "" ? 0 : Number(discount);
         }
         totalReduce += Number(discount);

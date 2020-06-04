@@ -137,7 +137,7 @@ Common::authen();
                             <th>Tên sản phẩm</th>
                             <th>Giá bán lẻ</th>
                             <th>Giảm giá</th>
-                            <th></th>
+                            <th>Giá sale</th>
                             <th>Chất liệu</th>
                             <th>Xuất xứ</th>
                             <th>Publish</th>
@@ -815,16 +815,20 @@ Common::authen();
 
     function format_discount_display(data) {
         let discount = data.discount;
+        let retail = replaceComma(data.retail);
+
+        let salePrice = '';
         if (typeof discount == "undefined" || discount == 0) {
             discount = "";
         } else {
             if (discount < 100) {
-                discount = discount + "%";
+                // discount = discount + "%";
+                salePrice = formatNumber(retail - (retail * discount) / 100);
             } else {
-                discount = formatNumber(discount);
+                salePrice = formatNumber(retail - discount);
             }
         }
-        return discount;
+        return salePrice;
     }
 
     function format_discount(data) {
@@ -841,38 +845,39 @@ Common::authen();
         let retail = data.retail;
         let profit = data.profit;
         let product_id = data.product_id;
-        return '<input type="text" onchange="onchange_discount(this, \'' + profit + '\')" onblur="onchange_discount(this, \'' + profit + '\', \'' + retail + '\')" class="form-control col-md-6 float-left" value="' + discount + '"/>&nbsp;' +
+        return '<input type="text" onchange="onchange_discount(this, \'' + profit + '\', \'' + retail + '\')" onblur="onchange_discount(this, \'' + profit + '\', \'' + retail + '\')" class="form-control col-md-12 float-left" value="' + discount + '"/>&nbsp;' +
             '<button type="button" class="btn bg-gradient-info btn-sm mt-1" onclick="update_discount(this, ' + product_id + ')" title="Lưu khuyến mãi"><i class="fas fa-save"></i></button>';
     }
 
     function onchange_discount(e, profit, retail) {
         $(e).removeClass("is-invalid");
         $("#update_discount").prop("disabled", true);
-        let val = $(e).val();
-        val = replaceComma(val);
-        console.log(val);
+        let discount = $(e).val();
+        discount = replaceComma(discount);
+        retail = replaceComma(retail);
+        profit = replaceComma(profit);
+        console.log(discount);
+        let salePrice = '';
         // let profit;
-        if (val == "") {
+        if (discount == "") {
 
-        } else if (val.indexOf("%") == -1) {
-            if (!isNaN(val) && val >= 0) {
-                profit = replaceComma(profit);
-                profit = profit - val;
-                val = formatNumber(val);
-                $(e).val(val);
+        } else if (discount.indexOf("%") == -1) {
+            if (!isNaN(discount) && discount >= 0) {
+                profit = profit - discount;
+                salePrice = formatNumber(retail - discount);
+                $(e).val(formatNumber(discount));
                 $("#update_discount").prop("disabled", "");
             } else {
                 $(e).addClass("is-invalid");
                 $("#update_discount").prop("disabled", true);
             }
         } else {
-            val = replacePercent(val);
-            profit = replaceComma(profit);
-            retail = replaceComma(retail);
-            profit = profit - retail * val / 100;
+            discount = replacePercent(discount);
+            profit = profit - retail * discount / 100;
             $("#update_discount").prop("disabled", "");
+            salePrice = formatNumber(retail - (retail * discount) / 100);
         }
-        $(e).parent().next("td").text(formatNumber(profit));
+        $(e).parent().next("td").html(formatNumber(salePrice)+'<br><small>'+formatNumber(profit)+'</small>');
     }
 
     function update_discount(e, product_id) {

@@ -49,8 +49,7 @@ class PrinterReceipt
             chmod("pdf/".$filename, 0777);
             return $filename;
         } catch (Exception $e) {
-            echo "Couldn't print to this printer: " . $e -> getMessage() . "\n";
-            throw new Exception($e);
+            throw new Exception("Couldn't print to this printer: " . $e -> getMessage());
         }
     }
 

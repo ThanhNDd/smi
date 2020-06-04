@@ -848,7 +848,10 @@ Common::authen();
                 let price = Number(val);
                 let percent = $("#percent").val();
                 percent = Number(percent);
-                let retail = Math.round(price * percent / 100) + price;
+                let fee = $("#fee").val();
+                fee = replaceComma(fee);
+                fee = Number(fee);
+                let retail = Math.round((price+fee) * percent / 100) + price + fee;
                 $("#retail").val(formatNumber(retail));
                 calc_profit();
             }
@@ -882,7 +885,8 @@ Common::authen();
                 let price = $("#price").val();
                 price = replaceComma(price);
                 price = Number(price);
-                let retail = Math.round(price * val / 100) + price;
+                let fee = Number(replaceComma($("#fee").val()));
+                let retail = Math.round((price + fee) * val / 100) + price + fee;
                 $("#retail").val(formatNumber(retail));
                 calc_profit();
             }
@@ -926,7 +930,7 @@ Common::authen();
                 retail = Number(retail);
                 price = Number(price);
                 fee = Number(fee);
-                let percent = (retail - price) * 100 / (price + fee);
+                let percent = (retail - price - fee) * 100 / (price + fee);
                 percent = Math.round(percent);
                 $("[id=percent]").val(percent);
             }
