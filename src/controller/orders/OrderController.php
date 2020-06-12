@@ -222,9 +222,9 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
             $customer->setPhone($data->phone_number);
             $customer->setEmail($data->email);
             $customer->setAddress($data->address);
-            $customer->setCity_id($data->cityId);
-            $customer->setDistrict_id($data->districtId);
-            $customer->setVillage_id($data->villageId);
+            $customer->setCityId($data->cityId);
+            $customer->setDistrictId($data->districtId);
+            $customer->setVillageId($data->villageId);
             if ($data->customer_id > 0) {
                 $customer->setId($data->customer_id);
                 $customerDAO->update_customer($customer);

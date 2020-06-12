@@ -274,7 +274,7 @@ Common::authen();
                 val = replaceComma(val);
                 if (isNaN(val)) {
                     $(e).addClass("is-invalid");
-                    disable_btn_add_new();
+                    // // disable_btn_add_new();
                 } else {
                     $(e).removeClass("is-invalid");
                     check_products_list();
@@ -299,7 +299,7 @@ Common::authen();
                 val = replaceComma(val);
                 if (isNaN(val)) {
                     $(e).addClass("is-invalid");
-                    disable_btn_add_new();
+                    // // disable_btn_add_new();
                 } else {
                     $(e).removeClass("is-invalid");
                     check_products_list();
@@ -323,7 +323,7 @@ Common::authen();
                 let val = $(this).val();
                 if (val != "" && !validateEmail(val)) {
                     $(this).addClass("is-invalid");
-                    disable_btn_add_new();
+                    // // disable_btn_add_new();
                 } else {
                     $(this).removeClass("is-invalid");
                     check_products_list();
@@ -335,7 +335,7 @@ Common::authen();
                 val = replaceComma(val);
                 if (isNaN(val)) {
                     $(e).addClass("is-invalid");
-                    disable_btn_add_new();
+                    // // disable_btn_add_new();
                 } else {
                     $(e).removeClass("is-invalid");
                     check_products_list();
@@ -366,7 +366,7 @@ Common::authen();
                 let customer_name = $("#customer_name").val();
                 if (customer_name === "") {
                     $("#customer_name").addClass("is-invalid");
-                    disable_btn_add_new();
+                    // disable_btn_add_new();
                     return false;
                 } else {
                     $("#customer_name").removeClass("is-invalid");
@@ -375,7 +375,7 @@ Common::authen();
                 let phone_number = $("#phone_number").val();
                 if (phone_number === "") {
                     $("#phone_number").addClass("is-invalid");
-                    disable_btn_add_new();
+                    // disable_btn_add_new();
                     return false;
                 } else {
                     $("#phone_number").removeClass("is-invalid");
@@ -384,7 +384,7 @@ Common::authen();
                 let cityId = $(".select-city").val();
                 if (cityId === "-1") {
                     $(".select-city").addClass("is-invalid");
-                    disable_btn_add_new();
+                    // disable_btn_add_new();
                     return false;
                 } else {
                     $(".select-city").removeClass("is-invalid");
@@ -392,7 +392,7 @@ Common::authen();
                     let districtId = $(".select-district").val();
                     if (districtId === "-1") {
                         $(".select-district").addClass("is-invalid");
-                        disable_btn_add_new();
+                        // disable_btn_add_new();
                         return false;
                     } else {
                         $(".select-district").removeClass("is-invalid");
@@ -400,7 +400,7 @@ Common::authen();
                         let villageId = $(".select-village").val();
                         if (villageId === "-1") {
                             $(".select-village").addClass("is-invalid");
-                            disable_btn_add_new();
+                            // disable_btn_add_new();
                             return false;
                         } else {
                             $(".select-village").removeClass("is-invalid");
@@ -408,7 +408,7 @@ Common::authen();
                             let add = $("#address").val();
                             if (add === "") {
                                 $("#address").addClass("is-invalid");
-                                disable_btn_add_new();
+                                // disable_btn_add_new();
                                 return false;
                             } else {
                                 $("#address").removeClass("is-invalid");
@@ -424,7 +424,7 @@ Common::authen();
                 let customer_payment = $("#payment").val();
                 if(customer_payment === "") {
                     $("#payment").addClass("is-invalid");
-                    disable_btn_add_new();
+                    // disable_btn_add_new();
                     return false;
                 } else {
                     $("#payment").removeClass("is-invalid");
@@ -471,11 +471,11 @@ Common::authen();
                 console.log(prodId);
                 if (typeof prodId != "undefined" && prodId == "") {
                     $("#prod_" + i).focus();
-                    disable_btn_add_new();
+                    // disable_btn_add_new();
                     return;
                 }
                 $(".add-new-prod").prop("disabled", false);
-                enable_btn_add_new();
+                // enable_btn_add_new();
             }
         }
 
@@ -637,16 +637,8 @@ Common::authen();
             $('.count-row').val("");
             $('#order_id').val("");
             $('#orderDate').val($('#orderDate').val());
-            disable_btn_add_new();
+            // disable_btn_add_new();
             onchange_order_type(1);
-        }
-
-        function disable_btn_add_new() {
-            // $(".create-new").prop("disabled", true);
-        }
-
-        function enable_btn_add_new() {
-            // $(".create-new").prop("disabled", false);
         }
 
         function new_product(e, rowIndex) {
@@ -656,7 +648,7 @@ Common::authen();
             } else {
                 add_new_product();
                 $(".add-new-prod").prop("disabled", true);
-                disable_btn_add_new();
+                // disable_btn_add_new();
             }
 
         }
@@ -751,7 +743,7 @@ Common::authen();
             }
             if (isNaN(val)) {
                 $(e).addClass("is-invalid");
-                disable_btn_add_new();
+                // disable_btn_add_new();
             } else {
                 $(e).removeClass("is-invalid");
                 check_products_list();
@@ -794,7 +786,7 @@ Common::authen();
         function blur_check(e) {
             if ($(e).val() === "") {
                 $(e).addClass("is-invalid");
-                disable_btn_add_new();
+                // disable_btn_add_new();
             }
         }
 
@@ -840,14 +832,14 @@ Common::authen();
                         });
                     } else {
                         $(e).addClass("is-invalid");
-                        disable_btn_add_new();
+                        // disable_btn_add_new();
                     }
                 },
                 error: function (data, errorThrown) {
                     console.log(data.responseText);
                     console.log(errorThrown);
                     $(e).addClass("is-invalid");
-                    disable_btn_add_new();
+                    // disable_btn_add_new();
                 }
             });
         }

@@ -94,6 +94,7 @@ body, section.content {
 .datepicker-days {
 	font-size: 12px !important;
 }
-
-
+li.paginate_button.page-item {
+  padding: 5px !important;
+}
 

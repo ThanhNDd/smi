@@ -12,7 +12,7 @@ require_once("common.php");
   <link rel="stylesheet" href="<?php Common::getPath()?>plugins/fontawesome-free/css/all.min.css">
   <link rel="stylesheet" href="<?php Common::getPath()?>plugins/fontawesome-free/css/fontawesome.min.css" type="text/css">
   <!-- Ionicons -->
-  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+<!--  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">-->
   <!-- Tempusdominus Bbootstrap 4 -->
   <link rel="stylesheet" href="<?php Common::getPath()?>plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
   <!-- iCheck -->
@@ -28,7 +28,7 @@ require_once("common.php");
   <!-- summernote -->
   <link rel="stylesheet" href="<?php Common::getPath()?>plugins/summernote/summernote-bs4.css">
   <!-- Google Font: Source Sans Pro -->
-  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+<!--  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">-->
 
   <!-- DataTables -->
   <link rel="stylesheet" href="<?php Common::getPath()?>plugins/datatables/dataTables.bootstrap4.min.css" type="text/css" />
