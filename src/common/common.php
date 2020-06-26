@@ -53,6 +53,11 @@ class Common
         echo Common::path() . "dist/img/img_err.jpg";
     }
 
+    public static function no_avatar()
+    {
+      echo Common::path() . "dist/img/img_err.jpg";
+    }
+
     public static function path_img()
     {
         echo Common::path() . "dist/uploads/";
@@ -61,5 +66,12 @@ class Common
     {
         return '../../../dist/uploads/';
     }
-
+    public static function path_avatar()
+    {
+      echo Common::path() . "dist/avatars/";
+    }
+    public static function dir_upload_avatar()
+    {
+      return '../../../dist/avatars/';
+    }
 }

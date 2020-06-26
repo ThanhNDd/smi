@@ -16,8 +16,11 @@ function formatNumber(num) {
 }
 
 function replaceComma(value) {
-    value = value.trim();
-    return value.replace(/,/g, '');
+    if(value) {
+      value = value.trim();
+      return value.replace(/,/g, '');
+    }
+    return value;
 }
 
 function replacePercent(value) {
@@ -35,6 +38,16 @@ function validate_date(val) {
     return regDate.test(val);
 }
 
+  let regEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/;
+  function validate_email(val) {
+    return regEmail.test(val);
+  }
+
+  let regPhone = /^((09|03|07|08|05)+([0-9]{8})\b)$/;
+  function validate_phone(val) {
+    return regPhone.test(val);
+  }
+
 function get_current_date() {
     let today = new Date();
     let dd = String(today.getDate()).padStart(2, '0');
@@ -51,3 +64,19 @@ function custom_select2(el, data) {
         closeOnSelect: true,
     });
 }
+
+function format_money(value) {
+  if(value.indexOf('k') > -1 || value.indexOf('K') > -1) {
+      value = value.replace('k','000');
+      value = value.replace('K','000');
+      return value;
+  } else if(value.indexOf('m') > -1 || value.indexOf('M') > -1) {
+    value = value.replace('m','000000');
+    value = value.replace('M','000000');
+    return value;
+  } else {
+    return value;
+  }
+}
+
+

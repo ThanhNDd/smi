@@ -516,7 +516,7 @@ Common::authen();
         reset_data();
         $(".modal-title").text("Cập nhật đơn hàng #" + order_id);
         $("#create_new").text("Cập nhật");
-        enable_btn_add_new();
+        // enable_btn_add_new();
         $("#order_type").val(order_type).trigger("change");
         $.each(data, function (key, value) {
             console.log(order_type);
