@@ -8,7 +8,7 @@ Common::authen();
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Sản phẩm hết hàng</title>
-    <link rel="shortcut icon" type="image/x-icon" href="<<?php Common::getPath() ?>dist/img/icon.png"/>
+    <link rel="shortcut icon" type="image/x-icon" href="<?php Common::getPath() ?>dist/img/icon.png"/>
     <?php require_once('../../common/css.php'); ?>
     <?php require_once('../../common/js.php'); ?>
     <style>
@@ -516,7 +516,14 @@ Common::authen();
     }
 
     function format_image(data) {
-        return "<img src=" + data.image + " width='100px' id='thumbnail'>";
+        let image = data.image;
+        let json = JSON.parse(image);
+        let src = json[0].src;
+        let type = json[0].type;
+        if(type === "upload") {
+            src = '<?php Common::path_img() ?>' + src;
+        }
+        return "<a href='"+src+"' target='_blank'><img src='" + src + "' width='100px' id='thumbnail' onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"'></a>";
     }
 
     function format_variation(variations, isNew) {

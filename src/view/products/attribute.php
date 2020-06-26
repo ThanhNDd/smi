@@ -141,6 +141,70 @@
             text: '20'
         },
         {
+            id: '21',
+            text: '21'
+        },
+        {
+            id: '22',
+            text: '22'
+        },
+        {
+            id: '23',
+            text: '23'
+        },
+        {
+            id: '24',
+            text: '24'
+        },
+        {
+            id: '25',
+            text: '25'
+        },
+        {
+            id: '26',
+            text: '26'
+        },
+        {
+            id: '27',
+            text: '27'
+        },
+        {
+            id: '28',
+            text: '28'
+        },
+        {
+            id: '29',
+            text: '29'
+        },
+        {
+            id: '30',
+            text: '30'
+        },
+        {
+            id: '31',
+            text: '31'
+        },
+        {
+            id: '32',
+            text: '32'
+        },
+        {
+            id: '33',
+            text: '33'
+        },
+        {
+            id: '34',
+            text: '34'
+        },
+        {
+            id: '35',
+            text: '35'
+        },
+        {
+            id: '36',
+            text: '36'
+        },
+        {
             id: '1T',
             text: '1T'
         },
@@ -219,6 +283,34 @@
         {
             id: '20T',
             text: '20T'
+        },
+        {
+            id: 'S',
+            text: 'S'
+        },
+        {
+            id: 'M',
+            text: 'M'
+        },
+        {
+            id: 'L',
+            text: 'L'
+        },
+        {
+            id: 'X',
+            text: 'X'
+        },
+        {
+            id: 'XL',
+            text: 'XL'
+        },
+        {
+            id: 'XXL',
+            text: 'XXL'
+        },
+        {
+            id: 'XXXL',
+            text: 'XXXL'
         }
     ];
     let select_colors = [
