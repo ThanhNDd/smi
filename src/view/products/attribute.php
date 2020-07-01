@@ -1,47 +1,47 @@
 <script>
     let select_size = [
         {
-            id: '60',
+            id: '60 cm (3kg-6kg)',
             text: '60 cm (3kg-6kg)'
         },
         {
-            id: '73',
+            id: '73 cm (6kg-8kg)',
             text: '73 cm (6kg-8kg)'
         },
         {
-            id: '80',
+            id: '80 cm (8kg-10kg)',
             text: '80 cm (8kg-10kg)'
         },
         {
-            id: '90',
+            id: '90 cm (11kg-13kg)',
             text: '90 cm (11kg-13kg)'
         },
         {
-            id: '100',
+            id: '100 cm (14kg-16kg)',
             text: '100 cm (14kg-16kg)'
         },
         {
-            id: '110',
+            id: '110 cm (17kg-18kg)',
             text: '110 cm (17kg-18kg)'
         },
         {
-            id: '120',
+            id: '120 cm (19kg-20kg)',
             text: '120 cm (19kg-20kg)'
         },
         {
-            id: '130',
+            id: '130 cm (21kg-23kg)',
             text: '130 cm (21kg-23kg)'
         },
         {
-            id: '140',
+            id: '140 cm (24kg-27kg)',
             text: '140 cm (24kg-27kg)'
         },
         {
-            id: '150',
+            id: '150 cm (28kg-32kg)',
             text: '150 cm (28kg-32kg)'
         },
         {
-            id: '160',
+            id: '160 cm (33kg-40kg)',
             text: '160 cm (33kg-40kg)'
         },
         {
@@ -205,6 +205,22 @@
             text: '36'
         },
         {
+            id: '37',
+            text: '37'
+        },
+        {
+            id: '38',
+            text: '38'
+        },
+        {
+            id: '39',
+            text: '39'
+        },
+        {
+            id: '40',
+            text: '40'
+        },
+        {
             id: '1T',
             text: '1T'
         },
@@ -365,6 +381,10 @@
         {
             id: 'Kẻ',
             text: 'Kẻ'
+        },
+        {
+            id: 'Hạt dẻ',
+            text: 'Hạt dẻ'
         }
     ];
     let select_qty = [
@@ -442,10 +462,10 @@
             id: '1',
             text: 'Bé gái'
         },
-        {
-            id: '2',
-            text: 'Trai gái'
-        },
+        // {
+        //     id: '2',
+        //     text: 'Trai gái'
+        // },
         {
             id: '3',
             text: 'Sơ sinh'

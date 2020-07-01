@@ -91,8 +91,11 @@ Common::authen();
             /*display: inline-block;*/
         }
 
-        .card.card-outline.card-danger {
-            min-height: 690px;
+        /*.card.card-outline.card-danger {*/
+        /*    min-height: 690px;*/
+        /*}*/
+        span.twitter-typeahead {
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -421,6 +424,7 @@ Common::authen();
                     for (let i = 0; i < variations.length; i++) {
                         let id = variations[i].id;
                         let sku = variations[i].sku;
+                        // let image = variations[i].image;
                         let size = variations[i].size;
                         let color = variations[i].color;
                         let qty = variations[i].quantity;
@@ -430,6 +434,7 @@ Common::authen();
                     $(".create-new").text("Cập nhật");
                     $(".add-new-prod").prop("disabled", '');
                     $("#create_variation").prop("disabled", true);
+
                 },
                 error: function (data, errorThrown) {
                     console.log(data.responseText);
@@ -438,7 +443,7 @@ Common::authen();
                         type: 'error',
                         title: 'Đã xảy ra lỗi',
                         text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-                    });
+                    })
                     hide_loading();
                 }
             });

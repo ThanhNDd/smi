@@ -384,3 +384,23 @@ if (isset($_POST["method"]) && $_POST["method"] == "updated_qty") {
   }
   $db->commit();
 }
+
+if (isset($_POST["method"]) && $_POST["method"] == "load_size") {
+    try {
+        Common::authen_get_data();
+        $size = $dao->get_sizes();
+        echo json_encode($size);
+    } catch (Exception $e) {
+        throw new Exception($e);
+    }
+}
+
+if (isset($_POST["method"]) && $_POST["method"] == "load_color") {
+    try {
+        Common::authen_get_data();
+        $color = $dao->get_colors();
+        echo json_encode($color);
+    } catch (Exception $e) {
+        throw new Exception($e);
+    }
+}

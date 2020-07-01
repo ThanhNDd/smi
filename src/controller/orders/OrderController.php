@@ -226,6 +226,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
             $customer->setDistrictId($data->districtId);
             $customer->setVillageId($data->villageId);
             if ($data->customer_id > 0) {
+                $cusId = $data->customer_id;
                 $customer->setId($data->customer_id);
                 $customerDAO->update_customer($customer);
             } else {

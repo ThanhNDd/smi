@@ -277,23 +277,24 @@ class ProductDAO
                         A.retail,
                         A.profit,
                         A.short_description,
-                        case 
-                            when B.size = '3' then concat(B.size, 'm')
-                            when B.size = '6' then concat(B.size, 'm')
-                            when B.size = '9' then concat(B.size, 'm')
-                            when B.size = '60' then concat(B.size, ' cm (3kg-6kg)')
-                            when B.size = '73' then concat(B.size, ' cm (6kg-8kg)')
-                            when B.size = '80' then concat(B.size, ' cm (8kg-10kg)')
-                            when B.size = '90' then concat(B.size, ' cm (11kg-13kg)')
-                            when B.size = '100' then concat(B.size, ' cm (14kg-16kg)')
-                            when B.size = '110' then concat(B.size, ' cm (17kg-18kg)')
-                            when B.size = '120' then concat(B.size, ' cm (19kg-20kg)')
-                            when B.size = '130' then concat(B.size, ' cm (21kg-23kg)')
-                            when B.size = '140' then concat(B.size, ' cm (24kg-27kg)')
-                            when B.size = '150' then concat(B.size, ' cm (28kg-32kg)')
-                            when B.size = '160' then concat(B.size, ' cm (33kg-40kg)')
-                            else concat(B.size)
-                        end as size, 
+                        B.size,
+//                        case 
+//                            when B.size = '3' then concat(B.size, 'm')
+//                            when B.size = '6' then concat(B.size, 'm')
+//                            when B.size = '9' then concat(B.size, 'm')
+//                            when B.size = '60' then concat(B.size, ' cm (3kg-6kg)')
+//                            when B.size = '73' then concat(B.size, ' cm (6kg-8kg)')
+//                            when B.size = '80' then concat(B.size, ' cm (8kg-10kg)')
+//                            when B.size = '90' then concat(B.size, ' cm (11kg-13kg)')
+//                            when B.size = '100' then concat(B.size, ' cm (14kg-16kg)')
+//                            when B.size = '110' then concat(B.size, ' cm (17kg-18kg)')
+//                            when B.size = '120' then concat(B.size, ' cm (19kg-20kg)')
+//                            when B.size = '130' then concat(B.size, ' cm (21kg-23kg)')
+//                            when B.size = '140' then concat(B.size, ' cm (24kg-27kg)')
+//                            when B.size = '150' then concat(B.size, ' cm (28kg-32kg)')
+//                            when B.size = '160' then concat(B.size, ' cm (33kg-40kg)')
+//                            else concat(B.size)
+//                        end as size, 
                         B.color, 
                         B.quantity, 
                         B.sku, 
@@ -757,6 +758,41 @@ class ProductDAO
 //            throw new Exception("find_variation_by_sku >> " . $e);
 //        }
 //    }
+
+    function get_colors()
+    {
+        try {
+            $sql = "SELECT distinct color FROM smi_variations where color is not null and color <> ''";
+            $result = mysqli_query($this->conn, $sql);
+            $data = array();
+            if (!empty($result)) {
+                foreach ($result as $k => $row) {
+                    array_push($data, $row["color"]);
+                }
+            }
+            return $data;
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function get_sizes()
+    {
+        try {
+            $sql = "select distinct `size` from smi_variations where `size` is not null and `size` <> '' order by `size`";
+            $result = mysqli_query($this->conn, $sql);
+            $data = array();
+            if (!empty($result)) {
+                foreach ($result as $k => $row) {
+                    array_push($data, $row["size"]);
+                }
+            }
+            return $data;
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
     /**
      * Get the value of conn
      */

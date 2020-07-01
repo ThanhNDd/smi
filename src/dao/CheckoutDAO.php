@@ -757,6 +757,7 @@ class CheckoutDAO
             if(!empty($order->getOrder_date())) {
                 $date = $order->getOrder_date();
                 $date = str_replace('/', '-', $date);
+                $date .= date("H:i:s");
                 $order_date = date('Y-m-d H:i:s', strtotime($date));
             }
             $id = $order->getId();

@@ -49,6 +49,8 @@ require_once("common.php");
 <script src="<?php Common::getPath()?>plugins/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
 <script src="<?php Common::getPath()?>plugins/bootstrap-datepicker/bootstrap-datepicker.vi.min.js"></script>
 <script src="<?php Common::getPath()?>plugins/summernote/summernote-bs4.min.js"></script>
+<script src="<?php Common::getPath()?>plugins/typeahead/js/typeahead.bundle.js"></script>
+<script src="<?php Common::getPath()?>plugins/typeahead/js/bloodhound.min.js"></script>
 <script src="<?php Common::getPath()?>dist/js/common.js"></script>
 <script type="text/javascript">
 	

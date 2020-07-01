@@ -102,6 +102,7 @@ Common::authen();
 </div>
 <div class="iframeArea hidden"></div>
 <?php require_once ('../../common/footer.php'); ?>
+<?php require_once('attribute.php'); ?>
 <script>
     $(document).ready(function () {
         set_title("Danh sách sản phẩm hết hàng");
@@ -223,9 +224,9 @@ Common::authen();
             tdi.first().removeClass('fa-plus-square');
             tdi.first().addClass('fa-minus-square');
 
-            generate_select2(".select-qty-" + new_sku, qty, "");
-            generate_select2(".select-color-" + new_sku, colors, "");
-            generate_select2(".select-size-" + new_sku, size, "");
+            generate_select2(".select-qty-" + new_sku, select_qty, "");
+            generate_select2(".select-color-" + new_sku, select_colors, "");
+            generate_select2(".select-size-" + new_sku, select_size, "");
             //  }
         });
 
@@ -256,9 +257,9 @@ Common::authen();
             $(td[4]).html(input_qty);
             $(td[5]).html(btn_gr);
             $(tr).append(gr_input_hidden);
-            generate_select2(".select-qty-" + sku, qty, qty_text);
-            generate_select2(".select-color-" + sku, colors, color_text);
-            generate_select2(".select-size-" + sku, size, size_value);
+            generate_select2(".select-qty-" + sku, select_qty, qty_text);
+            generate_select2(".select-color-" + sku, select_colors, color_text);
+            generate_select2(".select-size-" + sku, select_size, size_value);
         });
 
         // Event click Save new variation
@@ -612,5 +613,6 @@ Common::authen();
         }
     }
 </script>
+
 </body>
 </html>
