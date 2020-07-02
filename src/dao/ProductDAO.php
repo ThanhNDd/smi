@@ -219,23 +219,53 @@ class ProductDAO
     function find_all($status)
     {
         try {
-            $sql = "select 
-                        A.id as product_id, 
-                        A.name , 
-                        A.image , 
-                        A.link , 
-                        A.retail,
-                        A.discount,
-                        A.profit,
-                        A.social_publish,
-                        A.material,
-                        A.origin,
-                        A.short_description
-                    from 
-                        smi_products A
+//            $sql = "select
+//                        A.id as product_id,
+//                        A.name ,
+//                        A.image ,
+//                        A.link ,
+//                        A.retail,
+//                        A.discount,
+//                        A.profit,
+//                        A.social_publish,
+//                        A.material,
+//                        A.origin,
+//                        A.short_description
+//                    from
+//                        smi_products A
+//                    where
+//                        A.status = $status
+//                    order by A.created_at desc, A.id";
+
+            $sql = "SELECT A.id as product_id, 
+                           A.name,
+                           A.image , 
+                           A.link , 
+                           CASE
+                               WHEN MAX(B.retail) = MIN(B.retail) THEN MIN(B.retail)
+                               ELSE CONCAT(MIN(B.retail), ' - ', MAX(B.retail))
+                           END AS retail,
+                            A.discount,
+                            A.profit,
+                            A.social_publish,
+                            A.material,
+                            A.origin,
+                            A.short_description
+                    FROM `smi_products` A
+                    LEFT JOIN smi_variations B ON A.id = B.product_id
                     where
                         A.status = $status
-                    order by A.created_at desc, A.id";
+                    GROUP BY A.id,
+                             A.name,
+                             A.image , 
+                             A.link , 
+                             A.discount,
+                              A.profit,
+                              A.social_publish,
+                              A.material,
+                              A.origin,
+                              A.short_description
+                    ORDER BY A.created_at DESC";
             $result = mysqli_query($this->conn, $sql);
 //            print_r($this->getConn()->error);
             $data = array();
@@ -245,7 +275,7 @@ class ProductDAO
                     'name' => $row["name"],
                     'image' => $row["image"],
                     'link' => $row["link"],
-                    'retail' => number_format($row["retail"]),
+                    'retail' => $row["retail"],
                     'discount' => $row["discount"],
                     'profit' => number_format($row["profit"]),
                     'social_publish' => $row["social_publish"],
@@ -263,105 +293,149 @@ class ProductDAO
         }
     }
 
-    function find_detail($productId)
-    {
-        try {
-            $sql = "select 
-                        A.id as product_id, 
-                        B.id as variant_id,  
-                        A.name , 
-                        A.image , 
-                        A.link , 
-                        A.price, 
-                        A.fee_transport,
-                        A.retail,
-                        A.profit,
-                        A.short_description,
-                        B.size,
-//                        case 
-//                            when B.size = '3' then concat(B.size, 'm')
-//                            when B.size = '6' then concat(B.size, 'm')
-//                            when B.size = '9' then concat(B.size, 'm')
-//                            when B.size = '60' then concat(B.size, ' cm (3kg-6kg)')
-//                            when B.size = '73' then concat(B.size, ' cm (6kg-8kg)')
-//                            when B.size = '80' then concat(B.size, ' cm (8kg-10kg)')
-//                            when B.size = '90' then concat(B.size, ' cm (11kg-13kg)')
-//                            when B.size = '100' then concat(B.size, ' cm (14kg-16kg)')
-//                            when B.size = '110' then concat(B.size, ' cm (17kg-18kg)')
-//                            when B.size = '120' then concat(B.size, ' cm (19kg-20kg)')
-//                            when B.size = '130' then concat(B.size, ' cm (21kg-23kg)')
-//                            when B.size = '140' then concat(B.size, ' cm (24kg-27kg)')
-//                            when B.size = '150' then concat(B.size, ' cm (28kg-32kg)')
-//                            when B.size = '160' then concat(B.size, ' cm (33kg-40kg)')
-//                            else concat(B.size)
-//                        end as size, 
-                        B.color, 
-                        B.quantity, 
-                        B.sku, 
-                        A.created_at,
-                        A.discount,
-                        B.image as 'variation_image',
-                        B.updated_qty
-                    from 
-                        smi_products A left join smi_variations B on A.id = B.product_id    
-                    where B.product_id = $productId 
-                    order by A.created_at desc, A.id, B.id, B.color, B.size";
-            $result = mysqli_query($this->conn, $sql);
-            $data = array();
-            $product_id = 0;
-            $i = 0;
-            foreach ($result as $k => $row) {
-                if ($product_id != $row["product_id"]) {
-                    $product = array(
-                        'product_id' => $row["product_id"],
-                        'name' => $row["name"],
-                        'image' => $row["image"],
-                        'link' => $row["link"],
-                        'price' => number_format($row["price"]),
-                        'fee_transport' => number_format($row["fee_transport"]),
-                        'retail' => number_format($row["retail"]),
-                        'profit' => number_format($row["profit"]),
-                        'discount' => $row["discount"],
-                        'short_description' => $row["short_description"],
-                        'created_at' => date_format(date_create($row["created_at"]), "d/m/Y"),
-                        'variations' => array()
-                    );
-                    $variation = array(
-                        'id' => $row["variant_id"],
-                        'size' => $row["size"],
-                        'color' => $row["color"],
-                        'quantity' => $row["quantity"],
-                        'sku' => $row["sku"],
-                        'product_id' => $row["product_id"],
-                        'image' => $row["variation_image"],
-                        'updated_qty' => $row["updated_qty"]
-                    );
-                    array_push($product['variations'], $variation);
-                    array_push($data, $product);
-                    $product_id = $row["product_id"];
-                    $i++;
-                } else {
-                    $variation = array(
-                        'id' => $row["variant_id"],
-                        'size' => $row["size"],
-                        'color' => $row["color"],
-                        'quantity' => $row["quantity"],
-                        'sku' => $row["sku"],
-                        'product_id' => $row["product_id"],
-                        'image' => $row["variation_image"],
-                      'updated_qty' => $row["updated_qty"]
-                    );
-                    array_push($data[$i - 1]['variations'], $variation);
-                }
-            }
-            $arr = array();
-            $arr["data"] = $data;
-            // print_r($arr);
-            return $arr;
-        } catch (Exception $e) {
-            echo "Open connection database is error exception >> " . $e->getMessage();
-        }
+  function find_detail($productId)
+  {
+    try {
+      $sql = "select 
+                    B.id, 
+                    B.product_id,
+                    B.image, 
+                    B.price, 
+                    FORMAT(B.retail, 0) as retail,
+                    B.profit,
+                    B.size,
+                    B.color, 
+                    B.quantity, 
+                    B.sku, 
+                    B.updated_qty
+                from smi_variations B 
+                where B.product_id = $productId 
+                order by B.id";
+      $result = mysqli_query($this->conn, $sql);
+      $data = array();
+      foreach ($result as $k => $row) {
+          $variation = array(
+            'id' => $row["id"],
+            'product_id' => $row["product_id"],
+            'image' => $row["image"],
+            'price' => $row["price"],
+            'retail' => $row["retail"],
+            'profit' => $row["profit"],
+            'size' => $row["size"],
+            'color' => $row["color"],
+            'quantity' => $row["quantity"],
+            'sku' => $row["sku"],
+            'updated_qty' => $row["updated_qty"]
+          );
+          array_push($data, $variation);
+      }
+      $arr = array();
+      $arr["data"] = $data;
+      return $arr;
+    } catch (Exception $e) {
+      echo "Open connection database is error exception >> " . $e->getMessage();
     }
+  }
+
+//    function find_detail($productId)
+//    {
+//        try {
+//            $sql = "select
+//                        A.id as product_id,
+//                        B.id as variant_id,
+//                        A.name ,
+//                        A.image ,
+//                        A.link ,
+//                        A.price,
+//                        A.fee_transport,
+//                        A.retail,
+//                        A.profit,
+//                        A.short_description,
+//                        B.size,
+////                        case
+////                            when B.size = '3' then concat(B.size, 'm')
+////                            when B.size = '6' then concat(B.size, 'm')
+////                            when B.size = '9' then concat(B.size, 'm')
+////                            when B.size = '60' then concat(B.size, ' cm (3kg-6kg)')
+////                            when B.size = '73' then concat(B.size, ' cm (6kg-8kg)')
+////                            when B.size = '80' then concat(B.size, ' cm (8kg-10kg)')
+////                            when B.size = '90' then concat(B.size, ' cm (11kg-13kg)')
+////                            when B.size = '100' then concat(B.size, ' cm (14kg-16kg)')
+////                            when B.size = '110' then concat(B.size, ' cm (17kg-18kg)')
+////                            when B.size = '120' then concat(B.size, ' cm (19kg-20kg)')
+////                            when B.size = '130' then concat(B.size, ' cm (21kg-23kg)')
+////                            when B.size = '140' then concat(B.size, ' cm (24kg-27kg)')
+////                            when B.size = '150' then concat(B.size, ' cm (28kg-32kg)')
+////                            when B.size = '160' then concat(B.size, ' cm (33kg-40kg)')
+////                            else concat(B.size)
+////                        end as size,
+//                        B.color,
+//                        B.quantity,
+//                        B.sku,
+//                        A.created_at,
+//                        A.discount,
+//                        B.image as 'variation_image',
+//                        B.updated_qty
+//                    from
+//                        smi_products A left join smi_variations B on A.id = B.product_id
+//                    where B.product_id = $productId
+//                    order by A.created_at desc, A.id, B.id, B.color, B.size";
+//            $result = mysqli_query($this->conn, $sql);
+//            $data = array();
+//            $product_id = 0;
+//            $i = 0;
+//            foreach ($result as $k => $row) {
+//                if ($product_id != $row["product_id"]) {
+//                    $product = array(
+//                        'product_id' => $row["product_id"],
+//                        'name' => $row["name"],
+//                        'image' => $row["image"],
+//                        'link' => $row["link"],
+//                        'price' => number_format($row["price"]),
+//                        'fee_transport' => number_format($row["fee_transport"]),
+//                        'retail' => number_format($row["retail"]),
+//                        'profit' => number_format($row["profit"]),
+//                        'discount' => $row["discount"],
+//                        'short_description' => $row["short_description"],
+//                        'created_at' => date_format(date_create($row["created_at"]), "d/m/Y"),
+//                        'variations' => array()
+//                    );
+//                    $variation = array(
+//                        'id' => $row["variant_id"],
+//                        'size' => $row["size"],
+//                        'color' => $row["color"],
+//                        'quantity' => $row["quantity"],
+//                        'sku' => $row["sku"],
+//                        'product_id' => $row["product_id"],
+//                        'image' => $row["variation_image"],
+//                        'updated_qty' => $row["updated_qty"]
+//                    );
+//                    array_push($product['variations'], $variation);
+//                    array_push($data, $product);
+//                    $product_id = $row["product_id"];
+//                    $i++;
+//                } else {
+//                    $variation = array(
+//                        'id' => $row["variant_id"],
+//                        'size' => $row["size"],
+//                        'color' => $row["color"],
+//                        'quantity' => $row["quantity"],
+//                        'sku' => $row["sku"],
+//                        'product_id' => $row["product_id"],
+//                        'image' => $row["variation_image"],
+//                      'updated_qty' => $row["updated_qty"]
+//                    );
+//                    array_push($data[$i - 1]['variations'], $variation);
+//                }
+//            }
+//            $arr = array();
+//            $arr["data"] = $data;
+//            // print_r($arr);
+//            return $arr;
+//        } catch (Exception $e) {
+//            echo "Open connection database is error exception >> " . $e->getMessage();
+//        }
+//    }
 
     function delete_product($product_id)
     {

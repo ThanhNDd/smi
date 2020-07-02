@@ -343,9 +343,10 @@ Common::authen();
                     success: function (res) {
                         console.log(res);
                         let data = res.data;
+                        console.log(JSON.stringify(data));
                         // let details = res[0].details;
                         if (data.length > 0) {
-                            row.child(format_variation(data[0].variations)).show();
+                            row.child(format_variation(data)).show();
                             tr.addClass('shown');
                             tdi.first().removeClass('fa-plus-square');
                             tdi.first().addClass('fa-minus-square');
@@ -1147,6 +1148,7 @@ Common::authen();
             '<th>Màu</th>' +
             '<th>Size</th>' +
             '<th>Số lượng</th>' +
+            '<th>Giá bán</th>' +
             '<th>Shopee</th>' +
             '<th>Lazada</th>' +
             '</tr>' +
@@ -1163,6 +1165,7 @@ Common::authen();
                 '<td>' + variations[i].color + '</td>' +
                 '<td>' + variations[i].size + '</td>' +
                 '<td id="qty">' + variations[i].quantity + '</td>' +
+                '<td id="qty">' + variations[i].retail + '</td>' +
                 '<td><div class="custom-control custom-switch">' +
                 '<input type="checkbox" class="custom-control-input upd-qty-shopee" id="shopee_'+variations[i].sku+'" '+shopee+' onchange="updatedQty(this, \'shopee\', '+variations[i].sku+')">' +
                 '<label class="custom-control-label" for="shopee_'+variations[i].sku+'"></label>' +
