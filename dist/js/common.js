@@ -65,18 +65,30 @@ function custom_select2(el, data) {
     });
 }
 
-function format_money(value) {
-  if(value.indexOf('k') > -1 || value.indexOf('K') > -1) {
-      value = value.replace('k','000');
-      value = value.replace('K','000');
-      return value;
-  } else if(value.indexOf('m') > -1 || value.indexOf('M') > -1) {
-    value = value.replace('m','000000');
-    value = value.replace('M','000000');
-    return value;
-  } else {
-    return value;
-  }
+// function format_money(value) {
+//   if(value.indexOf('k') > -1 || value.indexOf('K') > -1) {
+//       value = value.replace('k','000');
+//       value = value.replace('K','000');
+//       return value;
+//   } else if(value.indexOf('m') > -1 || value.indexOf('M') > -1) {
+//     value = value.replace('m','000000');
+//     value = value.replace('M','000000');
+//     return value;
+//   } else {
+//     return value;
+//   }
+// }
+function format_money(val) {
+    if(val.indexOf('k') > -1 || val.indexOf('K') > -1) {
+        val = val.replace('k','000');
+        val = val.replace('K','000');
+    } else if(val.indexOf('m') > -1 || val.indexOf('M') > -1) {
+        val = val.replace('m','000000');
+        val = val.replace('M','000000');
+    } else {
+        val = replaceComma(val);
+    }
+    return val;
 }
 
 

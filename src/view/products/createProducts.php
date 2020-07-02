@@ -30,16 +30,16 @@ Common::authen();
                                     </div>
                                     <div class="form-group col-md-3">
                                         <label for="name">Tên sản phẩm:</label>
-                                        <input type="text" class="form-control ml-2" id="name" placeholder="Nhập tên sản phẩm">
+                                        <input type="text" class="form-control ml-2" id="name" placeholder="Nhập tên sản phẩm" autocomplete="off">
                                     </div>
                                     <div class="form-group col-md-3">
                                         <label for="link">Link sản phẩm:</label>
-                                        <input type="text" class="form-control ml-2" id="link" placeholder="Nhập link sản phẩm">
+                                        <input type="text" class="form-control ml-2" id="link" placeholder="Nhập link sản phẩm" autocomplete="off">
                                     </div>
                                     <div class="form-group col-md-3">
                                         <label for="fee">Phí vận chuyển:</label>
                                         <div class="input-group mb-1">
-                                            <input type="text" class="form-control ml-2" id="fee" value="0" placeholder="Nhập phí vận chuyển">
+                                            <input type="text" class="form-control ml-2" id="fee" value="0" placeholder="Nhập phí vận chuyển" autocomplete="off">
                                             <div class="input-group-append">
                                                 <span class="input-group-text" style="border-radius: 0;">đ</span>
                                             </div>
@@ -49,12 +49,12 @@ Common::authen();
                                 <div class="row col-md-12">
                                     <div class="form-group col-md-3">
                                         <label for="qty">Số lượng:</label>
-                                        <input type="number" class="form-control ml-2" id="qty" min="1" placeholder="Nhập số lượng">
+                                        <input type="number" class="form-control ml-2" id="qty" min="1" placeholder="Nhập số lượng" autocomplete="off">
                                     </div>
                                     <div class="form-group col-md-3">
                                         <label for="price">Giá nhập:</label>
                                         <div class="input-group mb-1">
-                                            <input type="text" class="form-control ml-2" id="price" value="" placeholder="Nhập giá nhập sản phẩm">
+                                            <input type="text" class="form-control ml-2" id="price" value="" placeholder="Nhập giá nhập sản phẩm" autocomplete="off">
                                             <div class="input-group-append">
                                                 <span class="input-group-text" style="border-radius: 0;">đ</span>
                                             </div>
@@ -63,7 +63,7 @@ Common::authen();
                                     <div class="form-group col-md-3">
                                         <label for="retail">Giá bán lẻ:</label>
                                         <div class="input-group mb-1">
-                                            <input type="text" class="form-control ml-2 col-sm-10" id="retail" placeholder="Nhập giá bán lẻ">
+                                            <input type="text" class="form-control ml-2 col-sm-10" id="retail" placeholder="Nhập giá bán lẻ" autocomplete="off">
                                             <input type="text" class="form-control ml-2" id="percent" value="100">
                                             <div class="input-group-append">
                                                 <span class="input-group-text" style="border-radius: 0;">%</span>
@@ -72,7 +72,7 @@ Common::authen();
                                     </div>
                                     <div class="form-group col-md-3">
                                         <label for="profit">Profit:</label>
-                                        <input type="text" class="form-control ml-2" id="profit">
+                                        <input type="text" class="form-control ml-2" id="profit" autocomplete="off" placeholder="Profit" readonly>
                                     </div>
                                 </div>
                                 <div class="row col-md-12">
@@ -317,6 +317,7 @@ Common::authen();
                                     <table class="table table-list table-bordered table-striped">
                                         <thead>
                                         <tr>
+                                            <th class="hidden">id</th>
                                             <th width="150px">Hình ảnh</th>
                                             <th width="150px">Màu sắc</th>
                                             <th width="150px">Size</th>
@@ -382,7 +383,7 @@ Common::authen();
                 table.ajax.reload(init_select2, false);
             });
 
-            custom_select2('#select_size', select_size);
+            // custom_select2('#select_size', select_size);
             // custom_select2('#select_color', select_colors);
             custom_select2('#select_gender', select_types);
             custom_select2('#select_cat', select_cats);
@@ -393,23 +394,25 @@ Common::authen();
             //     create_variation();
             // });
 
-            $("#price").change(function () {
+            $("#price").on('keyup keypress blur change', function () {
                 onchange_price();
             });
 
-            $("#retail").change(function () {
+            $("#retail").on('keyup keypress blur change', function () {
                 onchange_retail();
             });
 
-            $("#percent").change(function () {
+            $("#percent").on('keyup keypress blur change', function () {
                 onchange_percent();
             });
 
-            $("#fee").change(function () {
+            $("#fee").on('keyup keypress blur change', function () {
                 onchange_fee();
+                calculate_profit_in_list();
             });
 
-            $("#qty").keyup(function () {
+            $("#qty").on('keyup keypress blur change', function () {
+                console.log('keyup');
                 let qty = $(this).val();
                 onchange_qty(qty);
             });
@@ -485,7 +488,6 @@ Common::authen();
                 $("[id=image_type_"+i+"]").val('');
                 $("[id=img_"+i+"]").prop("src",'');
             }
-            // $("#img_0").val('').addClass('hidden');
             $("#fee").val('');
             $("#select_gender").val(null).trigger('change');
             $("#select_cat").val(null).trigger('change');
@@ -501,18 +503,8 @@ Common::authen();
             $("#create_variation").prop('disabled', '');
             $(".add-new-prod").prop('disabled', true);
             $(".table-info-product > tbody > tr").find('input').removeClass('is-invalid');
-            // $(".table-list > tbody").html("<tr class=\"row_0\">\n" +
-            //     "                                                <td class='color_0'></td>\n" +
-            //     "                                                <td class='size_0'></td>\n" +
-            //     "                                                <td class='qty_0'></td>\n" +
-            //     "                                                <td class='price_0'></td>\n" +
-            //     "                                                <td class='sku_0'></td>\n" +
-            //     "                                                <td><i class='fa fa-trash'></i></td>\n" +
-            //     "                                            </tr>");
             $('#description').summernote('code', '');
             $('#short_description').val('');
-            // $("#select_colors").html("<input class=\"select_color_0 form-control\" type=\"text\" placeholder=\"Chọn màu sắc\">");
-            // $("#select_sizes").html("<input class=\"select_size_0 typeahead form-control\" type=\"text\" placeholder=\"Chọn size\">");
             $("#select_colors").html("");
             $("#select_sizes").html("");
         }
@@ -522,9 +514,6 @@ Common::authen();
             if (!validate_product()) {
                 return;
             }
-            // if (!validate_variations()) {
-            //     return;
-            // }
             Swal.fire({
                 title: 'Bạn có chắc chắn muốn tạo các sản phẩm này?',
                 text: "",
@@ -623,6 +612,7 @@ Common::authen();
             let arr = [];
             for(let c=1; c<=color; c++) {
                 for(let s=1; s<=size; s++) {
+                    let _id = $(".table-list tbody tr .id_"+s).text();
                     let _image = $(".table-list tbody tr td #img_variation_"+c).attr("src");
                     let _color = $(".table-list tbody tr .color_"+c).text();
                     let _size  = $(".table-list tbody tr .size_"+c+"_"+s).text();
@@ -631,17 +621,18 @@ Common::authen();
                     let _retail = $(".table-list tbody tr #retail_"+c+"_"+s).val();
                     let _percent = $(".table-list tbody tr #percent_"+c+"_"+s).val();
                     let _profit = $(".table-list tbody tr #profit_"+c+"_"+s).val();
-                    let _sku = $(".table-list tbody tr #sku_"+s).val();
+                    let _sku = $(".table-list tbody tr .sku_"+s).val();
 
                     let variations = {};
+                    variations['id'] = _id;
                     variations['image'] = _image;
                     variations['color'] = _color;
                     variations['size'] = _size;
                     variations['qty'] = _qty;
-                    variations['price'] = _price;
-                    variations['retail'] = _retail;
+                    variations['price'] = replaceComma(_price);
+                    variations['retail'] = replaceComma(_retail);
                     variations['percent'] = _percent;
-                    variations['profit'] = _profit;
+                    variations['profit'] = replaceComma(_profit);
                     variations['sku'] = _sku;
                     arr.push(variations);
                 }
@@ -754,85 +745,86 @@ Common::authen();
 
         function draw_table_variations() {
             let color = $("#select_colors").children(".twitter-typeahead").length;
-            console.log(color);
             let size = $("#select_sizes").children(".twitter-typeahead").length;
-            console.log(size);
-            let imageByColor = $("#image_by_color").children(".image-by-color").length;
-            console.log(imageByColor);
             let qty = $("#qty").val();
             let price = $("#price").val();
             let retail = $("#retail").val();
             let percent = $("#percent").val();
             let profit = $("#profit").val();
             let product_id = $("#display_product_id").val();
-            console.log(product_id);
-
-            // let arr = [];
-            // $(".table-list > tbody > tr").each(function () {
-            //     let no = $(this).attr('class');
-            //     let id = $("[id=variation_id_" + no + "]").val();
-            //     let sku = $("[id=sku_" + no + "]").val();
-            //     // let image = $("[id=link_image_" + no + "]").val();
-            //     // let image_type = $("[id=image_type_" + no + "]").val();
-            //     let size = $("[id=select_size_" + no + "]").val();
-            //     let color = $("[id=select_color_" + no + "]").val();
-            //     let qty = $("[id=qty_" + no + "]").val();
-            // });
-
 
             let width_img = 35;
             let d = 1;
             if(color > 0) {
                 let table = "";
-                let c = 0;
-                for (let i = 0; i < color; i++) {
-                    c++;
-                    let s = 1;
-                    for (let j = 0; j < size; j++) {
-                        let select_color = $(".select_color_"+c).val();
-                        let select_size = $(".select_size_"+s).val();
-                        let _img = $(".table-list tbody tr #img_variation_"+s).attr("src");
-                        _img = _img ? _img : $(".table-list tbody tr #link_image_by_color_"+c).val();
+                // let c = 1;
+                for (let c = 1; c <= color; c++) {
+                    // let s = 1;
+                    for (let s = 1; s <= size; s++) {
+                        let _id = $(".table-list tbody tr #id_"+c+"_"+s).text();
+                        if(typeof _id === 'undefined' || _id === '') {
+                            _id = '';
+                        }
+                        let _img = $(".table-list tbody tr #img_variation_"+c).attr("src");
+                        if(typeof _img === 'undefined' || _img === '') {
+                            _img = $("#link_image_by_color_"+c).val();
+                        }
                         let _color = $(".table-list tbody tr .color_"+c).text();
-                        // _color = _color && _color === 'Màu '+c ? (select_color !== '' ? select_color : 'Màu '+c) : _color;
                         if(typeof _color === 'undefined' || _color === '') {
                             _color = 'Màu '+c;
                         }
                         let _size = $(".table-list tbody tr .size_"+c+"_"+s).text();
-                        // _size = _size === 'Size '+s ? (select_size !== '' ? select_size : 'Size '+s) : _size;
                         if(typeof _size == 'undefined' || _size === '') {
-                            _size = "Size "+s;
+                            let size_select = $("#select_size_"+s).val();
+                            if(typeof size_select == 'undefined' || size_select === '') {
+                                _size = "Size " + s;
+                            } else {
+                                _size = size_select;
+                            }
                         }
                         let _qty = $(".table-list tbody tr #qty_"+c+"_"+s).val();
-                        _qty = _qty ? _qty : $("#qty").val();
+                        if(typeof _qty === 'undefined' || _qty === '') {
+                            _qty = $("#qty").val();
+                        }
                         let _price = $(".table-list tbody tr #price_"+c+"_"+s).val();
-                        _price = _price ? _price : $("#price").val();
+                        if(typeof _price === 'undefined' || _price === '') {
+                            _price = $("#price").val();
+                        }
                         let _retail = $(".table-list tbody tr #retail_"+c+"_"+s).val();
-                        _retail = _retail ? _retail : $("#retail").val();
+                        if(typeof _retail === 'undefined' || _retail === '') {
+                            _retail = $("#retail").val();
+                        }
                         let _percent = $(".table-list tbody tr #percent_"+c+"_"+s).val();
-                        _percent = _percent ? _percent : $("#percent").val();
+                        if(typeof _percent === 'undefined' || _percent === '') {
+                            _percent = $("#percent").val();
+                        }
                         let _profit = $(".table-list tbody tr #profit_"+c+"_"+s).val();
-                        _profit = _profit ? _profit : $("#profit").val();
+                        if(typeof _profit === 'undefined' || _profit === '') {
+                            _profit = $("#profit").val();
+                        }
 
                         let sku = product_id + (d < 10 ? "0" + d : d);
                         table += "<tr class=\"" + d + "\">\n";
-                        if(j === 0) {
+                        table += "<td class=\"hidden\" id='id_"+c+"_"+s+"'>"+_id+"</td>";
+                        if(s === 1) {
                             table += "<td class='image_"+c+"' rowspan='"+size+"'>"+
                                 "<img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width=\""+(width_img*size)+"\" src=\""+_img+"\" id=\"img_variation_"+c+"\" class=\"mr-1\" style=\"max-width: 120px;\">" +
                                 "</td>\n";
                             table += "<td class='color_"+c+"' rowspan='"+size+"'>"+_color+"</td>\n";
                         }
                         table += "<td class='size_"+c+"_"+s+"'>"+_size+"</td>\n" +
-                            "<td class='qty_"+c+"_"+s+"'><input type='number' class='form-control' value='"+_qty+"' id='qty_"+c+"_"+s+"'></td>\n" +
-                            "<td class='price_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_price+"' id='price_"+c+"_"+s+"'></td>\n" +
-                            "<td class='retail_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_retail+"' id='retail_"+c+"_"+s+"'></td>\n" +
-                            "<td class='percent_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_percent+"' id='percent_"+c+"_"+s+"'></td>\n" +
-                            "<td class='profit_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_profit+"' id='profit_"+c+"_"+s+"'></td>\n" +
+                            "<td class='qty_"+c+"_"+s+"'><input type='number' class='form-control' placeholder='Số lượng' value='"+_qty+"' id='qty_"+c+"_"+s+"'></td>\n" +
+                            "<td class='price_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá nhâp' value='"+_price+"' id='price_"+c+"_"+s+"' onchange='onchange_price_in_list("+c+", "+s+")' onkeyup='onchange_price_in_list("+c+", "+s+")'></td>\n" +
+                            "<td class='retail_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá bán' value='"+_retail+"' id='retail_"+c+"_"+s+"' onchange='onchange_retail_in_list("+c+", "+s+")' onkeyup='onchange_retail_in_list("+c+", "+s+")'></td>\n" +
+                            "<td class='percent_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='%' value='"+_percent+"' id='percent_"+c+"_"+s+"' onchange='onchange_percent_in_list("+c+", "+s+")' onkeyup='onchange_percent_in_list("+c+", "+s+")'></td>\n" +
+                            "<td class='profit_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Profit' value='"+_profit+"' id='profit_"+c+"_"+s+"' readonly></td>\n" +
                             "<td class='sku_"+s+"'>"+sku+"</td>\n" +
                             "</tr>";
-                        s++;
+                        $(".table-list tbody").append(table);
+                        // s++;
                         d++;
                     }
+                    // c++;
                 }
                 $(".table-list tbody").html(table);
             } else {
@@ -843,16 +835,15 @@ Common::authen();
                     "</td>\n" +
                     "<td class='color_"+d+"' colspan='"+size+"'>Màu "+d+"</td>\n" +
                     "<td class='size_1_"+d+"'>Size "+d+"</td>\n" +
-                    "<td class='qty_1_"+d+"'><input type='number' class='form-control' value='"+qty+"' id='qty_"+d+"'></td>\n" +
-                    "<td class='price_1_"+d+"'><input type='text' class='form-control' value='"+price+"' id='price_"+d+"'></td>\n" +
-                    "<td class='retail_1_"+d+"'><input type='text' class='form-control' value='"+retail+"' id='retail_"+d+"'></td>\n" +
-                    "<td class='percent_1_"+d+"'><input type='text' class='form-control' value='"+percent+"' id='percent_"+d+"'></td>\n" +
-                    "<td class='profit_1_"+d+"'><input type='text' class='form-control' value='"+profit+"' id='profit_"+d+"'></td>\n" +
+                    "<td class='qty_1_"+d+"'><input type='number' class='form-control' value='"+qty+"' id='qty_1_"+d+"'></td>\n" +
+                    "<td class='price_1_"+d+"'><input type='text' class='form-control' value='"+price+"' id='price_1_"+d+"'></td>\n" +
+                    "<td class='retail_1_"+d+"'><input type='text' class='form-control' value='"+retail+"' id='retail_1_"+d+"'></td>\n" +
+                    "<td class='percent_1_"+d+"'><input type='text' class='form-control' value='"+percent+"' id='percent_1_"+d+"'></td>\n" +
+                    "<td class='profit_1_"+d+"'><input type='text' class='form-control' value='"+profit+"' id='profit_1_"+d+"'></td>\n" +
                     "<td class='sku_"+d+"'>"+sku+"</td>\n" +
                     "<td><i class='fa fa-trash'></i></td>\n" +
                     "</tr>");
             }
-
         }
 
         function btn_upload(no, type) {
@@ -962,6 +953,7 @@ Common::authen();
                 $("[id=link_image_by_color_" + no + "]").bind("paste", function (e) {
                     let pastedData = e.originalEvent.clipboardData.getData('text');
                     $("[id=img_by_color_" + no + "]").prop('src', pastedData).removeClass('hidden');
+                    onchange_image_color(no, pastedData);
                 });
             } else {
                 $("[id=link_image_" + no + "]").bind("paste", function (e) {
@@ -1110,23 +1102,23 @@ Common::authen();
 
             let color = $("#select_colors").children(".twitter-typeahead").length;
             for(let i=1; i<=color; i++) {
-                let c = $(".select_color_"+i).typeahead('val');
+                let c = $("#select_color_"+i).val();
                 if(c === '') {
-                    $(".select_color_"+i).addClass("is-invalid");
+                    $("#select_color_"+i).addClass("is-invalid");
                     is_valid = false;
                 } else {
-                    $(".select_color_"+i).removeClass("is-invalid");
+                    $("#select_color_"+i).removeClass("is-invalid");
                 }
             }
 
             let size = $("#select_sizes").children(".twitter-typeahead").length;
             for(let i=1; i<=size; i++) {
-                let c = $(".select_size_"+i).typeahead('val');
+                let c = $("#select_size_"+i).val();
                 if(c === '') {
-                    $(".select_size_"+i).addClass("is-invalid");
+                    $("#select_size_"+i).addClass("is-invalid");
                     is_valid = false;
                 } else {
-                    $(".select_size_"+i).removeClass("is-invalid");
+                    $("#select_size_"+i).removeClass("is-invalid");
                 }
             }
 
@@ -1206,7 +1198,7 @@ Common::authen();
         let c = 1;
         function add_color() {
             // $("#btn_add_color").click(function () {
-            $("#select_colors").append("<input class=\"select_color_"+c+" form-control\" type=\"text\" placeholder=\"Chọn màu "+c+"\" autocomplete=\"off\" spellcheck=\"false\">");
+            $("#select_colors").append("<input id='select_color_"+c+"' class=\"select_color_"+c+" form-control\" type=\"text\" placeholder=\"Chọn màu "+c+"\" autocomplete=\"off\" spellcheck=\"false\">");
             $('.select_color_'+c).typeahead({
                     hint: true,
                     highlight: true,
@@ -1229,22 +1221,12 @@ Common::authen();
                 "<img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width=\"40\" src=\"\" id=\"img_by_color_"+c+"\" class=\"mr-1\">\n" +
                 "<input type=\"text\" class=\"form-control\" placeholder=\"Nhập link hình ảnh màu "+c+"\" onchange=\"onchange_image_link("+c+", 'byColor')\" id=\"link_image_by_color_"+c+"\" autocomplete=\"off\">\n" +
                 "<input type=\"hidden\" class=\"form-control\" id=\"image_type_by_color_"+c+"\">\n" +
-                "</div>")
+                "</div>");
+            onpaste_image_link(c, 'byColor');
         }
 
-        // function add_variation_by_color(c) {
-        //     $(".table-list tbody").append("<tr class=\"row_"+c+"\">\n" +
-        //         "                                                <td class='color_"+c+"'></td>\n" +
-        //         "                                                <td class='size_"+c+"'></td>\n" +
-        //         "                                                <td class='qty_"+c+"'></td>\n" +
-        //         "                                                <td class='price_"+c+"'></td>\n" +
-        //         "                                                <td class='sku_"+c+"'></td>\n" +
-        //         "                                                <td><i class='fa fa-trash'></i></td>\n" +
-        //         "                                            </tr>")
-        // }
-
         function onchange_select_color(c) {
-            $(".select_color_"+c).blur(function(){
+            $(".select_color_"+c).on('keyup keypress blur change', function(){
                 let value = $(this).val();
                 $("#link_image_by_color_"+c).attr("placeholder","Nhập link hình ảnh màu "+value);
                 onchange_color(c, value);
@@ -1253,7 +1235,7 @@ Common::authen();
 
         let s = 1;
         function add_size() {
-            $("#select_sizes").append("<input class=\"select_size_"+s+" form-control\" type=\"text\" placeholder=\"Chọn size "+s+"\" autocomplete=\"off\" spellcheck=\"false\">");
+            $("#select_sizes").append("<input id='select_size_"+s+"' class=\"select_size_"+s+" form-control\" type=\"text\" placeholder=\"Chọn size "+s+"\" autocomplete=\"off\" spellcheck=\"false\">");
             $('.select_size_'+s).typeahead({
                     hint: true,
                     highlight: true,
@@ -1269,7 +1251,7 @@ Common::authen();
         };
 
         function onchange_select_size(s) {
-            $(".select_size_"+s).blur(function(){
+            $(".select_size_"+s).on('keyup keypress blur change', function(){
                 let value = $(this).val();
                 onchange_size(s, value);
             });
@@ -1280,7 +1262,7 @@ Common::authen();
             // $("#btn_add_image").click(function(){
                 $("#image").append("<div class=\"input-group mb-1 image\" style=\"margin-top: 10px;\">\n" +
                     "<img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width=\"40\" src=\"\" id=\"img_"+image+"\" class=\"mr-1\">\n" +
-                    "<input type=\"text\" class=\"form-control\" placeholder=\"Nhập link hình ảnh "+image+"\" onchange=\"onchange_image_link("+image+")\" id=\"link_image_"+image+"\">\n" +
+                    "<input type=\"text\" class=\"form-control\" placeholder=\"Nhập link hình ảnh "+image+"\" onchange=\"onchange_image_link("+image+")\" id=\"link_image_"+image+"\" autocomplete=\"off\">\n" +
                     "<input type=\"hidden\" class=\"form-control\" id=\"image_type_"+image+"\">\n" +
                     "<div class=\"input-group-append\">\n" +
                     "<form id=\"form_0\" action=\"\" method=\"post\" enctype=\"multipart/form-data\">\n" +
@@ -1381,8 +1363,6 @@ Common::authen();
             });
         }
 
-
-
         function substringMatcher (strs) {
             return function findMatches(q, cb) {
                 let matches = [];
@@ -1428,28 +1408,23 @@ Common::authen();
         }
 
         function onchange_price() {
-            let val = $("#price").val();
-            val = format_money(val);
-            if (isNaN(val)) {
+            let price = $("#price").val();
+            price = format_money(price);
+            if (isNaN(price)) {
                 $("#price").addClass("is-invalid");
             } else {
-                $("#price").removeClass("is-invalid");
-                $("#price").val(formatNumber(val));
-
-                let price = Number(val);
+                $("#price").removeClass("is-invalid").val(formatNumber(price));
                 let percent = $("#percent").val();
-                percent = Number(percent);
                 let fee = $("#fee").val();
                 fee = replaceComma(fee);
-                fee = Number(fee);
-                let retail = Math.round((price+fee) * percent / 100) + price + fee;
-                $("#retail").val(formatNumber(retail));
+                let retail = Math.round((Number(price)+Number(fee)) * Number(percent) / 100) + Number(price) + Number(fee);
+                $("#retail").val(retail > 0 ? formatNumber(retail) : '');
                 calc_profit();
-                calculate_price();
+                calculate_all_price_in_list();
             }
         }
 
-        function calculate_price() {
+        function calculate_all_price_in_list() {
             let price = $("#price").val();
             let retail = $("#retail").val();
             let percent = $("#percent").val();
@@ -1469,13 +1444,10 @@ Common::authen();
         function onchange_retail() {
             let val = $("#retail").val();
             val = format_money(val);
-            if (isNaN(val) || val < 10) {
+            if (isNaN(val)) {
                 $("#retail").addClass("is-invalid");
             } else {
                 $("#retail").removeClass("is-invalid");
-                // if (val.indexOf(",") == -1) {
-                //     val = val + "000";
-                // }
                 $("#retail").val(formatNumber(val));
                 calc_percent();
                 calc_profit();
@@ -1484,7 +1456,7 @@ Common::authen();
 
         function onchange_percent() {
             let val = $("#percent").val();
-            if (isNaN(val) || val < 39) {
+            if (isNaN(val)) {
                 $("#percent").addClass("is-invalid");
                 $("#percent").focus();
             } else {
@@ -1509,9 +1481,8 @@ Common::authen();
             } else {
                 $("#fee").removeClass("is-invalid");
                 $("#fee").val(formatNumber(val));
-
-                let fee = Number(val);
-                $("#fee").val(formatNumber(fee));
+                // let fee = Number(val);
+                // $("#fee").val(formatNumber(fee));
                 calc_profit();
             }
         }
@@ -1553,21 +1524,127 @@ Common::authen();
             let fee = $("[id=fee]").val();
             fee = replaceComma(fee);
             let profit = Number(retail) - Number(price) - Number(fee);
-            $("[id=profit]").val(formatNumber(profit));
+            $("[id=profit]").val(profit > 0 ? formatNumber(profit) : '');
+
         }
 
-        function format_money(val) {
-            if(val.indexOf('k') > -1 || val.indexOf('K') > -1) {
-                val = val.replace('k','000');
-                val = val.replace('K','000');
-            } else if(val.indexOf('m') > -1 || val.indexOf('M') > -1) {
-                val = val.replace('m','000000');
-                val = val.replace('M','000000');
+
+        function onchange_price_in_list(c, s) {
+            let val = $(".table-list tbody tr td #price_"+c+"_"+s).val();
+            val = format_money(val);
+            if (isNaN(val)) {
+                $(".table-list tbody tr td #price_"+c+"_"+s).addClass("is-invalid");
             } else {
-                val = replaceComma(val);
+                $(".table-list tbody tr td #price_"+c+"_"+s).removeClass("is-invalid").val(val > 0 ? formatNumber(val) : '');
+                let price = Number(val);
+                let percent = $(".table-list tbody tr td #percent_"+c+"_"+s).val();
+                percent = Number(percent);
+                let fee = $("#fee").val();
+                fee = replaceComma(fee);
+                fee = Number(fee);
+                let retail = Math.round((price+fee) * percent / 100) + price + fee;
+                $(".table-list tbody tr td #retail_"+c+"_"+s).val(retail > 0 ? formatNumber(retail) : '');
+                calc_profit_in_list(c, s);
             }
-            return val;
         }
+
+        function onchange_retail_in_list(c, s) {
+            let val = $(".table-list tbody tr td #retail_"+c+"_"+s).val();
+            val = format_money(val);
+            if (isNaN(val)) {
+                $(".table-list tbody tr td #retail_"+c+"_"+s).addClass("is-invalid");
+            } else {
+                $(".table-list tbody tr td #retail_"+c+"_"+s).removeClass("is-invalid").val(formatNumber(val));
+                calc_percent(c, s);
+                calc_profit_in_list(c, s);
+            }
+        }
+
+        function onchange_percent_in_list(c, s) {
+            let val = $(".table-list tbody tr td #percent_"+c+"_"+s).val();
+            if (isNaN(val)) {
+                $(".table-list tbody tr td #percent_"+c+"_"+s).addClass("is-invalid").focus();
+            } else {
+                $(".table-list tbody tr td #percent_"+c+"_"+s).removeClass("is-invalid");
+
+                let price = $(".table-list tbody tr td #price_"+c+"_"+s).val();
+                price = replaceComma(price);
+                price = Number(price);
+                let fee = Number(replaceComma($("#fee").val()));
+                let retail = Math.round((price + fee) * val / 100) + price + fee;
+                $(".table-list tbody tr td #retail_"+c+"_"+s).val(formatNumber(retail));
+                calc_profit_in_list(c, s);
+            }
+        }
+
+        function calc_profit_in_list(c, s) {
+            let retail = $(".table-list tbody tr td #retail_"+c+"_"+s).val();
+            retail = replaceComma(retail);
+            let price = $(".table-list tbody tr td #price_"+c+"_"+s).val();
+            price = replaceComma(price);
+            let fee = $("#fee").val();
+            fee = replaceComma(fee);
+            let profit = Number(retail) - Number(price) - Number(fee);
+            $(".table-list tbody tr td #profit_"+c+"_"+s).val(formatNumber(profit));
+        }
+
+        function calculate_profit_in_list() {
+            let fee = $("#fee").val();
+            fee = replaceComma(fee);
+            let color = $("#select_colors").children(".twitter-typeahead").length;
+            let size = $("#select_sizes").children(".twitter-typeahead").length;
+            for(let c=1; c<=color; c++) {
+                for(let s=1; s<=size; s++) {
+                    let retail = $(".table-list tbody tr td #retail_"+c+"_"+s).val();
+                    retail = replaceComma(retail);
+                    let price = $(".table-list tbody tr td #price_"+c+"_"+s).val();
+                    price = replaceComma(price);
+                    let profit = Number(retail) - Number(price) - Number(fee);
+                    $(".table-list tbody tr td #profit_"+c+"_" + s).val(formatNumber(profit));
+                }
+            }
+        }
+
+        function calc_percent(c, s) {
+            let retail = $(".table-list tbody tr td #retail_"+c+"_"+s).val();
+            retail = replaceComma(retail);
+            let price = $(".table-list tbody tr td #price_"+c+"_"+s).val();
+            price = replaceComma(price);
+            let fee = $(".table-list tbody tr td #fee_"+c+"_"+s).val();
+            fee = replaceComma(fee);
+            if (isNaN(retail)) {
+                $(".table-list tbody tr td #retail_"+c+"_"+s).addClass("is-invalid").focus();
+            } else if (isNaN(price)) {
+                $(".table-list tbody tr td #price_"+c+"_"+s).addClass("is-invalid").focus();
+            } else if (isNaN(fee)) {
+                $(".table-list tbody tr td #fee_"+c+"_"+s).addClass("is-invalid").focus();
+            } else {
+                $(".table-list tbody tr td #retail_"+c+"_"+s).removeClass("is-invalid");
+                $(".table-list tbody tr td #price_"+c+"_"+s).removeClass("is-invalid");
+                $("#fee").removeClass("is-invalid");
+                retail = Number(retail);
+                price = Number(price);
+                fee = Number(fee);
+                let percent = (retail - price - fee) * 100 / (price + fee);
+                percent = Math.round(percent);
+                $(".table-list tbody tr td #percent_"+c+"_"+s).val(percent);
+            }
+        }
+
+
+
+        // function format_money(val) {
+        //     if(val.indexOf('k') > -1 || val.indexOf('K') > -1) {
+        //         val = val.replace('k','000');
+        //         val = val.replace('K','000');
+        //     } else if(val.indexOf('m') > -1 || val.indexOf('M') > -1) {
+        //         val = val.replace('m','000000');
+        //         val = val.replace('M','000000');
+        //     } else {
+        //         val = replaceComma(val);
+        //     }
+        //     return val;
+        // }
 
         function show_loading() {
             $("#create-product .overlay").removeClass("hidden");

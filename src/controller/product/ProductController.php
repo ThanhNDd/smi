@@ -213,11 +213,17 @@ if (isset($_POST["type"]) && $_POST["type"] == "save_variation") {
         }
 
         $variation = new Variations();
-        $variation->setProduct_id($product_id);
-        $variation->setSku($sku);
-        $variation->setQuantity($qty);
-        $variation->setColor($color);
+        $variation->setProductId($product_id);
         $variation->setSize($size);
+        $variation->setColor($color);
+        $variation->setQuantity($qty);
+        $variation->setPrice($price);
+        $variation->setRetail($retail);
+        $variation->setProfit($profit);
+        $variation->setPercent($percent);
+        $variation->setSku($sku);
+        $variation->setImage($image);
+
         $arr = array();
         array_push($arr, $variation);
         $dao->save_variations($arr);
@@ -307,11 +313,11 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $product->setId($data->product_id);
         $product->setName($data->name);
         $product->setLink($data->link);
-        $product->setPrice($data->price);
+        $product->setPrice(0);//unuse
         $product->setFee_transport($data->fee);
-        $product->setProfit($data->profit);
-        $product->setPercent($data->percent);
-        $product->setRetail($data->retail);
+        $product->setProfit(0);//unuse
+        $product->setPercent(0);//unuse
+        $product->setRetail(0);//unuse
         $product->setType($data->type);
         $product->setCategory_id($data->cat);
         $product->setImage($data->image);
@@ -331,11 +337,16 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $variations = $data->variations;
         for ($i = 0; $i < count($variations); $i++) {
             $variation = new Variations();
-            $variation->setProduct_id($prodId);
+            $variation->setProductId($prodId);
             $variation->setSize($variations[$i]->size);
             $variation->setColor($variations[$i]->color);
             $variation->setQuantity($variations[$i]->qty);
             $variation->setSku($variations[$i]->sku);
+            $variation->setPrice($variations[$i]->price);
+            $variation->setRetail($variations[$i]->retail);
+            $variation->setProfit($variations[$i]->profit);
+            $variation->setPercent($variations[$i]->percent);
+            $variation->setImage($variations[$i]->image);
             $variation_id = $variations[$i]->id;
             if(empty($variation_id)) {
                 $dao->save_variation($variation);

@@ -625,15 +625,20 @@ class ProductDAO
     function save_variation(Variations $variation)
     {
         try {
-            $product_id = $variation->getProduct_id();
+            $product_id = $variation->getProductId();
             $size = $variation->getSize();
             $color = $variation->getColor();
             $qty = $variation->getQuantity();
             $sku = $variation->getSku();
+            $price = $variation->getPrice();
+            $retail = $variation->getRetail();
+            $profit = $variation->getProfit();
+            $percent = $variation->getPercent();
+            $image = $variation->getImage();
             $updated_qty = '{"lazada": 0, "shopee": 0}';
 
-            $stmt = $this->getConn()->prepare("INSERT INTO smi_variations (`product_id`, `size`, `color`, `quantity`, `sku`, `updated_qty`,`created_at`) VALUES (?, ?, ?, ?, ?, ?, NOW())");
-            $stmt->bind_param("ississ", $product_id, $size, $color, $qty, $sku, $updated_qty);
+            $stmt = $this->getConn()->prepare("INSERT INTO smi_variations (`product_id`, `size`, `color`, `quantity`, `sku`, `price`, `retail`, `profit`, `percent`, `image`, `updated_qty`,`created_at`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+            $stmt->bind_param("issisddddss", $product_id, $size, $color, $qty, $sku, $price, $retail, $profit, $percent, $image, $updated_qty);
             if(!$stmt->execute()) {
                 throw new Exception($stmt->error);
             }

@@ -7,15 +7,19 @@ class Variations
     private $size;
     private $color;
     private $quantity;
+    private $price;
+    private $retail;
+    private $profit;
+    private $percent;
     private $sku;
     private $image;
     private $image_type;
+    private $updated_qty;
     private $created_at;
     private $updated_at;
 
-
     /**
-     * Get the value of id
+     * @return mixed
      */
     public function getId()
     {
@@ -23,39 +27,31 @@ class Variations
     }
 
     /**
-     * Set the value of id
-     *
-     * @return  self
+     * @param mixed $id
      */
-    public function setId($id)
+    public function setId($id): void
     {
         $this->id = $id;
-
-        return $this;
     }
 
     /**
-     * Get the value of product_id
+     * @return mixed
      */
-    public function getProduct_id()
+    public function getProductId()
     {
         return $this->product_id;
     }
 
     /**
-     * Set the value of product_id
-     *
-     * @return  self
+     * @param mixed $product_id
      */
-    public function setProduct_id($product_id)
+    public function setProductId($product_id): void
     {
         $this->product_id = $product_id;
-
-        return $this;
     }
 
     /**
-     * Get the value of size
+     * @return mixed
      */
     public function getSize()
     {
@@ -63,19 +59,15 @@ class Variations
     }
 
     /**
-     * Set the value of size
-     *
-     * @return  self
+     * @param mixed $size
      */
-    public function setSize($size)
+    public function setSize($size): void
     {
         $this->size = $size;
-
-        return $this;
     }
 
     /**
-     * Get the value of color
+     * @return mixed
      */
     public function getColor()
     {
@@ -83,19 +75,15 @@ class Variations
     }
 
     /**
-     * Set the value of color
-     *
-     * @return  self
+     * @param mixed $color
      */
-    public function setColor($color)
+    public function setColor($color): void
     {
         $this->color = $color;
-
-        return $this;
     }
 
     /**
-     * Get the value of quantity
+     * @return mixed
      */
     public function getQuantity()
     {
@@ -103,19 +91,79 @@ class Variations
     }
 
     /**
-     * Set the value of quantity
-     *
-     * @return  self
+     * @param mixed $quantity
      */
-    public function setQuantity($quantity)
+    public function setQuantity($quantity): void
     {
         $this->quantity = $quantity;
-
-        return $this;
     }
 
     /**
-     * Get the value of sku
+     * @return mixed
+     */
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
+    /**
+     * @param mixed $price
+     */
+    public function setPrice($price): void
+    {
+        $this->price = $price;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRetail()
+    {
+        return $this->retail;
+    }
+
+    /**
+     * @param mixed $retail
+     */
+    public function setRetail($retail): void
+    {
+        $this->retail = $retail;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getProfit()
+    {
+        return $this->profit;
+    }
+
+    /**
+     * @param mixed $profit
+     */
+    public function setProfit($profit): void
+    {
+        $this->profit = $profit;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPercent()
+    {
+        return $this->percent;
+    }
+
+    /**
+     * @param mixed $percent
+     */
+    public function setPercent($percent): void
+    {
+        $this->percent = $percent;
+    }
+
+    /**
+     * @return mixed
      */
     public function getSku()
     {
@@ -123,15 +171,11 @@ class Variations
     }
 
     /**
-     * Set the value of sku
-     *
-     * @return  self
+     * @param mixed $sku
      */
-    public function setSku($sku)
+    public function setSku($sku): void
     {
         $this->sku = $sku;
-
-        return $this;
     }
 
     /**
@@ -145,7 +189,7 @@ class Variations
     /**
      * @param mixed $image
      */
-    public function setImage($image)
+    public function setImage($image): void
     {
         $this->image = $image;
     }
@@ -167,42 +211,52 @@ class Variations
     }
 
     /**
-     * Get the value of created_at
+     * @return mixed
      */
-    public function getCreated_at()
+    public function getUpdatedQty()
+    {
+        return $this->updated_qty;
+    }
+
+    /**
+     * @param mixed $updated_qty
+     */
+    public function setUpdatedQty($updated_qty): void
+    {
+        $this->updated_qty = $updated_qty;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCreatedAt()
     {
         return $this->created_at;
     }
 
     /**
-     * Set the value of created_at
-     *
-     * @return  self
+     * @param mixed $created_at
      */
-    public function setCreated_at($created_at)
+    public function setCreatedAt($created_at): void
     {
         $this->created_at = $created_at;
-
-        return $this;
     }
 
     /**
-     * Get the value of updated_at
+     * @return mixed
      */
-    public function getUpdated_at()
+    public function getUpdatedAt()
     {
         return $this->updated_at;
     }
 
     /**
-     * Set the value of updated_at
-     *
-     * @return  self
+     * @param mixed $updated_at
      */
-    public function setUpdated_at($updated_at)
+    public function setUpdatedAt($updated_at): void
     {
         $this->updated_at = $updated_at;
-
-        return $this;
     }
+
+
 }
