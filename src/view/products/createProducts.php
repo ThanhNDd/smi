@@ -438,9 +438,11 @@ Common::authen();
             // load_size();
             $("#btn_add_color").click(function () {
                 add_color();
+                draw_table_variations();
             });
             $("#btn_add_size").click(function () {
                 add_size();
+                draw_table_variations();
             });
             $("#btn_add_image").click(function(){
                 add_image();
@@ -462,7 +464,7 @@ Common::authen();
                 success: function (response) {
                     console.log(response.max_id);
                     $("#display_product_id").val(response.max_id);
-                    // draw_table_variations();
+                    draw_table_variations();
                 },
                 error: function (data, errorThrown) {
                     console.log(data.responseText);
@@ -507,16 +509,19 @@ Common::authen();
             // $("#select_size").val(null).prop('disabled', '').trigger('change');
             // $("#select_color").val(null).prop('disabled', '').trigger('change');
 
-            for(let i=0; i<number_image_upload; i++) {
-                $("[id=link_image_"+i+"]").val('');
-                $("[id=image_type_"+i+"]").val('');
-                $("[id=img_"+i+"]").prop("src",'');
-            }
+            // for(let i=0; i<number_image_upload; i++) {
+            //     $("[id=link_image_"+i+"]").val('');
+            //     $("[id=image_type_"+i+"]").val('');
+            //     $("[id=img_"+i+"]").prop("src",'');
+            // }
 
             // $("#create_variation").prop('disabled', '');
 
+
+            $("#image").html("");
+            $("#image_by_color").html("");
             $(".add-new-prod").prop('disabled', true);
-            $(".table-info-product > tbody > tr").find('input').removeClass('is-invalid');
+            // $(".table-info-product > tbody > tr").find('input').removeClass('is-invalid');
             // $('#description').summernote('code', null);
             $('#short_description').val('');
             $("#select_colors").html("");
@@ -628,8 +633,8 @@ Common::authen();
             product['origin'] = origin;
             product['short_description'] = short_description;
 
-            let color = $("#select_colors").children(".twitter-typeahead").length;
-            let size = $("#select_sizes").children(".twitter-typeahead").length;
+            let color = get_color_length();
+            let size = get_size_length();
             // validate variation
             let arr = [];
             for(let c=1; c<=color; c++) {
@@ -765,16 +770,24 @@ Common::authen();
         //     }
         // }
 
+        function get_color_length() {
+            return $("#select_colors").find(".twitter-typeahead").length;
+        }
+
+        function get_size_length() {
+            return $("#select_sizes").find(".twitter-typeahead").length;
+        }
+
         function draw_table_variations() {
-            let color = $("#select_colors").children(".twitter-typeahead").length;
-            let size = $("#select_sizes").children(".twitter-typeahead").length;
+            let color = get_color_length();
+            let size = get_size_length();
             let qty = $("#qty").val();
             let price = $("#price").val();
             let retail = $("#retail").val();
             let percent = $("#percent").val();
             let profit = $("#profit").val();
             let product_id = $("#display_product_id").val();
-
+            // $(".table-list tbody").html("");
             let width_img = 35;
             let d = 1;
             if(color > 0) {
@@ -851,7 +864,7 @@ Common::authen();
                 $(".table-list tbody").html(table);
             } else {
                 let sku = product_id + (d < 10 ? "0" + d : d);
-                $(".table-list tbody").append("<tr class=\"" + d + "\">" +
+                $(".table-list tbody").html("<tr class=\"" + d + "\">" +
                     "<td class='image_"+c+"' rowspan='"+size+"'>"+
                     "<img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width=\""+width_img+"\" src=\"\" id=\"img_variation_"+c+"\" class=\"mr-1\" style=\"max-width: 120px;\">" +
                     "</td>\n" +
@@ -1192,7 +1205,7 @@ Common::authen();
                 $("#percent").removeClass("is-invalid").val(formatNumber(percent));
             }
 
-            let color = $("#select_colors").children(".twitter-typeahead").length;
+            let color = get_color_length();
             for(let i=1; i<=color; i++) {
                 let c = $("#select_color_"+i).val();
                 if(c === '') {
@@ -1203,7 +1216,7 @@ Common::authen();
                 }
             }
 
-            let size = $("#select_sizes").children(".twitter-typeahead").length;
+            let size = get_size_length();
             for(let i=1; i<=size; i++) {
                 let c = $("#select_size_"+i).val();
                 if(c === '') {
@@ -1280,7 +1293,6 @@ Common::authen();
             // add_color();
             // add_size();
             add_image();
-
             $('#create-product').modal({
                 backdrop: 'static',
                 keyboard: false,
@@ -1291,7 +1303,8 @@ Common::authen();
         let c = 1;
         function add_color(value) {
             // $("#btn_add_color").click(function () {
-            $("#select_colors").append("<input id='select_color_"+c+"' class=\"select_color_"+c+" form-control\" type=\"text\" placeholder=\"Chọn màu "+c+"\" autocomplete=\"off\" spellcheck=\"false\">");
+            $("#select_colors").append("<div id='w_select_color_"+c+"'><input id='select_color_"+c+"' class=\"select_color_"+c+" form-control\" type=\"text\" placeholder=\"Chọn màu "+c+"\" autocomplete=\"off\" spellcheck=\"false\">" +
+                "<button class='btn btn-secondary btn-flat' id='delete_color_"+c+"'><i class='fa fa-trash'></i></button></div>");
             $('.select_color_'+c).typeahead({
                 hint: true,
                 highlight: true,
@@ -1306,9 +1319,41 @@ Common::authen();
             }
             onchange_select_color(c);
             add_image_by_color(c);
-            draw_table_variations();
+            delete_color(c);
+            // draw_table_variations();
             c++;
             // });
+        }
+        function delete_color(color) {
+            $("#delete_color_"+color).on('click', function(){
+                Swal.fire({
+                    title: 'Bạn có chắc chắn muốn xoá size này?',
+                    text: "",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ok'
+                }).then((result) => {
+                    if (result.value) {
+                        let arr_color = [];
+                        let color_length = get_color_length();
+                        for(let i=1; i<=color_length; i++) {
+                            let color = $("#select_color_"+i).val();
+                            arr_color.push(color);
+                        }
+                        arr_color.splice(color-1,1);
+                        $(this).parent("#w_select_color_"+color).remove();
+                        $("#select_colors").html("");
+                        c = 1;
+                        for(let i=0; i<arr_color.length; i++) {
+                            add_color(arr_color[i]);
+                            $("#select_color_"+(i+1)).trigger('change');
+                        }
+                        draw_table_variations();
+                    }
+                });
+            });
         }
 
         function add_image_by_color(c, src) {
@@ -1333,7 +1378,8 @@ Common::authen();
 
         let s = 1;
         function add_size(value) {
-            $("#select_sizes").append("<input id='select_size_"+s+"' class=\"select_size_"+s+" form-control\" type=\"text\" placeholder=\"Chọn size "+s+"\" autocomplete=\"off\" spellcheck=\"false\">");
+            $("#select_sizes").append("<div id='w_select_size_"+s+"'><input id='select_size_"+s+"' class=\"select_size_"+s+" form-control\" type=\"text\" placeholder=\"Chọn size "+s+"\" autocomplete=\"off\" spellcheck=\"false\">" +
+                "<button class='btn btn-secondary btn-flat' id='delete_size_"+s+"'><i class='fa fa-trash'></i></button></div>");
             $('.select_size_'+s).typeahead({
                     hint: true,
                     highlight: true,
@@ -1347,9 +1393,43 @@ Common::authen();
                 $('.select_size_'+s).typeahead('val', value);
             }
             onchange_select_size(s);
-            draw_table_variations();
+            delete_size(s);
+            // draw_table_variations();
             s++;
         };
+
+        function delete_size(size) {
+            $("#delete_size_"+size).on('click', function(){
+                Swal.fire({
+                    title: 'Bạn có chắc chắn muốn xoá size này?',
+                    text: "",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ok'
+                }).then((result) => {
+                    if (result.value) {
+                        let arr_size = [];
+                        let size_length = get_size_length();
+                        for(let i=1; i<=size_length; i++) {
+                            let size = $("#select_size_"+i).val();
+                            arr_size.push(size);
+                        }
+                        arr_size.splice(size-1,1);
+                        $(this).parent("#w_select_size_"+size).remove();
+                        $("#select_sizes").html("");
+                        s = 1;
+                        for(let i=0; i<arr_size.length; i++) {
+                            add_size(arr_size[i]);
+                            $("#select_size_"+(i+1)).trigger('change');
+                        }
+                        draw_table_variations();
+                    }
+                });
+            });
+        }
+
 
         function onchange_select_size(s) {
             $(".select_size_"+s).on('keyup keypress blur change', function(){
@@ -1495,7 +1575,7 @@ Common::authen();
         }
 
         function onchange_size(no, value) {
-            let color = $("#select_colors").children(".twitter-typeahead").length;
+            let color = get_color_length();
             for(let i=1; i<=color; i++) {
                 $("[class=size_"+ i + "_" + no + "]").text(value);
             }
@@ -1508,10 +1588,8 @@ Common::authen();
         }
 
         function onchange_qty(qty) {
-            let color = $("#select_colors").children(".twitter-typeahead").length;
-            console.log(color);
-            let size = $("#select_sizes").children(".twitter-typeahead").length;
-            console.log(size);
+            let color = get_color_length();
+            let size = get_size_length();
             for(let i=1; i<=color; i++) {
                 for(let j=1; j<=size; j++) {
                     $(".table-list tbody tr td #qty_"+i+"_" + j).val(qty);
@@ -1541,8 +1619,8 @@ Common::authen();
             let retail = $("#retail").val();
             let percent = $("#percent").val();
             let profit = $("#profit").val();
-            let color = $("#select_colors").children(".twitter-typeahead").length;
-            let size = $("#select_sizes").children(".twitter-typeahead").length;
+            let color = get_color_length();
+            let size = get_size_length();
             for(let i=1; i<=color; i++) {
                 for(let j=1; j<=size; j++) {
                     $("[id=price_" + i +"_" + j + "]").val(price);
@@ -1667,7 +1745,7 @@ Common::authen();
                 $(".table-list tbody tr td #retail_"+c+"_"+s).addClass("is-invalid");
             } else {
                 $(".table-list tbody tr td #retail_"+c+"_"+s).removeClass("is-invalid").val(formatNumber(val));
-                calc_percent(c, s);
+                calc_percent_in_list(c, s);
                 calc_profit_in_list(c, s);
             }
         }
@@ -1703,8 +1781,8 @@ Common::authen();
         function calculate_profit_in_list() {
             let fee = $("#fee").val();
             fee = replaceComma(fee);
-            let color = $("#select_colors").children(".twitter-typeahead").length;
-            let size = $("#select_sizes").children(".twitter-typeahead").length;
+            let color = get_color_length();
+            let size = get_size_length();
             for(let c=1; c<=color; c++) {
                 for(let s=1; s<=size; s++) {
                     let retail = $(".table-list tbody tr td #retail_"+c+"_"+s).val();
@@ -1717,19 +1795,19 @@ Common::authen();
             }
         }
 
-        function calc_percent(c, s) {
+        function calc_percent_in_list(c, s) {
             let retail = $(".table-list tbody tr td #retail_"+c+"_"+s).val();
             retail = replaceComma(retail);
             let price = $(".table-list tbody tr td #price_"+c+"_"+s).val();
             price = replaceComma(price);
-            let fee = $(".table-list tbody tr td #fee_"+c+"_"+s).val();
+            let fee = $("#fee").val();
             fee = replaceComma(fee);
             if (isNaN(retail)) {
                 $(".table-list tbody tr td #retail_"+c+"_"+s).addClass("is-invalid").focus();
             } else if (isNaN(price)) {
                 $(".table-list tbody tr td #price_"+c+"_"+s).addClass("is-invalid").focus();
             } else if (isNaN(fee)) {
-                $(".table-list tbody tr td #fee_"+c+"_"+s).addClass("is-invalid").focus();
+                $("#fee").addClass("is-invalid").focus();
             } else {
                 $(".table-list tbody tr td #retail_"+c+"_"+s).removeClass("is-invalid");
                 $(".table-list tbody tr td #price_"+c+"_"+s).removeClass("is-invalid");

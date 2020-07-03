@@ -96,6 +96,7 @@ Common::authen();
         /*}*/
         span.twitter-typeahead {
             margin-top: 10px;
+            width: 86%;
         }
     </style>
 </head>
