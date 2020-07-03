@@ -483,27 +483,41 @@ Common::authen();
             $("#product_id").val(0);
             $("#name").val('');
             $("#link").val('');
+            $("#fee").val('');
+
+            $("#select_gender").val(null).trigger('change');
+            $("#select_cat").val(null).trigger('change');
+            $("#select_material").val(null).trigger('change');
+            $("#select_origin").val(null).trigger('change');
+            if($("#price")) {
+                $("#price").val('');
+            }
+            if($("#retail")){
+                $("#retail").val('');
+            }
+            if($("#percent")) {
+                $("#percent").val(100);
+            }
+            if($("#profit")) {
+                $("#profit").val('');
+            }
+            if($("#qty")) {
+                $("#qty").val('');
+            }
+            // $("#select_size").val(null).prop('disabled', '').trigger('change');
+            // $("#select_color").val(null).prop('disabled', '').trigger('change');
+
             for(let i=0; i<number_image_upload; i++) {
                 $("[id=link_image_"+i+"]").val('');
                 $("[id=image_type_"+i+"]").val('');
                 $("[id=img_"+i+"]").prop("src",'');
             }
-            $("#fee").val('');
-            $("#select_gender").val(null).trigger('change');
-            $("#select_cat").val(null).trigger('change');
-            $("#select_material").val(null).trigger('change');
-            $("#select_origin").val(null).trigger('change');
-            $("#price").val('');
-            $("#retail").val('');
-            $("#percent").val(100);
-            $("#profit").val('');
-            $("#select_size").val(null).prop('disabled', '').trigger('change');
-            $("#select_color").val(null).prop('disabled', '').trigger('change');
-            $("#qty").val('').prop('disabled', '');
-            $("#create_variation").prop('disabled', '');
+
+            // $("#create_variation").prop('disabled', '');
+
             $(".add-new-prod").prop('disabled', true);
             $(".table-info-product > tbody > tr").find('input').removeClass('is-invalid');
-            $('#description').summernote('code', '');
+            // $('#description').summernote('code', null);
             $('#short_description').val('');
             $("#select_colors").html("");
             $("#select_sizes").html("");
@@ -526,6 +540,7 @@ Common::authen();
                 if (result.value) {
                     show_loading();
                     let product = get_data_inform();
+                    console.log(product);
                     $.ajax({
                         dataType: 'json',
                         url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
@@ -559,7 +574,6 @@ Common::authen();
                             hide_loading();
                         }
                     });
-
                 }
             });
         }
@@ -569,6 +583,10 @@ Common::authen();
             let name = $("#name").val();
             let link = $("#link").val();
             let fee = $("#fee").val();
+            // let price = $("#price").val();
+            // let retail = $("#retail").val();
+            // let profit = $("#profit").val();
+            // let percent = $("#percent").val();
             let gender = $("#select_gender").val();
             let cat = $("#select_cat").val();
             let material = $("#select_material").val();
@@ -599,6 +617,10 @@ Common::authen();
             product['link'] = link;
             product['image'] = link_image;
             product['fee'] = replaceComma(fee);
+            // product['price'] = replaceComma(price);
+            // product['retail'] = replaceComma(retail);
+            // product['profit'] = replaceComma(profit);
+            // product['percent'] = percent;
             product['type'] = gender;
             product['cat'] = cat;
             product['description'] = description;
@@ -612,7 +634,7 @@ Common::authen();
             let arr = [];
             for(let c=1; c<=color; c++) {
                 for(let s=1; s<=size; s++) {
-                    let _id = $(".table-list tbody tr .id_"+s).text();
+                    let _id = $(".table-list tbody tr #id_"+c+"_"+s).text();
                     let _image = $(".table-list tbody tr td #img_variation_"+c).attr("src");
                     let _color = $(".table-list tbody tr .color_"+c).text();
                     let _size  = $(".table-list tbody tr .size_"+c+"_"+s).text();
@@ -621,7 +643,7 @@ Common::authen();
                     let _retail = $(".table-list tbody tr #retail_"+c+"_"+s).val();
                     let _percent = $(".table-list tbody tr #percent_"+c+"_"+s).val();
                     let _profit = $(".table-list tbody tr #profit_"+c+"_"+s).val();
-                    let _sku = $(".table-list tbody tr .sku_"+s).val();
+                    let _sku = $(".table-list tbody tr .sku_"+c+"_"+s).text();
 
                     let variations = {};
                     variations['id'] = _id;
@@ -818,7 +840,7 @@ Common::authen();
                             "<td class='retail_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá bán' value='"+_retail+"' id='retail_"+c+"_"+s+"' onchange='onchange_retail_in_list("+c+", "+s+")' onkeyup='onchange_retail_in_list("+c+", "+s+")'></td>\n" +
                             "<td class='percent_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='%' value='"+_percent+"' id='percent_"+c+"_"+s+"' onchange='onchange_percent_in_list("+c+", "+s+")' onkeyup='onchange_percent_in_list("+c+", "+s+")'></td>\n" +
                             "<td class='profit_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Profit' value='"+_profit+"' id='profit_"+c+"_"+s+"' readonly></td>\n" +
-                            "<td class='sku_"+s+"'>"+sku+"</td>\n" +
+                            "<td class='sku_"+c+"_"+s+"'>"+sku+"</td>\n" +
                             "</tr>";
                         $(".table-list tbody").append(table);
                         // s++;
@@ -840,7 +862,77 @@ Common::authen();
                     "<td class='retail_1_"+d+"'><input type='text' class='form-control' value='"+retail+"' id='retail_1_"+d+"'></td>\n" +
                     "<td class='percent_1_"+d+"'><input type='text' class='form-control' value='"+percent+"' id='percent_1_"+d+"'></td>\n" +
                     "<td class='profit_1_"+d+"'><input type='text' class='form-control' value='"+profit+"' id='profit_1_"+d+"'></td>\n" +
-                    "<td class='sku_"+d+"'>"+sku+"</td>\n" +
+                    "<td class='sku_1_"+d+"'>"+sku+"</td>\n" +
+                    "<td><i class='fa fa-trash'></i></td>\n" +
+                    "</tr>");
+            }
+        }
+
+
+        function draw_table_variations_by_edit_product(color, size, variations) {
+            let qty = $("#qty").val();
+            let price = $("#price").val();
+            let retail = $("#retail").val();
+            let percent = $("#percent").val();
+            let profit = $("#profit").val();
+            let product_id = $("#display_product_id").val();
+
+            let width_img = 35;
+            let d = 1;
+            if(color > 0) {
+                let table = "";
+                let i = 0;
+                for (let c = 1; c <= color; c++) {
+                    // let s = 1;
+                    for (let s = 1; s <= size; s++) {
+                        let _id = variations[i].id;
+                        let _img = variations[i].image;
+                        let _color = variations[i].color;
+                        let _size = variations[i].size;
+                        let _qty = variations[i].quantity;
+                        let _price = variations[i].price;
+                        let _retail = variations[i].retail;
+                        let _percent = variations[i].percent;
+                        let _profit = variations[i].profit;
+                        let sku = variations[i].sku;
+                        table += "<tr class=\"" + d + "\">\n";
+                        table += "<td class=\"hidden\" id='id_"+c+"_"+s+"'>"+_id+"</td>";
+                        if(s === 1) {
+                            table += "<td class='image_"+c+"' rowspan='"+size+"'>"+
+                                "<img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width=\""+(width_img*size)+"\" src=\""+_img+"\" id=\"img_variation_"+c+"\" class=\"mr-1\" style=\"max-width: 120px;\">" +
+                                "</td>\n";
+                            table += "<td class='color_"+c+"' rowspan='"+size+"'>"+_color+"</td>\n";
+                        }
+                        table += "<td class='size_"+c+"_"+s+"'>"+_size+"</td>\n" +
+                            "<td class='qty_"+c+"_"+s+"'><input type='number' class='form-control' placeholder='Số lượng' value='"+_qty+"' id='qty_"+c+"_"+s+"'></td>\n" +
+                            "<td class='price_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá nhâp' value='"+_price+"' id='price_"+c+"_"+s+"' onchange='onchange_price_in_list("+c+", "+s+")' onkeyup='onchange_price_in_list("+c+", "+s+")'></td>\n" +
+                            "<td class='retail_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá bán' value='"+_retail+"' id='retail_"+c+"_"+s+"' onchange='onchange_retail_in_list("+c+", "+s+")' onkeyup='onchange_retail_in_list("+c+", "+s+")'></td>\n" +
+                            "<td class='percent_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='%' value='"+_percent+"' id='percent_"+c+"_"+s+"' onchange='onchange_percent_in_list("+c+", "+s+")' onkeyup='onchange_percent_in_list("+c+", "+s+")'></td>\n" +
+                            "<td class='profit_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Profit' value='"+_profit+"' id='profit_"+c+"_"+s+"' readonly></td>\n" +
+                            "<td class='sku_"+c+"_"+s+"'>"+sku+"</td>\n" +
+                            "</tr>";
+                        $(".table-list tbody").append(table);
+                        // s++;
+                        d++;
+                        i++;
+                    }
+                    // c++;
+                }
+                $(".table-list tbody").html(table);
+            } else {
+                let sku = product_id + (d < 10 ? "0" + d : d);
+                $(".table-list tbody").append("<tr class=\"" + d + "\">" +
+                    "<td class='image_"+c+"' rowspan='"+size+"'>"+
+                    "<img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width=\""+width_img+"\" src=\"\" id=\"img_variation_"+c+"\" class=\"mr-1\" style=\"max-width: 120px;\">" +
+                    "</td>\n" +
+                    "<td class='color_"+d+"' colspan='"+size+"'>Màu "+d+"</td>\n" +
+                    "<td class='size_1_"+d+"'>Size "+d+"</td>\n" +
+                    "<td class='qty_1_"+d+"'><input type='number' class='form-control' value='"+qty+"' id='qty_1_"+d+"'></td>\n" +
+                    "<td class='price_1_"+d+"'><input type='text' class='form-control' value='"+price+"' id='price_1_"+d+"'></td>\n" +
+                    "<td class='retail_1_"+d+"'><input type='text' class='form-control' value='"+retail+"' id='retail_1_"+d+"'></td>\n" +
+                    "<td class='percent_1_"+d+"'><input type='text' class='form-control' value='"+percent+"' id='percent_1_"+d+"'></td>\n" +
+                    "<td class='profit_1_"+d+"'><input type='text' class='form-control' value='"+profit+"' id='profit_1_"+d+"'></td>\n" +
+                    "<td class='sku_1_"+d+"'>"+sku+"</td>\n" +
                     "<td><i class='fa fa-trash'></i></td>\n" +
                     "</tr>");
             }
@@ -1195,20 +1287,23 @@ Common::authen();
                 show: true
             });
         }
+
         let c = 1;
-        function add_color() {
+        function add_color(value) {
             // $("#btn_add_color").click(function () {
             $("#select_colors").append("<input id='select_color_"+c+"' class=\"select_color_"+c+" form-control\" type=\"text\" placeholder=\"Chọn màu "+c+"\" autocomplete=\"off\" spellcheck=\"false\">");
             $('.select_color_'+c).typeahead({
-                    hint: true,
-                    highlight: true,
-                    minLength: 1
-                },
-                {
-                    name: 'color',
-                    source: substringMatcher(colors)
-                });
-
+                hint: true,
+                highlight: true,
+                minLength: 1
+            },
+            {
+                name: 'color',
+                source: substringMatcher(colors)
+            });
+            if(value) {
+                $('.select_color_'+c).typeahead('val', value);
+            }
             onchange_select_color(c);
             add_image_by_color(c);
             draw_table_variations();
@@ -1216,10 +1311,13 @@ Common::authen();
             // });
         }
 
-        function add_image_by_color(c) {
+        function add_image_by_color(c, src) {
+            if(!src) {
+                src = '';
+            }
             $("#image_by_color").append("<div class=\"input-group mb-1 image-by-color\" style=\"margin-top: 10px;\">\n" +
-                "<img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width=\"40\" src=\"\" id=\"img_by_color_"+c+"\" class=\"mr-1\">\n" +
-                "<input type=\"text\" class=\"form-control\" placeholder=\"Nhập link hình ảnh màu "+c+"\" onchange=\"onchange_image_link("+c+", 'byColor')\" id=\"link_image_by_color_"+c+"\" autocomplete=\"off\">\n" +
+                "<img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width=\"40\" src=\""+src+"\" id=\"img_by_color_"+c+"\" class=\"mr-1\">\n" +
+                "<input type=\"text\" class=\"form-control\" placeholder=\"Nhập link hình ảnh màu "+c+"\" value=\""+src+"\" onchange=\"onchange_image_link("+c+", 'byColor')\" id=\"link_image_by_color_"+c+"\" autocomplete=\"off\">\n" +
                 "<input type=\"hidden\" class=\"form-control\" id=\"image_type_by_color_"+c+"\">\n" +
                 "</div>");
             onpaste_image_link(c, 'byColor');
@@ -1234,7 +1332,7 @@ Common::authen();
         }
 
         let s = 1;
-        function add_size() {
+        function add_size(value) {
             $("#select_sizes").append("<input id='select_size_"+s+"' class=\"select_size_"+s+" form-control\" type=\"text\" placeholder=\"Chọn size "+s+"\" autocomplete=\"off\" spellcheck=\"false\">");
             $('.select_size_'+s).typeahead({
                     hint: true,
@@ -1245,7 +1343,10 @@ Common::authen();
                     name: 'size',
                     source: substringMatcher(size)
                 });
-            onchange_select_size(s)
+            if(value) {
+                $('.select_size_'+s).typeahead('val', value);
+            }
+            onchange_select_size(s);
             draw_table_variations();
             s++;
         };
@@ -1257,27 +1358,31 @@ Common::authen();
             });
         }
 
-        let image = 1;
-        function add_image() {
-            // $("#btn_add_image").click(function(){
-                $("#image").append("<div class=\"input-group mb-1 image\" style=\"margin-top: 10px;\">\n" +
-                    "<img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width=\"40\" src=\"\" id=\"img_"+image+"\" class=\"mr-1\">\n" +
-                    "<input type=\"text\" class=\"form-control\" placeholder=\"Nhập link hình ảnh "+image+"\" onchange=\"onchange_image_link("+image+")\" id=\"link_image_"+image+"\" autocomplete=\"off\">\n" +
-                    "<input type=\"hidden\" class=\"form-control\" id=\"image_type_"+image+"\">\n" +
-                    "<div class=\"input-group-append\">\n" +
-                    "<form id=\"form_0\" action=\"\" method=\"post\" enctype=\"multipart/form-data\">\n" +
-                    "<input id=\"image_"+image+"\" type=\"file\" accept=\"image/*\" name=\"image\" class=\"hidden\"/>\n" +
-                    "<button type=\"button\" class=\"btn btn-info btn-flat\" id=\"btn_upload_"+image+"\">\n" +
-                    "<span class=\"spinner-border spinner-border-sm hidden\" id=\"spinner_"+image+"\"></span>\n" +
-                    "<i class=\"fa fa-upload\"></i>\n" +
-                    "</button>\n" +
-                    "</form>\n" +
-                    "</div>\n" +
-                    "</div>");
-                btn_upload(image);
-                onpaste_image_link(image);
-                image++;
-            // });
+        let idx_image = 1;
+        function add_image(src, type) {
+            if(!src) {
+                src = '';
+            }
+            if(!type) {
+                type = '';
+            }
+            $("#image").append("<div class=\"input-group mb-1 image\" style=\"margin-top: 10px;\">\n" +
+                "<img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width=\"40\" src=\""+src+"\" id=\"img_"+idx_image+"\" class=\"mr-1\">\n" +
+                "<input type=\"text\" class=\"form-control\" placeholder=\"Nhập link hình ảnh "+idx_image+"\" value=\""+src+"\" onchange=\"onchange_image_link("+idx_image+")\" id=\"link_image_"+idx_image+"\" autocomplete=\"off\">\n" +
+                "<input type=\"hidden\" class=\"form-control\" id=\"image_type_"+idx_image+"\" value=\""+type+"\">\n" +
+                "<div class=\"input-group-append\">\n" +
+                "<form id=\"form_0\" action=\"\" method=\"post\" enctype=\"multipart/form-data\">\n" +
+                "<input id=\"image_"+idx_image+"\" type=\"file\" accept=\"image/*\" name=\"image\" class=\"hidden\"/>\n" +
+                "<button type=\"button\" class=\"btn btn-info btn-flat\" id=\"btn_upload_"+idx_image+"\">\n" +
+                "<span class=\"spinner-border spinner-border-sm hidden\" id=\"spinner_"+idx_image+"\"></span>\n" +
+                "<i class=\"fa fa-upload\"></i>\n" +
+                "</button>\n" +
+                "</form>\n" +
+                "</div>\n" +
+                "</div>");
+            btn_upload(idx_image);
+            onpaste_image_link(idx_image);
+            idx_image++;
         }
 
 
@@ -1314,7 +1419,11 @@ Common::authen();
                             name: 'size',
                             source: substringMatcher(response)
                         });
-                    add_size();
+                    let product_id = $("#product_id").val();
+                    if(product_id === '0') {
+                        // add new product
+                        add_size();
+                    }
                 },
                 error: function (data, errorThrown) {
                     console.log(data.responseText);
@@ -1348,7 +1457,10 @@ Common::authen();
                         name: 'size',
                         source: substringMatcher(response)
                     });
-                    add_color();
+                    let product_id = $("#product_id").val();
+                    if(product_id === '0') {
+                        add_color();
+                    }
                     onchange_select_color(0);
                 },
                 error: function (data, errorThrown) {

@@ -199,85 +199,90 @@ if (isset($_POST["type"]) && $_POST["type"] == "edit_product") {
     }
 }
 
-if (isset($_POST["type"]) && $_POST["type"] == "save_variation") {
-    try {
-        Common::authen_get_data();
-        $product_id = $_POST["product_id"];
-        $sku = $_POST["sku"];
-        $color = $_POST["color"];
-        $size = $_POST["size"];
-        $qty = $_POST["qty"];
-
-        if (empty($product_id) || $product_id == 0) {
-            throw new Exception("product_id is empty or equal zero");
-        }
-
-        $variation = new Variations();
-        $variation->setProductId($product_id);
-        $variation->setSize($size);
-        $variation->setColor($color);
-        $variation->setQuantity($qty);
-        $variation->setPrice($price);
-        $variation->setRetail($retail);
-        $variation->setProfit($profit);
-        $variation->setPercent($percent);
-        $variation->setSku($sku);
-        $variation->setImage($image);
-
-        $arr = array();
-        array_push($arr, $variation);
-        $dao->save_variations($arr);
-        $response_array['success'] = "successfully";
-        echo json_encode($response_array);
-    } catch (Exception $e) {
-        $db->rollback();
-        echo $e->getMessage();
-    }
-    $db->commit();
-}
-
-if (isset($_POST["type"]) && $_POST["type"] == "update_variation") {
-    try {
-        Common::authen_get_data();
-        $sku = $_POST["sku"];
-        $color = $_POST["color"];
-        $size = $_POST["size"];
-        $qty = $_POST["qty"];
-
-        if (empty($sku) || $sku == 0) {
-            throw new Exception("sku is empty or equal zero");
-        }
-        $variation = new Variations();
-        $variation->setSku($sku);
-        $variation->setColor($color);
-        $variation->setSize($size);
-        $variation->setQuantity($qty);
-        $dao->update_variation($variation);
-        $response_array['success'] = "successfully";
-        echo json_encode($response_array);
-    } catch (Exception $e) {
-        $db->rollback();
-        echo $e->getMessage();
-    }
-    $db->commit();
-}
-
-if (isset($_POST["type"]) && $_POST["type"] == "delete_variation") {
-    try {
-        Common::authen_get_data();
-        $variation_id = $_POST["data"];
-        if (empty($variation_id) || $variation_id == 0) {
-            throw new Exception("variation_id is empty or equal zero");
-        }
-        $dao->delete_variation($variation_id);
-        $response_array['success'] = "successfully";
-        echo json_encode($response_array);
-    } catch (Exception $e) {
-        $db->rollback();
-        echo $e->getMessage();
-    }
-    $db->commit();
-}
+//if (isset($_POST["type"]) && $_POST["type"] == "save_variation") {
+//    try {
+//        Common::authen_get_data();
+//        $product_id = $_POST["product_id"];
+//        $sku = $_POST["sku"];
+//        $color = $_POST["color"];
+//        $size = $_POST["size"];
+//        $qty = $_POST["qty"];
+//        $price = $_POST["price"];
+//        $retail = $_POST["retail"];
+//        $profit = $_POST["profit"];
+//        $percent = $_POST["percent"];
+//        $image = $_POST["image"];
+//
+//        if (empty($product_id) || $product_id == 0) {
+//            throw new Exception("product_id is empty or equal zero");
+//        }
+//
+//        $variation = new Variations();
+//        $variation->setProductId($product_id);
+//        $variation->setSize($size);
+//        $variation->setColor($color);
+//        $variation->setQuantity($qty);
+//        $variation->setPrice($price);
+//        $variation->setRetail($retail);
+//        $variation->setProfit($profit);
+//        $variation->setPercent($percent);
+//        $variation->setSku($sku);
+//        $variation->setImage($image);
+//
+//        $arr = array();
+//        array_push($arr, $variation);
+//        $dao->save_variations($arr);
+//        $response_array['success'] = "successfully";
+//        echo json_encode($response_array);
+//    } catch (Exception $e) {
+//        $db->rollback();
+//        echo $e->getMessage();
+//    }
+//    $db->commit();
+//}
+//
+//if (isset($_POST["type"]) && $_POST["type"] == "update_variation") {
+//    try {
+//        Common::authen_get_data();
+//        $sku = $_POST["sku"];
+//        $color = $_POST["color"];
+//        $size = $_POST["size"];
+//        $qty = $_POST["qty"];
+//
+//        if (empty($sku) || $sku == 0) {
+//            throw new Exception("sku is empty or equal zero");
+//        }
+//        $variation = new Variations();
+//        $variation->setSku($sku);
+//        $variation->setColor($color);
+//        $variation->setSize($size);
+//        $variation->setQuantity($qty);
+//        $dao->update_variation($variation);
+//        $response_array['success'] = "successfully";
+//        echo json_encode($response_array);
+//    } catch (Exception $e) {
+//        $db->rollback();
+//        echo $e->getMessage();
+//    }
+//    $db->commit();
+//}
+//
+//if (isset($_POST["type"]) && $_POST["type"] == "delete_variation") {
+//    try {
+//        Common::authen_get_data();
+//        $variation_id = $_POST["data"];
+//        if (empty($variation_id) || $variation_id == 0) {
+//            throw new Exception("variation_id is empty or equal zero");
+//        }
+//        $dao->delete_variation($variation_id);
+//        $response_array['success'] = "successfully";
+//        echo json_encode($response_array);
+//    } catch (Exception $e) {
+//        $db->rollback();
+//        echo $e->getMessage();
+//    }
+//    $db->commit();
+//}
 
 if (isset($_GET["method"]) && $_GET["method"] == "findall") {
     try {
@@ -313,11 +318,11 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $product->setId($data->product_id);
         $product->setName($data->name);
         $product->setLink($data->link);
-        $product->setPrice(0);//unuse
         $product->setFee_transport($data->fee);
-        $product->setProfit(0);//unuse
-        $product->setPercent(0);//unuse
-        $product->setRetail(0);//unuse
+        $product->setPrice(0);
+        $product->setProfit(0);
+        $product->setPercent(0);
+        $product->setRetail(0);
         $product->setType($data->type);
         $product->setCategory_id($data->cat);
         $product->setImage($data->image);
@@ -332,7 +337,12 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
                 throw new Exception("Insert product has Failed!!!!");
             }
         } else {
-          $dao->update_product($product);
+            $dao->update_product($product);
+        }
+        try {
+            $dao->delete_variation_by_product_id($prodId);
+        } catch (Exception $e) {
+            throw new Exception("Delete variation failed!!");
         }
         $variations = $data->variations;
         for ($i = 0; $i < count($variations); $i++) {
@@ -347,12 +357,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
             $variation->setProfit($variations[$i]->profit);
             $variation->setPercent($variations[$i]->percent);
             $variation->setImage($variations[$i]->image);
-            $variation_id = $variations[$i]->id;
-            if(empty($variation_id)) {
-                $dao->save_variation($variation);
-            } else {
-              $dao->update_variation($variation);
-            }
+            $dao->save_variation($variation);
         }
         $response_array['success'] = $prodId;
         echo json_encode($response_array);

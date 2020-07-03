@@ -371,7 +371,7 @@ Common::authen();
             let td = tr.find("td");
             let product_id = $(td[1]).text();
             // clear();
-            open_modal();
+            // open_modal();
             // add_new_product();
             $.ajax({
                 url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
@@ -382,59 +382,90 @@ Common::authen();
                     product_id: product_id
                 },
                 success: function (res) {
+                    open_modal();
                     console.log(res);
                     let arr = res.data;
                     console.log(arr[0].profit);
                     $("#display_product_id").val(arr[0].product_id);
                     $("#product_id").val(arr[0].product_id);
 
-                    let image = arr[0].image;
-                    let json = JSON.parse(image);
-                    for(let i=0; i<json.length; i++) {
-                        let src = json[i].src;
-                        let type = json[i].type;
-                        if(type === "upload") {
-                            src = '<?php echo Common::path_img() ?>' + src;
-                        }
-                        $("#link_image_"+i).val(src).trigger('change');
-                        $("#image_type_"+i).val(type);
-                        $("[id=img_"+i+"]").removeClass('hidden');
-                    }
                     $("#name").val(arr[0].name);
                     $("#link").val(arr[0].link);
-                    $("#price").val(arr[0].price);
                     $("#fee").val(arr[0].fee_transport);
-                    $("#percent").val(arr[0].percent);
-                    $("#retail").val(arr[0].retail);
-                    $("#profit").val(arr[0].profit);
-                    $("#select_type").val(arr[0].type).trigger("change");
+                    $("#price").prop("disabled", true);
+                    $("#percent").prop("disabled", true);
+                    $("#retail").prop("disabled", true);
+                    $("#profit").prop("disabled", true);
+                    $("#qty").prop("disabled", true);
+
+                    $("#select_gender").val(arr[0].type).trigger("change");
                     $("#select_cat").val(arr[0].category_id).trigger("change");
-                    $("#select_size").prop("disabled", "disabled");
-                    $("#select_color").prop("disabled", "disabled");
-                    $("#qty").prop("disabled", "disabled");
                     $("#select_material").val(arr[0].material).trigger("change");
                     $("#select_origin").val(arr[0].origin).trigger("change");
+                    $('#short_description').val(arr[0].short_description);
+
                     if(arr[0].description !== "") {
                         $('#description').summernote('code', arr[0].description);
                     } else {
                         $('#description').summernote('code', '');
                     }
-                    $('#short_description').val(arr[0].short_description);
-                    let variations = arr[0].variations;
-                    let count = 0;
-                    for (let i = 0; i < variations.length; i++) {
-                        let id = variations[i].id;
-                        let sku = variations[i].sku;
-                        // let image = variations[i].image;
-                        let size = variations[i].size;
-                        let color = variations[i].color;
-                        let qty = variations[i].quantity;
-                        count++;
-                        generate_variations(count, qty, id, color, size, sku);
+
+                    let color = arr[0].colors;
+                    for(let i=0; i<color.length; i++) {
+                        add_color(color[i]);
                     }
+                    let size = arr[0].sizes;
+                    for(let i=0; i<size.length; i++) {
+                        add_size(size[i]);
+                    }
+
+                    let image = arr[0].image;
+                    let json = JSON.parse(image);
+                    if(json.length > 0) {
+                        $("#image").html("");
+                        idx_image = 1;
+                        for(let i=0; i<json.length; i++) {
+                            let src = json[i].src;
+                            let type = json[i].type;
+                            if(type === "upload") {
+                                src = '<?php echo Common::path_img() ?>' + src;
+                            }
+                            add_image(src, type);
+                        }
+                    }
+
+                    let image_variation = arr[0].image_variation;
+                    if(image_variation.length > 0) {
+                        $("#image_by_color").html("");
+                        for (let i = 0; i < image_variation.length; i++) {
+                            add_image_by_color((i + 1), image_variation[i]);
+                        }
+                    }
+
+                    // $("#select_size").prop("disabled", "disabled");
+                    // $("#select_color").prop("disabled", "disabled");
+                    //
+
+                    let variations = arr[0].variations;
+                    if(variations.length > 0){
+                        $(".table-list tbody").html("");
+                        draw_table_variations_by_edit_product(color.length, size.length, variations);
+                    }
+
+                    // let count = 0;
+                    // for (let i = 0; i < variations.length; i++) {
+                    //     let id = variations[i].id;
+                    //     let sku = variations[i].sku;
+                    //     // let image = variations[i].image;
+                    //     let size = variations[i].size;
+                    //     let color = variations[i].color;
+                    //     let qty = variations[i].quantity;
+                    //     count++;
+                    //     // generate_variations(count, qty, id, color, size, sku);
+                    // }
                     $(".create-new").text("Cập nhật");
                     $(".add-new-prod").prop("disabled", '');
-                    $("#create_variation").prop("disabled", true);
+                    // $("#create_variation").prop("disabled", true);
 
                 },
                 error: function (data, errorThrown) {

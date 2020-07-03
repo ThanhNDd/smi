@@ -137,23 +137,23 @@ class ProductDAO
                            A.name,
                            A.image,
                            A.link,
-                           A.price,
                            A.fee_transport,
-                           A.profit,
-                           A.retail,
-                           A.percent,
                            A.type,
                            A.category_id,
+                           A.description,
+                           A.material,
+                           A.origin,
+                           A.short_description,
                            B.id AS variant_id,
                            B.size,
                            B.color,
                            B.quantity,
                            B.sku,
                            B.image as 'image_variation',
-                           A.description,
-                           A.material,
-                           A.origin,
-                           A.short_description
+                           B.price,
+                           B.profit,
+                           B.retail,
+                           B.percent
                     FROM smi_products A
                     LEFT JOIN smi_variations B ON A.id = B.product_id
                     WHERE A.id = " . $id;
@@ -161,6 +161,9 @@ class ProductDAO
             $data = array();
             $product_id = 0;
             $i = 0;
+            $colors = array();
+            $sizes = array();
+            $image_variation = array();
             foreach ($result as $k => $row) {
                 if ($product_id != $row["product_id"]) {
                     $product = array(
@@ -169,16 +172,15 @@ class ProductDAO
                         'image' => $row["image"],
                         'link' => $row["link"],
                         'type' => $row["type"],
-                        'percent' => $row["percent"],
                         'category_id' => $row["category_id"],
-                        'price' => number_format($row["price"]),
                         'fee_transport' => number_format($row["fee_transport"]),
-                        'retail' => number_format($row["retail"]),
-                        'profit' => number_format($row["profit"]),
                         'description' => $row["description"],
                         'material' => $row["material"],
                         'origin' => $row["origin"],
                         'short_description' => $row["short_description"],
+                        'sizes' => array(),
+                        'colors' => array(),
+                        'image_variation' => array(),
                         'variations' => array()
                     );
                     $variation = array(
@@ -188,9 +190,17 @@ class ProductDAO
                         'quantity' => $row["quantity"],
                         'sku' => $row["sku"],
                         'product_id' => $row["product_id"],
-                        'image' => $row["image_variation"]
+                        'image' => $row["image_variation"],
+                        'percent' => $row["percent"],
+                        'price' => number_format($row["price"]),
+                        'retail' => number_format($row["retail"]),
+                        'profit' => number_format($row["profit"]),
                     );
                     array_push($product['variations'], $variation);
+//                    array_push($colors, $row["color"]);
+//                    array_push($sizes, $row["size"]);
+//                    array_push($product["sizes"], $sizes);
+//                    array_push($product["colors"], $colors);
                     array_push($data, $product);
                     $product_id = $row["product_id"];
                     $i++;
@@ -202,11 +212,21 @@ class ProductDAO
                         'quantity' => $row["quantity"],
                         'sku' => $row["sku"],
                         'product_id' => $row["product_id"],
-                        'image' => $row["image_variation"]
+                        'image' => $row["image_variation"],
+                        'percent' => $row["percent"],
+                        'price' => number_format($row["price"]),
+                        'retail' => number_format($row["retail"]),
+                        'profit' => number_format($row["profit"]),
                     );
                     array_push($data[$i - 1]['variations'], $variation);
                 }
+                array_push($colors, $row["color"]);
+                array_push($sizes, $row["size"]);
+                array_push($image_variation, $row["image_variation"]);
             }
+            $data[0]["sizes"] = array_values(array_unique($sizes));
+            $data[0]["colors"] = array_values(array_unique($colors));
+            $data[0]["image_variation"] = array_values(array_unique($image_variation));
             $arr = array();
             $arr["data"] = $data;
             // print_r($arr);
@@ -543,13 +563,17 @@ class ProductDAO
     function update_variation(Variations $variation)
     {
         try {
-            $sku = $variation->getSku();
-            $color = $variation->getColor();
             $size = $variation->getSize();
+            $color = $variation->getColor();
             $qty = $variation->getQuantity();
+            $sku = $variation->getSku();
+            $price = $variation->getPrice();
+            $retail = $variation->getRetail();
+            $profit = $variation->getProfit();
+            $percent = $variation->getPercent();
             $image = $variation->getImage();
-            $stmt = $this->getConn()->prepare("update smi_variations set color = ?, size = ?, quantity = ?, image = ? where sku = ?");
-            $stmt->bind_param("ssiss", $color, $size, $qty, $image, $sku);
+            $stmt = $this->getConn()->prepare("update smi_variations set size = ?, color = ?, quantity = ?, price = ?, retail = ?, profit = ?, percent = ?, image = ? where sku = ?");
+            $stmt->bind_param("ssidddiss", $size, $color, $qty, $price, $retail, $profit, $percent, $image, $sku);
             if(!$stmt->execute()) {
                 throw new Exception($stmt->error);
             }
@@ -559,19 +583,19 @@ class ProductDAO
         }
     }
 
-//    function delete_variation($sku)
-//    {
-//        try {
-//            $stmt = $this->getConn()->prepare("delete from smi_variations where sku = ?");
-//            $stmt->bind_param("s", $sku);
-//            if(!$stmt->execute()) {
-//                throw new Exception($stmt->error);
-//            }
-//            $stmt->close();
-//        } catch (Exception $e) {
-//            throw new Exception($e);
-//        }
-//    }
+    function delete_variation_by_product_id($product_id)
+    {
+        try {
+            $stmt = $this->getConn()->prepare("delete from smi_variations where product_id = ?");
+            $stmt->bind_param("i", $product_id);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
 
     function save_product(Product $product)
     {
