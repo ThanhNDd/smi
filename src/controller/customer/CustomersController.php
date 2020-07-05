@@ -20,16 +20,16 @@ if (isset($_GET["method"]) && $_GET["method"] == "findall") {
     }
 }
 
-if (isset($_POST["method"]) && $_POST["method"] == "find_detail") {
-  try {
-    Common::authen_get_data();
-    $product_id = $_POST["product_id"];
-    $variations = $dao->find_detail($product_id);
-    echo json_encode($variations);
-  } catch (Exception $e) {
-    throw new Exception($e);
-  }
-}
+//if (isset($_POST["method"]) && $_POST["method"] == "find_detail") {
+//  try {
+//    Common::authen_get_data();
+//    $product_id = $_POST["product_id"];
+//    $variations = $dao->find_detail($product_id);
+//    echo json_encode($variations);
+//  } catch (Exception $e) {
+//    throw new Exception($e);
+//  }
+//}
 
 if (isset($_POST) && !empty($_FILES['file'])) {
   if ($_FILES["file"]["size"] > 200000) {//200kb
@@ -50,19 +50,13 @@ if (isset($_POST) && !empty($_FILES['file'])) {
   }
 }
 
-if (isset($_POST["method"]) && $_POST["method"] == "check_exist") {
+if (isset($_POST["method"]) && $_POST["method"] == "find_customer") {
   try {
     Common::authen_get_data();
     $value = $_POST["value"];
     $type = $_POST["type"];
-    if(!empty($value) && !empty($type)) {
-      $isExist = $dao->check_exist($value, $type);
-    }
-    $existed = '';
-    if($isExist) {
-      $existed = 'existed';
-    }
-    echo $existed;
+    $customer = $dao->find_customer($value, $type);
+    echo json_encode($customer);
   } catch (Exception $e) {
     throw new Exception($e);
   }
@@ -78,14 +72,14 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
       $customer_id = $data->id;
       if(!$customer_id) {
         $phone = $data->phone;
-        $checkExist = $dao->check_exist($phone, 'phone');
+        $checkExist = $dao->find_customer($phone, 'phone');
         if($checkExist) {
           echo 'existed_phone';
           return;
         }
 
         $email = $data->email;
-        $checkExist = $dao->check_exist($email, 'email');
+        $checkExist = $dao->find_customer($email, 'email');
         if($checkExist) {
           echo 'existed_email';
           return;

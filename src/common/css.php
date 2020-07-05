@@ -31,9 +31,10 @@ require_once("common.php");
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 
   <!-- DataTables -->
+<!--<link rel="stylesheet" href="--><?php //Common::getPath()?><!--plugins/datatables/jquery.dataTables.css" type="text/css" />-->
   <link rel="stylesheet" href="<?php Common::getPath()?>plugins/datatables/dataTables.bootstrap4.min.css" type="text/css" />
-  <link rel="stylesheet" href="<?php Common::getPath()?>plugins/datatables/responsive.bootstrap4.min.css" type="text/css" />
-  <link rel="stylesheet" href="<?php Common::getPath()?>plugins/datatables/jquery.dataTables.css" type="text/css" />
+<!--  <link rel="stylesheet" href="--><?php //Common::getPath()?><!--plugins/datatables/responsive.bootstrap4.min.css" type="text/css" />-->
+
   <link rel="stylesheet" href="<?php Common::getPath()?>plugins/datatables/extensions/button/css/buttons.dataTables.min.css" type="text/css" />
 
   <link rel="stylesheet" href="<?php Common::getPath()?>plugins/select2/css/select2.min.css" type="text/css" />

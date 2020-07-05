@@ -2,7 +2,7 @@
 require_once("../../common/common.php");
 Common::authen();
 ?>
-<div class="modal fade" id="create-product">
+<div class="modal fade" id="create_product">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">
             <div class="overlay d-flex justify-content-center align-items-center hidden">
@@ -342,7 +342,7 @@ Common::authen();
                             </div>
                             <div class="form-group">
                                 <label for="short_description">Mô tả ngắn</label>
-                                <input type="text" class="form-control" placeholder="Mô tả ngắn" id="short_description" maxlength="255">
+                                <textarea class="form-control" placeholder="Mô tả ngắn (tối đa 500 ký tự)" id="short_description" maxlength="500"></textarea>
                             </div>
                         </div>
                     </div>
@@ -376,9 +376,9 @@ Common::authen();
                 placeholder: 'Mô tả sản phẩm...'
             });
             $('.product-create').click(function () {
-                open_modal();
+                open_modal_product_create();
             });
-            $('#create-product').on('hidden.bs.modal', function () {
+            $('#create_product').on('hidden.bs.modal', function () {
                 let table = $('#example').DataTable();
                 table.ajax.reload(init_select2, false);
             });
@@ -443,6 +443,10 @@ Common::authen();
             $("#btn_add_size").click(function () {
                 add_size();
                 draw_table_variations();
+                let color = get_color_length();
+                for(let i=1; i<=color; i++) {
+                    $("#select_color_"+i).trigger('change');
+                }
             });
             $("#btn_add_image").click(function(){
                 add_image();
@@ -562,7 +566,7 @@ Common::authen();
                                 'success'
                             ).then((result) => {
                                 if (result.value) {
-                                    $('#create-product').modal('hide');
+                                    $('#create_product').modal('hide');
                                     reset_modal();
                                 }
                             });
@@ -876,7 +880,6 @@ Common::authen();
                     "<td class='percent_1_"+d+"'><input type='text' class='form-control' value='"+percent+"' id='percent_1_"+d+"'></td>\n" +
                     "<td class='profit_1_"+d+"'><input type='text' class='form-control' value='"+profit+"' id='profit_1_"+d+"'></td>\n" +
                     "<td class='sku_1_"+d+"'>"+sku+"</td>\n" +
-                    "<td><i class='fa fa-trash'></i></td>\n" +
                     "</tr>");
             }
         }
@@ -1206,25 +1209,35 @@ Common::authen();
             }
 
             let color = get_color_length();
-            for(let i=1; i<=color; i++) {
-                let c = $("#select_color_"+i).val();
-                if(c === '') {
-                    $("#select_color_"+i).addClass("is-invalid");
-                    is_valid = false;
-                } else {
-                    $("#select_color_"+i).removeClass("is-invalid");
+            if(color > 0) {
+                for(let i=1; i<=color; i++) {
+                    let c = $("#select_color_"+i).val();
+                    if(c === '') {
+                        $("#select_color_"+i).addClass("is-invalid");
+                        is_valid = false;
+                    } else {
+                        $("#select_color_"+i).removeClass("is-invalid");
+                    }
                 }
+            } else {
+                toastr.error("Không tồn tại màu !!!");
+                is_valid = false;
             }
 
             let size = get_size_length();
-            for(let i=1; i<=size; i++) {
-                let c = $("#select_size_"+i).val();
-                if(c === '') {
-                    $("#select_size_"+i).addClass("is-invalid");
-                    is_valid = false;
-                } else {
-                    $("#select_size_"+i).removeClass("is-invalid");
+            if(size > 0) {
+                for (let i = 1; i <= size; i++) {
+                    let c = $("#select_size_" + i).val();
+                    if (c === '') {
+                        $("#select_size_" + i).addClass("is-invalid");
+                        is_valid = false;
+                    } else {
+                        $("#select_size_" + i).removeClass("is-invalid");
+                    }
                 }
+            } else {
+                toastr.error("Không tồn tại size !!!");
+                is_valid = false;
             }
 
             let image = $("#image").children(".image").length;
@@ -1282,7 +1295,7 @@ Common::authen();
             return is_valid;
         }
 
-        function open_modal() {
+        function open_modal_product_create() {
             reset_modal();
             load_size();
             load_color();
@@ -1293,11 +1306,13 @@ Common::authen();
             // add_color();
             // add_size();
             add_image();
-            $('#create-product').modal({
-                backdrop: 'static',
-                keyboard: false,
-                show: true
-            });
+            // $('#create_product').modal({
+            //     backdrop: 'static',
+            //     keyboard: false,
+            //     show: true
+            // });
+
+            open_modal('#create_product');
         }
 
         let c = 1;
@@ -1836,13 +1851,13 @@ Common::authen();
         //     return val;
         // }
 
-        function show_loading() {
-            $("#create-product .overlay").removeClass("hidden");
-        }
-
-        function hide_loading() {
-            $("#create-product .overlay").addClass("hidden");
-        }
+        // function show_loading() {
+        //     $("#create-product .overlay").removeClass("hidden");
+        // }
+        //
+        // function hide_loading() {
+        //     $("#create-product .overlay").addClass("hidden");
+        // }
 
         function onerror_img() {
             return '';

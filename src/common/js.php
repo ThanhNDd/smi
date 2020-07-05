@@ -53,7 +53,7 @@ require_once("common.php");
 <script src="<?php Common::getPath()?>plugins/typeahead/js/bloodhound.min.js"></script>
 <script src="<?php Common::getPath()?>dist/js/common.js"></script>
 <script type="text/javascript">
-	
+	let root_path = '<?php Common::getPath(); ?>';
 	function set_title(title) {
 		$(".title-page").text(title);
 	}

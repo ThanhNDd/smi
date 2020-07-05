@@ -328,8 +328,8 @@ class CheckoutDAO
                         LEFT JOIN smi_products D ON E.product_id = D.id
                             LEFT JOIN (select B.id,
                             case B.type
-                            when 1 then sum(0 - (D.profit * B.quantity - B.reduce)) 
-                            else sum(D.profit * B.quantity - B.reduce) 
+                            when 1 then sum(0 - (B.profit * B.quantity - B.reduce)) 
+                            else sum(B.profit * B.quantity - B.reduce) 
                             end as p
                             from smi_orders A
                         LEFT JOIN smi_order_detail B ON A.id = B.order_id
@@ -472,7 +472,7 @@ class CheckoutDAO
                         E.size,
                         E.color,
                         A.payment_type,
-                        D.profit,
+                        B.profit,
                         B.type,
                         E.updated_qty
                     from smi_orders A 
@@ -784,6 +784,7 @@ class CheckoutDAO
             $qty = $detail->getQuantity();
             $reduce = $detail->getReduce();
             $type = $detail->getType();
+            $profit = $detail->getProfit();
             $stmt = $this->getConn()->prepare("insert into smi_order_detail (
                     `order_id`,
                     `product_id`,
@@ -792,9 +793,10 @@ class CheckoutDAO
                     `price`,
                     `quantity`,
                     `reduce`,
-                    `type`) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("iiisdidi", $order_id, $product_id, $variant_id, $sku, $price, $qty, $reduce, $type);
+                    `type`,
+                    `profit`) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("iiisdidid", $order_id, $product_id, $variant_id, $sku, $price, $qty, $reduce, $type, $profit);
             if(!$stmt->execute()) {
                 throw new Exception($stmt->error);
             }
@@ -817,11 +819,12 @@ class CheckoutDAO
             $qty = $detail->getQuantity();
             $reduce = $detail->getReduce();
             $type = $detail->getType();
+            $profit = $detail->getProfit();
             $id = $detail->getId();
             $stmt = $this->getConn()->prepare("update `smi_order_detail`
                     SET `order_id` = ?, `product_id` = ?, `variant_id` = ?,
-                    `sku` = ?, `price` = ?, `quantity` = ?, `reduce` = ? WHERE `id` = ?");
-            $stmt->bind_param("iiisdidii", $order_id, $product_id, $variant_id, $sku, $price, $qty, $reduce, $type, $id);
+                    `sku` = ?, `price` = ?, `quantity` = ?, `reduce` = ?, `profit` = ? WHERE `id` = ?");
+            $stmt->bind_param("iiisdidii", $order_id, $product_id, $variant_id, $sku, $price, $qty, $reduce, $type, $profit, $id);
             if(!$stmt->execute()) {
                 throw new Exception($stmt->error);
             }

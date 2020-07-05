@@ -115,9 +115,9 @@ class PrinterReceipt
                             <h4>SHOP MẸ ỈN</h4>
                             <p>Thời trang trẻ em cao cấp</p>
                             <span>* * * * * * * * * * * *</span>
-                            <p style="margin: 5px 0;">Đ/c: 227 Phố Huyện - Thị Trấn Quốc Oai - Hà Nội</p>
+                            <p style="margin: 5px 0;">Đ/c: 227 Phố Huyện - TT.Quốc Oai - Hà Nội</p>
                             <p>Hotline: 0962.926.302</p>
-                            <p>Website: www.shopmein.net</p>
+                            <p>Website: www.shopmein.vn</p>
                             <p>Facebook: Shop Mẹ Ỉn</p>
                             <span>* * * * * * * * * * * *</span>
                             <h4>HÓA ĐƠN THANH TOÁN</h4>

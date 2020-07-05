@@ -23,7 +23,7 @@ Common::authen();
         text-align: center;
         color: red;
       }
-        div#example_filter label {
+        div#table_customer_filter label {
             width: 100%;
             float: left;
         }
@@ -38,131 +38,107 @@ Common::authen();
             margin: 0 !important;
         }
 
-        input[type=text], input[type=number], .select2-container--bootstrap4 .select2-selection {
-            border-radius: 0 !important;
-            margin: 0 !important;
-        }
-      .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-        background: linear-gradient(to bottom, #ffffff 0%, #ffffff 100%) !important;
-        border: #ffffff !important;
-      }
+        /*input[type=text], input[type=number], .select2-container--bootstrap4 .select2-selection {*/
+        /*    border-radius: 0 !important;*/
+        /*    margin: 0 !important;*/
+        /*}*/
+      /*.dataTables_wrapper .dataTables_paginate .paginate_button:hover {*/
+      /*  background: linear-gradient(to bottom, #ffffff 0%, #ffffff 100%) !important;*/
+      /*  border: #ffffff !important;*/
+      /*}*/
       .customer-inactive td, .customer-inactive a {
         color: slategray;
       }
-      table.dataTable tbody th, table.dataTable tbody td {
-        padding: 3px 10px !important;
+      div#table_customer_wrapper {
+          padding: 20px;
       }
-      .dataTable td, .dataTable th {
-        font-size: 14px !important;
-      }
-      table.dataTable thead th, table.dataTable thead td {
-        padding: 5px 10px !important;
-      }
-      table.dataTable thead th, table.dataTable thead td {
-        border-bottom: 1px solid #1110 !important;
-      }
-      .dataTables_wrapper.no-footer .dataTables_scrollBody {
-        border-bottom: 1px solid #1110 !important;
-      }
-      .dataTables_filter {
-        display: none;
-      }
+      /*table.dataTable tbody th, table.dataTable tbody td {*/
+      /*  padding: 3px 10px !important;*/
+      /*}*/
+      /*.dataTable td, .dataTable th {*/
+      /*  font-size: 14px !important;*/
+      /*}*/
+      /*table.dataTable thead th, table.dataTable thead td {*/
+      /*  padding: 5px 10px !important;*/
+      /*}*/
+      /*table.dataTable thead th, table.dataTable thead td {*/
+      /*  border-bottom: 1px solid #1110 !important;*/
+      /*}*/
+      /*.dataTables_wrapper.no-footer .dataTables_scrollBody {*/
+      /*  border-bottom: 1px solid #1110 !important;*/
+      /*}*/
+      /*.dataTables_filter {*/
+      /*  display: none;*/
+      /*}*/
     </style>
 </head>
 <?php require_once('../../common/header.php'); ?>
 <?php require_once('../../common/menu.php'); ?>
 <section class="content">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="row col-12" style="display: inline-block;">
-                    <section style="display: inline-block;float: right;padding-top: 1.25rem;padding-bottom: 1.25rem;">
-                        <button type="button" class="btn btn-success btn-flat create_new">
-                            <i class="fa fa-plus-circle" aria-hidden="true"></i> Tạo mới
-                        </button>
-                    </section>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body">
-                    <table id="example" class="table table-hover table-striped">
-                        <thead>
-<!--                        <tr>-->
-<!--                            <th></th>-->
-<!--                            <th>Chức năng</th>-->
-<!--                            <th class="hidden">ID</th>-->
-<!--                            <th>Hình ảnh</th>-->
-<!--                            <th>Họ tên</th>-->
-<!--                            <th>Địa chỉ</th>-->
-<!--                            <th>Số điện thoại</th>-->
-<!--                            <th>Ngày sinh</th>-->
-<!--                            <th>Email</th>-->
-<!--                            <th>Facebook</th>-->
-<!--                            <th>Số lần mua hàng</th>-->
-<!--                            <th>Ngày tạo</th>-->
-<!--                        </tr>-->
-                        <tr>
-<!--                          <th></th>-->
-                          <th></th>
-                          <td class="hidden" width="50px"></td>
-                          <th></th>
-                          <td width="150px">Họ tên</td>
-                          <td width="350px">Địa chỉ</td>
-                          <td width="80px">Số điện thoại</td>
-                          <td width="80px">Ngày sinh</td>
-                          <td width="150px">Email</td>
-                          <td width="100px">Facebook</td>
-                          <td width="50px">Số lần mua hàng </td>
-                          <td width="80px">Ngày tạo</td>
-                        </tr>
-                        </thead>
-                        <tbody>
-
-                        </tbody>
-                    </table>
-                </div>
-                <!-- /.card-body -->
+    <div class="card">
+        <div class="card-body">
+            <div class="row col-12" style="display: inline-block;">
+                <section style="display: inline-block;float: right;padding-top: 1.25rem;padding-bottom: 1.25rem;">
+                    <button type="button" class="btn btn-success btn-flat" id="btn_create_new_customer">
+                        <i class="fa fa-plus-circle" aria-hidden="true"></i> Tạo mới
+                    </button>
+                </section>
             </div>
-            <!-- /.card -->
+            <table id="table_customer" class="table table-hover table-striped">
+                <thead>
+                    <tr>
+                      <th></th>
+                      <th class="hidden"></th>
+                      <th></th>
+                      <th>Họ tên</th>
+                      <th>Địa chỉ</th>
+                      <th>Số điện thoại</th>
+                      <th>Ngày sinh</th>
+                      <th>Email</th>
+                      <th>Facebook</th>
+                      <th>Số lần mua hàng </th>
+                      <th>Ngày tạo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
         </div>
-        <!-- /.col -->
     </div>
-    <!-- /.row -->
 </section>
-<!-- /.content -->
-</div>
 <?php include 'createCustomer.php'; ?>
 <?php require_once('../../common/footer.php'); ?>
 <script>
     $(document).ready(function () {
         set_title("Danh sách khách hàng");
 
-        $('#example thead td').each( function () {
-            let width = $(this).attr('width');
-            $(this).html( '<input type="text" style="width:'+width+'"  autocomplete="chrome-off"/>' );
-        } );
+        // $('#table_customer thead td').each( function () {
+        //     let width = $(this).attr('width');
+        //     $(this).html( '<input type="text" style="width:'+width+'"  autocomplete="chrome-off"/>' );
+        // } );
         loadall();
         $('[data-toggle="tooltip"]').tooltip();
     });
     function loadall() {
-        let table = $('#example').DataTable({
+        let table = $('#table_customer').DataTable({
             "ajax": '<?php Common::getPath() ?>src/controller/customer/CustomersController.php?method=findall',
-            initComplete: function () {
-                // Apply the search
-                this.api().columns().every( function () {
-                    let that = this;
-                    $( 'input', this.header() ).on( 'keyup change clear', function () {
-                        if ( that.search() !== this.value ) {
-                            that.search( this.value ).draw();
-                        }
-                    } );
-                } );
-            },
+            // initComplete: function () {
+            //     // Apply the search
+            //     this.api().columns().every( function () {
+            //         let that = this;
+            //         $( 'input', this.header() ).on( 'keyup change clear', function () {
+            //             if ( that.search() !== this.value ) {
+            //                 that.search( this.value ).draw();
+            //             }
+            //         } );
+            //     } );
+            // },
             // searching: false,
             ordering: false,
             select: "single",
             deferRender: true,
             rowId: 'extn',
-            "scrollX": true,
+            // "scrollX": true,
             "columns": [
                 // {
                 //     "className": 'details-control',
@@ -233,14 +209,14 @@ Common::authen();
             "lengthMenu": [[50, 100, -1], [50, 100, "All"]]
         });
 
-        $('#example tbody').on('click', '.edit_customer', function () {
+        $('#table_customer tbody').on('click', '.edit_customer', function () {
                let tr = $(this).closest('tr');
                let row = table.row(tr);
                let customerId = row.data().id;
                edit_customer(customerId);
         });
 
-        $('#example tbody').on('click', '.active_customer', function () {
+        $('#table_customer tbody').on('click', '.active_customer', function () {
             let tr = $(this).closest('tr');
             let row = table.row(tr);
             let customerId = row.data().id;
@@ -324,7 +300,7 @@ Common::authen();
         return '';
     }
 
-    function active_customer(customerId, status, row) {
+    function active_customer(customerId, status) {
         if(customerId) {
             $.ajax({
                 url: "<?php Common::getPath() ?>src/controller/customer/CustomersController.php",
@@ -337,22 +313,22 @@ Common::authen();
                 },
                 success: function (res) {
                     console.log(res);
-                    hiden_overlay();
-                    if(res == 'success') {
+                    hide_loading();
+                    if(res === 'success') {
                         toastr.success('Cập nhật thành công!!');
                         // if(status == 0) {
                         //     $(row).addClass('customer-inactive');
                         // } else {
                         //     $(row).removeClass('customer-inactive');
                         // }
-                        $('#example').DataTable().ajax.reload();
+                        $('#table_customer').DataTable().ajax.reload();
                     } else {
                         toastr.error('Cập nhật không thành công!!!');
                     }
                 }
             });
         } else {
-            hiden_overlay();
+            hide_loading();
             toastr.error('Đã xảy ra lỗi!!!');
         }
     }

@@ -91,4 +91,185 @@ function format_money(val) {
     return val;
 }
 
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000
+});
 
+function generate_select2_city(city_id) {
+    // show_loading();
+    $.ajax({
+        dataType: "json",
+        url: root_path + "src/controller/orders/OrderController.php",
+        data: {
+            orders: 'loadDataCity'
+        },
+        type: 'GET',
+        success: function (data) {
+            // hide_loading();
+            reset_select2('.select-city');
+            $('.select-city').select2({
+                data: data.results,
+                theme: 'bootstrap4',
+                placeholder: 'Lựa chọn'
+            });
+            // let select = $('.select-city');
+            // let option = $('<option></option>').attr('selected', true).text("Lựa chọn").val(-1);
+            // option.appendTo(select);
+            // select.trigger('change');
+            if (city_id) {
+                $(".select-city").val(city_id).trigger("change");
+            } else {
+                generate_select2_district();
+            }
+        },
+        error: function (data, errorThrown) {
+            console.log(data.responseText);
+            console.log(errorThrown);
+            // hide_loading();
+        }
+    });
+}
+
+function generate_select2_district(cityId, districtId) {
+    // show_loading();
+    if(!cityId) {
+        reset_select2('.select-district');
+        $('.select-district').select2({
+            data: null,
+            theme: 'bootstrap4',
+            placeholder: 'Lựa chọn'
+        });
+        generate_select2_village();
+        // hide_loading();
+    } else {
+        $.ajax({
+            dataType: "json",
+            url: root_path + "src/controller/orders/OrderController.php",
+            data: {
+                orders: 'loadDataDistrict',
+                cityId: cityId
+            },
+            type: 'GET',
+            success: function (data) {
+                // console.log(data.results);
+                // hide_loading();
+                reset_select2('.select-district');
+                $('.select-district').select2({
+                    data: data.results,
+                    theme: 'bootstrap4',
+                    placeholder: 'Lựa chọn'
+                });
+                if (districtId) {
+                    districtId = districtId.padStart(3, '0');
+                    $(".select-district").val(districtId).trigger("change");
+                } else {
+                    generate_select2_village();
+                }
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                // hide_loading();
+            }
+        });
+    }
+}
+
+function generate_select2_village(districtId, villageId) {
+    // show_loading();
+    if(!districtId) {
+        reset_select2('.select-village');
+        $('.select-village').select2({
+            data: null,
+            theme: 'bootstrap4',
+            placeholder: 'Lựa chọn'
+        });
+        // hide_loading();
+    } else {
+        $.ajax({
+            dataType: "json",
+            url: root_path + "src/controller/orders/OrderController.php",
+            data: {
+                orders: 'loadDataVillage',
+                districtId: districtId
+            },
+            type: 'GET',
+            success: function (data) {
+                reset_select2('.select-village');
+                $('.select-village').select2({
+                    data: data.results,
+                    theme: 'bootstrap4',
+                    placeholder: 'Lựa chọn'
+                });
+                // hide_loading();
+                if (villageId) {
+                    villageId = villageId.padStart(5, '0');
+                    $(".select-village").val(villageId).trigger("change");
+                }
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                // hide_loading();
+            }
+        });
+    }
+}
+
+function reset_select2(element) {
+    let select = $(element);
+    $(select).html("");
+    $(select).removeClass('is-invalid');
+    let option = $('<option></option>').attr('selected', true).text("Lựa chọn").val(-1);
+    option.prependTo(select);
+    select.trigger('change');
+}
+
+function open_modal(modal_element) {
+    if(modal_element) {
+        $(modal_element).modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+        hide_loading();
+    } else {
+        toastr.error('Đã xảy ra lỗi.');
+    }
+}
+
+function close_modal(modal_element) {
+    if(modal_element) {
+        $(modal_element).modal('hide');
+    } else {
+        toastr.error('Đã xảy ra lỗi.');
+    }
+}
+
+function show_loading() {
+    $(".modal-dialog .overlay").removeClass("hidden");
+}
+
+function hide_loading() {
+    $(".modal-dialog .overlay").addClass("hidden");
+}
+
+function format_date(date) {
+    if(date) {
+        let arr = date.split("-");
+        let y = arr[0];
+        let m = arr[1];
+        let d = arr[2];
+        return d+"/"+m+"/"+y;
+    }
+    return date;
+}
+
+function generate_select2(element) {
+    $(element).select2({
+        theme: 'bootstrap4'
+    });
+}

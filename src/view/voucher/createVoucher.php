@@ -2,7 +2,7 @@
 require_once("../../common/common.php");
 Common::authen();
 ?>
-<div class="modal fade" id="create-voucher">
+<div class="modal fade" id="create_voucher">
   <div class="modal-dialog modal-xl modal-dialog-scrollable">
     <div class="modal-content">
       <div class="overlay d-flex justify-content-center align-items-center">
@@ -67,7 +67,7 @@ Common::authen();
         <button type="button" class="btn btn-success form-control add-new-prod w80" title="Thêm 10 bản ghi">
           <i class="fa fa-plus-circle" aria-hidden="true"> </i>
         </button>
-        <button type="button" class="btn btn-primary create-new">Tạo mới</button>
+        <button type="button" class="btn btn-primary" id="create_new_voucher">Tạo mới</button>
       </div>
     </div>
     <!-- /.modal-content -->
@@ -75,7 +75,7 @@ Common::authen();
   <!-- /.modal-dialog -->
   <?php include Common::getPath().'src/common/js.php'; ?>
   <script>
-    var flagError = 0;
+    let flagError = 0;
     const Toast = Swal.mixin({
         toast: true,
         position: 'top-end',
@@ -86,7 +86,7 @@ Common::authen();
     $(document).ready(function () {
       $('.voucher-create').click(function(){
         clear();
-        open_modal();
+        open_modal('#create_voucher');
         add_new_product();
       });
       
@@ -94,8 +94,8 @@ Common::authen();
         add_new_product();
       });
       
-      $('.create-new').click(function(){
-        create_new();
+      $('#create_new_voucher').click(function(){
+          create_new_voucher();
       });
       $('#create-product').on('hidden.bs.modal', function () {
         location.reload();
@@ -103,13 +103,13 @@ Common::authen();
     });
 
 
-    function open_modal() {
-        $('#create-voucher').modal({
-          backdrop : 'static',
-          keyboard : false,
-          show: true
-        }); 
-    }
+    // function open_modal() {
+    //     $('#create-voucher').modal({
+    //       backdrop : 'static',
+    //       keyboard : false,
+    //       show: true
+    //     });
+    // }
 
     function reset_form()
     {
@@ -126,11 +126,11 @@ Common::authen();
     function add_new_product()
     {
       show_loading();
-      var noRow = $('.count-row').val();
+      let noRow = $('.count-row').val();
       for($i=0; $i<10; $i++) {
         noRow = Number(noRow) + 1;
         $('.count-row').val(noRow);
-        var content = '<div class="row" id="product-'+noRow+'" row-index="'+noRow+'" style="padding-top: 10px;">' +
+        let content = '<div class="row" id="product-'+noRow+'" row-index="'+noRow+'" style="padding-top: 10px;">' +
                         '<input type="hidden" id="product_id_'+noRow+'">'+
                         '<div class="w30 center">' +
                           '<span class="lineNo">'+noRow+'</span>' +
@@ -218,11 +218,11 @@ Common::authen();
 
     function onchange_retail_tmp(e)
     {
-      var rowIndex = $(e).parent().parent().attr("row-index");
-      var percent = $("[id=p_percent_"+rowIndex+"]").val();
-      var price = $("[id=p_price_"+rowIndex+"]").val();
+      let rowIndex = $(e).parent().parent().attr("row-index");
+      let percent = $("[id=p_percent_"+rowIndex+"]").val();
+      let price = $("[id=p_price_"+rowIndex+"]").val();
       price = replaceComma(price);
-      var fee = $("[id=p_fee_"+rowIndex+"]").val();
+      let fee = $("[id=p_fee_"+rowIndex+"]").val();
       fee = replaceComma(fee);
       if(price !== "" && !isNaN(price))
       {
@@ -245,7 +245,7 @@ Common::authen();
       {
         percent = 0;
       }
-      var retail = price + (price + fee)*percent/100;
+      let retail = price + (price + fee)*percent/100;
       retail = formatNumber(retail);
       if(retail === '0')
       {
@@ -256,8 +256,8 @@ Common::authen();
 
     function onchange_retail(e)
     {
-      var rowIndex = $(e).parent().parent().attr("row-index");
-      var val = $(e).val();
+      let rowIndex = $(e).parent().parent().attr("row-index");
+      let val = $(e).val();
       val = replaceComma(val);
       if(isNaN(val) || val < 10) {
         $(e).addClass("is-invalid");  
@@ -279,20 +279,20 @@ Common::authen();
 
     function calc_profit(rowIndex)
     {
-      var retail = $("[id=p_retail_"+rowIndex+"]").val();
+      let retail = $("[id=p_retail_"+rowIndex+"]").val();
       retail = replaceComma(retail);
-      var price = $("[id=p_price_"+rowIndex+"]").val();
+      let price = $("[id=p_price_"+rowIndex+"]").val();
       price = replaceComma(price);
-      var fee = $("[id=p_fee_"+rowIndex+"]").val();
+      let fee = $("[id=p_fee_"+rowIndex+"]").val();
       fee = replaceComma(fee);
-      var profit = Number(retail) - Number(price) - Number(fee);
+      let profit = Number(retail) - Number(price) - Number(fee);
       $("[id=p_profit_"+rowIndex+"]").text(formatNumber(profit));
     }
 
     function onchange_price(e)
     {
-      var rowIndex = $(e).parent().parent().attr("row-index");
-      var val = $(e).val();
+      let rowIndex = $(e).parent().parent().attr("row-index");
+      let val = $(e).val();
       val = replaceComma(val);
       if(val.indexOf(".") > 0)
       {
@@ -314,8 +314,8 @@ Common::authen();
 
     function onchange_percent(e)
     {
-      var rowIndex = $(e).parent().parent().attr("row-index");
-      var val = $(e).val();
+      let rowIndex = $(e).parent().parent().attr("row-index");
+      let val = $(e).val();
       if(isNaN(val) || val < 39) {
         $(e).addClass("is-invalid");  
         $(e).focus();
@@ -328,11 +328,11 @@ Common::authen();
 
     function calc_percent(rowIndex)
     {
-      var retail = $("[id=p_retail_"+rowIndex+"]").val();
+      let retail = $("[id=p_retail_"+rowIndex+"]").val();
       retail = replaceComma(retail);
-      var price =  $("[id=p_price_"+rowIndex+"]").val();
+      let price =  $("[id=p_price_"+rowIndex+"]").val();
       price = replaceComma(price);
-      var fee =  $("[id=p_fee_"+rowIndex+"]").val();
+      let fee =  $("[id=p_fee_"+rowIndex+"]").val();
       fee = replaceComma(fee);
       if(isNaN(retail)) {
         $("[id=p_retail_"+rowIndex+"]").addClass("is-invalid");  
@@ -350,37 +350,37 @@ Common::authen();
         retail = Number(retail);
         price = Number(price);
         fee = Number(fee);
-        var percent = (retail - price)*100 / (price + fee);
+        let percent = (retail - price)*100 / (price + fee);
         percent = Math.round(percent);
         $("[id=p_percent_"+rowIndex+"]").val(percent);
       }
     }
 
-    function create_new()
+    function create_new_voucher()
     {
       show_loading();
-      var data = {};
-      var rowProductNumber = $(".count-row").val();
-      var products = [];
-      for(var i=1; i<=rowProductNumber.length; i++)
+      let data = {};
+      let rowProductNumber = $(".count-row").val();
+      let products = [];
+      for(let i=1; i<=rowProductNumber.length; i++)
       {
-        var product_id = $("#product_id_"+i).val();
-        var image = $("#p_image_"+i).val();
-        var name = $("#p_name_"+i).val();
-        var link = $("#p_link_"+i).val();
-        var size = $("#select_size_"+i).val();
-        var color = $("#select_color_"+i).val();
-        var qty = $("#p_qty_"+i).val();
-        var price = $("#p_price_"+i).val();
-        var fee = $("#p_fee_"+i).val();
-        var percent = $("#p_percent_"+i).val();
-        var retail = $("#p_retail_"+i).val();
-        var profit = $("#p_profit_"+i).text();
-        var type = $("#select_type_"+i).val();
-        var catId = $("#select_cat_"+i).val();
+        let product_id = $("#product_id_"+i).val();
+        let image = $("#p_image_"+i).val();
+        let name = $("#p_name_"+i).val();
+        let link = $("#p_link_"+i).val();
+        let size = $("#select_size_"+i).val();
+        let color = $("#select_color_"+i).val();
+        let qty = $("#p_qty_"+i).val();
+        let price = $("#p_price_"+i).val();
+        let fee = $("#p_fee_"+i).val();
+        let percent = $("#p_percent_"+i).val();
+        let retail = $("#p_retail_"+i).val();
+        let profit = $("#p_profit_"+i).text();
+        let type = $("#select_type_"+i).val();
+        let catId = $("#select_cat_"+i).val();
         if(image !== "" && name !== "" && price !== "" && type.length > 0 && catId.length > 0)
           {
-          var product = {};
+          let product = {};
               product["image"] = image;  
               product["name"] = name;  
               product["link"] = link;  
@@ -464,7 +464,7 @@ Common::authen();
     } 
 
 
-    var size = [
+    let size = [
           {
               id: '60',
               text: '60 cm (3kg-6kg)'
@@ -526,7 +526,7 @@ Common::authen();
               text: 'Free Size'
           }
       ];
-      var colors = [
+      let colors = [
           {
               id: 'Trắng',
               text: 'Trắng'
@@ -580,7 +580,7 @@ Common::authen();
               text: 'Kẻ'
           }
       ];
-      var qty = [
+      let qty = [
           {
               id: '0',
               text: '0'
@@ -642,7 +642,7 @@ Common::authen();
               text: '14'
           }
       ];
-      var types = [
+      let types = [
           {
               id: '-1',
               text: ''
@@ -660,7 +660,7 @@ Common::authen();
               text: 'Trai gái'
           }
       ];
-      var cats = [
+      let cats = [
           {
               id: '-1',
               text: ''

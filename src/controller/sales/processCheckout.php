@@ -126,10 +126,12 @@ if (isset($_POST["type"]) && $_POST["type"] == "checkout") {
         $detail->setReduce($reduce);
         $detail->setReduce_percent($reduce_percent);
         $detail->setType(0);//add new
+          $detail->setProfit($details[$i]->profit);
         $checkout_dao->saveOrderDetail($detail);
         $detail->setProductName($details[$i]->product_name);
+
         array_push($detailsObj, $detail);
-        if ($sku != "") {
+        if (!empty($sku)) {
           $dao->update_qty_variation_by_sku((int)$sku, (int)$qty, 1);
         } else {
           throw new Exception("SKU is empty");

@@ -162,7 +162,7 @@ Common::authen();
     <!-- /.row -->
 </section>
 <!-- /.content -->
-<?php include 'createProducts.php'; ?>
+<?php include 'customer_phoneroducts.php'; ?>
 </div>
 <div class="iframeArea hidden"></div>
 <?php require_once('../../common/footer.php'); ?>
@@ -383,7 +383,7 @@ Common::authen();
                     product_id: product_id
                 },
                 success: function (res) {
-                    open_modal();
+                    open_modal_product_create();
                     console.log(res);
                     let arr = res.data;
                     console.log(arr[0].profit);
@@ -476,7 +476,7 @@ Common::authen();
                         type: 'error',
                         title: 'Đã xảy ra lỗi',
                         text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-                    })
+                    });
                     hide_loading();
                 }
             });

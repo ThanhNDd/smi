@@ -2,23 +2,21 @@
 require_once("../../common/common.php");
 Common::authen();
 ?>
-<div class="modal fade" id="create-customer">
+<div class="modal fade" id="create_customer">
   <div class="modal-dialog modal-xl modal-dialog-scrollable">
     <div class="modal-content">
       <div class="overlay d-flex justify-content-center align-items-center">
         <i class="fas fa-2x fa-sync fa-spin"></i>
       </div>
       <div class="modal-header">
-        <h4 class="modal-title">Tạo mới khách hàng</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <h4 class="modal-title modal-customer">Tạo mới khách hàng</h4>
+        <button type="button" class="close close-modal-customer" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <input type="hidden" class="form-control" id="customer_id" value="">
-<!--          <input type="hidden" class="form-control" id="customer_exist" value="0">-->
-<!--          <input type="hidden" class="form-control" id="form_valid" value="0">-->
+          <input type="hidden" class="form-control" id="id" value="">
           <div class="row">
             <div class="col-4">
               <label>Số điện thoại <span style="color:red">*</span></label>
@@ -66,28 +64,20 @@ Common::authen();
             </div>
             <div class="col-4">
               <label>Họ tên <span style="color:red">*</span></label>
-              <input type="text" class="form-control" id="customer_name" placeholder="Họ tên"
+              <input type="text" class="form-control" id="name" placeholder="Họ tên"
                      autocomplete="chrome-off">
             </div>
-
-
             <div class="col-4">
               <label>Tỉnh / Thành phố <span style="color:red">*</span></label>
-              <select class="select-city form-control" id="select_city">
-                <option value="-1">Lựa chọn</option>
-              </select>
+              <select class="select-city form-control" id="select_city"></select>
             </div>
             <div class="col-4">
               <label>Quận / Huyện <span style="color:red">*</span></label>
-              <select class="select-district form-control" id="select_district">
-                <option value="-1">Lựa chọn</option>
-              </select>
+              <select class="select-district form-control" id="select_district"></select>
             </div>
             <div class="col-4">
               <label>Phường xã <span style="color:red">*</span></label>
-              <select class="select-village form-control" id="select_village">
-                <option value="-1">Lựa chọn</option>
-              </select>
+              <select class="select-village form-control" id="select_village"></select>
             </div>
             <div class="col-4">
               <label>Địa chỉ <span style="color:red">*</span></label>
@@ -111,52 +101,60 @@ Common::authen();
         </div>
       </div>
       <div class="modal-footer justify-content-between">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="create_new">Tạo mới</button>
+        <button type="button" class="btn btn-secondary close-modal-customer">Close</button>
+        <button type="button" class="btn btn-primary" id="create_new_customer">Đồng ý</button>
       </div>
     </div>
-    <!-- /.modal-content -->
   </div>
-  <!-- /.modal-dialog -->
   <?php require_once('../../common/js.php'); ?>
   <script>
-      let data_products;
-      let flagError = 0;
-      const Toast = Swal.mixin({
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 3000
-      });
       $(document).ready(function () {
-          $('.create_new').click(function () {
-              reset_data();
-              generate_select2_city();
-              open_modal();
-          });
+          open_form_create_new_customer();
+          close_modal_customer();
+          init_select_city();
+          init_select_district();
+          process_create_new_customer();
+          btn_upload();
+          find_customer_by_email();
+          find_customer_by_phone();
+          onchange_image();
+      });
+
+      function init_select_city() {
           $('.select-city').on('select2:select', function (e) {
               let data = e.params.data;
               let cityId = data.id;
               generate_select2_district(cityId);
           });
+      }
+
+      function init_select_district() {
           $('.select-district').on('select2:select', function (e) {
               let data = e.params.data;
               let districtId = data.id;
               generate_select2_village(districtId);
           });
+      }
 
-          $('#create_new').click(function () {
-              create_new();
+      function open_form_create_new_customer() {
+          $('#btn_create_new_customer').click(function () {
+              reset_data_customer();
+              generate_select2_city();
+              open_modal('#create_customer');
           });
+      }
 
-          btn_upload();
+      function process_create_new_customer() {
+          $('#create_new_customer').click(function () {
+              create_new_customer();
+          });
+      }
 
-          check_exist_email();
-          check_exist_phone();
-
-          onchange_image();
-
-      });
+      function close_modal_customer() {
+          $('.close-modal-customer').click(function () {
+              close_modal("#create_customer");
+          });
+      }
 
       function edit_customer(customerId) {
           if(customerId) {
@@ -170,10 +168,10 @@ Common::authen();
                   },
                   success: function (res) {
                       console.log(res);
-                      hiden_overlay();
+                      hide_loading();
                       if(res && res.length > 0) {
                           let data = res[0];
-                          reset_data();
+                          reset_data_customer();
                           setDataInform(data);
                           open_modal();
                       } else {
@@ -182,87 +180,87 @@ Common::authen();
                   }
               });
           } else {
-              hiden_overlay();
+              hide_loading();
               toastr.error('Đã xảy ra lỗi!!!');
           }
       }
 
       function setDataInform(data) {
           $("#customer_exist").val('');
-          $("#customer_id").val(data.id);
+          $("#id").val(data.id);
           $("#phone_number").val(data.phone);
           $("#email").val(data.email);
-          $("#link_image").val(data.avatar ? '<?php Common::path_avatar(); ?>'+data.avatar : '<?php Common::image_error(); ?>').trigger('blur');
-          $("#customer_name").val(data.name);
+          if(data.avatar) {
+              $("#link_image").val(data.avatar ? '<?php Common::path_avatar(); ?>'+data.avatar : '<?php Common::image_error(); ?>').trigger('blur');
+          }
+          $("#name").val(data.name);
           generate_select2_city(data.city_id);
           generate_select2_district(data.city_id, data.district_id);
           generate_select2_village(data.district_id, data.village_id);
-          // $(".select-city").val(data.cityId).trigger('change');
-          // $(".select-district").val(data.districtId).trigger('change');
-          // $(".select-village").val(data.villageId).trigger('change');
           $("#address").val(data.address);
-          $("#birthday").val(data.birthday);
+          $("#birthday").val(format_date(data.birthday));
           $("#facebook").val(data.facebook);
           $("#link_fb").val(data.link_fb);
       }
 
-      function check_exist_phone() {
+      function find_customer_by_phone() {
           $("#phone_number").blur(function () {
              let phone = $("#phone_number").val();
-              let customer_id = $("#customer_id").val();
-             if(phone && !customer_id) {
+              let id = $("#id").val();
+             if(phone && !id) {
                  if(!validate_phone(phone)) {
                      $("#phone_number").addClass("is-invalid");
                      $("#phone_number").focus();
                  } else {
                      $('.spinner-phone').removeClass('hidden');
-                     check_exist(phone, 'phone');
+                     find_customer(phone, 'phone');
                  }
              }
           });
       }
 
-      function check_exist_email() {
+      function find_customer_by_email() {
           $("#email").blur(function () {
               let email = $("#email").val();
-              let customer_id = $("#customer_id").val();
-              if(email && !customer_id) {
+              let id = $("#id").val();
+              if(email && !id) {
                   if(!validate_email(email)) {
                       $("#email").addClass("is-invalid");
                       $("#email").focus();
                   } else {
                       $('.spinner-email').removeClass('hidden');
-                      check_exist(email, 'email');
+                      find_customer(email, 'email');
                   }
               }
           });
       }
 
-      function check_exist(value, type) {
+      function find_customer(value, type) {
           $.ajax({
               url: "<?php Common::getPath() ?>src/controller/customer/CustomersController.php",
-              dataType: 'text',
+              dataType: 'JSON',
               type: 'post',
               data: {
                   value: value,
                   type: type,
-                  method: 'check_exist'
+                  method: 'find_customer'
               },
               success: function (res) {
                   console.log(res);
                   $('.spinner-phone').addClass('hidden');
                   $('.spinner-email').addClass('hidden');
-                  $("#existed_phone").val(0);
-                  $("#existed_email").val(0);
-                  if(res === 'existed') {
+                  // $("#existed_phone").val(0);
+                  // $("#existed_email").val(0);
+                  if(res) {
+                      process_existed(type, res);
                       if(type === 'phone') {
-                          toastr.error('Số điện thoại đã tồn tại');
+                          // toastr.error('Số điện thoại đã tồn tại');
                           $("#phone_number").addClass("is-invalid");
-                          $("#existed_phone").val(1);
+                          // $("#existed_phone").val(1);
                       } else if(type === 'email') {
-                          toastr.error('Email đã tồn tại');
+                          // toastr.error('Email đã tồn tại');
                           $("#email").addClass("is-invalid");
-                          $("#existed_email").val(1);
+                          // $("#existed_email").val(1);
                       }
                   } else {
                       if(type === 'phone') {
@@ -273,6 +271,27 @@ Common::authen();
                   }
               }
           });
+      }
+
+      function process_existed(type, data) {
+          let title = "Số điện thoại đã tồn tại";
+          if(type === 'email') {
+              title = "Email đã tồn tại";
+          }
+          Swal.fire({
+              title: title,
+              text: "Bạn có muốn cập nhật thông tin khách hàng không?",
+              type: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Ok'
+          }).then((result) => {
+              if (result.value) {
+                  reset_data_customer();
+                  setDataInform(data);
+              }
+          })
       }
 
       function btn_upload() {
@@ -337,18 +356,18 @@ Common::authen();
           });
       }
 
-      function validate() {
+      function validate_customer() {
           let is_valid = true;
           $(".modal-body").find("input").removeClass("is-invalid");
           $(".modal-body").find("select").removeClass("is-invalid");
-          let customer_id = $("#customer_id").val();
+          let id = $("#id").val();
           let phone_number = $("#phone_number").val();
           let existed_phone = $("#existed_phone").val();
           if (!phone_number || !validate_phone(phone_number)) {
               $("#phone_number").addClass("is-invalid");
               // $("#phone_number").focus();
               is_valid = false;
-          } else if(!customer_id && existed_phone == 1){
+          } else if(!id && existed_phone == 1){
               toastr.error('Số điện thoại đã tổn tại');
               $("#phone_number").addClass("is-invalid");
               is_valid = false;
@@ -361,20 +380,20 @@ Common::authen();
               $("#email").addClass("is-invalid");
               // $("#email").focus();
               is_valid = false;
-          } else if(!customer_id && existed_mail == 1){
+          } else if(!id && existed_mail == 1){
               toastr.error('Email đã tổn tại');
               $("#email").addClass("is-invalid");
               is_valid = false;
           } else {
               $("#email").removeClass("is-invalid");
           }
-          let customer_name = $("#customer_name").val();
-          if (customer_name === "") {
-              $("#customer_name").addClass("is-invalid");
-              // $("#customer_name").focus();
+          let name = $("#name").val();
+          if (name === "") {
+              $("#name").addClass("is-invalid");
+              // $("#name").focus();
               is_valid = false;
           } else {
-              $("#customer_name").removeClass("is-invalid");
+              $("#name").removeClass("is-invalid");
           }
 
           let cityId = $(".select-city").val();
@@ -416,13 +435,17 @@ Common::authen();
               $("#facebook").addClass("is-invalid");
               is_valid = false;
           }
+          if(!is_valid) {
+              toastr.error('Đã xảy ra lỗi');
+          }
           return is_valid;
       }
 
-      function create_new() {
-          if (!validate()) {
+      function create_new_customer() {
+          if (!validate_customer()) {
               return;
           }
+          let id = $("#id").val();
           let avatar = $("#link_image").val();
           let imgErr = '<?php Common::image_error(); ?>';
           if(avatar.indexOf(imgErr) > -1) {
@@ -430,11 +453,13 @@ Common::authen();
           } else {
               avatar = avatar.replace('<?php echo Common::path_avatar(); ?>','');
           }
+          let phone_number = $("#phone_number").val();
+          let name = $("#name").val();
           let data = {};
-          data["id"] = $("#customer_id").val();
-          data["name"] = $("#customer_name").val();
+          data["id"] = id;
+          data["name"] = name;
           data["avatar"] = avatar;
-          data["phone"] = $("#phone_number").val();
+          data["phone"] = phone_number;
           data["email"] = $("#email").val();
           data["facebook"] = $("#facebook").val();
           data["linkFB"] = $("#link_fb").val();
@@ -446,8 +471,7 @@ Common::authen();
 
           console.log(JSON.stringify(data));
           let title = 'Bạn có chắc chắn muốn tạo khách hàng này?';
-          let customer_id = $("#customer_id").val();
-          if (customer_id !== "underfined" && customer_id !== "") {
+          if (id) {
               title = 'Bạn có chắc chắn muốn cập nhật khách hàng này?';
           }
           Swal.fire({
@@ -460,7 +484,7 @@ Common::authen();
               confirmButtonText: 'Ok'
           }).then((result) => {
               if (result.value) {
-                  show_overlay();
+                  show_loading();
                   $.ajax({
                       dataType: 'text',
                       url: '<?php Common::getPath() ?>src/controller/customer/CustomersController.php',
@@ -470,26 +494,38 @@ Common::authen();
                       },
                       type: 'POST',
                       success: function (data) {
-                          hiden_overlay();
+                          hide_loading();
                           console.log(data);
-                          if(data == 'success') {
+                          if(data === "success") {
+                              let success = "Tạo mới thành công";
+                              if (id) {
+                                  success = "Cập nhật thành công";
+                              }
                               Swal.fire({
                                   type: 'success',
-                                  title: 'Tạo mới thành công',
+                                  title: success,
                                   text: "Khách hàng đã được tạo mới thành công"
                               }).then((result) => {
                                   if (result.value) {
-                                      reset_data();
-                                      $("#create-customer .close").click();
-                                      hiden_overlay();
-                                      $('#example').DataTable().ajax.reload();
+                                      hide_loading();
+                                      close_modal_customer();
+                                      if($('#table_customer')) {
+                                          reset_data_customer();
+                                          $('#table_customer').DataTable().ajax.reload();
+                                      }
+                                      if($("#customer_phone")) {
+                                          $("#customer_phone").val(phone_number);
+                                      }
+                                      if($("#name")) {
+                                          $("#name").val(name);
+                                      }
                                   }
                               });
-                          } if(data == 'existed_phone') {
+                          } if(data === "existed_phone") {
                               toastr.error('Số điện thoại đã tồn tại');
                               $("#phone_number").addClass("is-invalid");
                               $("#customer_exist").val("phone");
-                          } else if(data == 'existed_email') {
+                          } else if(data === "existed_email") {
                               toastr.error('Email đã tồn tại');
                               $("#email").addClass("is-invalid");
                               $("#customer_exist").val("email");
@@ -503,7 +539,7 @@ Common::authen();
                               title: 'Đã xảy ra lỗi',
                               text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
                           });
-                          hiden_overlay();
+                          hide_loading();
                       }
                   });
 
@@ -511,22 +547,27 @@ Common::authen();
           })
       }
 
-      function reset_data() {
-          $(".modal-title").text("Tạo mới khách hàng");
-          $("#create_new").text("Tạo mới");
-          $("#customer_id").val("");
-          $("#customer_name").val("").removeClass('is-invalid');
+      function reset_data_customer() {
+          $(".modal-customer").text("Tạo mới khách hàng");
+          // $("#create_new_customer").text("Tạo mới");
+          $("#id").val("");
+          $("#name").val("").removeClass('is-invalid');
           $("#phone_number").val("").removeClass('is-invalid');
           $("#email").val("").removeClass('is-invalid');
-          $(".select-city").val("-1").trigger("change").removeClass('is-invalid');
-          $(".select-district").val("-1").trigger("change").removeClass('is-invalid');
-          $(".select-village").val("-1").trigger("change").removeClass('is-invalid');
+          // $(".select-city").val(-1).trigger("change").removeClass('is-invalid');
+          // $(".select-district").val(-1).trigger("change").removeClass('is-invalid');
+          // $(".select-village").val(-1).trigger("change").removeClass('is-invalid');
+          reset_select2('.select-city');
+          reset_select2('.select-district');
+          reset_select2('.select-village');
           $("#address").val("").removeClass('is-invalid');
           $("#birthday").val("").removeClass('is-invalid');
           $("#link_image").val('').trigger('blur');
           $("#facebook").val('');
           $("#link_fb").val('');
       }
+
+
 
       // function validateEmail(email) {
       //     let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -541,116 +582,116 @@ Common::authen();
       //     return value.replace(/%/g, '');
       // }
 
-      function open_modal() {
-          $('#create-customer').modal({
-              backdrop: 'static',
-              keyboard: false,
-              show: true
-          });
-      }
+      // function open_modal() {
+      //     $('#create-customer').modal({
+      //         backdrop: 'static',
+      //         keyboard: false,
+      //         show: true
+      //     });
+      // }
 
-      function generate_select2_city(city_id) {
-          show_overlay();
-          $.ajax({
-              dataType: "json",
-              url: "<?php Common::getPath() ?>src/controller/orders/OrderController.php",
-              data: {
-                  orders: 'loadDataCity'
-              },
-              type: 'GET',
-              success: function (data) {
-                  $('.select-city').select2({
-                      data: data.results,
-                      theme: 'bootstrap4',
-                      placeholder: 'Lựa chọn'
-                  });
-                  hiden_overlay();
-                  if (city_id) {
-                      $(".select-city").val(city_id).trigger("change");
-                  }
-              },
-              error: function (data, errorThrown) {
-                  console.log(data.responseText);
-                  console.log(errorThrown);
-                  hiden_overlay();
-              }
-          });
-      }
+      //function generate_select2_city(city_id) {
+      //    show_overlay();
+      //    $.ajax({
+      //        dataType: "json",
+      //        url: "<?php //Common::getPath() ?>//src/controller/orders/OrderController.php",
+      //        data: {
+      //            orders: 'loadDataCity'
+      //        },
+      //        type: 'GET',
+      //        success: function (data) {
+      //            $('.select-city').select2({
+      //                data: data.results,
+      //                theme: 'bootstrap4',
+      //                placeholder: 'Lựa chọn'
+      //            });
+      //            hiden_overlay();
+      //            if (city_id) {
+      //                $(".select-city").val(city_id).trigger("change");
+      //            }
+      //        },
+      //        error: function (data, errorThrown) {
+      //            console.log(data.responseText);
+      //            console.log(errorThrown);
+      //            hiden_overlay();
+      //        }
+      //    });
+      //}
 
-      function generate_select2_district(cityId, districtId) {
-          show_overlay();
-          $('.select-district').empty();
-          $.ajax({
-              dataType: "json",
-              url: "<?php Common::getPath() ?>src/controller/orders/OrderController.php",
-              data: {
-                  orders: 'loadDataDistrict',
-                  cityId: cityId
-              },
-              type: 'GET',
-              success: function (data) {
-                  console.log(data.results);
-                  $('.select-district').select2({
-                      data: data.results,
-                      theme: 'bootstrap4',
-                  });
-                  hiden_overlay();
-                  let select = $('.select-district');
-                  let option = $('<option></option>').attr('selected', true).text("Lựa chọn").val(-1);
-                  option.prependTo(select);
-                  select.trigger('change');
-                  if (typeof districtId != "undefined" && districtId !== '') {
-                      districtId = districtId.padStart(3, '0');
-                      $(".select-district").val(districtId).trigger("change");
-                  }
-              },
-              error: function (data, errorThrown) {
-                  console.log(data.responseText);
-                  console.log(errorThrown);
-                  hiden_overlay();
-              }
-          });
-      }
+      //function generate_select2_district(cityId, districtId) {
+      //    show_overlay();
+      //    $('.select-district').empty();
+      //    $.ajax({
+      //        dataType: "json",
+      //        url: "<?php //Common::getPath() ?>//src/controller/orders/OrderController.php",
+      //        data: {
+      //            orders: 'loadDataDistrict',
+      //            cityId: cityId
+      //        },
+      //        type: 'GET',
+      //        success: function (data) {
+      //            console.log(data.results);
+      //            $('.select-district').select2({
+      //                data: data.results,
+      //                theme: 'bootstrap4',
+      //            });
+      //            hiden_overlay();
+      //            let select = $('.select-district');
+      //            let option = $('<option></option>').attr('selected', true).text("Lựa chọn").val(-1);
+      //            option.prependTo(select);
+      //            select.trigger('change');
+      //            if (typeof districtId != "undefined" && districtId !== '') {
+      //                districtId = districtId.padStart(3, '0');
+      //                $(".select-district").val(districtId).trigger("change");
+      //            }
+      //        },
+      //        error: function (data, errorThrown) {
+      //            console.log(data.responseText);
+      //            console.log(errorThrown);
+      //            hiden_overlay();
+      //        }
+      //    });
+      //}
+      //
+      //function generate_select2_village(districtId, villageId) {
+      //    show_overlay();
+      //    $('.select-village').empty();
+      //    $.ajax({
+      //        dataType: "json",
+      //        url: "<?php //Common::getPath() ?>//src/controller/orders/OrderController.php",
+      //        data: {
+      //            orders: 'loadDataVillage',
+      //            districtId: districtId
+      //        },
+      //        type: 'GET',
+      //        success: function (data) {
+      //            $('.select-village').select2({
+      //                data: data.results,
+      //                theme: 'bootstrap4',
+      //            });
+      //            let select = $('.select-village');
+      //            let option = $('<option></option>').attr('selected', true).text("Lựa chọn").val(-1);
+      //            option.prependTo(select);
+      //            select.trigger('change');
+      //            hiden_overlay();
+      //            if (typeof villageId != "undefined" && villageId !== '') {
+      //                villageId = villageId.padStart(5, '0');
+      //                $(".select-village").val(villageId).trigger("change");
+      //            }
+      //        },
+      //        error: function (data, errorThrown) {
+      //            console.log(data.responseText);
+      //            console.log(errorThrown);
+      //            hiden_overlay();
+      //        }
+      //    });
+      //}
 
-      function generate_select2_village(districtId, villageId) {
-          show_overlay();
-          $('.select-village').empty();
-          $.ajax({
-              dataType: "json",
-              url: "<?php Common::getPath() ?>src/controller/orders/OrderController.php",
-              data: {
-                  orders: 'loadDataVillage',
-                  districtId: districtId
-              },
-              type: 'GET',
-              success: function (data) {
-                  $('.select-village').select2({
-                      data: data.results,
-                      theme: 'bootstrap4',
-                  });
-                  let select = $('.select-village');
-                  let option = $('<option></option>').attr('selected', true).text("Lựa chọn").val(-1);
-                  option.prependTo(select);
-                  select.trigger('change');
-                  hiden_overlay();
-                  if (typeof villageId != "undefined" && villageId !== '') {
-                      villageId = villageId.padStart(5, '0');
-                      $(".select-village").val(villageId).trigger("change");
-                  }
-              },
-              error: function (data, errorThrown) {
-                  console.log(data.responseText);
-                  console.log(errorThrown);
-                  hiden_overlay();
-              }
-          });
-      }
-
-      function show_overlay() {
-          $("#create-order .overlay").removeClass("hidden");
-      }
-      function hiden_overlay() {
-          $("#create-customer .overlay").addClass("hidden");
-      }
+      // function show_overlay() {
+      //     $("#create-order .overlay").removeClass("hidden");
+      // }
+      // function hiden_overlay() {
+      //     $("#create-customer .overlay").addClass("hidden");
+      // }
 
   </script>

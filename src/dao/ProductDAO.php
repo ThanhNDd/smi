@@ -749,10 +749,24 @@ class ProductDAO
     function find_by_sku($sku)
     {
         try {
-            $sql = "select A.id as product_id, B.id as variant_id, A.name, A.retail, B.size, B.color, B.quantity, B.sku, A.discount, A.price 
-                    from smi_products A left join smi_variations B on A.id = B.product_id 
-                    where B.sku = " . $sku . "
-                    order by A.id, B.id, B.color, B.size";
+            $sql = "SELECT A.id AS product_id,
+                           B.id AS variant_id,
+                           A.name,
+                           B.retail,
+                           B.size,
+                           B.color,
+                           B.quantity,
+                           B.sku,
+                           A.discount,
+                           B.price,
+                           B.profit
+                    FROM smi_products A
+                    LEFT JOIN smi_variations B ON A.id = B.product_id
+                    WHERE B.sku = " . $sku . "
+                    ORDER BY A.id,
+                             B.id,
+                             B.color,
+                             B.size";
             $result = mysqli_query($this->conn, $sql);
             $data = array();
             if (!empty($result)) {
@@ -766,7 +780,8 @@ class ProductDAO
                         'color' => $row["color"],
                         'sku' => $row["sku"],
                         'discount' => $row["discount"],
-                        'price' => number_format($row["price"])
+                        'price' => number_format($row["price"]),
+                        'profit' => number_format($row["profit"])
                     );
                     array_push($data, $product);
                 }

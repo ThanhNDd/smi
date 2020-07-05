@@ -371,14 +371,14 @@ Common::authen();
             '<i class="fas fa-trash"></i> Xóa</a>' +
             '</button>';
     }
-
-    function open_modal() {
-        $('#formFee').modal({
-            backdrop: 'static',
-            keyboard: false,
-            show: true
-        });
-    }
+    //
+    // function open_modal() {
+    //     $('#formFee').modal({
+    //         backdrop: 'static',
+    //         keyboard: false,
+    //         show: true
+    //     });
+    // }
 
     function reset_modal() {
         $(".modal-title").text("Tạo mới phiếu chi");
@@ -398,7 +398,7 @@ Common::authen();
             valid = false;
         }
         let reason = $("#reason").val();
-        if(reason == "") {
+        if(reason === "") {
             toastr.error("Đã có lỗi xảy ra");
             $("#reason").focus();
             valid = false;
@@ -527,7 +527,7 @@ Common::authen();
                 $("#amount").val(res[0].amount);
                 $("#type").val(res[0].type).trigger("change");
                 $(".modal-title").text("Cập nhật phiếu chi");
-                open_modal();
+                open_modal('#formFee');
             },
             error: function (data, errorThrown) {
                 console.log(data);

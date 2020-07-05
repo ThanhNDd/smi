@@ -63,7 +63,7 @@ Common::authen();
                 <!-- /.card-header -->
                 <div class="card-body pt-0">
                     <div class="table-responsive">
-                        <table id="example" class="table table-bordered table-striped">
+                        <table id="example" class="table table-hover table-striped">
                             <thead>
                             <tr>
                                 <th></th>
@@ -284,11 +284,18 @@ Common::authen();
                     d.end_date = $("#endDate").val();
                 }
             },
+            searching: false,
             ordering: false,
             scrollY: '50vh',
             scrollCollapse: true,
             "language": {
-                "emptyTable": "Không có dữ liệu"
+                "emptyTable": "Không có dữ liệu",
+                "oPaginate": {
+                    "sFirst":    	"&lsaquo;",
+                    "sPrevious": 	"&laquo;",
+                    "sNext":     	"&raquo;",
+                    "sLast":     	"&rsaquo;"
+                },
             },
             select: "single",
             "columns": [
@@ -437,7 +444,7 @@ Common::authen();
                                 type: 'error',
                                 title: 'Đã xảy ra lỗi',
                                 text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-                            })
+                            });
                             hide_loading();
                         }
                     });
@@ -471,7 +478,7 @@ Common::authen();
                         type: 'error',
                         title: 'Đã xảy ra lỗi',
                         text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-                    })
+                    });
                     hide_loading();
                 }
             });
@@ -506,7 +513,7 @@ Common::authen();
                     type: 'error',
                     title: 'Đã xảy ra lỗi',
                     text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-                })
+                });
                 hide_loading();
             }
         });
@@ -515,7 +522,7 @@ Common::authen();
     function set_data_edit_order(order_id, data, order_type) {
         reset_data();
         $(".modal-title").text("Cập nhật đơn hàng #" + order_id);
-        $("#create_new").text("Cập nhật");
+        $("#create_new_order").text("Cập nhật");
         // enable_btn_add_new();
         $("#order_type").val(order_type).trigger("change");
         $.each(data, function (key, value) {
@@ -528,38 +535,38 @@ Common::authen();
                     $("#customer_id").val(value[0].customer_id);
                     $("#bill_of_lading_no").val(value[0].bill_of_lading_no);
                     $("#shipping_fee").val(value[0].shipping_fee);
-                    $("#customer_name").val(value[0].customerName);
-                    $("#phone_number").val(value[0].phone);
-                    $("#email").val(value[0].email);
-                    generate_select2_city(value[0].city_id);
-                    generate_select2_district(value[0].city_id, value[0].district_id);
-                    generate_select2_village(value[0].district_id, value[0].village_id);
-                    $("#address").val(value[0].address);
+                    // $("#customer_name").val(value[0].customerName);
+                    // $("#phone_number").val(value[0].phone);
+                    // $("#email").val(value[0].email);
+                    // generate_select2_city(value[0].city_id);
+                    // generate_select2_district(value[0].city_id, value[0].district_id);
+                    // generate_select2_village(value[0].district_id, value[0].village_id);
+                    // $("#address").val(value[0].address);
                     $("#shipping").val(value[0].shipping).trigger("change");
                     $("#bill_of_lading_no").prop("disabled", false);
                     $("#shipping_fee").prop("disabled", false);
-                    $("#customer_name").prop("disabled", false);
-                    $("#phone_number").prop("disabled", false);
-                    $("#email").prop("disabled", false);
+                    // $("#customer_name").prop("disabled", false);
+                    // $("#phone_number").prop("disabled", false);
+                    // $("#email").prop("disabled", false);
                     $(".select-shipping-unit").prop("disabled", false);
-                    $(".select-city").prop("disabled", false);
-                    $(".select-district").prop("disabled", false);
-                    $(".select-village").prop("disabled", false);
-                    $("#address").prop("disabled", false);
+                    // $(".select-city").prop("disabled", false);
+                    // $(".select-district").prop("disabled", false);
+                    // $(".select-village").prop("disabled", false);
+                    // $("#address").prop("disabled", false);
                     $("#shipping").prop("disabled", false);
                 } else if (order_type == 0) {
                     generate_select2_city();
                     // on shop
                     $("#bill_of_lading_no").prop("disabled", true);
                     $("#shipping_fee").prop("disabled", true);
-                    $("#customer_name").prop("disabled", true);
-                    $("#phone_number").prop("disabled", true);
-                    $("#email").prop("disabled", true);
+                    // $("#customer_name").prop("disabled", true);
+                    // $("#phone_number").prop("disabled", true);
+                    // $("#email").prop("disabled", true);
                     $(".select-shipping-unit").prop("disabled", true);
-                    $(".select-city").prop("disabled", true);
-                    $(".select-district").prop("disabled", true);
-                    $(".select-village").prop("disabled", true);
-                    $("#address").prop("disabled", true);
+                    // $(".select-city").prop("disabled", true);
+                    // $(".select-district").prop("disabled", true);
+                    // $(".select-village").prop("disabled", true);
+                    // $("#address").prop("disabled", true);
                     $("#shipping").prop("disabled", true);
                     $("#order_status").val(3).trigger("change");//complete
                 }
@@ -584,7 +591,7 @@ Common::authen();
                         $("#prodReduce_" + (i + 1)).prop("disabled", false);
                     }
                 }
-                open_modal();
+                open_modal('#create_order');
             } else {
                 toastr.error('Đã xảy ra lỗi.');
             }
@@ -891,13 +898,13 @@ Common::authen();
         });
     }
 
-    function show_loading() {
-        $("#create-product .overlay").removeClass("hidden");
-    }
-
-    function hide_loading() {
-        $("#create-product .overlay").addClass("hidden");
-    }
+    // function show_loading() {
+    //     $("#create-product .overlay").removeClass("hidden");
+    // }
+    //
+    // function hide_loading() {
+    //     $("#create-product .overlay").addClass("hidden");
+    // }
 
 </script>
 </body>

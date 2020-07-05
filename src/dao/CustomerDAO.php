@@ -186,6 +186,25 @@ class CustomerDAO
     }
   }
 
+    function find_customer($value, $type)
+    {
+        try {
+            $where = '1=1';
+            if($type == 'phone') {
+                $where .= " and phone = '$value' ";
+            } else if($type == 'email') {
+                $where .= " and email = '$value' ";
+            }
+            $sql = "select * from smi_customers where $where limit 1";
+            $result = mysqli_query($this->conn, $sql);
+            while ($obj = mysqli_fetch_object($result, "Customer")) {
+                return $obj;
+            }
+        } catch (Exception $e) {
+            echo "Open connection database is error exception >> " . $e->getMessage();
+        }
+    }
+
 
   function active_customer($id, $status)
   {

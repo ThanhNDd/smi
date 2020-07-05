@@ -1,22 +1,22 @@
 <?php
 class Customer {
 
-  private $id;
-  private $name;
-  private $avatar;
-  private $phone;
-  private $email;
-  private $facebook;
-  private $link_fb;
-  private $address;
-  private $birthday;
-  private $village_id;
-  private $district_id;
-  private $city_id;
-  private $active;
-  private $purchased;
-  private $created_at;
-  private $updated_at;
+  public $id;
+  public $name;
+  public $avatar;
+  public $phone;
+  public $email;
+  public $facebook;
+  public $link_fb;
+  public $address;
+  public $birthday;
+  public $village_id;
+  public $district_id;
+  public $city_id;
+  public $active;
+  public $purchased;
+  public $created_at;
+  public $updated_at;
 
   /**
    * @return mixed

@@ -7,8 +7,17 @@
 	src: url("../fonts/Roboto/Roboto-Light.ttf");
 }
 body, section.content {
-    font-family: Roboto-Regular !important;
+	font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+	font-size: 13px !important;
+	color: #676a6c !important;
 }
+table.dataTable thead th, table.dataTable thead td,
+.dataTables_wrapper.no-footer .dataTables_scrollBody{
+	border-bottom: none !important;
+}
+/*body, section.content {*/
+/*    font-family: Roboto-Regular !important;*/
+/*}*/
 .center {
 	text-align: center !important;
 }
@@ -94,7 +103,25 @@ body, section.content {
 .datepicker-days {
 	font-size: 12px !important;
 }
-li.paginate_button.page-item {
-  padding: 5px !important;
+
+.badge-warning, .badge-info {
+	padding: 5px !important;
 }
 
+.form-control {
+	font-size: 13px !important;
+}
+
+div.dataTables_wrapper div.dataTables_filter {
+	float: right;
+	padding-right: 5px;
+}
+input, button, select, .select2-container--bootstrap4 .select2-selection {
+	border-radius: 0 !important;
+}
+.select2-selection__rendered {
+	font-size: 13px;
+	padding: 7px;
+	margin-left: 7px;
+	color: #495057;
+}
