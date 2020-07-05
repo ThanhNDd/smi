@@ -362,14 +362,14 @@ Common::authen();
     <!-- /.modal-dialog -->
     <?php require_once('../../common/js.php'); ?>
     <script>
-        let flagError = 0;
-        let number_image_upload = 4;
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-        });
+        // let flagError = 0;
+        // let number_image_upload = 4;
+        // const Toast = Swal.mixin({
+        //     toast: true,
+        //     position: 'top-end',
+        //     showConfirmButton: false,
+        //     timer: 3000
+        // });
 
         $(document).ready(function () {
             $('.textarea').summernote({
@@ -566,7 +566,8 @@ Common::authen();
                                 'success'
                             ).then((result) => {
                                 if (result.value) {
-                                    $('#create_product').modal('hide');
+                                    // $('#create_product').modal('hide');
+                                    close_modal('#create_product');
                                     reset_modal();
                                 }
                             });

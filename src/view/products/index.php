@@ -162,7 +162,7 @@ Common::authen();
     <!-- /.row -->
 </section>
 <!-- /.content -->
-<?php include 'customer_phoneroducts.php'; ?>
+<?php include 'createProducts.php'; ?>
 </div>
 <div class="iframeArea hidden"></div>
 <?php require_once('../../common/footer.php'); ?>

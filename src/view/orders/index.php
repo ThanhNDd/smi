@@ -67,7 +67,7 @@ Common::authen();
                             <thead>
                             <tr>
                                 <th></th>
-                                <th>Mã đơn hàng</th>
+                                <th class="w100">ID</th>
                                 <!-- <th>Khách hàng</th> -->
                                 <!-- <th>Số điện thoại</th>
                                 <th>Địa chỉ</th> -->
@@ -124,7 +124,7 @@ Common::authen();
                                     </span>
                                 </div>
                                 <div class="col-4">
-                                    <h1 class="display-5 text-right count_on_shop">12</h1>
+                                    <h1 class="display-5 text-right count_on_shop"></h1>
                                 </div>
                             </div>
                             <!-- /.info-box-content -->

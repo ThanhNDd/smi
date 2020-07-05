@@ -204,13 +204,13 @@ Common::authen();
       }
 
       function find_customer_by_phone() {
-          $("#phone_number").blur(function () {
+          $("#phone_number").change(function () {
              let phone = $("#phone_number").val();
               let id = $("#id").val();
              if(phone && !id) {
                  if(!validate_phone(phone)) {
-                     $("#phone_number").addClass("is-invalid");
-                     $("#phone_number").focus();
+                     toastr.error('Số điện thoại không đúng định dạng');
+                     $("#phone_number").addClass("is-invalid").focus();
                  } else {
                      $('.spinner-phone').removeClass('hidden');
                      find_customer(phone, 'phone');

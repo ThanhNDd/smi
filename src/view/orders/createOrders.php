@@ -320,7 +320,7 @@ Common::authen();
             generate_select2('.shipping-unit');
             generate_select2('.payment-type');
 
-            create_new_customer();
+            create_customer();
 
             $("#order_type").change(function(){
                 let order_type = $(this).val();
@@ -449,13 +449,22 @@ Common::authen();
             add_product();
             $('[data-toggle="popover"]').popover();
 
-            $("#customer_phone").on('change blur', function () {
+            $("#customer_phone").on('change', function () {
                 let phone = $(this).val();
-                check_exist_customer(phone);
+                if(phone) {
+                    check_exist_customer(phone);
+                }
+            });
+            $("#customer_phone").on('keypress', function (event) {
+                let keycode = event.keyCode;
+                let phone = $(this).val();
+                if(keycode === 13 && phone) {
+                    check_exist_customer(phone);
+                }
             });
         });
 
-        function create_new_customer() {
+        function create_customer() {
             $("#btn_add_customer").click(function () {
                 reset_data_customer();
                 open_modal('#create_customer');
@@ -496,6 +505,7 @@ Common::authen();
                         }).then((result) => {
                             if (result.value) {
                                 reset_data_customer();
+                                $("#phone_number").val(phone);
                                 open_modal('#create_customer');
                             }
                         })
