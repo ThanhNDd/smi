@@ -12,19 +12,32 @@ $(document).ready(function () {
 });
 
 function formatNumber(num) {
-    return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    if(num) {
+        return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+    }
+    return num;
 }
 
 function replaceComma(value) {
     if(value) {
-      value = value.trim();
-      return value.replace(/,/g, '');
+        value = value.replace(/,/g, '');
+        if(value.indexOf("đ") > -1) {
+            value = value.replace(" đ","");
+        }
+        value = value.replace(/ /g, '');
     }
     return value;
 }
 
 function replacePercent(value) {
-    return value.replace(/%/g, '');
+    if(value) {
+        value = value.replace(/%/g, '');
+        if (value.indexOf("đ") > -1) {
+            value = value.replace("đ", "");
+        }
+        value = value.replace(/ /g, '');
+    }
+    return value;
 }
 
 // let regExp = /^\d*$|^\d*[,]?\d+$/;
@@ -272,4 +285,28 @@ function generate_select2(element) {
     $(element).select2({
         theme: 'bootstrap4'
     });
+}
+
+function alert_error_message(msg) {
+    if(!msg) {
+        msg = "Vui lòng liên hệ quản trị hệ thống để khắc phục";
+    }
+    Swal.fire({
+        type: 'error',
+        title: 'Đã xảy ra lỗi',
+        text: msg
+    });
+}
+
+function substringMatcher (strs) {
+    return function findMatches(q, cb) {
+        let matches = [];
+        let substrRegex = new RegExp(q, 'i');
+        $.each(strs, function (i, str) {
+            if (substrRegex.test(str)) {
+                matches.push(str);
+            }
+        });
+        cb(matches);
+    };
 }

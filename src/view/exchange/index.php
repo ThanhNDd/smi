@@ -1061,9 +1061,9 @@ Common::authen();
         objFra.contentWindow.print();
     }
 
-    function formatNumber(num) {
-        return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-    }
+    // function formatNumber(num) {
+    //     return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    // }
 
     function on_change_reduce(priceId, qtyId, intoMoneyId, reduceId, oldIntoMoneyId, diffMoneyId) {
         let price = get_price(priceId);
@@ -1179,23 +1179,23 @@ Common::authen();
         $("#checkout").prop("disabled","");
     }
 
-    function replaceComma(value) {
-        value = value.replace(/,/g, '');
-        if(value.indexOf("đ")) {
-            value = value.replace(" đ","");
-        }
-        value = value.replace(/ /g, '');
-        return value;
-    }
-
-    function replacePercent(value) {
-        value = value.replace(/%/g, '');
-        if(value.indexOf("đ")) {
-            value = value.replace("đ","");
-        }
-        value = value.replace(/ /g, '');
-        return value;
-    }
+    // function replaceComma(value) {
+    //     value = value.replace(/,/g, '');
+    //     if(value.indexOf("đ")) {
+    //         value = value.replace(" đ","");
+    //     }
+    //     value = value.replace(/ /g, '');
+    //     return value;
+    // }
+    //
+    // function replacePercent(value) {
+    //     value = value.replace(/%/g, '');
+    //     if(value.indexOf("đ")) {
+    //         value = value.replace("đ","");
+    //     }
+    //     value = value.replace(/ /g, '');
+    //     return value;
+    // }
 
     function resetData() {
         $("#tableProd tbody").html("");

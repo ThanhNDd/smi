@@ -319,10 +319,10 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $product->setName($data->name);
         $product->setLink($data->link);
         $product->setFee_transport($data->fee);
-        $product->setPrice(0);
-        $product->setProfit(0);
-        $product->setPercent(0);
-        $product->setRetail(0);
+        $product->setPrice($data->price);
+        $product->setProfit($data->profit);
+        $product->setPercent($data->percent);
+        $product->setRetail($data->retail);
         $product->setType($data->type);
         $product->setCategory_id($data->cat);
         $product->setImage($data->image);
@@ -354,6 +354,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
             $variation->setSku($variations[$i]->sku);
             $variation->setPrice($variations[$i]->price);
             $variation->setRetail($variations[$i]->retail);
+            $variation->setFee($variations[$i]->fee);
             $variation->setProfit($variations[$i]->profit);
             $variation->setPercent($variations[$i]->percent);
             $variation->setImage($variations[$i]->image);
@@ -415,6 +416,16 @@ if (isset($_POST["method"]) && $_POST["method"] == "load_color") {
     try {
         Common::authen_get_data();
         $color = $dao->get_colors();
+        echo json_encode($color);
+    } catch (Exception $e) {
+        throw new Exception($e);
+    }
+}
+
+if (isset($_POST["method"]) && $_POST["method"] == "load_material") {
+    try {
+        Common::authen_get_data();
+        $color = $dao->get_materials();
         echo json_encode($color);
     } catch (Exception $e) {
         throw new Exception($e);

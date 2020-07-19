@@ -468,14 +468,14 @@ Common::authen();
         });
     }
 
-    function formatNumber(num) {
-        return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-    }
-
-    function replaceComma(value) {
-        value = value.trim();
-        return value.replace(/,/g, '');
-    }
+    // function formatNumber(num) {
+    //     return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    // }
+    //
+    // function replaceComma(value) {
+    //     value = value.trim();
+    //     return value.replace(/,/g, '');
+    // }
 </script>
 </body>
 </html>

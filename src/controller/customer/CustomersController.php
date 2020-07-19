@@ -62,6 +62,16 @@ if (isset($_POST["method"]) && $_POST["method"] == "find_customer") {
   }
 }
 
+if (isset($_GET["method"]) && $_GET["method"] == "get_all_customer") {
+    try {
+        Common::authen_get_data();
+        $customer = $dao->find_customers_for_suggestion();
+        echo json_encode($customer);
+    } catch (Exception $e) {
+        throw new Exception($e);
+    }
+}
+
 
 if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
   try {
@@ -72,17 +82,24 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
       $customer_id = $data->id;
       if(!$customer_id) {
         $phone = $data->phone;
-        $checkExist = $dao->find_customer($phone, 'phone');
-        if($checkExist) {
-          echo 'existed_phone';
-          return;
+        if(empty($phone)) {
+            echo 'not_existed_phone';
+            return;
+        } else {
+            $checkExist = $dao->find_customer($phone, 'phone');
+            if ($checkExist) {
+                echo 'existed_phone';
+                return;
+            }
         }
 
         $email = $data->email;
-        $checkExist = $dao->find_customer($email, 'email');
-        if($checkExist) {
-          echo 'existed_email';
-          return;
+        if(!empty($email)) {
+            $checkExist = $dao->find_customer($email, 'email');
+            if ($checkExist) {
+                echo 'existed_email';
+                return;
+            }
         }
       }
       $customer = new Customer();

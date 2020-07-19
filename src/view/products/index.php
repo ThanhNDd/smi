@@ -98,6 +98,15 @@ Common::authen();
             margin-top: 10px;
             width: 86%;
         }
+        .select_material label {
+            margin-bottom: 0 !important;
+        }
+        .select_material .twitter-typeahead {
+            margin-top: 8px !important;
+        }
+        table#example {
+            width: 100% !important;
+        }
     </style>
 </head>
 <?php require_once('../../common/header.php'); ?>
@@ -128,8 +137,19 @@ Common::authen();
                         </button>
                     </section>
                 </div>
+<!--                <div class="row col-12 m-3">-->
+<!--                    <section>-->
+<!--                        <div class="form-inline" style="display: inline-block">-->
+<!--                            <input type="text" value="" name="search_sku" id="search_sku"-->
+<!--                                   placeholder="Nhập mã sản phẩm" class="form-control">-->
+<!--                            <input type="text" value="" name="search_name" id="search_name"-->
+<!--                                   placeholder="Nhập tên sản phẩm" class="form-control">-->
+<!--                            <button id="search" class="btn btn-secondary btn-flat"><i class="fa fa-search"></i> Tìm kiếm</button>-->
+<!--                        </div>-->
+<!--                    </section>-->
+<!--                </div>-->
                 <!-- /.card-header -->
-                <div class="card-body">
+                <div class="card-body m-3">
                     <table id="example" class="table table-bordered table-striped">
                         <thead>
                         <tr>
@@ -171,6 +191,10 @@ Common::authen();
         set_title("Danh sách sản phẩm");
         count_out_of_stock();
         generate_datatable();
+        $('#example').on('draw.dt', function() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        });
 
         $(".print-barcode").on("click", function () {
             let data = [];
@@ -256,6 +280,14 @@ Common::authen();
     function generate_datatable() {
         let table = $('#example').DataTable({
             "ajax": '<?php Common::getPath() ?>src/controller/product/ProductController.php?method=findall&status=0',
+            'ajax': {
+                "type": "GET",
+                "url": '<?php Common::getPath() ?>src/controller/product/ProductController.php',
+                "data": function (d) {
+                    d.method = 'findall';
+                    d.status = 0;
+                }
+            },
             select: "single",
             deferRender: true,
             rowId: 'extn',
@@ -324,6 +356,7 @@ Common::authen();
             let tdi = tr.find("i.fa");
             let row = table.row(tr);
             let productId = row.data().product_id;
+            let discount = row.data().discount;
 
             if (row.child.isShown()) {
                 // This row is already open - close it
@@ -347,7 +380,7 @@ Common::authen();
                         console.log(JSON.stringify(data));
                         // let details = res[0].details;
                         if (data.length > 0) {
-                            row.child(format_variation(data)).show();
+                            row.child(format_variation(data, discount)).show();
                             tr.addClass('shown');
                             tdi.first().removeClass('fa-plus-square');
                             tdi.first().addClass('fa-minus-square');
@@ -386,22 +419,21 @@ Common::authen();
                     open_modal_product_create();
                     console.log(res);
                     let arr = res.data;
-                    console.log(arr[0].profit);
                     $("#display_product_id").val(arr[0].product_id);
                     $("#product_id").val(arr[0].product_id);
 
                     $("#name").val(arr[0].name);
                     $("#link").val(arr[0].link);
-                    $("#fee").val(arr[0].fee_transport);
-                    $("#price").prop("disabled", true);
-                    $("#percent").prop("disabled", true);
-                    $("#retail").prop("disabled", true);
-                    $("#profit").prop("disabled", true);
-                    $("#qty").prop("disabled", true);
+                    // $("#fee").val(arr[0].fee_transport);
+                    // $("#price").val(arr[0].price);
+                    // $("#percent").val(arr[0].percent);
+                    // $("#retail").val(arr[0].retail);
+                    // $("#profit").val(arr[0].profit);
+                    // $("#qty").val(arr[0].quantity);
 
                     $("#select_gender").val(arr[0].type).trigger("change");
                     $("#select_cat").val(arr[0].category_id).trigger("change");
-                    $("#select_material").val(arr[0].material).trigger("change");
+                    // $("#select_material").val(arr[0].material).trigger("change");
                     $("#select_origin").val(arr[0].origin).trigger("change");
                     $('#short_description').val(arr[0].short_description);
 
@@ -409,6 +441,20 @@ Common::authen();
                         $('#description').summernote('code', arr[0].description);
                     } else {
                         $('#description').summernote('code', '');
+                    }
+
+                    $(".select_material").html("<label for=\"select_material\">Chất liệu:</label><input id='select_material' class=\"form-control\" type=\"text\" placeholder=\"Chọn chất liệu\" autocomplete=\"off\" spellcheck=\"false\">");
+                    $('#select_material').typeahead({
+                        hint: true,
+                        highlight: true,
+                        minLength: 1
+                    },
+                    {
+                        name: 'size',
+                        source: substringMatcher(materials)
+                    });
+                    if(arr[0].material) {
+                        $('#select_material').typeahead('val', arr[0].material);
                     }
 
                     let color = arr[0].colors;
@@ -438,7 +484,7 @@ Common::authen();
                     let image_variation = arr[0].image_variation;
                     if(image_variation.length > 0) {
                         $("#image_by_color").html("");
-                        for (let i = 0; i < image_variation.length; i++) {
+                        for (let i = 0; i < color.length; i++) {
                             add_image_by_color((i + 1), image_variation[i]);
                         }
                     }
@@ -807,11 +853,11 @@ Common::authen();
             '<input type="checkbox" class="custom-control-input shopee-publish" id="shopee_'+product_id+'" '+shopee+'>' +
             '<label class="custom-control-label" for="shopee_'+product_id+'">Shopee</label>' +
             '</div>';
-        let lazada = social_publish.lazada === 0 ? '' : 'checked';
-        btn += '<div class="custom-control custom-switch">' +
-            '<input type="checkbox" class="custom-control-input lazada-publish" id="lazada_'+product_id+'" '+lazada+'>' +
-            '<label class="custom-control-label" for="lazada_'+product_id+'">Lazada</label>' +
-            '</div>';
+        // let lazada = social_publish.lazada === 0 ? '' : 'checked';
+        // btn += '<div class="custom-control custom-switch">' +
+        //     '<input type="checkbox" class="custom-control-input lazada-publish" id="lazada_'+product_id+'" '+lazada+'>' +
+        //     '<label class="custom-control-label" for="lazada_'+product_id+'">Lazada</label>' +
+        //     '</div>';
         return btn;
     }
 
@@ -851,17 +897,30 @@ Common::authen();
 
     function format_discount_display(data) {
         let discount = data.discount;
-        let retail = replaceComma(data.retail);
-
-        let salePrice = '';
-        if (typeof discount == "undefined" || discount == 0) {
-            discount = "";
+        if(!discount || discount === '' || discount === '0') {
+            return '';
+        }
+        let retail = data.retail;
+        let min_price = 0;
+        let max_price = 0;
+        if(retail.indexOf("-") > -1) {
+            min_price = replaceComma(retail.split("-")[0]);
+            max_price = replaceComma(retail.split("-")[1]);
         } else {
-            if (discount < 100) {
-                // discount = discount + "%";
-                salePrice = formatNumber(retail - (retail * discount) / 100);
+            retail = replaceComma(retail);
+        }
+        let salePrice = '';
+        if (discount > 100) {
+            if(min_price > 0 || max_price > 0) {
+                salePrice = formatNumber(min_price - discount) +" - "+formatNumber(max_price - discount);
             } else {
                 salePrice = formatNumber(retail - discount);
+            }
+        } else {
+            if(min_price > 0 || max_price > 0) {
+                salePrice = formatNumber(min_price - (min_price * discount) / 100) +" - "+formatNumber(max_price - (max_price * discount) / 100);
+            } else {
+                salePrice = formatNumber(retail - (retail * discount) / 100);
             }
         }
         return salePrice;
@@ -869,7 +928,7 @@ Common::authen();
 
     function format_discount(data) {
         let discount = data.discount;
-        if (typeof discount == "undefined" || discount == 0) {
+        if (!discount || discount === "0") {
             discount = "";
         } else {
             if (discount < 100) {
@@ -889,29 +948,52 @@ Common::authen();
         $(e).removeClass("is-invalid");
         $("#update_discount").prop("disabled", true);
         let discount = $(e).val();
+        if(!discount) {
+            return;
+        }
         discount = replaceComma(discount);
-        retail = replaceComma(retail);
-        profit = replaceComma(profit);
+        discount = replacePercent(discount);
+        let min_price = 0;
+        let max_price = 0;
+        if(retail.indexOf("-") > -1) {
+            min_price = replaceComma(retail.split("-")[0]);
+            max_price = replaceComma(retail.split("-")[1]);
+        } else {
+            retail = replaceComma(retail);
+        }
+        // profit = replaceComma(profit);
+        profit = '';
         console.log(discount);
         let salePrice = '';
         // let profit;
-        if (discount == "") {
-
-        } else if (discount.indexOf("%") == -1) {
-            if (!isNaN(discount) && discount >= 0) {
-                profit = profit - discount;
-                salePrice = formatNumber(retail - discount);
+        if (!isNaN(discount) && discount > 0) {
+            if (discount > 100) {
+                if(min_price > 0 || max_price > 0) {
+                    // profit = '';
+                    salePrice = formatNumber(min_price - discount) +" - "+formatNumber(max_price - discount);
+                } else {
+                    // profit = profit - discount;
+                    salePrice = formatNumber(retail - discount);
+                }
                 $(e).val(formatNumber(discount));
-                $("#update_discount").prop("disabled", "");
             } else {
-                $(e).addClass("is-invalid");
-                $("#update_discount").prop("disabled", true);
+
+                // discount = replacePercent(discount);
+                if(min_price > 0 || max_price > 0) {
+                    profit = '';
+                    // profit = formatNumber(profit - min_price * discount / 100) +" - "+formatNumber(profit - max_price * discount / 100);
+                    salePrice = formatNumber(min_price - (min_price * discount) / 100) +" - "+formatNumber(max_price - (max_price * discount) / 100);
+                } else {
+                    // profit = profit - retail * discount / 100;
+                    salePrice = formatNumber(retail - (retail * discount) / 100);
+                }
+                // $("#update_discount").prop("disabled", "");
+                $(e).val(discount+"%");
             }
-        } else {
-            discount = replacePercent(discount);
-            profit = profit - retail * discount / 100;
             $("#update_discount").prop("disabled", "");
-            salePrice = formatNumber(retail - (retail * discount) / 100);
+        } else {
+            $(e).addClass("is-invalid");
+            $("#update_discount").prop("disabled", true);
         }
         $(e).parent().next("td").html(formatNumber(salePrice)+'<br><small>'+formatNumber(profit)+'</small>');
     }
@@ -920,9 +1002,7 @@ Common::authen();
         let discount = $(e).parent().find("input").val();
         discount = replaceComma(discount);
         discount = replacePercent(discount);
-        console.log(discount);
-        console.log(product_id);
-        if (discount == "undefined" || discount == "" || discount < 0) {
+        if (!discount || discount < 0) {
             toastr.error('Nhập chưa đúng!');
             return;
         }
@@ -957,7 +1037,7 @@ Common::authen();
         discount = replaceComma(discount);
         discount = replacePercent(discount);
         console.log(discount);
-        if (discount == "undefined" || discount == "" || discount < 0) {
+        if (!discount || discount < 0) {
             toastr.error('Nhập chưa đúng!');
             return;
         }
@@ -1171,42 +1251,66 @@ Common::authen();
         return "<a href='"+src+"' target='_blank'><img src='" + src + "' width='100px' id='thumbnail' onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"'></a>";
     }
 
-    function format_variation(variations, isNew) {
-        let table = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
+    function format_variation(variations, discount, isNew) {
+        let table = "<div class=\"card card-outline card-danger\" style='margin: 20px'>\n" +
+            // "        <div class=\"card-header\">\n" +
+            // "          <h3 class=\"card-title\">Danh sách sản phẩm</h3>\n" +
+            // "        </div>\n" +
+            "        <div class=\"card-body\">";
+        table += '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;" class="table table-hover table-bodered">';
         table += '<thead>' +
             '<tr>' +
-            '<th class="center"><input type="checkbox" id="selectall" onclick="checkAll(this)"></th>' +
-            '<th>Mã sản phẩm</th>' +
-            '<th>Màu</th>' +
-            '<th>Size</th>' +
-            '<th>Số lượng</th>' +
-            '<th>Giá bán</th>' +
-            '<th>Shopee</th>' +
-            '<th>Lazada</th>' +
+            '<th style="width: 3%;" class="center"><input type="checkbox" id="selectall" onclick="checkAll(this)"></th>' +
+            '<th style="width: 5%;">Hình ảnh</th>' +
+            '<th style="width: 7%;">Màu</th>' +
+            '<th style="width: 7%;">Mã sản phẩm</th>' +
+            '<th style="width: 8%;">Size</th>' +
+            '<th style="width: 5%;">Số lượng</th>' +
+            '<th style="width: 7%;">Giá bán</th>' +
+            '<th>Giá sale</th>' +
+            // '<th>Shopee</th>' +
+            // '<th>Lazada</th>' +
             '</tr>' +
             '</thead>' +
             '<tbody>';
+        let width_img = 35;
         for (let i = 0; i < variations.length; i++) {
-            let updated_qty = JSON.parse(variations[i].updated_qty);
-            let shopee = updated_qty.shopee === 0 ? '' : 'checked';
-            let lazada = updated_qty.lazada === 0 ? '' : 'checked';
-            table += '<tr class="' + variations[i].sku + '">' +
-                '<td class="center"><input type="checkbox" id="' + variations[i].sku + '" onclick="check(this)"></td>';
-            table += '<input type="hidden" class="product-id-' + variations[i].sku + '" value="' + variations[i].product_id + '">' +
-                '<td>' + variations[i].sku + '</td>' +
-                '<td>' + variations[i].color + '</td>' +
-                '<td>' + variations[i].size + '</td>' +
-                '<td id="qty">' + variations[i].quantity + '</td>' +
-                '<td id="qty">' + variations[i].retail + '</td>' +
-                '<td><div class="custom-control custom-switch">' +
-                '<input type="checkbox" class="custom-control-input upd-qty-shopee" id="shopee_'+variations[i].sku+'" '+shopee+' onchange="updatedQty(this, \'shopee\', '+variations[i].sku+')">' +
-                '<label class="custom-control-label" for="shopee_'+variations[i].sku+'"></label>' +
-                '</div></td>' +
-                '<td><div class="custom-control custom-switch">' +
-                '<input type="checkbox" class="custom-control-input upd-qty-lazada" id="lazada_'+variations[i].sku+'" '+lazada+' onchange="updatedQty(this, \'lazada\', '+variations[i].sku+')">' +
-                '<label class="custom-control-label" for="lazada_'+variations[i].sku+'"></label>' +
-                '</div></td>' +
-                '</tr>';
+            // let updated_qty = JSON.parse(variations[i].updated_qty);
+            // let shopee = updated_qty.shopee === 0 ? '' : 'checked';
+            // let lazada = updated_qty.lazada === 0 ? '' : 'checked';
+
+            let len = variations[i].length;
+            for(let j=0; j<len; j++) {
+                table += '<tr class="' + variations[i][j].sku + '">';
+                table += '<input type="hidden" class="product-id-' + variations[i][j].sku + '" value="' + variations[i][j].product_id + '">';
+                table += '<td class="center"><input type="checkbox" id="' + variations[i][j].sku + '" onclick="check(this)"></td>';
+                if(j === 0) {
+                    table += "<td rowspan=\""+variations[i].length+"\"><img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width=\""+(width_img*len)+"\" src=\""+variations[i][j].image+"\" style=\"max-width: 70px;border-radius: 50%;\"></td>";
+                    table += '<td rowspan="'+variations[i].length+'">' + variations[i][j].color + '</td>';
+                }
+                table += '<td>' + variations[i][j].sku + '</td>';
+                table += '<td>' + variations[i][j].size + '</td>';
+                table += '<td id="qty">' + (variations[i][j].quantity === "0" ? "<span class=\"text-danger\">Hết hàng</span>" : variations[i][j].quantity)  + '</td>';
+                table += '<td id="retail">' + variations[i][j].retail + '</td>';
+                let sale_price = '';
+                if(discount && discount > 0) {
+                    if(discount < 100) {
+                        sale_price = Number(replaceComma(variations[i][j].retail)) * (100 - Number(discount)) / 100;
+                    } else {
+                        sale_price = Number(replaceComma(variations[i][j].retail)) - Number(discount);
+                    }
+                }
+                table += '<td id="sale_price">' + formatNumber(sale_price) + '</td>';
+                // '<td><div class="custom-control custom-switch">' +
+                // '<input type="checkbox" class="custom-control-input upd-qty-shopee" id="shopee_'+variations[i].sku+'" '+shopee+' onchange="updatedQty(this, \'shopee\', '+variations[i].sku+')">' +
+                // '<label class="custom-control-label" for="shopee_'+variations[i].sku+'"></label>' +
+                // '</div></td>' +
+                // '<td><div class="custom-control custom-switch">' +
+                // '<input type="checkbox" class="custom-control-input upd-qty-lazada" id="lazada_'+variations[i].sku+'" '+lazada+' onchange="updatedQty(this, \'lazada\', '+variations[i].sku+')">' +
+                // '<label class="custom-control-label" for="lazada_'+variations[i].sku+'"></label>' +
+                // '</div></td>' +
+                table += '</tr>';
+            }
         }
         if (isNew === "isNew") {
             let new_sku = Number(variations[variations.length - 1].sku) < 10 ? "0" + variations[variations.length - 1].sku : Number(variations[variations.length - 1].sku) + 1;
@@ -1220,6 +1324,8 @@ Common::authen();
         }
         table += '</tbody>';
         table += '</table>';
+        table += '</div>';
+        table += '</div>';
         return table;
     }
 
@@ -1268,9 +1374,9 @@ Common::authen();
     function checkAll(e) {
         let isCheck = $(e).prop('checked');
         if (isCheck) {
-            $(e).parent().parent().parent().parent().find('td:first-child input:checkbox').prop("checked", "checked");
+            $(e).parent().parent().parent().parent().find('td input:checkbox').prop("checked", "checked");
         } else {
-            $(e).parent().parent().parent().parent().find('td:first-child input:checkbox').prop("checked", "");
+            $(e).parent().parent().parent().parent().find('td input:checkbox').prop("checked", "");
         }
         countAllChecked();
     }

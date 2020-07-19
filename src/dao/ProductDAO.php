@@ -66,7 +66,7 @@ class ProductDAO
             $sql = "select 
                         A.name ,
                         B.sku,
-                        A.retail,
+                        B.retail,
                         B.quantity, 
                         case when B.size ='Free Size' then B.color else concat(B.size,'-',B.color) end as size
                     from 
@@ -153,7 +153,8 @@ class ProductDAO
                            B.price,
                            B.profit,
                            B.retail,
-                           B.percent
+                           B.percent,
+                           B.fee
                     FROM smi_products A
                     LEFT JOIN smi_variations B ON A.id = B.product_id
                     WHERE A.id = " . $id;
@@ -174,6 +175,9 @@ class ProductDAO
                         'type' => $row["type"],
                         'category_id' => $row["category_id"],
                         'fee_transport' => number_format($row["fee_transport"]),
+//                        'price' => number_format($row["price"]),
+//                        'profit' => number_format($row["profit"]),
+//                        'retail' => number_format($row["retail"]),
                         'description' => $row["description"],
                         'material' => $row["material"],
                         'origin' => $row["origin"],
@@ -195,6 +199,7 @@ class ProductDAO
                         'price' => number_format($row["price"]),
                         'retail' => number_format($row["retail"]),
                         'profit' => number_format($row["profit"]),
+                        'fee' => number_format($row["fee"])
                     );
                     array_push($product['variations'], $variation);
 //                    array_push($colors, $row["color"]);
@@ -217,6 +222,7 @@ class ProductDAO
                         'price' => number_format($row["price"]),
                         'retail' => number_format($row["retail"]),
                         'profit' => number_format($row["profit"]),
+                        'fee' => number_format($row["fee"])
                     );
                     array_push($data[$i - 1]['variations'], $variation);
                 }
@@ -229,7 +235,7 @@ class ProductDAO
             $data[0]["image_variation"] = array_values(array_unique($image_variation));
             $arr = array();
             $arr["data"] = $data;
-            // print_r($arr);
+//             print_r($arr);
             return $arr;
         } catch (Exception $e) {
             throw new Exception($e);
@@ -261,10 +267,8 @@ class ProductDAO
                            A.name,
                            A.image , 
                            A.link , 
-                           CASE
-                               WHEN MAX(B.retail) = MIN(B.retail) THEN MIN(B.retail)
-                               ELSE CONCAT(MIN(B.retail), ' - ', MAX(B.retail))
-                           END AS retail,
+                           MAX(B.retail) as max_retail,
+                           MIN(B.retail) as min_retail,
                             A.discount,
                             A.profit,
                             A.social_publish,
@@ -295,7 +299,7 @@ class ProductDAO
                     'name' => $row["name"],
                     'image' => $row["image"],
                     'link' => $row["link"],
-                    'retail' => $row["retail"],
+                    'retail' => $row["max_retail"] == $row["min_retail"] ? number_format($row['min_retail']) : number_format($row['min_retail'])." - ".number_format($row['max_retail']),
                     'discount' => $row["discount"],
                     'profit' => number_format($row["profit"]),
                     'social_publish' => $row["social_publish"],
@@ -333,21 +337,46 @@ class ProductDAO
                 order by B.id";
       $result = mysqli_query($this->conn, $sql);
       $data = array();
+      $colors = array();
+      $color = '';
+      $i = 0;
       foreach ($result as $k => $row) {
-          $variation = array(
-            'id' => $row["id"],
-            'product_id' => $row["product_id"],
-            'image' => $row["image"],
-            'price' => $row["price"],
-            'retail' => $row["retail"],
-            'profit' => $row["profit"],
-            'size' => $row["size"],
-            'color' => $row["color"],
-            'quantity' => $row["quantity"],
-            'sku' => $row["sku"],
-            'updated_qty' => $row["updated_qty"]
-          );
-          array_push($data, $variation);
+          if($color != $row["color"]) {
+              $color = $row["color"];
+              $colors = array();
+              $colors = array();
+              $variation = array(
+                  'id' => $row["id"],
+                  'product_id' => $row["product_id"],
+                  'image' => $row["image"],
+                  'price' => $row["price"],
+                  'retail' => $row["retail"],
+                  'profit' => $row["profit"],
+                  'size' => $row["size"],
+                  'color' => $row["color"],
+                  'quantity' => $row["quantity"],
+                  'sku' => $row["sku"],
+                  'updated_qty' => $row["updated_qty"]
+              );
+              array_push($colors, $variation);
+              array_push($data, $colors);
+              $i++;
+          } else {
+              $variation = array(
+                  'id' => $row["id"],
+                  'product_id' => $row["product_id"],
+                  'image' => $row["image"],
+                  'price' => $row["price"],
+                  'retail' => $row["retail"],
+                  'profit' => $row["profit"],
+                  'size' => $row["size"],
+                  'color' => $row["color"],
+                  'quantity' => $row["quantity"],
+                  'sku' => $row["sku"],
+                  'updated_qty' => $row["updated_qty"]
+              );
+              array_push($data[$i-1], $variation);
+          }
       }
       $arr = array();
       $arr["data"] = $data;
@@ -633,7 +662,7 @@ class ProductDAO
                                 `short_description`,
                                 `created_at`) 
                             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-            $stmt->bind_param("sssddddiiisiiis",
+            $stmt->bind_param("sssddddiiissiis",
                                 $name,
                                 $image,
                                 $link,
@@ -695,7 +724,7 @@ class ProductDAO
                 short_description = ?,
                 updated_at = NOW() 
                 WHERE id = ?");
-            $stmt->bind_param("sssddddiiisiisi",
+            $stmt->bind_param("sssddddiiissisi",
                 $name,
                 $image,
                 $link,
@@ -730,13 +759,14 @@ class ProductDAO
             $sku = $variation->getSku();
             $price = $variation->getPrice();
             $retail = $variation->getRetail();
+            $fee = $variation->getFee();
             $profit = $variation->getProfit();
             $percent = $variation->getPercent();
             $image = $variation->getImage();
             $updated_qty = '{"lazada": 0, "shopee": 0}';
 
-            $stmt = $this->getConn()->prepare("INSERT INTO smi_variations (`product_id`, `size`, `color`, `quantity`, `sku`, `price`, `retail`, `profit`, `percent`, `image`, `updated_qty`,`created_at`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-            $stmt->bind_param("issisddddss", $product_id, $size, $color, $qty, $sku, $price, $retail, $profit, $percent, $image, $updated_qty);
+            $stmt = $this->getConn()->prepare("INSERT INTO smi_variations (`product_id`, `size`, `color`, `quantity`, `sku`, `price`, `retail`, `fee`, `profit`, `percent`, `image`, `updated_qty`,`created_at`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+            $stmt->bind_param("issisdddddss", $product_id, $size, $color, $qty, $sku, $price, $retail, $fee, $profit, $percent, $image, $updated_qty);
             if(!$stmt->execute()) {
                 throw new Exception($stmt->error);
             }
@@ -752,6 +782,7 @@ class ProductDAO
             $sql = "SELECT A.id AS product_id,
                            B.id AS variant_id,
                            A.name,
+                           B.image,
                            B.retail,
                            B.size,
                            B.color,
@@ -776,6 +807,7 @@ class ProductDAO
                         'variant_id' => $row["variant_id"],
                         'retail' => number_format($row["retail"]),
                         'name' => $row["name"],
+                        'image' => $row["image"],
                         'size' => $row["size"],
                         'color' => $row["color"],
                         'sku' => $row["sku"],
@@ -903,6 +935,23 @@ class ProductDAO
             if (!empty($result)) {
                 foreach ($result as $k => $row) {
                     array_push($data, $row["size"]);
+                }
+            }
+            return $data;
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function get_materials()
+    {
+        try {
+            $sql = "SELECT distinct material FROM smi_products where material is not null and material <> ''";
+            $result = mysqli_query($this->conn, $sql);
+            $data = array();
+            if (!empty($result)) {
+                foreach ($result as $k => $row) {
+                    array_push($data, $row["material"]);
                 }
             }
             return $data;

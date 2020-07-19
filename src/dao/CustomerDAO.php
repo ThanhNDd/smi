@@ -21,6 +21,8 @@ class CustomerDAO
             if(!empty($birthday)) {
               $date = str_replace('/', '-', $birthday);
               $birthday = date('Y-m-d H:i:s', strtotime($date));
+            } else {
+                $birthday = null;
             }
             $stmt = $this->getConn()->prepare("insert into `smi_customers`
                     (`avatar`,`name`, `phone`, `email`,`facebook`,`link_fb`, `birthday`, `address`, `village_id`, `district_id`, `city_id`, `created_at`, `updated_at`)
@@ -102,6 +104,32 @@ class CustomerDAO
       echo "Open connection database is error exception >> " . $e->getMessage();
     }
   }
+
+    function find_customers_for_suggestion()
+    {
+        try {
+            $sql = "select id, name, phone from smi_customers where active = 1";
+            $result = mysqli_query($this->conn, $sql);
+            $data = array();
+
+            foreach ($result as $k => $row) {
+                $arr = array();
+                $data["customer"] = array();
+                $customer = array(
+                    'id' => $row["id"],
+                    'name' => $row["name"],
+                    'phone' => $row["phone"]
+                );
+                $arr["customer"] = $customer;
+                array_push($data, $arr);
+            }
+            $arr = array();
+            $arr["customers"] = $data;
+            return $arr;
+        } catch (Exception $e) {
+            echo "Open connection database is error exception >> " . $e->getMessage();
+        }
+    }
 
   function find_by_id($id)
   {

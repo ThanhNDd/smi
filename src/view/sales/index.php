@@ -738,9 +738,9 @@ Common::authen();
     }
 
 
-    function formatNumber(num) {
-        return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-    }
+    // function formatNumber(num) {
+    //     return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    // }
 
     function find_product(sku, qty) {
         $.ajax({
@@ -960,13 +960,13 @@ Common::authen();
         $("#checkout").removeAttr("disabled");
     }
 
-    function replaceComma(value) {
-        return value.replace(/,/g, '');
-    }
-
-    function replacePercent(value) {
-        return value.replace(/%/g, '');
-    }
+    // function replaceComma(value) {
+    //     return value.replace(/,/g, '');
+    // }
+    //
+    // function replacePercent(value) {
+    //     return value.replace(/%/g, '');
+    // }
 
     function resetData() {
         $("#tableProd tbody").html("");

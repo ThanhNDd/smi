@@ -36,6 +36,9 @@ Common::authen();
         table.dataTable.no-footer {
             border-bottom: none;
         }
+        .customer-phone .twitter-typeahead {
+            width: 79% !important;
+        }
     </style>
 </head>
 <?php require_once('../../common/header.php'); ?>
@@ -103,8 +106,12 @@ Common::authen();
                                         </h5>
                                      </span>
                                 </div>
-                                <div class="col-4">
-                                    <h1 class="display-5 text-danger text-right total_orders"></h1>
+<!--                                <div class="col-4">-->
+<!--                                    <h1 class="display-5 text-danger text-right total_orders"></h1>-->
+<!--                                </div>-->
+                                <div class="col-4 float-right">
+                                    <h1 class="display-5 text-danger text-left"><span class="total_orders">0</span> <small style="font-size: 30%;color: black;">Đơn</small></h1>
+                                    <h5 class="display-5 text-danger text-left"><span class="total_products">0</span> <small style="font-size: 60%;color: black;">Sản phẩm</small></h5>
                                 </div>
                             </div>
                         </div>
@@ -123,8 +130,12 @@ Common::authen();
                                         </h5>
                                     </span>
                                 </div>
-                                <div class="col-4">
-                                    <h1 class="display-5 text-right count_on_shop"></h1>
+<!--                                <div class="col-4">-->
+<!--                                    <h1 class="display-5 text-right count_on_shop"></h1>-->
+<!--                                </div>-->
+                                <div class="col-4 float-right">
+                                    <h1 class="display-5 text-left"><span class="count_on_shop">0</span> <small style="font-size: 30%;color: black;">Đơn</small></h1>
+                                    <h5 class="display-5 text-left"><span class="total_product_on_shop">0</span> <small style="font-size: 60%;color: black;">Sản phẩm</small></h5>
                                 </div>
                             </div>
                             <!-- /.info-box-content -->
@@ -146,8 +157,12 @@ Common::authen();
                                         </h5>
                                     </span>
                                 </div>
-                                <div class="col-4">
-                                    <h1 class="display-5 text-right count_online"></h1>
+<!--                                <div class="col-4">-->
+<!--                                    <h1 class="display-5 text-right count_online"></h1>-->
+<!--                                </div>-->
+                                <div class="col-4 float-right">
+                                    <h1 class="display-5 text-left"><span class="count_online">0</span> <small style="font-size: 30%;color: black;">Đơn</small></h1>
+                                    <h5 class="display-5 text-left"><span class="total_product_online">0</span> <small style="font-size: 60%;color: black;">Sản phẩm</small></h5>
                                 </div>
                             </div>
                             <!-- /.info-box-content -->
@@ -167,8 +182,12 @@ Common::authen();
                                         </h5>
                                     </span>
                                 </div>
-                                <div class="col-4">
-                                    <h1 class="display-5 text-right count_exchange"></h1>
+<!--                                <div class="col-4">-->
+<!--                                    <h1 class="display-5 text-right count_exchange"></h1>-->
+<!--                                </div>-->
+                                <div class="col-4 float-right">
+                                    <h1 class="display-5 text-left"><span class="count_exchange">0</span> <small style="font-size: 30%;color: black;">Đơn</small></h1>
+                                    <h5 class="display-5 text-left"><span class="total_product_exchange">0</span> <small style="font-size: 60%;color: black;">Sản phẩm</small></h5>
                                 </div>
                             </div>
                             <!-- /.info-box-content -->
@@ -679,7 +698,7 @@ Common::authen();
         // let order_type = data.type;
         let d = '<div class="card">' +
             '<div class="card-body">';
-        if (order_type === 1) {
+        if (order_type === "1") {
             // online
             d += '<div class="row">' +
                 '<div class="col-3 col-sm-3 col-md-3"><small>Mã khách hàng</small> <h5>' + data.customer_id + '</h5></div>' +
@@ -875,12 +894,16 @@ Common::authen();
             success: function (res) {
                 $(".total_money").html(res.total_checkout + " <small>đ</small>");
                 $(".total_orders").html(res.count_total);
+                $(".total_products").html(res.total_product);
                 $(".total_on_shop").html(res.total_on_shop + " <small>đ</small>");
                 $(".count_on_shop").html(res.count_on_shop);
+                $(".total_product_on_shop").html(res.total_product_on_shop);
                 $(".total_online").html(res.total_online + " <small>đ</small>");
                 $(".count_online").html(res.count_online);
+                $(".total_product_online").html(res.total_product_online);
                 $(".total_exchange").html(res.total_exchange + " <small>đ</small>");
                 $(".count_exchange").html(res.count_exchange);
+                $(".total_product_exchange").html(res.total_product_exchange);
                 $(".total_cash").html(res.total_cash + " <small>đ</small>");
                 $(".total_transfer").html(res.total_transfer + " <small>đ</small>");
                 $(".total_profit").html(res.total_profit + " <small>đ</small>");

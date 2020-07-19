@@ -10,6 +10,7 @@ class Variations
     private $price;
     private $retail;
     private $profit;
+    private $fee;
     private $percent;
     private $sku;
     private $image;
@@ -144,6 +145,22 @@ class Variations
     public function setProfit($profit): void
     {
         $this->profit = $profit;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFee()
+    {
+        return $this->fee;
+    }
+
+    /**
+     * @param mixed $fee
+     */
+    public function setFee($fee): void
+    {
+        $this->fee = $fee;
     }
 
     /**

@@ -217,24 +217,25 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $cusId = 0;
         if ($order_type == 1) {
             //online
-            $customer = new Customer();
-            $customer->setName($data->customer_name);
-            $customer->setPhone($data->phone_number);
-            $customer->setEmail($data->email);
-            $customer->setAddress($data->address);
-            $customer->setCityId($data->cityId);
-            $customer->setDistrictId($data->districtId);
-            $customer->setVillageId($data->villageId);
-            if ($data->customer_id > 0) {
-                $cusId = $data->customer_id;
-                $customer->setId($data->customer_id);
-                $customerDAO->update_customer($customer);
-            } else {
-                $cusId = $customerDAO->save_customer($customer);
-                if (empty($cusId)) {
-                    throw new Exception("Insert customer is failure", 1);
-                }
-            }
+//            $customer = new Customer();
+//            $customer->setName($data->customer_name);
+//            $customer->setPhone($data->phone_number);
+//            $customer->setEmail($data->email);
+//            $customer->setAddress($data->address);
+//            $customer->setCityId($data->cityId);
+//            $customer->setDistrictId($data->districtId);
+//            $customer->setVillageId($data->villageId);
+//            if ($data->customer_id > 0) {
+
+//                $customer->setId($data->customer_id);
+//                $customerDAO->update_customer($customer);
+//            } else {
+//                $cusId = $customerDAO->save_customer($customer);
+//                if (empty($cusId)) {
+//                    throw new Exception("Insert customer is failure", 1);
+//                }
+//            }
+            $cusId = $data->customer_id;
             $order->setBill_of_lading_no($data->bill_of_lading_no);
             $order->setShipping_fee($data->shipping_fee);
             $order->setShipping($data->shipping);
@@ -286,6 +287,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
             $detail->setQuantity(empty($details[$i]->quantity) ? 0 : $details[$i]->quantity);
             $detail->setReduce(empty($details[$i]->reduce) ? 0 : $details[$i]->reduce);
             $detail->setReduce_percent(empty($details[$i]->reduce_percent) ? 0 : $details[$i]->reduce_percent);
+            $detail->setProfit($details[$i]->profit);
             $lastId = $checkoutDAO->saveOrderDetail($detail);
             if (empty($lastId)) {
                 throw new Exception("Insert order detail is failure", 1);

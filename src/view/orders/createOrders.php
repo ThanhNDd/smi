@@ -29,7 +29,7 @@ Common::authen();
                         </div>
                         <div class="col">
                             <label>Số điện thoại <span style="color:red">*</span></label>
-                            <div class="input-group mb-1">
+                            <div class="input-group mb-1 customer-phone">
                                 <input type="text" class="form-control" id="customer_phone" placeholder="Nhập số điện thoại" autocomplete="off">
                                 <div class="input-group-append">
                                     <button type="button" class="btn btn-info btn-flat" id="btn_add_customer" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-content="Thêm mới khách hàng">
@@ -40,7 +40,7 @@ Common::authen();
                         </div>
                         <div class="col">
                             <label>Tên khách hàng</label>
-                            <input class="form-control" id="customer_name" readonly>
+                            <input class="form-control" id="customer_name">
                         </div>
                         <div class="col">
                             <label>Ngày đặt hàng</label>
@@ -133,7 +133,8 @@ Common::authen();
                 </div>
                 <div class="form-group col-2">
                     <label>Thêm sản phẩm</label>
-                    <input class="form-control" id="add_product" placeholder="Nhập mã sản phẩm">
+                    <input class="form-control" id="add_product" placeholder="Nhập mã sản phẩm"
+                           data-toggle="popover_add_product" data-content="Nhập mã sản phẩm">
                 </div>
                 <div class="form-group">
                     <input type="hidden" value="0" class="count-row"/>
@@ -170,6 +171,7 @@ Common::authen();
                             <tr>
                                 <th class="hidden"></th>
                                 <th class="hidden"></th>
+                                <th>Hình ảnh</th>
                                 <th>SKU</th>
                                 <th>Tên</th>
                                 <th>Giá</th>
@@ -314,6 +316,8 @@ Common::authen();
             //     autoclose: true
             // });
 
+            load_customer_info();
+
             generate_select2('.order-type');
             generate_select2('.order-status');
             generate_select2('.order-source');
@@ -328,7 +332,7 @@ Common::authen();
             });
 
             $("#payment_type").change(function(){
-                if($(this).val() === 0) {
+                if ($(this).val() === "0") {
                     $("#payment").removeClass("hidden").focus();
                 } else {
                     $("#payment").val("").addClass("hidden");
@@ -337,15 +341,17 @@ Common::authen();
 
             $("#payment").change(function() {
                 $("#payment").removeClass("is-invalid");
-                let total_checkout = $("#total_checkout").text();
-                total_checkout = replaceComma(total_checkout);
-                let customer_payment = $("#payment").val();
-                customer_payment = replaceComma(customer_payment);
+                let customer_payment = format_money(replaceComma($("#payment").val()));
+                if (customer_payment && isNaN(customer_payment)) {
+                    $("#payment").addClass("is-invalid");
+                    return false;
+                }
+                let total_checkout = replaceComma($("#total_checkout").text());
                 let repay = 0;
                 if(customer_payment > total_checkout) {
                     repay = Number(customer_payment) - Number(total_checkout);
                 } else if(customer_payment < total_checkout) {
-                    $("#payment").addCLass("is-invalid");
+                    $("#payment").addClass("is-invalid");
                     return false;
                 }
                 $(this).val(formatNumber(customer_payment));
@@ -380,6 +386,7 @@ Common::authen();
             $("#shipping").change(function () {
                 let e = this;
                 let val = $(e).val();
+                val = format_money(val);
                 val = replaceComma(val);
                 if (isNaN(val)) {
                     $(e).addClass("is-invalid");
@@ -395,13 +402,14 @@ Common::authen();
             $("#discount").change(function () {
                 let e = this;
                 let val = $(e).val();
+                val = format_money(val);
                 val = replaceComma(val);
                 if (isNaN(val)) {
                     $(e).addClass("is-invalid");
                     // // disable_btn_add_new();
                 } else {
                     $(e).removeClass("is-invalid");
-                    check_products_list();
+                    // check_products_list();
                     val = Number(val);
                     $(e).val(formatNumber(val));
                     on_change_total();
@@ -410,7 +418,7 @@ Common::authen();
 
             $("#email").change(function () {
                 let val = $(this).val();
-                if (val != "" && !validateEmail(val)) {
+                if (val != "" && !validate_email(val)) {
                     $(this).addClass("is-invalid");
                     // // disable_btn_add_new();
                 } else {
@@ -472,12 +480,15 @@ Common::authen();
         }
 
         function check_exist_customer(phone) {
+            $("#customer_phone").removeClass("is-invalid");
             if(!validate_phone(phone)) {
-                Swal.fire({
-                    type: 'error',
-                    title: 'Đã xảy ra lỗi',
-                    text: 'Số điện thoại chưa đúng!',
-                });
+                // Swal.fire({
+                //     type: 'error',
+                //     title: 'Đã xảy ra lỗi',
+                //     text: 'Số điện thoại chưa đúng!',
+                // });
+                toastr.error("Số điện thoại chưa đúng");
+                $("#customer_phone").addClass("is-invalid");
                 return;
             }
             $.ajax({
@@ -506,6 +517,7 @@ Common::authen();
                             if (result.value) {
                                 reset_data_customer();
                                 $("#phone_number").val(phone);
+                                generate_select2_city();
                                 open_modal('#create_customer');
                             }
                         })
@@ -521,23 +533,32 @@ Common::authen();
             let is_valid = true;
             $(".modal-body").find("input").removeClass("is-invalid");
             $(".modal-body").find("select").removeClass("is-invalid");
-            // let order_type = $('#order_type').val();
-            // if (order_type === "1") {
-            //     // online
-            //     let customer_name = $("#customer_name").val();
-            //     if (!customer_name) {
-            //         $("#customer_name").addClass("is-invalid");
-            //         is_valid = false;
-            //     } else {
-            //         $("#customer_name").removeClass("is-invalid");
-            //     }
-            //     let customer_phone = $("#customer_phone").val();
-            //     if (!customer_phone) {
-            //         $("#customer_phone").addClass("is-invalid");
-            //         is_valid = false;
-            //     } else {
-            //         $("#customer_phone").removeClass("is-invalid");
-            //     }
+
+            let customer_phone = $("#customer_phone").val();
+            let order_type = $('#order_type').val();
+            if (order_type === "1") {
+                // online
+                //     let customer_name = $("#customer_name").val();
+                //     if (!customer_name) {
+                //         $("#customer_name").addClass("is-invalid");
+                //         is_valid = false;
+                //     } else {
+                //         $("#customer_name").removeClass("is-invalid");
+                //     }
+
+                if (!customer_phone) {
+                    $("#customer_phone").addClass("is-invalid");
+                    is_valid = false;
+                    // toastr.error("Chưa nhập số điện thoại");
+                } else {
+                    $("#customer_phone").removeClass("is-invalid");
+                }
+            }
+            let customer_id = $("#customer_id").val();
+            if (customer_phone && !customer_id) {
+                check_exist_customer(customer_phone);
+            }
+
             //     let cityId = $(".select-city").val();
             //     if (!cityId || cityId === "-1") {
             //         $(".select-city").addClass("is-invalid");
@@ -566,31 +587,82 @@ Common::authen();
             //     } else {
             //         $("#address").removeClass("is-invalid");
             //     }
-            // }
+            let table = $("#table_list_product tbody tr").length;
+            if (!table || table === 0) {
+                is_valid = false;
+                toastr.error("Chưa có sản phẩm");
+            } else {
+                $("#table_list_product tbody tr").each(function () {
+                    let row_id = $(this).attr("id");
+                    if (row_id) {
+                        row_id = row_id.split("_")[1];
+                        let qty = $("[id=qty_" + row_id + "]").val();
+                        if (!qty || qty < 1) {
+                            is_valid = false;
+                            // toastr.error("Số lượng sản phẩm không đúng!");
+                            $("[id=qty_" + row_id + "]").addClass("is-invalid");
+                            // return false;
+                        } else {
+                            $("[id=qty_" + row_id + "]").removeClass("is-invalid");
+                        }
+                        let reduce = $("[id=reduce_" + row_id + "]").val();
+                        if (reduce) {
+                            reduce = replaceComma(replacePercent(reduce));
+                            if (isNaN(reduce) || Number(reduce) < 0) {
+                                // toastr.error("Giảm giá không đúng!");
+                                $("[id=reduce_" + row_id + "]").addClass("is-invalid");
+                                is_valid = false;
+                                // return false;
+                            } else {
+                                $("[id=reduce_" + row_id + "]").removeClass("is-invalid");
+                            }
+                        } else {
+                            $("[id=reduce_" + row_id + "]").removeClass("is-invalid");
+                        }
+                    }
+                });
+            }
+
             let payment_type = $("#payment_type").val();
             if(payment_type && payment_type === "0") {
-                let customer_payment = $("#payment").val();
-                if(customer_payment) {
+                let customer_payment = format_money(replaceComma($("#payment").val()));
+                if (!customer_payment || isNaN(customer_payment)) {
                     $("#payment").addClass("is-invalid");
                     is_valid = false;
+                    // toastr.error("Chưa nhập số tiền thanh toán");
                 } else {
                     $("#payment").removeClass("is-invalid");
                 }
             }
-            let rowProductNumber = get_row_index();
-            for (let i = 1; i <= rowProductNumber; i++) {
-                let sku = $("#sku_" + i).val();
-                console.log(sku);
-                if (!sku) {
-                    $("#sku_" + i).addClass("is-invalid");
-                    is_valid = false;
-                } else {
-                    $("#sku_" + i).removeClass("is-invalid");
-                }
-            }
+            // let rowProductNumber = get_row_index();
+            // for (let i = 1; i <= rowProductNumber; i++) {
+            //     let sku = $("#sku_" + i).val();
+            //     console.log(sku);
+            //     if (!sku) {
+            //         $("#sku_" + i).addClass("is-invalid");
+            //         is_valid = false;
+            //     } else {
+            //         $("#sku_" + i).removeClass("is-invalid");
+            //     }
+            // }
+
+
+            // else {
+            //     $("#table_list_product tbody tr").each(function () {
+            //         let row_id = $(this).attr("id");
+            //         if(row_id) {
+            //             row_id = row_id.split("_")[1];
+            //             let product_id = $("[id=qty_"+row_id+"]").text();
+            //             let variant_id = $("[id=variant_id_"+row_id+"]").text();
+            //         }
+            //     });
+            // }
+            
+
             if(!is_valid) {
                 toastr.error("Đã xảy ra lỗi");
             }
+
             return is_valid;
         }
 
@@ -613,27 +685,28 @@ Common::authen();
                 $("#bill_of_lading_no").prop("disabled", true);
                 $("#shipping_fee").prop("disabled", true);
                 $("#shipping_unit").prop("disabled", true);
-                $("#customer_name").prop("disabled", true);
-                $("#customer_phone").prop("disabled", true);
+                // $("#customer_name").prop("disabled", true);
+                // $("#customer_phone").prop("disabled", true);
                 $("#order_source").prop("disabled", true);
                 $("#shipping").prop("disabled", true);
-                $("#btn_add_customer").prop("disabled", true);
+                // $("#btn_add_customer").prop("disabled", true);
                 // $("#email").prop("disabled", true);
                 // $("#select_city").prop("disabled", true);
                 // $("#select_district").prop("disabled", true);
                 // $("#select_village").prop("disabled", true);
                 // $("#address").prop("disabled", true);
-
+                $("#payment_type").val("0").trigger("change");
             } else {
                 // online
                 $("#bill_of_lading_no").prop("disabled", "");
                 $("#shipping_fee").prop("disabled", "");
                 $("#shipping_unit").prop("disabled", "");
-                $("#customer_name").prop("disabled", "").prop("readonly", true);
-                $("#customer_phone").prop("disabled", "");
+                // $("#customer_name").prop("disabled", "").prop("readonly", true);
+                // $("#customer_phone").prop("disabled", "");
                 $("#order_source").prop("disabled", "");
-                $("#btn_add_customer").prop("disabled", "");
+                // $("#btn_add_customer").prop("disabled", "");
                 $("#shipping").prop("disabled", "");
+                $("#payment_type").val("1").trigger("change");
                 // $("#email").prop("disabled", "");
                 // $("#select_city").prop("disabled", "");
                 // $("#select_district").prop("disabled", "");
@@ -649,71 +722,135 @@ Common::authen();
             let data = {};
             data["order_type"] = $('#order_type').val();
             data["order_id"] = $("#order_id").val();
+
+            let source = 0;// shop
+            let order_type = $('#order_type').val();
             data["customer_id"] = $("#customer_id").val();
-            data["bill_of_lading_no"] = $("#bill_of_lading_no").val();
-            data["shipping_fee"] = replaceComma($("#shipping_fee").val());
-            data["shipping_unit"] = $(".select-shipping-unit").val();
-            // data["customer_name"] = $("#customer_name").val();
-            // data["phone_number"] = $("#customer_phone").val();
-            // data["email"] = $("#email").val();
-            // data["cityId"] = $(".select-city").val();
-            // data["districtId"] = $(".select-district").val();
-            // data["villageId"] = $(".select-village").val();
-            // data["address"] = $("#address").val();
+            if (order_type === "1") {
+                // online
+                data["bill_of_lading_no"] = $("#bill_of_lading_no").val();
+                data["shipping_fee"] = replaceComma($("#shipping_fee").val());
+                data["shipping_unit"] = $("#shipping_unit").val();
+                // data["customer_name"] = $("#customer_name").val();
+                // data["phone_number"] = $("#customer_phone").val();
+                // data["email"] = $("#email").val();
+                // data["cityId"] = $(".select-city").val();
+                // data["districtId"] = $(".select-district").val();
+                // data["villageId"] = $(".select-village").val();
+                // data["address"] = $("#address").val();
+                source = $("#order_source").val();
+            }
+            data["source"] = source;
             data["shipping"] = replaceComma($("#shipping").val());
             data["discount"] = replaceComma($("#discount").val());
             data["total_amount"] = replaceComma($("#total_amount").text());
             data["total_checkout"] = replaceComma($("#total_checkout").text());
+            data["repay"] = replaceComma($("#repay").text());
             data["payment_type"] = $("#payment_type").val();
             data["order_date"] = $("#orderDate").val();
             data["order_status"] = $("#order_status").val();
             data["customer_payment"] = replaceComma($("#payment").val());
-            data["source"] = 0;// shop
-            let rowProductNumber = get_row_index();
+
+            // let rowProductNumber = get_row_index();
 
             let products = [];
-            for (let i = 1; i <= rowProductNumber; i++) {
-                let product = {};
-                let sku = $("#sku_" + i).val();
-                if (typeof sku !== "undefined" && sku !== "") {
-                    product["sku"] = $("#sku_" + i).val();
-                } else {
-                    continue;
+            $("#table_list_product tbody tr").each(function () {
+                let row_id = $(this).attr("id");
+                if (row_id) {
+                    let product = {};
+                    row_id = row_id.split("_")[1];
+                    product["product_id"] = $("[id=product_id_" + row_id + "]").text();
+                    // let product_id = $("[id=product_id_"+row_id+"]").text();
+                    // if(product_id) {
+                    //     product["product_id"] = product_id;
+                    // } else {
+                    //     return;
+                    // }
+                    product["variant_id"] = $("[id=variant_id_" + row_id + "]").text();
+                    // let variant_id = $("[id=variant_id_"+row_id+"]").text();
+                    // if(variant_id) {
+                    //     product["variant_id"] = variant_id;
+                    // } else {
+                    //     return;
+                    // }
+                    product["sku"] = $("[id=sku_" + row_id + "]").text();
+                    // let sku = $("[id=sku_"+row_id+"]").text();
+                    // if(sku) {
+                    //     product["sku"] = sku;
+                    // } else {
+                    //     return;
+                    // }
+                    product["price"] = replaceComma($("[id=price_" + row_id + "]").text());
+                    // let price = $("[id=price_"+row_id+"]").text();
+                    // if(price) {
+                    //     product["price"] = replaceComma(price);
+                    // } else {
+                    //     return;
+                    // }
+                    product["quantity"] = $("[id=qty_" + row_id + "]").val();
+                    // let qty = $("[id=qty_"+row_id+"]").val();
+                    // if(qty) {
+                    //     product["quantity"] = qty;
+                    // } else {
+                    //     return;
+                    // }
+                    product["reduce"] = replacePercent(replaceComma($("[id=reduce_" + row_id + "]").val()));
+                    // let reduce = $("[id=reduce_"+row_id+"]").val();
+                    // if(reduce) {
+                    //     product["reduce"] = replacePercent(replaceComma(reduce));
+                    // } else {
+                    //     product["reduce"] = 0;
+                    // }
+                    product["profit"] = replaceComma($("[id=profit_" + row_id + "]").text());
+                    // let profit = $("[id=profit_"+row_id+"]").text();
+                    // if(profit) {
+                    //     product["profit"] = replaceComma(profit);
+                    // } else {
+                    //     return;
+                    // }
+                    products.push(product);
                 }
+            });
 
-                let detailId = $("#detailId_" + i).val();
-                if (typeof detailId !== "undefined" && detailId !== "") {
-                    product["detail_id"] = $("#detailId_" + i).val();
-                }
-                let prodId = $("#prod_" + i).val();
-                if (typeof prodId !== "undefined" && prodId !== "") {
-                    product["product_id"] = $("#prod_" + i).val();
-                }
-                let variantId = $("#variantId_" + i).val();
-                if (typeof variantId !== "undefined" && variantId !== "") {
-                    product["variant_id"] = $("#variantId_" + i).val();
-                }
 
-                let qty = $("#prodQty_" + i).val();
-                if (typeof qty !== "undefined" && qty !== "") {
-                    product["quantity"] = $("#prodQty_" + i).val();
-                }
-                let price = $("#prodPrice_" + i).val();
-                if (typeof price !== "undefined" && price !== "") {
-                    product["price"] = replaceComma($("#prodPrice_" + i).val());
-                }
-                let reduce = $("#prodReduce_" + i).val();
-                if (typeof reduce !== "undefined" && reduce !== "") {
-                    product["reduce"] = replaceComma($("#prodReduce_" + i).val());
-                }
-                products.push(product);
-            }
+            // for (let i = 1; i <= rowProductNumber; i++) {
+            //     let product = {};
+            //     let sku = $("#sku_" + i).val();
+            //     if (typeof sku !== "undefined" && sku !== "") {
+            //         product["sku"] = $("#sku_" + i).val();
+            //     } else {
+            //         continue;
+            //     }
+            //
+            //     let detailId = $("#detailId_" + i).val();
+            //     if (typeof detailId !== "undefined" && detailId !== "") {
+            //         product["detail_id"] = $("#detailId_" + i).val();
+            //     }
+            //     let prodId = $("#prod_" + i).val();
+            //     if (typeof prodId !== "undefined" && prodId !== "") {
+            //         product["product_id"] = $("#prod_" + i).val();
+            //     }
+            //     let variantId = $("#variantId_" + i).val();
+            //     if (typeof variantId !== "undefined" && variantId !== "") {
+            //         product["variant_id"] = $("#variantId_" + i).val();
+            //     }
+            //
+            //     let qty = $("#prodQty_" + i).val();
+            //     if (typeof qty !== "undefined" && qty !== "") {
+            //         product["quantity"] = $("#prodQty_" + i).val();
+            //     }
+            //     let price = $("#prodPrice_" + i).val();
+            //     if (typeof price !== "undefined" && price !== "") {
+            //         product["price"] = replaceComma($("#prodPrice_" + i).val());
+            //     }
+            //     let reduce = $("#prodReduce_" + i).val();
+            //     if (typeof reduce !== "undefined" && reduce !== "") {
+            //         product["reduce"] = replaceComma($("#prodReduce_" + i).val());
+            //     }
+            //     products.push(product);
+            // }
             if(products.length === 0) {
-                Swal.fire({
-                    type: 'error',
-                    title: 'Đã xảy ra lỗi',
-                    text: "Chưa có sản phẩm"
-                });
+                alert_error_message("Chưa có sản phẩm hoặc thông tin sản phẩm lỗi. Vui lòng kiểm tra lại");
                 return;
             }
             data["products"] = products;
@@ -764,11 +901,7 @@ Common::authen();
                         error: function (data, errorThrown) {
                             console.log(data.responseText);
                             console.log(errorThrown);
-                            Swal.fire({
-                                type: 'error',
-                                title: 'Đã xảy ra lỗi',
-                                text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-                            });
+                            alert_error_message();
                             hide_loading();
                         }
                     });
@@ -780,28 +913,23 @@ Common::authen();
         function reset_data() {
             $(".modal-order").text("Tạo mới đơn hàng");
             $("#create_new_order").text("Tạo mới");
-            $("#order_type").val("1");
+            $("#order_type").val("1").trigger("change");
             $("#payment_type").val("1").trigger("change");
             $("#customer_id").val("");
             $("#bill_of_lading_no").val("");
+            $("#customer_name").val("");
+            $("#customer_phone").val("");
+            $("#order_status").val("1").trigger("change");
             $("#shipping_fee").val("");
-            // $("#customer_name").val("");
-            // $("#customer_phone").val("");
-            // $("#email").val("");
-            // $("#select_city").val(null).trigger("change");
-            // $("#select_district").val(null).trigger("change");
-            // $("#select_village").val(null).trigger("change");
-            // $("#address").val("");
             $("#shipping").val("");
             $("#discount").val("");
             $("#total_amount").text("0");
             $("#total_checkout").text("0");
-            $(".product-area").html("");
-            set_row_index(0);
+            $("#repay").text("0");
             $('#order_id').val("");
-            // $('#orderDate').val($('#orderDate').val());
-            // disable_btn_add_new();
-            onchange_order_type(1);
+            $("#table_list_product tbody").html("");
+
+            // onchange_order_type(1);
         }
 
         // function new_product(e, rowIndex) {
@@ -859,60 +987,332 @@ Common::authen();
         }
 
 
+        let row_num = 1;
         function add_product() {
-            $("#add_product").change(function () {
-                draw_table_product_list();
+            $("#add_product").change(function (e) {
+                let _self = $(this);
+                let sku = $(_self).val();
+                console.log("SKU === " + sku);
+                let is_exist_sku = checking_exist_sku_in_table_list(sku);
+                if (!is_exist_sku) {
+                    console.log("!is_exist_sku");
+                    $.ajax({
+                        dataType: "json",
+                        url: "<?php Common::getPath() ?>src/controller/orders/OrderController.php",
+                        data: {
+                            method: 'find_product_by_sku',
+                            sku: sku
+                        },
+                        type: 'POST',
+                        success: function (data) {
+                            if (data.length > 0) {
+                                console.log("draw_table");
+                                add_product_list(data);
+                                calculate_total();
+                                $(_self).val("");
+                            } else {
+                                $(e).addClass("is-invalid");
+                                Swal.fire({
+                                    type: 'error',
+                                    title: 'Không tìm thấy sản phẩm',
+                                    text: "Vui lòng kiểm tra lại mã sản phẩm"
+                                });
+                            }
+                        },
+                        error: function (data, errorThrown) {
+                            console.log(data.responseText);
+                            console.log(errorThrown);
+                            $(e).addClass("is-invalid");
+                        }
+                    });
+                }
             });
         }
 
-        function draw_table_product_list() {
-            let noRow = get_row_index();
-            //
-            // let index = 1;
-            // $("#table_list_product tbody tr").each(function () {
-            //     let product_id = $("#product_id_"+index).text();
-            //     let variant_id = $("#variant_id_"+index).text();
-            //     let sku = $("#sku_"+index).text();
-            //     let name = $("#name_"+index).text();
-            //     let price = $("#price_"+index).text();
-            //     let qty = $("#qty_"+index).val();
-            //     let reduce = $("#reduce_"+index).valtext();
-            //     let total = $("#total_"+index).text();
-            //
-            // });
+        function add_product_list(data) {
+            // let noRow = get_row_index();
+            $.each(data, function (k, v) {
+                // let name = v.name + " - " + v.size + " - " + v.color;
+                let retail = 0;
+                if (v.retail) {
+                    retail = Number(replaceComma(v.retail));
+                }
+                let total = 0;
+                let reduce = '';
+                if (v.discount && v.discount !== '' && v.discount !== '0') {
+                    reduce = Number(replaceComma(v.discount));
+                    if (reduce > 0 && reduce < 101) {
+                        // reduce = Number(v.discount) * retail / 100;
+                        total = formatNumber(retail * (100 - reduce) / 100);
+                        reduce += "%";
+                    } else {
+                        // reduce = Number(replaceComma(v.discount));
+                        total = formatNumber(retail - reduce);
+                        reduce = formatNumber(reduce);
+                    }
+                } else {
+                    total = retail;
+                }
 
-            let content = `<tr id="row_1">
-                                <td id="product_id_1" class="hidden"></td>
-                                <td id="variant_id_1" class="hidden"></td>
-                                <td id="sku_1" class="w100"></td>
-                                <td id="name_1" class="w200"></td>
-                                <td id="price_1" class="w150"></td>
-                                <td><input type="number" class="form-control w100" id="qty_1"></td>
-                                <td><input type="text" class="form-control w150" id="reduce_1"></td>
-                                <td id="total_1" class="w150"></td>
-                                <td id="delete_1"><button class="btn btn-danger"><i class="fa fa-trash"></i></button></td>
-                            </tr>`;
+                let content = "<tr id=\"row_" + row_num + "\">\n" +
+                    "<td id=\"product_id_" + row_num + "\" class=\"hidden\">" + v.product_id + "</td>\n" +
+                    "<td id=\"variant_id_" + row_num + "\" class=\"hidden\">" + v.variant_id + "</td>\n" +
+                    "<td id=\"profit_" + row_num + "\" class=\"hidden\">" + v.profit + "</td>\n" +
+                    "<td id=\"image_" + row_num + "\" class=\"w100\"><img src='" + v.image + "' onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"' width='50px'></td>\n" +
+                    "<td id=\"sku_" + row_num + "\" class=\"w100\">" + v.sku + "</td>\n" +
+                    "<td id=\"name_" + row_num + "\" class=\"w200\"><strong>" + v.name + "</strong><br><small>Size: " + v.size + "</small><br><small>Màu: " + v.color + "</small></td>\n" +
+                    "<td id=\"price_" + row_num + "\" class=\"w150\">" + formatNumber(retail) + "</td>\n" +
+                    "<td><input type=\"number\" class=\"form-control w100\" id=\"qty_" + row_num + "\" min=\"1\" value=\"1\" onchange=\"onchange_in_list(this, " + row_num + ")\"></td>\n" +
+                    "<td><input type=\"text\" class=\"form-control w150\" id=\"reduce_" + row_num + "\" value='" + reduce + "' onchange=\"onchange_in_list(this, " + row_num + ")\"></td>\n" +
+                    "<td id=\"total_" + row_num + "\" class=\"w150\">" + formatNumber(total) + "</td>\n" +
+                    "<td id=\"delete_" + row_num + "\"><a href=\"javascript:void(0)\" onclick='delete_product_in_list(" + row_num + ")' class=\"btn\"><i class=\"fa fa-trash text-danger\"></i></a></td>\n" +
+                    "</tr>";
+                $("#table_list_product tbody").append(content);
+                row_num++;
+            });
+        }
+
+        function onchange_in_list(e, row_num) {
+            let val = $(e).val();
+            val = replaceComma(val);
+            val = replacePercent(val);
+            val = format_money(val);
+            if (isNaN(val) || val < 0) {
+                // Swal.fire({
+                //     type: 'error',
+                //     title: 'Đã xảy ra lỗi',
+                //     text: 'Giá trị nhập vào phải là số!',
+                // });
+                $(e).addClass("is-invalid");
+                return;
+            } else {
+                $(e).removeClass("is-invalid");
+            }
+            $(e).val(formatNumber(val));
+            calculate_total_in_list(row_num);
+            calculate_total();
+        }
+
+        function checking_exist_sku_in_table_list(sku) {
+            console.log("checking_exist_sku_in_table_list");
+            let is_exist_sku = false;
+            let row_index = 1;
+            $("#table_list_product tbody tr").each(function () {
+                console.log("checking_exist_sku_in_table_list in each");
+                let sku_in_list = $("#sku_" + row_index).text();
+                if (sku_in_list === sku) {
+                    let qty = $("#qty_" + row_index).val();
+                    qty = Number(qty);
+                    qty++;
+                    $("#qty_" + row_index).val(qty);
+                    calculate_total_in_list(row_index);
+                    calculate_total();
+                    $("#add_product").val("");
+                    is_exist_sku = true;
+                }
+                row_index++;
+            });
+            return is_exist_sku;
+        }
+
+        function calculate_total_in_list(row_index) {
+            let qty = $("#qty_" + row_index).val();
+            if (qty && qty !== "") {
+                qty = Number(replaceComma(qty));
+            } else {
+                qty = 0;
+            }
+            let price = $("#price_" + row_index).text();
+            if (price && price !== "") {
+                price = Number(replaceComma(price));
+            } else {
+                price = 0;
+            }
+            let reduce = $("#reduce_" + row_index).val();
+            reduce = replacePercent(reduce);
+            reduce = replaceComma(reduce);
+            if (reduce && reduce !== "") {
+                reduce = Number(reduce);
+            } else {
+                reduce = 0;
+            }
+            if (reduce > 0 && reduce < 101) {
+                $("#reduce_" + row_index).val(reduce + "%");
+                reduce = reduce * price / 100;
+            }
+            let subtotal = (price - reduce) * qty;
+            $("#total_" + row_index).text(formatNumber(subtotal));
+        }
+
+        function calculate_total() {
+            let total = 0;
+            let row_index = 1;
+            $("#table_list_product tbody tr").each(function () {
+                let subtotal = $("#total_" + row_index).text();
+                if (subtotal && subtotal !== '') {
+                    total += Number(replaceComma(subtotal));
+                }
+                row_index++;
+            });
+            $("#total_amount").text(formatNumber(total));
+
+            let shipping = $("#shipping").val();
+            let discount = $("#discount").val();
+            let total_checkout = total + Number(shipping) - Number(discount);
+            $("#total_checkout").text(formatNumber(total_checkout));
+        }
+
+        function delete_product_in_list(rowIndex) {
+            Swal.fire({
+                title: 'Bạn có chắc chắn muốn xóa sản phẩm này?',
+                text: "",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ok'
+            }).then((result) => {
+                if (result.value) {
+                    $("#table_list_product tbody #row_" + rowIndex).remove();
+                    toastr.success('Sản phẩm đã được xóa thành công.');
+                    re_draw_table_product_list();
+                    calculate_total();
+                }
+            })
+        }
+
+        function re_draw_table_product_list() {
+            row_num = 1;
+            let content = "";
+            $("#table_list_product tbody tr").each(function () {
+                let row_id = $(this).attr("id");
+                if (row_id) {
+                    row_id = row_id.replace("row_", "");
+                }
+                let product_id = $("#product_id_" + row_id).text();
+                let variant_id = $("#variant_id_" + row_id).text();
+                let sku = $("#sku_" + row_id).text();
+                let name = $("#name_" + row_id).html();
+                let price = $("#price_" + row_id).text();
+                let qty = $("#qty_" + row_id).val();
+                let profit_ = $("#profit_" + row_id).text();
+                let image_ = $("#image_" + row_id).find("img").attr("src");
+                let reduce = $("#reduce_" + row_id).val();
+                let total = 0;
+                if (reduce) {
+                    reduce = Number(replaceComma(replacePercent(reduce)));
+                    if (reduce > 0 && reduce < 101) {
+                        total = Number(qty) * (Number(replaceComma(price)) * (100 - reduce) / 100);
+                        reduce += "%";
+                    } else {
+                        total = Number(qty) * (Number(replaceComma(price)) - reduce);
+                    }
+                }
+                content += "<tr id=\"row_" + row_num + "\">\n" +
+                    "<td id=\"product_id_" + row_num + "\" class=\"hidden\">" + product_id + "</td>\n" +
+                    "<td id=\"variant_id_" + row_num + "\" class=\"hidden\">" + variant_id + "</td>\n" +
+                    "<td id=\"profit_" + row_num + "\" class=\"hidden\">" + profit_ + "</td>\n" +
+                    "<td id=\"image_" + row_num + "\" class=\"w100\"><img src='" + image_ + "' onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"' width='50px'></td>\n" +
+                    "<td id=\"sku_" + row_num + "\" class=\"w100\">" + sku + "</td>\n" +
+                    "<td id=\"name_" + row_num + "\" class=\"w200\">" + name + "</td>\n" +
+                    "<td id=\"price_" + row_num + "\" class=\"w150\">" + formatNumber(price) + "</td>\n" +
+                    "<td><input type=\"number\" class=\"form-control w100\" id=\"qty_" + row_num + "\" value=\"" + qty + "\" onchange=\"onchange_in_list(this, " + row_num + ")\"></td>\n" +
+                    "<td><input type=\"text\" class=\"form-control w150\" id=\"reduce_" + row_num + "\" value='" + reduce + "' onchange=\"onchange_in_list(this, " + row_num + ")\"></td>\n" +
+                    "<td id=\"total_" + row_num + "\" class=\"w150\">" + formatNumber(total) + "</td>\n" +
+                    "<td id=\"delete_" + row_num + "\"><a href=\"javascript:void(0)\" class=\"btn\"><i class=\"fa fa-trash text-danger\"></i></a></td>\n" +
+                    "</tr>";
+                row_num++;
+            });
             $("#table_list_product tbody").html(content);
         }
 
-        function on_change_total() {
-            let total_amount = 0;
-            let rowProductNumber = $(".count-row").val();
-            for (let i = 1; i <= rowProductNumber; i++) {
-                let prodTotal = $("#prodTotal_" + i).val();
-                if (typeof prodTotal !== "undefined" && prodTotal !== "") {
-                    prodTotal = Number(replaceComma(prodTotal));
-                    total_amount += prodTotal;
+        function load_customer_info() {
+            let customers = new Bloodhound({
+                datumTokenizer: function (countries) {
+                    return Bloodhound.tokenizers.whitespace(countries.value);
+                },
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    url: '<?php Common::getPath() ?>/src/controller/customer/CustomersController.php?method=get_all_customer',
+                    filter: function (response) {
+                        return response.customers;
+                    }
                 }
-            }
-            $("#total_amount").text(formatNumber(total_amount));
+            });
+            customers.initialize();
+            $('#customer_phone').typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+            }, {
+                name: 'customers',
+                displayKey: function (customers) {
+                    return customers.customer.phone;
+                },
+                source: customers.ttAdapter(),
+                limit: 10
+            });
+            $('#customer_phone').bind('typeahead:select', function (ev, suggestions) {
+                let customer = suggestions.customer;
+                console.log(customer.id);
+                console.log(customer.phone);
+                console.log(customer.name);
+                $("#customer_id").val(customer.id);
+                $("#customer_phone").val(customer.phone);
+                $("#customer_name").val(customer.name);
+            });
+
+            $('#customer_name').typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+            }, {
+                name: 'customers',
+                displayKey: function (customers) {
+                    return customers.customer.name;
+                },
+                source: customers.ttAdapter(),
+                limit: 10
+            });
+            $('#customer_name').bind('typeahead:select', function (ev, suggestions) {
+                let customer = suggestions.customer;
+                console.log(customer.id);
+                console.log(customer.phone);
+                console.log(customer.name);
+                $("#customer_id").val(customer.id);
+                $("#customer_phone").val(customer.phone);
+                $("#customer_name").val(customer.name);
+            });
+        }
+
+
+
+
+
+
+        
+        
+        
+        function on_change_total() {
+            // let total_amount = 0;
+            // let rowProductNumber = $(".count-row").val();
+            // for (let i = 1; i <= rowProductNumber; i++) {
+            //     let prodTotal = $("#prodTotal_" + i).val();
+            //     if (typeof prodTotal !== "undefined" && prodTotal !== "") {
+            //         prodTotal = Number(replaceComma(prodTotal));
+            //         total_amount += prodTotal;
+            //     }
+            // }
+            let total_amount = Number(replaceComma($("#total_amount").text()));
+
             let shipping = $("#shipping").val();
             if (shipping !== "") {
-                shipping = Number(replaceComma(shipping));
+                shipping = Number(format_money(replaceComma(shipping)));
             }
             let discount = $("#discount").val();
             if (discount !== "") {
-                discount = Number(replaceComma(discount));
+                // discount = format_money(discount);
+                discount = Number(format_money(replaceComma(discount)));
             }
             let total_checkout = total_amount + shipping - discount;
             $("#total_checkout").text(formatNumber(total_checkout));
@@ -974,22 +1374,22 @@ Common::authen();
             $(".count-row").val(idx);
         }
 
-        function formatNumber(num) {
-            return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-        }
+        // function formatNumber(num) {
+        //     return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+        // }
 
-        function validateEmail(email) {
-            let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return re.test(String(email).toLowerCase());
-        }
+        // function validateEmail(email) {
+        //     let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        //     return re.test(String(email).toLowerCase());
+        // }
 
-        function replaceComma(value) {
-            return value.replace(/,/g, '');
-        }
-
-        function replacePercent(value) {
-            return value.replace(/%/g, '');
-        }
+        // function replaceComma(value) {
+        //     return value.replace(/,/g, '');
+        // }
+        //
+        // function replacePercent(value) {
+        //     return value.replace(/%/g, '');
+        // }
 
         function onfocus_check(e) {
             $(e).removeClass("is-invalid");
@@ -1001,6 +1401,7 @@ Common::authen();
                 // disable_btn_add_new();
             }
         }
+
 
         function on_change_product_2(e, rowIndex) {
             let val = $(e).val();

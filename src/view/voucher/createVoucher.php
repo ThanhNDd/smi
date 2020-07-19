@@ -446,22 +446,22 @@ Common::authen();
       })
     }
 
-    function show_loading()
-    {
-      $("#create-product .overlay").removeClass("hidden");
-    }
-    function hide_loading()
-    {
-      $("#create-product .overlay").addClass("hidden");
-    }
+    // function show_loading()
+    // {
+    //   $("#create-product .overlay").removeClass("hidden");
+    // }
+    // function hide_loading()
+    // {
+    //   $("#create-product .overlay").addClass("hidden");
+    // }
 
-    function formatNumber(num) {
-      return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-    }
-    function replaceComma(value)
-    {
-      return value.replace(/,/g, '');
-    } 
+    // function formatNumber(num) {
+    //   return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    // }
+    // function replaceComma(value)
+    // {
+    //   return value.replace(/,/g, '');
+    // }
 
 
     let size = [

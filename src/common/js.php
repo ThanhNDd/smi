@@ -51,6 +51,10 @@ require_once("common.php");
 <script src="<?php Common::getPath()?>plugins/summernote/summernote-bs4.min.js"></script>
 <script src="<?php Common::getPath()?>plugins/typeahead/js/typeahead.bundle.js"></script>
 <script src="<?php Common::getPath()?>plugins/typeahead/js/bloodhound.min.js"></script>
+
+<!--<script src="https://raw.githubusercontent.com/twitter/typeahead.js/master/dist/bloodhound.min.js"></script>-->
+
+
 <script src="<?php Common::getPath()?>dist/js/common.js"></script>
 <script type="text/javascript">
 	let root_path = '<?php Common::getPath(); ?>';

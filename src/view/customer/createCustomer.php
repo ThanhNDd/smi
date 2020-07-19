@@ -376,11 +376,11 @@ Common::authen();
           }
           let email = $("#email").val();
           let existed_mail = $("#existed_email").val();
-          if(email && !validate_email(email)) {
+          if(email !== "" && !validate_email(email)) {
               $("#email").addClass("is-invalid");
               // $("#email").focus();
               is_valid = false;
-          } else if(!id && existed_mail == 1){
+          } else if(!id && existed_mail === 1){
               toastr.error('Email đã tổn tại');
               $("#email").addClass("is-invalid");
               is_valid = false;
@@ -504,24 +504,28 @@ Common::authen();
                               Swal.fire({
                                   type: 'success',
                                   title: success,
-                                  text: "Khách hàng đã được tạo mới thành công"
+                                  text: "Khách hàng đã được "+ success
                               }).then((result) => {
                                   if (result.value) {
                                       hide_loading();
-                                      close_modal_customer();
-                                      if($('#table_customer')) {
+                                      close_modal("#create_customer");
+                                      if($('#table_customer').length > 0) {
                                           reset_data_customer();
                                           $('#table_customer').DataTable().ajax.reload();
                                       }
-                                      if($("#customer_phone")) {
+                                      if($("#customer_phone").length > 0) {
                                           $("#customer_phone").val(phone_number);
                                       }
-                                      if($("#name")) {
+                                      if($("#name").length > 0) {
                                           $("#name").val(name);
                                       }
                                   }
                               });
-                          } if(data === "existed_phone") {
+                          } if(data === "not_existed_phone") {
+                              toastr.error('Chưa nhập số điện thoại');
+                              $("#phone_number").addClass("is-invalid");
+                              $("#customer_exist").val("not_phone");
+                          } else if(data === "existed_phone") {
                               toastr.error('Số điện thoại đã tồn tại');
                               $("#phone_number").addClass("is-invalid");
                               $("#customer_exist").val("phone");
