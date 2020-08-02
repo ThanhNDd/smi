@@ -245,32 +245,16 @@ class ProductDAO
     function find_all($status)
     {
         try {
-//            $sql = "select
-//                        A.id as product_id,
-//                        A.name ,
-//                        A.image ,
-//                        A.link ,
-//                        A.retail,
-//                        A.discount,
-//                        A.profit,
-//                        A.social_publish,
-//                        A.material,
-//                        A.origin,
-//                        A.short_description
-//                    from
-//                        smi_products A
-//                    where
-//                        A.status = $status
-//                    order by A.created_at desc, A.id";
-
             $sql = "SELECT A.id as product_id, 
                            A.name,
-                           A.image , 
-                           A.link , 
+                           A.image,
+                           B.image as variant_image, 
+                           A.link, 
                            MAX(B.retail) as max_retail,
                            MIN(B.retail) as min_retail,
                             A.discount,
-                            A.profit,
+                            MAX(B.profit) as max_profit,
+                            MIN(B.profit) as min_profit,
                             A.social_publish,
                             A.material,
                             A.origin,
@@ -291,17 +275,17 @@ class ProductDAO
                               A.short_description
                     ORDER BY A.created_at DESC";
             $result = mysqli_query($this->conn, $sql);
-//            print_r($this->getConn()->error);
             $data = array();
             foreach ($result as $k => $row) {
                 $product = array(
                     'product_id' => $row["product_id"],
                     'name' => $row["name"],
                     'image' => $row["image"],
+                    'variant_image' => $row["variant_image"],
                     'link' => $row["link"],
                     'retail' => $row["max_retail"] == $row["min_retail"] ? number_format($row['min_retail']) : number_format($row['min_retail'])." - ".number_format($row['max_retail']),
                     'discount' => $row["discount"],
-                    'profit' => number_format($row["profit"]),
+                    'profit' => $row["max_profit"] == $row["min_profit"] ? number_format($row['min_profit']) : number_format($row['min_profit'])." - ".number_format($row['max_profit']),
                     'social_publish' => $row["social_publish"],
                     'material' => $row["material"],
                     'origin' => $row["origin"],
@@ -578,8 +562,23 @@ class ProductDAO
     function update_stock($status, $product_id)
     {
         try {
-            $stmt = $this->getConn()->prepare("update smi_products SET status = ?, updated_at = NOW() where id = ?");
-            $stmt->bind_param("ii", $status, $product_id);
+            if($product_id == -1) {
+                $stmt = $this->getConn()->prepare("UPDATE smi_products
+                                                    SET status = ?,
+                                                        updated_at = NOW()
+                                                    WHERE id IN
+                                                        (SELECT a.id
+                                                         FROM smi_products a
+                                                         LEFT JOIN smi_variations b ON a.id = b.product_id
+                                                         WHERE a.status = 0
+                                                         GROUP BY a.id,
+                                                                  a.name
+                                                         HAVING sum(b.quantity) = 0)");
+                $stmt->bind_param("i", $status);
+            } else {
+                $stmt = $this->getConn()->prepare("update smi_products SET status = ?, updated_at = NOW() where id = ?");
+                $stmt->bind_param("ii", $status, $product_id);
+            }
             if(!$stmt->execute()) {
                 throw new Exception($stmt->error);
             }
@@ -662,7 +661,7 @@ class ProductDAO
                                 `short_description`,
                                 `created_at`) 
                             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-            $stmt->bind_param("sssddddiiissiis",
+            $stmt->bind_param("sssddddiiisssis",
                                 $name,
                                 $image,
                                 $link,
@@ -871,7 +870,7 @@ class ProductDAO
     function social_publish($product_id, $type, $status)
     {
       try {
-          $stmt = $this->getConn()->prepare("update smi_products set social_publish = JSON_SET(social_publish, '$.".$type."', ?) where id = ?");
+          $stmt = $this->getConn()->prepare("update smi_products set social_publish = JSON_SET(`social_publish`, '$.".$type."', ?), `updated_at` = NOW() where id = ?");
           $stmt->bind_param("ii", $status, $product_id);
           if(!$stmt->execute()) {
             print_r($this->getConn()->error);

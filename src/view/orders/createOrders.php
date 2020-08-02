@@ -1030,9 +1030,7 @@ Common::authen();
         }
 
         function add_product_list(data) {
-            // let noRow = get_row_index();
             $.each(data, function (k, v) {
-                // let name = v.name + " - " + v.size + " - " + v.color;
                 let retail = 0;
                 if (v.retail) {
                     retail = Number(replaceComma(v.retail));
@@ -1053,7 +1051,10 @@ Common::authen();
                 } else {
                     total = retail;
                 }
-
+                let quantity = 1;
+                if(v.quantity) {
+                    quantity = v.quantity;
+                }
                 let content = "<tr id=\"row_" + row_num + "\">\n" +
                     "<td id=\"product_id_" + row_num + "\" class=\"hidden\">" + v.product_id + "</td>\n" +
                     "<td id=\"variant_id_" + row_num + "\" class=\"hidden\">" + v.variant_id + "</td>\n" +
@@ -1062,8 +1063,8 @@ Common::authen();
                     "<td id=\"sku_" + row_num + "\" class=\"w100\">" + v.sku + "</td>\n" +
                     "<td id=\"name_" + row_num + "\" class=\"w200\"><strong>" + v.name + "</strong><br><small>Size: " + v.size + "</small><br><small>Màu: " + v.color + "</small></td>\n" +
                     "<td id=\"price_" + row_num + "\" class=\"w150\">" + formatNumber(retail) + "</td>\n" +
-                    "<td><input type=\"number\" class=\"form-control w100\" id=\"qty_" + row_num + "\" min=\"1\" value=\"1\" onchange=\"onchange_in_list(this, " + row_num + ")\"></td>\n" +
-                    "<td><input type=\"text\" class=\"form-control w150\" id=\"reduce_" + row_num + "\" value='" + reduce + "' onchange=\"onchange_in_list(this, " + row_num + ")\"></td>\n" +
+                    "<td><input type=\"number\" class=\"form-control w100\" id=\"qty_" + row_num + "\" min=\"1\" value=\""+quantity+"\" onchange=\"onchange_in_list(this, " + row_num + ")\"></td>\n" +
+                    "<td><input type=\"text\" class=\"form-control w150\" id=\"reduce_" + row_num + "\" value='" + reduce + "' onchange=\"onchange_in_list(this, " + row_num + ", 'reduce')\"></td>\n" +
                     "<td id=\"total_" + row_num + "\" class=\"w150\">" + formatNumber(total) + "</td>\n" +
                     "<td id=\"delete_" + row_num + "\"><a href=\"javascript:void(0)\" onclick='delete_product_in_list(" + row_num + ")' class=\"btn\"><i class=\"fa fa-trash text-danger\"></i></a></td>\n" +
                     "</tr>";
@@ -1072,7 +1073,7 @@ Common::authen();
             });
         }
 
-        function onchange_in_list(e, row_num) {
+        function onchange_in_list(e, row_num, type) {
             let val = $(e).val();
             val = replaceComma(val);
             val = replacePercent(val);
@@ -1158,7 +1159,7 @@ Common::authen();
 
             let shipping = $("#shipping").val();
             let discount = $("#discount").val();
-            let total_checkout = total + Number(shipping) - Number(discount);
+            let total_checkout = total + Number(replaceComma(shipping)) - Number(replaceComma(discount));
             $("#total_checkout").text(formatNumber(total_checkout));
         }
 

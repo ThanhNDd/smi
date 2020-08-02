@@ -28,20 +28,12 @@ if (isset($_POST["submit"])) {
       Common::redirect_login_page();
     }
     $url = Common::path();
-    $name = 'is_login';
-    $value = true;
-    $expire = time()+3600*24;
-    $path = '/';
-    setcookie($name, $value,$expire ,$path);
+    Common::set_cookie();
     header('location:' . $url);
     exit;
 }
 
 if (isset($_GET["logout"])) {
-  $name = 'is_login';
-  $value = true;
-  $expire = time()-3600;
-  $path = '/';
-  setcookie($name, $value,$expire ,$path);
-  Common::redirect_login_page();
+    Common::set_cookie(-1);
+    Common::redirect_login_page();
 }

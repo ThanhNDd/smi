@@ -21,4 +21,6 @@ class Constant
     // social publish
     const PUBLISHED = 1;
     const UNPUBLISH = 0;
+
+    const COOKIE_NAME = 'smisession';
 }

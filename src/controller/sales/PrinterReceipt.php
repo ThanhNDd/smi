@@ -166,9 +166,9 @@ class PrinterReceipt
                     <tr>
                         <td class="left"></td>
                         <td class="center">'.$value->getQuantity().'</td>
-                        <td class="right">'.number_format($value->getPrice()).'</td>
+                        <td class="right">'.number_format($value->getPrice()).'<sup>đ</sup></td>
                         <td class="right">'."-".$reduce_percent."%".'</td>
-                        <td class="right">'.number_format($intoMoney).'</td>
+                        <td class="right">'.number_format($intoMoney).'<sup>đ</sup></td>
                     </tr>';
         }
         $body .= '</tbody>';
@@ -190,27 +190,27 @@ class PrinterReceipt
         $footer =   '<tfoot>
                             <tr>
                                 <td colspan="4" class="right">Tổng tiền</td>
-                                <td class="right">'.number_format(empty($order->getTotal_amount()) || $order->getTotal_amount() == 'NULL' ? 0 : $order->getTotal_amount()).'</td>
+                                <td class="right">'.number_format(empty($order->getTotal_amount()) || $order->getTotal_amount() == 'NULL' ? 0 : $order->getTotal_amount()).'<sup>đ</sup></td>
                             </tr>
                             <tr>
                                 <td colspan="4" class="right">Giảm trên tổng đơn</td>
-                                <td class="right">'.($order->getDiscount() > 0 && $order->getDiscount() < 100 ? $order->getDiscount()."%" : number_format($order->getDiscount())).'</td>
+                                <td class="right">'.($order->getDiscount() > 0 && $order->getDiscount() < 100 ? $order->getDiscount()."%" : (number_format($order->getDiscount())).'<sup>đ</sup>').'</td>
                             </tr>
                             <tr>
                                 <td colspan="4" class="right">Tổng Giảm trừ</td>
-                                <td class="right">'.number_format($reduce).'</td>
+                                <td class="right">'.number_format($reduce).'<sup>đ</sup></td>
                             </tr>
                             <tr>
                                 <td colspan="4" class="right">Tổng thanh toán</td>
-                                <td class="right">'.number_format(empty($order->getTotal_checkout()) || $order->getTotal_checkout() == 'NULL' ? 0 : $order->getTotal_checkout()).'</td>
+                                <td class="right">'.number_format(empty($order->getTotal_checkout()) || $order->getTotal_checkout() == 'NULL' ? 0 : $order->getTotal_checkout()).'<sup>đ</sup></td>
                             </tr>
                             <tr>
                                 <td colspan="4" class="right">Khách thanh toán</td>
-                                <td class="right">'.number_format(empty($order->getCustomer_payment()) || $order->getCustomer_payment() == 'NULL' ? 0 : $order->getCustomer_payment()).'</td>
+                                <td class="right">'.number_format(empty($order->getCustomer_payment()) || $order->getCustomer_payment() == 'NULL' ? 0 : $order->getCustomer_payment()).'<sup>đ</sup></td>
                             </tr>
                             <tr>
                                 <td colspan="4" class="right">Trả lại</td>
-                                <td class="right">'.number_format(empty($order->getRepay()) || $order->getRepay() == 'NULL' ? 0 : $order->getRepay()).'</td>
+                                <td class="right">'.number_format(empty($order->getRepay()) || $order->getRepay() == 'NULL' ? 0 : $order->getRepay()).'<sup>đ</sup></td>
                             </tr>
                         </tfoot>
                     </table>

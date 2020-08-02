@@ -542,7 +542,7 @@ Common::authen();
                 if (result.value) {
                     show_loading();
                     let product = get_data_inform();
-                    console.log(product);
+                    // console.log(product);
                     $.ajax({
                         dataType: 'json',
                         url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
@@ -552,7 +552,7 @@ Common::authen();
                         },
                         type: 'POST',
                         success: function (data) {
-                            console.log(data);
+                            // console.log(data);
                             Swal.fire(
                                 'Thành công!',
                                 'Các sản phẩm đã được tạo thành công.',
@@ -601,18 +601,22 @@ Common::authen();
             let image = $("#image").children(".image").length;
             for(let i=1; i<=image; i++) {
                 let img = $("#link_image_"+i).val();
-                let type = $("#image_type_"+i).val();
-                if(type === "upload") {
-                    img = img.replace('<?php echo Common::path_img()?>', '');
-                }
-                if(img !== "") {
-                    let image1 = {};
-                    image1["src"] = img;
-                    image1["type"] = type;
-                    link_image.push(image1);
+                if(img) {
+                    let type = $("#image_type_" + i).val();
+                    if (type === "upload") {
+                        img = img.replace('<?php echo Common::path_img()?>', '');
+                    }
+                    if (img !== "") {
+                        let image1 = {};
+                        image1["src"] = img;
+                        image1["type"] = type;
+                        link_image.push(image1);
+                    }
                 }
             }
-            link_image = JSON.stringify(link_image);
+            // if(link_image.length > 0) {
+                link_image = JSON.stringify(link_image);
+            // }
 
             let product = {};
             product['product_id'] = product_id;
@@ -997,7 +1001,7 @@ Common::authen();
                                 data: form_data,
                                 type: 'post',
                                 success: function (res) {
-                                    console.log(res);
+                                    // console.log(res);
                                     $("[id=btn_upload_by_color_" + no + "]").prop('disabled', '');
                                     $("[id=spinner_by_color_" + no + "]").addClass('hidden');
                                     if (res === 'file_too_large') {
@@ -1038,7 +1042,7 @@ Common::authen();
                                 data: form_data,
                                 type: 'post',
                                 success: function (res) {
-                                    console.log(res);
+                                    // console.log(res);
                                     $("[id=btn_upload_" + no + "]").prop('disabled', '');
                                     $("[id=spinner_" + no + "]").addClass('hidden');
                                     if (res === 'file_too_large') {
@@ -1069,12 +1073,15 @@ Common::authen();
                     let pastedData = e.originalEvent.clipboardData.getData('text');
                     $("[id=img_by_color_" + no + "]").prop('src', pastedData).removeClass('hidden');
                     onchange_image_color(no, pastedData);
+                    $(this).val(pastedData);
                 });
             } else {
                 $("[id=link_image_" + no + "]").bind("paste", function (e) {
                     let pastedData = e.originalEvent.clipboardData.getData('text');
                     $("[id=img_" + no + "]").prop('src', pastedData).removeClass('hidden');
+                    $(this).val(pastedData);
                 });
+                $("[id=image_type_" + no + "]").val("");
             }
         }
 
@@ -1098,6 +1105,7 @@ Common::authen();
                     }
                 }
                 $("[id=img_" + no + "]").prop('src', val);
+                $("[id=image_type_" + no + "]").val("");
             }
 
         }
@@ -1247,16 +1255,16 @@ Common::authen();
                 is_valid = false;
             }
 
-            let image = $("#image").children(".image").length;
-            for(let i=1; i<=image; i++) {
-                let c = $("#link_image_"+i).val();
-                if(c === '') {
-                    $("#link_image_"+i).addClass("is-invalid");
-                    is_valid = false;
-                } else {
-                    $("#link_image_"+i).removeClass("is-invalid");
-                }
-            }
+            // let image = $("#image").children(".image").length;
+            // for(let i=1; i<=image; i++) {
+            //     let c = $("#link_image_"+i).val();
+            //     if(c === '') {
+            //         $("#link_image_"+i).addClass("is-invalid");
+            //         is_valid = false;
+            //     } else {
+            //         $("#link_image_"+i).removeClass("is-invalid");
+            //     }
+            // }
 
             let image_by_color = $("#image_by_color").children(".image-by-color").length;
             for(let i=1; i<=image_by_color; i++) {
@@ -1504,7 +1512,7 @@ Common::authen();
                 },
                 type: 'POST',
                 success: function (response) {
-                    console.log(response);
+                    // console.log(response);
                     size = response;
                     // let substringMatcher = function (strs) {
                     //     return function findMatches(q, cb) {
@@ -1555,7 +1563,7 @@ Common::authen();
                 type: 'POST',
                 success: function (response) {
                     colors = response;
-                    console.log(response);
+                    // console.log(response);
                     $('.select_color_0').typeahead({
                         hint: true,
                         highlight: true
@@ -1594,7 +1602,7 @@ Common::authen();
                 type: 'POST',
                 success: function (response) {
                     materials = response;
-                    console.log(response);
+                    // console.log(response);
                     $(".select_material").html("<label for=\"select_material\">Chất liệu:</label><input id='select_material' class=\"form-control\" type=\"text\" placeholder=\"Chọn chất liệu\" autocomplete=\"off\" spellcheck=\"false\">");
                     $('#select_material').typeahead({
                         hint: true,

@@ -122,10 +122,16 @@ Common::authen();
                             Hết hàng <span class="badge badge-light number_out_of_stock">0</span>
                         </a>
                         <div class="form-inline" style="display: inline-block">
+                            <button id="btn_update_out_of_stock" class="btn btn-danger btn-flat">
+                                <i class="fa fa-spinner fa-spin show_loading_update hidden"></i>&nbsp;Cập nhật hết hàng
+                            </button>
+                        </div>
+                        <div class="form-inline" style="display: inline-block">
                             <input type="number" value="" name="discountAll" id="discountAll" min="0"
                                    placeholder="Giảm giá" class="form-control w110">
                             <button id="update_all" class="btn btn-primary btn-flat">Áp dụng</button>
                         </div>
+
                     </section>
                     <section style="display: inline-block;float: right;padding-top: 1.25rem;">
                         <button type="button" class="btn btn-success btn-flat product-create">
@@ -156,7 +162,7 @@ Common::authen();
                             <th class="center clearAll">
                                 <i class="fa fa-trash" aria-hidden="true" style="color: red;cursor: pointer;"></i>
                             </th>
-                            <th class="hidden">Id</th>
+                            <th class="">Id</th>
                             <th>Hình ảnh</th>
                             <th>Tên sản phẩm</th>
                             <th>Giá bán lẻ</th>
@@ -191,10 +197,10 @@ Common::authen();
         set_title("Danh sách sản phẩm");
         count_out_of_stock();
         generate_datatable();
-        $('#example').on('draw.dt', function() {
-            document.body.scrollTop = 0;
-            document.documentElement.scrollTop = 0;
-        });
+        // $('#example').on('draw.dt', function() {
+        //     document.body.scrollTop = 0;
+        //     document.documentElement.scrollTop = 0;
+        // });
 
         $(".print-barcode").on("click", function () {
             let data = [];
@@ -216,7 +222,7 @@ Common::authen();
             Swal.fire({
                 title: 'Bạn chắc chắn chứ?',
                 text: "Bạn muốn cập nhật giảm giá cho tất cả sản phẩm!",
-                icon: 'warning',
+                type: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
@@ -227,8 +233,30 @@ Common::authen();
                 }
             })
         })
-    });
 
+        $("#btn_update_out_of_stock").on("click", function (e) {
+            $(this).children("i.show_loading_update").removeClass("hidden");
+            $(this).prop("disabled", true);
+            let that = this;
+            Swal.fire({
+                title: 'Bạn chắc chắn chứ?',
+                text: "Tất cả các sản phẩm hết hàng sẽ được tự động cập nhật và ẩn khỏi danh sách sản phẩm!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Đồng ý'
+            }).then((result) => {
+                if (result.value) {
+                    update_out_of_stock(e, -1, that);
+                } else {
+                    $(that).prop("disabled", '');
+                    $(that).children("i.show_loading_update").addClass("hidden");
+                }
+            })
+        })
+    });
+    
     function clearAll() {
         $.each($("#example tbody td input[type='checkbox']:checked"), function () {
             $(this).prop("checked", false);
@@ -279,7 +307,7 @@ Common::authen();
 
     function generate_datatable() {
         let table = $('#example').DataTable({
-            "ajax": '<?php Common::getPath() ?>src/controller/product/ProductController.php?method=findall&status=0',
+            //"ajax": '<?php //Common::getPath() ?>//src/controller/product/ProductController.php?method=findall&status=0',
             'ajax': {
                 "type": "GET",
                 "url": '<?php Common::getPath() ?>src/controller/product/ProductController.php',
@@ -307,7 +335,7 @@ Common::authen();
                 },
                 {
                     "data": "product_id",
-                    "className": 'hidden',
+                    "className": '',
                     width: "5px"
                 },
                 {
@@ -331,7 +359,7 @@ Common::authen();
                     width: "50px"
                 },
                 {
-                    "data": format_material,
+                    "data": "material",
                     width: "50px"
                 },
                 {
@@ -375,9 +403,9 @@ Common::authen();
                         product_id: productId
                     },
                     success: function (res) {
-                        console.log(res);
+                        // console.log(res);
                         let data = res.data;
-                        console.log(JSON.stringify(data));
+                        // console.log(JSON.stringify(data));
                         // let details = res[0].details;
                         if (data.length > 0) {
                             row.child(format_variation(data, discount)).show();
@@ -417,7 +445,7 @@ Common::authen();
                 },
                 success: function (res) {
                     open_modal_product_create();
-                    console.log(res);
+                    // console.log(res);
                     let arr = res.data;
                     $("#display_product_id").val(arr[0].product_id);
                     $("#product_id").val(arr[0].product_id);
@@ -443,7 +471,7 @@ Common::authen();
                         $('#description').summernote('code', '');
                     }
 
-                    $(".select_material").html("<label for=\"select_material\">Chất liệu:</label><input id='select_material' class=\"form-control\" type=\"text\" placeholder=\"Chọn chất liệu\" autocomplete=\"off\" spellcheck=\"false\">");
+                    // $(".select_material").html("<label for=\"select_material\">Chất liệu:</label><input id='select_material' class=\"form-control\" type=\"text\" placeholder=\"Chọn chất liệu\" autocomplete=\"off\" spellcheck=\"false\">");
                     $('#select_material').typeahead({
                         hint: true,
                         highlight: true,
@@ -451,7 +479,8 @@ Common::authen();
                     },
                     {
                         name: 'size',
-                        source: substringMatcher(materials)
+                        source: substringMatcher(materials),
+                        limit: 10
                     });
                     if(arr[0].material) {
                         $('#select_material').typeahead('val', arr[0].material);
@@ -708,7 +737,7 @@ Common::authen();
                             data: sku
                         },
                         success: function (res) {
-                            console.log(res);
+                            // console.log(res);
                             toastr.success('Xóa thành công!');
                         },
                         error: function (data, errorThrown) {
@@ -961,18 +990,23 @@ Common::authen();
         } else {
             retail = replaceComma(retail);
         }
-        // profit = replaceComma(profit);
-        profit = '';
-        console.log(discount);
+        let min_profit = 0;
+        let max_profit = 0;
+        if(profit.indexOf("-") > -1) {
+            min_profit = replaceComma(profit.split("-")[0]);
+            max_profit = replaceComma(profit.split("-")[1]);
+        } else {
+            profit = replaceComma(profit);
+        }
         let salePrice = '';
-        // let profit;
+
         if (!isNaN(discount) && discount > 0) {
             if (discount > 100) {
                 if(min_price > 0 || max_price > 0) {
-                    // profit = '';
+                    profit = formatNumber(Math.round(min_profit - discount)) +" - "+formatNumber(Math.round(max_profit - discount));
                     salePrice = formatNumber(min_price - discount) +" - "+formatNumber(max_price - discount);
                 } else {
-                    // profit = profit - discount;
+                    profit = formatNumber(Math.round(profit - discount));
                     salePrice = formatNumber(retail - discount);
                 }
                 $(e).val(formatNumber(discount));
@@ -980,11 +1014,11 @@ Common::authen();
 
                 // discount = replacePercent(discount);
                 if(min_price > 0 || max_price > 0) {
-                    profit = '';
-                    // profit = formatNumber(profit - min_price * discount / 100) +" - "+formatNumber(profit - max_price * discount / 100);
+                    // profit = '';
+                    profit = formatNumber(Math.round(min_profit - min_profit * discount / 100)) +" - "+formatNumber(Math.round(max_profit - max_profit * discount / 100));
                     salePrice = formatNumber(min_price - (min_price * discount) / 100) +" - "+formatNumber(max_price - (max_price * discount) / 100);
                 } else {
-                    // profit = profit - retail * discount / 100;
+                    profit = formatNumber(Math.round(profit - retail * discount / 100));
                     salePrice = formatNumber(retail - (retail * discount) / 100);
                 }
                 // $("#update_discount").prop("disabled", "");
@@ -1016,7 +1050,7 @@ Common::authen();
                 discount: discount
             },
             success: function (res) {
-                console.log(res);
+                // console.log(res);
                 toastr.success('Cập nhật thành công!');
             },
             error: function (data, errorThrown) {
@@ -1033,10 +1067,10 @@ Common::authen();
 
     function update_discount_all() {
         let discount = $("#discountAll").val();
-        console.log(discount);
+        // console.log(discount);
         discount = replaceComma(discount);
         discount = replacePercent(discount);
-        console.log(discount);
+        // console.log(discount);
         if (!discount || discount < 0) {
             toastr.error('Nhập chưa đúng!');
             return;
@@ -1050,7 +1084,7 @@ Common::authen();
                 discount: discount
             },
             success: function (res) {
-                console.log(res);
+                // console.log(res);
                 toastr.success('Cập nhật thành công!');
                 let table = $('#example').DataTable();
                 table.ajax.reload(init_select2, false);
@@ -1069,7 +1103,7 @@ Common::authen();
 
     function update_material(e, product_id) {
         let material = $(e).parent().find("select").val();
-        console.log(material);
+        // console.log(material);
         if (typeof material === "undefined" || material < 0) {
            toastr.error('Bạn chưa chọn Chất liệu!');
            return false;
@@ -1079,7 +1113,7 @@ Common::authen();
 
     function update_origin(e, product_id) {
         let origin = $(e).parent().find("select").val();
-        console.log(origin);
+        // console.log(origin);
         if (typeof origin === "undefined" || origin < 0) {
             toastr.error('Bạn chưa chọn Xuất xứ!');
             return false;
@@ -1099,7 +1133,7 @@ Common::authen();
                 type: type
             },
             success: function (res) {
-                console.log(res);
+                // console.log(res);
                 toastr.success('Cập nhật thành công!');
                 $("#example").DataTable().ajax.reload(init_select2, false);
             },
@@ -1129,7 +1163,7 @@ Common::authen();
                 method: "count_out_of_stock"
             },
             success: function (res) {
-                console.log(res);
+                // console.log(res);
                 $(".number_out_of_stock").text(res.response);
             },
             error: function (data, errorThrown) {
@@ -1150,14 +1184,13 @@ Common::authen();
                 product_id: product_id
             },
             success: function (res) {
-                console.log(res);
+                // console.log(res);
                 if (res.response === "in_stock") {
                     Swal.fire({
                         type: 'error',
                         title: 'Số lượng sản phẩm vẫn còn',
                         text: "Bạn vui lòng kiểm tra lại trước khi cập nhật hết hàng."
                     });
-                    return;
                 } else if (res.response === "success") {
                     Swal.fire({
                         title: 'Bạn chắc chắn muốn cập nhật hết hàng cho sản phẩm này?',
@@ -1186,7 +1219,7 @@ Common::authen();
         });
     }
 
-    function update_out_of_stock(e, product_id) {
+    function update_out_of_stock(e, product_id, that) {
         $.ajax({
             url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
             type: "POST",
@@ -1197,11 +1230,15 @@ Common::authen();
                 status: 1 // out of stock
             },
             success: function (res) {
-                console.log(res);
                 toastr.success('Cập nhật thành công!');
-                $(e).parent().parent().hide(700);
-                $(e).parent().parent().next().hide(700);
+                if(e && $(e)) {
+                    $(e).parent().parent().hide(700);
+                    // $(e).parent().parent().next().hide(700);
+                }
+                $(that).prop("disabled", '');
+                $(that).children("i.show_loading_update").addClass("hidden");
                 count_out_of_stock();
+                $("#example").DataTable().ajax.reload(init_select2, false);
             },
             error: function (data, errorThrown) {
                 console.log(data.responseText);
@@ -1241,14 +1278,25 @@ Common::authen();
     }
 
     function format_image(data) {
-        let image = data.image;
-        let json = JSON.parse(image);
-        let src = json[0].src;
-        let type = json[0].type;
-        if(type === "upload") {
-            src = '<?php Common::path_img() ?>' + src;
+        if(data.variant_image) {
+            return "<a href='"+data.variant_image+"' target='_blank'><img src='" + data.variant_image + "' width='100px' id='thumbnail' onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"'></a>";
+        } else {
+            let image = !data.image || data.image === '[]' ? data.variant_image : data.image;
+            try {
+                let json = JSON.parse(image);
+                let src = '';
+                if(json.length > 0) {
+                    src = json[0].src;
+                    let type = json[0].type;
+                    if (type === "upload") {
+                        src = '<?php Common::path_img() ?>' + src;
+                    }
+                }
+                return "<a href='"+src+"' target='_blank'><img src='" + src + "' width='100px' id='thumbnail' onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"'></a>";
+            } catch (e) {
+                return "<a href='"+image+"' target='_blank'><img src='" + image + "' width='100px' id='thumbnail' onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"'></a>";
+            }
         }
-        return "<a href='"+src+"' target='_blank'><img src='" + src + "' width='100px' id='thumbnail' onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"'></a>";
     }
 
     function format_variation(variations, discount, isNew) {
@@ -1285,7 +1333,7 @@ Common::authen();
                 table += '<input type="hidden" class="product-id-' + variations[i][j].sku + '" value="' + variations[i][j].product_id + '">';
                 table += '<td class="center"><input type="checkbox" id="' + variations[i][j].sku + '" onclick="check(this)"></td>';
                 if(j === 0) {
-                    table += "<td rowspan=\""+variations[i].length+"\"><img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width=\""+(width_img*len)+"\" src=\""+variations[i][j].image+"\" style=\"max-width: 70px;border-radius: 50%;\"></td>";
+                    table += "<td rowspan=\""+variations[i].length+"\"><img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width=\""+(width_img*len)+"\" src=\""+variations[i][j].image+"\" style=\"max-width: 70px;\"></td>";
                     table += '<td rowspan="'+variations[i].length+'">' + variations[i][j].color + '</td>';
                 }
                 table += '<td>' + variations[i][j].sku + '</td>';
@@ -1346,7 +1394,7 @@ Common::authen();
                 status: status
             },
             success: function (res) {
-                console.log(res);
+                // console.log(res);
                 toastr.success('Cập nhật thành công!');
             },
             error: function (data, errorThrown) {

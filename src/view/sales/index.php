@@ -39,9 +39,10 @@ Common::authen();
               <th class="hidden"></th>
               <th class="hidden"></th>
               <th class="w70">ID</th>
+                <th class="w70">Hình ảnh</th>
               <th class="w150">Tên sản phẩm</th>
-              <th class="w150">Size</th>
-              <th class="w70">Màu</th>
+              <th class="w130">Size</th>
+              <th class="w130">Màu</th>
               <th class="w100">Đơn giá</th>
               <th class="w120">Số lượng</th>
               <th class="w150">Giảm trừ</th>
@@ -67,7 +68,7 @@ Common::authen();
             <tbody>
             <tr>
               <td class="right w90">Tổng tiền</td>
-              <td class="right"><b style="font-size: 20px;" id="totalAmount">0</b><b> đ</b></td>
+              <td class="right"><b style="font-size: 20px;" id="totalAmount">0</b> <sup>đ</sup></td>
             </tr>
             <tr>
               <td class="right">Khuyến mãi</td>
@@ -89,11 +90,11 @@ Common::authen();
             <tr>
               <td class="right">Tổng Giảm trừ</td>
               <td class="right">
-                <span style="font-size: 20px;" id="totalReduce">0</span><span> đ</span></td>
+                <span style="font-size: 20px;" id="totalReduce">0</span> <sup>đ</sup></td>
             </tr>
             <tr>
               <td class="right">Tổng thanh toán</td>
-              <td class="right" style="color:red;"><h2><b id="totalCheckout">0</b><b> đ</b></h2></td>
+              <td class="right" style="color:red;"><h2><b id="totalCheckout">0</b> <sup>đ</sup></h2></td>
             </tr>
             <tr>
               <td class="right">Khách thanh toán</td>
@@ -110,7 +111,7 @@ Common::authen();
             </tr>
             <tr>
               <td class="right">Trả lại</td>
-              <td class="right"><span style="font-size: 20px;" id="repay">0</span><span> đ</span></td>
+              <td class="right"><span style="font-size: 20px;" id="repay">0</span> <sup>đ</sup></td>
             </tr>
             </tbody>
           </table>
@@ -205,6 +206,7 @@ Common::authen();
         // });
 
         $("#checkout").click(function () {
+
             Swal.fire({
                 title: 'Bạn có chắc chắn muốn tạo đơn hàng này?',
                 text: "",
@@ -245,7 +247,7 @@ Common::authen();
             return;
         }
         let select_payment = $("#sel_payment").val();
-        if (select_payment === 0) {
+        if (select_payment == 0) {
             let payment = $("#payment").val();
             if (payment === "") {
                 disableCheckOutBtn();
@@ -308,7 +310,7 @@ Common::authen();
             },
             type: 'POST',
             success: function (res) {
-                console.log(res);
+                // console.log(res);
                 if (res.length > 0) {
                     let status = res[0].status;
                     if (status !== "undefined") {
@@ -587,7 +589,7 @@ Common::authen();
             return;
         }
         data["details"] = details;
-        console.log(JSON.stringify(data));
+        // console.log(JSON.stringify(data));
         $.ajax({
             dataType: 'json',
             url: '<?php Common::getPath()?>src/controller/sales/processCheckout.php',
@@ -599,7 +601,7 @@ Common::authen();
             success: function (data) {
                 let orderId = data.orderId;
                 let filename = data.fileName;
-                console.log('filename: ' + filename);
+                // console.log('filename: ' + filename);
                 $(".iframeArea").html("");
                 if (typeof filename !== "undefined" && filename !== "") {
                     $(".iframeArea").html('<iframe src="<?php Common::getPath()?>src/controller/sales/pdf/' + filename + '" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
@@ -752,7 +754,7 @@ Common::authen();
                 sku: sku
             },
             success: function (products) {
-                console.log(JSON.stringify(products));
+                // console.log(JSON.stringify(products));
                 if (products.length > 0) {
                     let discount = products[0].discount;
                     if (discount == 0) {
@@ -771,13 +773,14 @@ Common::authen();
                         + '<td class="hidden"><input type="hidden" name="sku" id="sku_' + noRow + '" class="form-control" value="' + products[0].sku + '"></td>'
                         + '<td class="hidden"><input type="hidden" name="profit" id="profit_' + noRow + '" class="form-control" value="' + products[0].profit + '"></td>'
                         + '<td>' + products[0].sku + '</td>'
+                        + '<td><img src="' + products[0].image + '" onerror=\'this.onerror=null;this.src="<?php Common::image_error()?>"\' width="50px"></td>'
                         + '<td><span class="product-name" id="name_' + noRow + '">' + products[0].name + '</span></td>'
                         + '<td><span class="size" id="size_' + noRow + '">' + products[0].size + '</span></td>'
                         + '<td><span class="color" id="color_' + noRow + '">' + products[0].color + '</span></td>'
-                        + '<td><span class="price" id="price_' + noRow + '">' + products[0].retail + '</span><span> đ</span></td>'
+                        + '<td><span class="price" id="price_' + noRow + '">' + products[0].retail + '</span> <sup>đ</sup></td>'
                         + '<td><input type="number" name="qty" id="qty_' + noRow + '" class="form-control" min="1" value="' + qty + '" onchange="on_change_qty(\'price_' + noRow + '\', \'qty_' + noRow + '\', \'intoMoney_' + noRow + '\', \'reduce_' + noRow + '\')"></td>'
                         + '<td><input type="text" name="reduce" id="reduce_' + noRow + '" class="form-control" value="' + discount + '" onchange="on_change_reduce(\'price_' + noRow + '\',\'qty_' + noRow + '\', \'intoMoney_' + noRow + '\', \'reduce_' + noRow + '\')"></td>'
-                        + '<td><span class="intoMoney" id="intoMoney_' + noRow + '">' + products[0].retail + '</span><span> đ</span></td>'
+                        + '<td><span class="intoMoney" id="intoMoney_' + noRow + '">' + products[0].retail + '</span> <sup>đ</sup></td>'
                         + '<td><button type="button" class="btn btn-danger form-control add-new-prod" title="Xóa"  onclick="del_product(this, \'product-' + noRow + '\')"><i class="fa fa-trash" aria-hidden="true"></i> Xóa</button></td>'
                         + '</tr>');
                     $('[id=qty_' + noRow + ']').trigger("change");

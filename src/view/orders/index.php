@@ -98,20 +98,20 @@ Common::authen();
                         <div class="info-box">
                             <span class="info-box-icon bg-info elevation-1"><i class="fas fa-dollar-sign"></i></span>
                             <div class="info-box-content col-12 row">
-                                <div class="col-8">
+                                <div class="col-6">
                                     <span class="info-box-text">Tổng tiền</span>
                                     <span class="info-box-number">
                                         <h5 class="total_money">
-                                          <small>đ</small>
+                                          <sup>đ</sup>
                                         </h5>
                                      </span>
                                 </div>
 <!--                                <div class="col-4">-->
 <!--                                    <h1 class="display-5 text-danger text-right total_orders"></h1>-->
 <!--                                </div>-->
-                                <div class="col-4 float-right">
-                                    <h1 class="display-5 text-danger text-left"><span class="total_orders">0</span> <small style="font-size: 30%;color: black;">Đơn</small></h1>
-                                    <h5 class="display-5 text-danger text-left"><span class="total_products">0</span> <small style="font-size: 60%;color: black;">Sản phẩm</small></h5>
+                                <div class="col-6 float-right">
+                                    <h1 class="text-danger text-left no-margin d-inline-block col-md-12"><span class="total_orders d-inline-block text-right col-md-6 float-left">0</span> <small style="font-size: 30%;color: #676a6c;">Đơn</small></h1>
+                                    <h5 class="text-danger text-left no-margin d-inline-block col-md-12"><span class="total_products d-inline-block text-right col-md-6 float-left" style="color: #676a6c;">0</span> <small style="font-size: 60%;color: #676a6c;">Sản phẩm</small></h5>
                                 </div>
                             </div>
                         </div>
@@ -122,20 +122,20 @@ Common::authen();
                         <div class="info-box mb-3">
                             <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-store"></i></span>
                             <div class="info-box-content col-12 row">
-                                <div class="col-8">
+                                <div class="col-6">
                                     <span class="info-box-text">Shop</span>
                                     <span class="info-box-number">
                                         <h5 class="total_on_shop">
-                                            <small>đ</small>
+                                            <sup>đ</sup>
                                         </h5>
                                     </span>
                                 </div>
 <!--                                <div class="col-4">-->
 <!--                                    <h1 class="display-5 text-right count_on_shop"></h1>-->
 <!--                                </div>-->
-                                <div class="col-4 float-right">
-                                    <h1 class="display-5 text-left"><span class="count_on_shop">0</span> <small style="font-size: 30%;color: black;">Đơn</small></h1>
-                                    <h5 class="display-5 text-left"><span class="total_product_on_shop">0</span> <small style="font-size: 60%;color: black;">Sản phẩm</small></h5>
+                                <div class="col-6 float-right">
+                                    <h1 class="text-danger text-left no-margin d-inline-block col-md-12"><span class="count_on_shop d-inline-block text-right col-md-6 float-left">0</span> <small style="font-size: 30%;color: #676a6c;">Đơn</small></h1>
+                                    <h5 class="text-danger text-left no-margin d-inline-block col-md-12"><span class="total_product_on_shop d-inline-block text-right col-md-6 float-left" style="color: #676a6c;">0</span> <small style="font-size: 60%;color: #676a6c;">Sản phẩm</small></h5>
                                 </div>
                             </div>
                             <!-- /.info-box-content -->
@@ -149,20 +149,20 @@ Common::authen();
                         <div class="info-box mb-3">
                             <span class="info-box-icon bg-success elevation-1"><i class="fas fa-globe"></i></span>
                             <div class="info-box-content col-12 row">
-                                <div class="col-8">
+                                <div class="col-6">
                                     <span class="info-box-text">Online</span>
                                     <span class="info-box-number">
                                         <h5 class="total_online">
-                                          <small>đ</small>
+                                          <sup>đ</sup>
                                         </h5>
                                     </span>
                                 </div>
 <!--                                <div class="col-4">-->
 <!--                                    <h1 class="display-5 text-right count_online"></h1>-->
 <!--                                </div>-->
-                                <div class="col-4 float-right">
-                                    <h1 class="display-5 text-left"><span class="count_online">0</span> <small style="font-size: 30%;color: black;">Đơn</small></h1>
-                                    <h5 class="display-5 text-left"><span class="total_product_online">0</span> <small style="font-size: 60%;color: black;">Sản phẩm</small></h5>
+                                <div class="col-6 float-right">
+                                    <h1 class="text-danger text-left no-margin d-inline-block col-md-12"><span class="count_online d-inline-block text-right col-md-6 float-left">0</span> <small style="font-size: 30%;color: #676a6c;">Đơn</small></h1>
+                                    <h5 class="text-danger text-left no-margin d-inline-block col-md-12"><span class="total_product_online d-inline-block text-right col-md-6 float-left" style="color: #676a6c;">0</span> <small style="font-size: 60%;color: #676a6c;">Sản phẩm</small></h5>
                                 </div>
                             </div>
                             <!-- /.info-box-content -->
@@ -174,20 +174,20 @@ Common::authen();
                         <div class="info-box mb-3">
                             <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-sync-alt"></i></span>
                             <div class="info-box-content col-12 row">
-                                <div class="col-8">
+                                <div class="col-6">
                                     <span class="info-box-text">Đổi hàng</span>
                                     <span class="info-box-number">
                                         <h5 class="total_exchange">
-                                          <small>đ</small>
+                                          <sup>đ</sup>
                                         </h5>
                                     </span>
                                 </div>
 <!--                                <div class="col-4">-->
 <!--                                    <h1 class="display-5 text-right count_exchange"></h1>-->
 <!--                                </div>-->
-                                <div class="col-4 float-right">
-                                    <h1 class="display-5 text-left"><span class="count_exchange">0</span> <small style="font-size: 30%;color: black;">Đơn</small></h1>
-                                    <h5 class="display-5 text-left"><span class="total_product_exchange">0</span> <small style="font-size: 60%;color: black;">Sản phẩm</small></h5>
+                                <div class="col-6 float-right">
+                                    <h1 class="text-danger text-left no-margin d-inline-block col-md-12"><span class="count_exchange d-inline-block text-right col-md-6 float-left">0</span> <small style="font-size: 30%;color: #676a6c;">Đơn</small></h1>
+                                    <h5 class="text-danger text-left no-margin d-inline-block col-md-12"><span class="total_product_exchange d-inline-block text-right col-md-6 float-left" style="color: #676a6c;">0</span> <small style="font-size: 60%;color: #676a6c;">Sản phẩm</small></h5>
                                 </div>
                             </div>
                             <!-- /.info-box-content -->
@@ -206,7 +206,7 @@ Common::authen();
                                 <span class="info-box-text">Tiền mặt</span>
                                 <span class="info-box-number">
                                     <h5 class="total_cash">
-                                      <small>đ</small>
+                                      <sup>đ</sup>
                                     </h5>
                                 </span>
                             </div>
@@ -221,7 +221,7 @@ Common::authen();
                                 <span class="info-box-text">Chuyển khoản</span>
                                 <span class="info-box-number">
                                     <h5 class="total_transfer">
-                                        <small>đ</small>
+                                        <sup>đ</sup>
                                     </h5>
                                 </span>
                             </div>
@@ -233,10 +233,10 @@ Common::authen();
                         <div class="info-box mb-3">
                             <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-wallet"></i></span>
                             <div class="info-box-content">
-                                <span class="info-box-text">Profit</span>
+                                <span class="info-box-text">--</span>
                                 <span class="info-box-number">
                                     <h5 class="total_profit">
-                                      <small>đ</small>
+                                      <sup>đ</sup>
                                     </h5>
                                 </span>
                             </div>
@@ -596,20 +596,24 @@ Common::authen();
                 $("#total_checkout").text(value[0].total_checkout);
                 $("#repay").text(value[0].repay);
                 $(".product-area").html("");
+                $("#table_list_product tbody").html("");
                 let details = value[0].details;
-                for (let i = 0; i < details.length; i++) {
-                    $('.count-row').val(i);
-                    add_new_product();
-                    $("#detailId_" + (i + 1)).val(details[i].order_detail_id)
-                    $("#sku_" + (i + 1)).val(details[i].sku).trigger("change");
-                    $("#prodQty_" + (i + 1)).val(details[i].quantity).trigger("change");
-                    $("#prodReduce_" + (i + 1)).val(details[i].reduce);
-                    if (order_type == 1) {
-                        $("#prodReduce_" + (i + 1)).prop("disabled", true);
-                    } else if (order_type == 0) {
-                        $("#prodReduce_" + (i + 1)).prop("disabled", false);
-                    }
-                }
+                add_product_list(details);
+                // for (let i = 0; i < details.length; i++) {
+                    // add_product_list(details[i]);
+
+                    // $('.count-row').val(i);
+                    // add_new_product();
+                    // $("#detailId_" + (i + 1)).val(details[i].order_detail_id)
+                    // $("#sku_" + (i + 1)).val(details[i].sku).trigger("change");
+                    // $("#prodQty_" + (i + 1)).val(details[i].quantity).trigger("change");
+                    // $("#prodReduce_" + (i + 1)).val(details[i].reduce);
+                    // if (order_type == 1) {
+                    //     $("#prodReduce_" + (i + 1)).prop("disabled", true);
+                    // } else if (order_type == 0) {
+                    //     $("#prodReduce_" + (i + 1)).prop("disabled", false);
+                    // }
+                // }
                 open_modal('#create_order');
             } else {
                 toastr.error('Đã xảy ra lỗi.');
@@ -676,10 +680,10 @@ Common::authen();
                 '<td>' + details[i].size + '</td>' +
                 '<td>' + details[i].color + '</td>' +
                 '<td>' + details[i].quantity + '</td>' +
-                '<td class="right">' + details[i].price + ' <small>đ</small></td>' +
-                '<td class="right">' + details[i].reduce + ' <small>đ</small></td>' +
-                '<td class="right">' + details[i].intoMoney + ' <small>đ</small></td>' +
-                '<td class="right" style="display: none;">' + formatNumber(detail_profit) + ' <small>đ</small></td>' +
+                '<td class="right">' + details[i].price + ' <sup>đ</sup></td>' +
+                '<td class="right">' + details[i].reduce + ' <sup>đ</sup></td>' +
+                '<td class="right">' + details[i].intoMoney + ' <sup>đ</sup></td>' +
+                '<td class="right" style="display: none;">' + formatNumber(detail_profit) + ' <sup>đ</sup></td>' +
                 '<td class="center"><div class="custom-control custom-switch">' +
                 '<input type="checkbox" class="custom-control-input upd-qty-shopee" id="shopee_'+details[i].sku+'" '+shopee+' onchange="updatedQty(this, \'shopee\', '+details[i].sku+')">' +
                 '<label class="custom-control-label" for="shopee_'+details[i].sku+'"></label>' +
@@ -723,14 +727,14 @@ Common::authen();
         profit = profit - discount - voucher_value;
 
         d += '<div class="row">' +
-            '<div class="col-3 col-sm-3 col-md-3"><small>Chiết khấu trên tổng đơn hàng</small> <h5>' + data.discount + ' <small>đ</small></h5></div>' +
-            '<div class="col-3 col-sm-3 col-md-3"><small>Tổng giảm trừ</small> <h5>' + data.total_reduce + ' <small>đ</small></h5></div>';
+            '<div class="col-3 col-sm-3 col-md-3"><small>Chiết khấu trên tổng đơn hàng</small> <h5>' + data.discount + ' <sup>đ</sup></h5></div>' +
+            '<div class="col-3 col-sm-3 col-md-3"><small>Tổng giảm trừ</small> <h5>' + data.total_reduce + ' <sup>đ</sup></h5></div>';
         let total_checkout = data.total_checkout;
         if (payment_exchange_type === '2') {
             total_checkout = '-' + total_checkout;
         }
-        d += '<div class="col-3 col-sm-3 col-md-3"><small>Tổng tiền thanh toán</small> <h5>' + total_checkout + ' <small>đ</small></h5></div>' +
-            '<div class="col-3 col-sm-3 col-md-3" style="display: block;"><small>Profit</small> <h5>' + formatNumber(profit) + ' <small>đ</small></h5></div>' +
+        d += '<div class="col-3 col-sm-3 col-md-3"><small>Tổng tiền thanh toán</small> <h5>' + total_checkout + ' <sup>đ</sup></h5></div>' +
+            '<div class="col-3 col-sm-3 col-md-3" style="display: block;"><small>-</small> <h5>' + formatNumber(profit) + ' <sup>đ</sup></h5></div>' +
             '</div>' +
             '</div>' +
             '</div>' +
@@ -798,11 +802,11 @@ Common::authen();
         let payment_exchange_type = data.payment_exchange_type;
         switch (payment_exchange_type) {
             case '1':
-                return total_checkout;
+                return total_checkout + " <sup>đ</sup>";
             case '2':
-                return '-' + total_checkout;
+                return '-' + total_checkout + " <sup>đ</sup>";
             default:
-                return total_checkout;
+                return total_checkout + " <sup>đ</sup>";
         }
     }
 
@@ -845,6 +849,9 @@ Common::authen();
                 break;
             case '2':
                 return '<span class="badge badge-warning">Nợ</span>';
+                break;
+            case '3':
+                return '<span class="badge badge-primary">COD</span>';
                 break;
             default:
                 return '';
@@ -892,21 +899,21 @@ Common::authen();
                 end_date: end_date
             },
             success: function (res) {
-                $(".total_money").html(res.total_checkout + " <small>đ</small>");
+                $(".total_money").html(res.total_checkout + " <sup>đ</sup>");
                 $(".total_orders").html(res.count_total);
                 $(".total_products").html(res.total_product);
-                $(".total_on_shop").html(res.total_on_shop + " <small>đ</small>");
+                $(".total_on_shop").html(res.total_on_shop + " <sup>đ</sup>");
                 $(".count_on_shop").html(res.count_on_shop);
                 $(".total_product_on_shop").html(res.total_product_on_shop);
-                $(".total_online").html(res.total_online + " <small>đ</small>");
+                $(".total_online").html(res.total_online + " <sup>đ</sup>");
                 $(".count_online").html(res.count_online);
                 $(".total_product_online").html(res.total_product_online);
-                $(".total_exchange").html(res.total_exchange + " <small>đ</small>");
+                $(".total_exchange").html(res.total_exchange + " <sup>đ</sup>");
                 $(".count_exchange").html(res.count_exchange);
                 $(".total_product_exchange").html(res.total_product_exchange);
-                $(".total_cash").html(res.total_cash + " <small>đ</small>");
-                $(".total_transfer").html(res.total_transfer + " <small>đ</small>");
-                $(".total_profit").html(res.total_profit + " <small>đ</small>");
+                $(".total_cash").html(res.total_cash + " <sup>đ</sup>");
+                $(".total_transfer").html(res.total_transfer + " <sup>đ</sup>");
+                $(".total_profit").html(res.total_profit + " <sup>đ</sup>");
             },
             error: function (data, errorThrown) {
                 console.log(data.responseText);

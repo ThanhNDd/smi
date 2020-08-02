@@ -507,6 +507,10 @@
         {
             id: '8',
             text: 'Phụ kiện'
+        },
+        {
+            id: '9',
+            text: 'Đồ bơi'
         }
     ];
     let select_origin = [
@@ -520,7 +524,7 @@
         },
         {
             id: '2',
-            text: 'Trung Quốc'
+            text: 'Quảng Châu'
         }
     ];
     let select_material = [

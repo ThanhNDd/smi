@@ -1,8 +1,9 @@
 <?php
 class DBConnect {
-    private $db = "cudwlevvhosting_admin";
+    private $db = "cudwlevvhosting_admin2";
     private $host = "127.0.0.1";
-    private $user = "cudwlevvhosting_smi";
+//    private $user = "cudwlevvhosting_smi";
+    private $user = "smi";
     private $pass = "xqjxERUWQ6F2S7r";
     private $conn;
 

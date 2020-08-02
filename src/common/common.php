@@ -1,5 +1,7 @@
 <?php
 
+include 'Constant.php';
+
 class Common
 {
     public static function path()
@@ -18,13 +20,21 @@ class Common
         echo Common::path();
     }
 
-    public static function is_logged_in()
-    {
-        if (isset($_COOKIE["is_login"]) && $_COOKIE["is_login"]) {
-            return true;
-        } else {
-            return false;
+    public static function check_logged() {
+        if (isset($_COOKIE[Constant::COOKIE_NAME]) && $_COOKIE[Constant::COOKIE_NAME]) {
+            $check = crypt(Constant::COOKIE_NAME, $_COOKIE[Constant::COOKIE_NAME]);
+            return hash_equals($check, $_COOKIE[Constant::COOKIE_NAME]);
         }
+        return false;
+    }
+
+    public static function set_cookie($time = 1) {
+        $expire = time()+3600*24*$time;
+        $path = '/';
+        $salt = strtr(base64_encode(date("ddMMyyyy")), '+', '.');
+        $salt = sprintf("$2y$%02d$", 10) . $salt;
+        $value = crypt(Constant::COOKIE_NAME, $salt);
+        setcookie(Constant::COOKIE_NAME, $value, $expire ,$path);
     }
 
     public static function redirect_login_page()
@@ -36,15 +46,15 @@ class Common
 
     public static function authen()
     {
-        if (!Common::is_logged_in()) {
+        if (!Common::check_logged()) {
             Common::redirect_login_page();
         }
     }
 
     public static function authen_get_data()
     {
-        if (!Common::is_logged_in()) {
-            throw new Exception("Forbidden! You don't have permission to access this resource.");
+        if (!Common::check_logged()) {
+            echo "Forbidden! You don't have permission to access this resource.";
         }
     }
 

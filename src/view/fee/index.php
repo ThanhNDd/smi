@@ -228,7 +228,7 @@ Common::authen();
         // generate_datatable();
         $('#create_new_fee').click(function () {
             reset_modal();
-            open_modal();
+            open_modal("#formFee");
         });
 
         $("#add_new").click(function () {
@@ -252,6 +252,7 @@ Common::authen();
 
         $("#amount").change(function () {
             let val = $(this).val();
+            val = format_money(val);
             if(validate_number(val)) {
                 if(Number(val) < 1000) {
                     val += "000";
@@ -404,6 +405,7 @@ Common::authen();
             valid = false;
         }
         let amount = $("#amount").val();
+        amount = format_money(amount);
         if(!validate_number(amount)) {
             toastr.error("Đã có lỗi xảy ra");
             $("#amount").focus();
@@ -445,6 +447,7 @@ Common::authen();
                 table.ajax.reload();
                 toastr.success("Lưu thành công");
                 reset_modal();
+                get_total_fee();
             },
             error: function (data, errorThrown) {
                 console.log(data.responseText);
