@@ -23,6 +23,7 @@ Common::authen();
 
         .new {
             font-size: large;
+            color: blue;
         }
 
         .checkout .h4, h4 {
@@ -49,10 +50,10 @@ Common::authen();
 <section class="content">
     <div class="row">
         <div class="col-md-9">
-            <div class="card card-outline card-danger">
-                <div class="card-header">
-                    <h3 class="card-title">Danh sách sản phẩm</h3>
-                </div>
+            <div class="card card-outline card-primary">
+<!--                <div class="card-header">-->
+<!--                    <h3 class="card-title">Danh sách sản phẩm</h3>-->
+<!--                </div>-->
                 <div class="card-body" style="min-height: 760px;">
                     <div class="row mb-3">
                         <div class="col-md-3">
@@ -102,27 +103,36 @@ Common::authen();
             <!-- /.card -->
         </div>
         <div class="col-md-3 checkout">
-            <div class="card card-outline card-warning">
-                <div class="card-header">
-                    <h3 class="card-title">Thông tin thanh toán</h3>
-                </div>
-                <div class="card-body" style="height: 760px;padding: 0 20px;">
+            <div class="card card-outline card-primary">
+<!--                <div class="card-header">-->
+<!--                    <h3 class="card-title">Thông tin thanh toán</h3>-->
+<!--                </div>-->
+                <div class="card-body" style="height: auto;padding: 20px;">
                     <table class="table table-hover">
                         <tbody>
-                        <tr>
-                            <td class="right w90 p-0 gray">Tổng tiền</td>
+                        <tr class="customer_info">
+                            <td class="right w90 gray">Khách hàng</td>
                             <td class="right p-0 gray">
-                                <h4><span id="totalAmount">0</span>
-                                    <small> đ</small>
-                                </h4>
+                                <input type="hidden" id="customer_id" value="0">
+                                <span id="customer_name">Khách lẻ</span>
                             </td>
                         </tr>
                         <tr>
-                            <td class="right p0 gray">Khuyến mãi</td>
+                            <td class="right w90 gray">Tổng tiền</td>
+                            <td class="right p-0 gray">
+                                <h4><span id="totalAmount">0</span> <small><sup>đ</sup></small></h4>
+                            </td>
+                        </tr>
+                        <tr class="wallet">
+                            <td class="right gray">Trừ trong ví</td>
                             <td class="right w110 p-0 gray">
-                                <h4><span id="discount">0</span>
-                                    <small> đ</small>
-                                </h4>
+                                <h4><span id="wallet">0</span> <small><sup>đ</sup></small></h4>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="right gray">Khuyến mãi</td>
+                            <td class="right w110 p-0 gray">
+                                <h4><span id="discount">0</span> <small><sup>đ</sup></small></h4>
                             </td>
                         </tr>
                         <tr>
@@ -133,105 +143,169 @@ Common::authen();
                             </td>
                         </tr>
                         <tr>
-                            <td class="right p-0 gray">Tổng Giảm trừ</td>
-                            <td class="right p-0 gray">
-                                <h4><span id="totalReduce">0</span>
-                                    <small> đ</small>
-                                </h4>
+                            <td class="right gray">Tổng Giảm trừ</td>
+                            <td class="right w110 p-0 gray">
+                                <h4><span id="totalReduce">0</span> <small><sup>đ</sup></small></h4>
                             </td>
                         </tr>
                         <tr>
-                            <td class="right p-0 gray">Tổng thanh toán</td>
-                            <td class="right p-0 gray">
-                                <h4><strong id="totalCheckout">0</strong>
-                                    <small> đ</small>
-                                </h4>
+                            <td class="right gray">Tổng thanh toán</td>
+                            <td class="right w110 p-0 gray">
+                                <h4><span id="totalCheckout">0</span> <small><sup>đ</sup></small></h4>
                             </td>
                         </tr>
                         <tr>
-                            <td class="right p-0 gray">Khách thanh toán</td>
-                            <td class="right p-0 gray">
-                                <h4><span id="payment">0</span>
-                                    <small> đ</small>
-                                </h4>
+                            <td class="right gray">Khách thanh toán</td>
+                            <td class="right w110 p-0 gray">
+                                <h4 class="mb-0"><span id="payment">0</span> <small><sup>đ</sup></small></h4>
                                 <span id="sel_payment"></span>
                             </td>
                         </tr>
                         <tr>
-                            <td class="right p-0 gray">Trả lại</td>
-                            <td class="right p-0 gray">
-                                <h4><span id="repay">0</span>
-                                    <small> đ</small>
-                                </h4>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="left p-0">Khách trả thêm</td>
-                            <td class="right p-0">
-                                <h3 style="color: red;"><span id="surcharge">0</span>
-                                    <small> đ</small>
-                                </h3>
-                                <h6 class="hidden" style="color: green;" id="add_more_discount">
-                                    <span>0</span>
-                                    <small>đ</small>
-                                </h6>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="left p-0">Giảm trừ</td>
-                            <td class="right pt-2 pr-0">
-                                <div class="input-group mb-3">
-                                    <input type="text" class="form-control" name="discount_new" id="discount_new" disabled>
-                                    <div class="input-group-append">
-                                        <span class="input-group-text">đ</span>
-                                    </div>
+                            <td class="right gray">Trả lại</td>
+                            <td class="right w110 p-0 gray">
+                                <div class="repay hidden">
+                                    <h4 class="mb-0"><span id="repay">0</span> <small><sup>đ</sup></small></h4>
+                                    <span>Tiền mặt</span>
+                                </div>
+                                <div class="transferToWallet hidden">
+                                    <h4 class="mb-0"><span id="transferToWallet">0</span> <small><sup>đ</sup></small></h4>
+                                    <span>Chuyển vào ví</span>
                                 </div>
                             </td>
                         </tr>
-                        <tr>
-                            <td class="left p-0">Tổng thanh toán</td>
-                            <td class="right p-0">
-                                <h4><span id="total_checkout_new">0</span>
-                                    <small> đ</small>
-                                </h4>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="right">Khách thanh toán</td>
-                            <td class="right">
-                                <select class="form-control" name="sel_payment_new" id="sel_payment_new" disabled>
-                                    <option value="0" selected="selected">Tiền mặt</option>
-                                    <option value="1">Chuyển khoản</option>
-                                    <option value="2">Nợ</option>
-                                </select>
-                                <div class="input-group mb-3 mt-2">
-                                    <input type="text" class="form-control right" name="payment_new" id="payment_new" disabled>
-                                    <div class="input-group-append">
-                                        <span class="input-group-text">đ</span>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="right">Trả lại</td>
-                            <td class="right">
-                                <div class="input-group mb-3">
-                                    <input type="text" class="form-control right" name="repay_new" id="repay_new" disabled>
-                                    <div class="input-group-append">
-                                        <span class="input-group-text">đ</span>
-                                    </div>
-                                </div>
+                        <tr class="saved">
+                            <td class="right gray">Tích lũy</td>
+                            <td class="right w110 p-0 gray">
+                                <h4><span id="saved">0</span> <small><sup>đ</sup></small></h4>
                             </td>
                         </tr>
                         </tbody>
                     </table>
-                    <div class="row">
+                </div>
+            </div>
+            <div class="card card-outline card-primary">
+<!--                <div class="card-header">-->
+<!--                    <h3 class="card-title">Thông tin thanh toán đơn hàng mới</h3>-->
+<!--                </div>-->
+                <div class="card-body" style="height: auto;padding: 20px;">
+                    <table class="table table-hover">
+                        <tbody>
+                            <tr>
+                                <td class="right w130">Tổng tiền</td>
+                                <td class="right w90 p-0 gray">
+                                    <h4><span style="color: red;" id="total_amount_new">0</span> <small><sup>đ</sup></small></h4>
+                                    <h6 class="hidden"><span style="color: green;" id="add_more_discount">0</span> <small><sup>đ</sup></small></h6>
+                                </td>
+                            </tr>
+                            <tr class="wallet hidden">
+                                <td class="right w90">Số dư trong ví</td>
+                                <td class="right pr-0">
+                                    <input type="text" class="form-control text-right" style="font-size: 20px;"
+                                           id="totalUsePoint">
+                                    <p class="mt-1 mb-0">Quý khách có <span class="text-primary c-pointer" id="totalBallanceInWallet">0</span> <sup
+                                                class="text-primary">đ</sup> trong ví</p>
+                                </td>
+                            </tr>
+                            <tr class="discount-new hidden">
+                                <td class="right">Giảm trừ</td>
+                                <td class="right pt-2 pr-0">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="discount_new" id="discount_new" disabled>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">đ</span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="total-reduce-new hidden">
+                                <td class="right">Tổng Giảm trừ</td>
+                                <td class="right p-0">
+                                    <h4><span id="totalReduceNew">0</span> <small><sup>đ</sup></small></h4>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="right">Tổng thanh toán</td>
+                                <td class="right p-0">
+                                    <h4><span id="total_checkout_new">0</span> <small><sup>đ</sup></small></h4>
+                                </td>
+                            </tr>
+                            <tr class="payment-new hidden">
+                                <td class="right">Khách thanh toán</td>
+                                <td class="right pr-0">
+                                    <select class="form-control" name="sel_payment_new" id="sel_payment_new" disabled>
+                                        <option value="0" selected="selected">Tiền mặt</option>
+                                        <option value="1">Chuyển khoản</option>
+                                        <option value="2">Nợ</option>
+                                    </select>
+                                    <div class="input-group mt-2">
+                                        <input type="text" class="form-control right" name="payment_new" id="payment_new" disabled>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">đ</span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="saved-point hidden">
+                                <td class="right pl-0" colspan="2">
+                                    <p class="mb-1">Quý khách sẽ tích lũy được <span class="text-primary"
+                                                                                     id="total_saved_point">0</span> <sup
+                                                class="text-primary">đ</sup> cho đơn hàng này.</p>
+                                </td>
+                            </tr>
+                            <tr class="repay-new hidden">
+                                <td class="right pl-0 pr-0">
+                                    <span>Trả lại</span>
+                                    <div class="form-group mt-3" style="">
+                                        <a href="javascript:void(0)" class="ml-3" id="reverse"><i class="fas fa-retweet"></i></a>
+                                    </div>
+<!--                                    <div class="repay_method hidden">-->
+<!--                                        <div class="form-check text-left">-->
+<!--                                            <label class="form-check-label">-->
+<!--                                                <input type="radio" class="form-check-input" name="repayType" checked value="0">Tiền mặt-->
+<!--                                            </label>-->
+<!--                                        </div>-->
+<!--                                        <div class="form-check text-left">-->
+<!--                                            <label class="form-check-label">-->
+<!--                                                <input type="radio" class="form-check-input" name="repayType" value="1">Chuyển vào Ví-->
+<!--                                            </label>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+                                </td>
+                                <td class="left">
+<!--                                    <span style="font-size: 20px;" id="repay_new">0 <small><sup>đ</sup></small></span>-->
+<!--                                    <input type="text" class="form-control right" name="repay_new" id="repay_new">-->
+<!--                                    <div class="form-group">-->
+<!--                                        <label for="cash">Tiền mặt</label>-->
+                                        <input type="text" class="form-control mb-2 text-right" placeholder="Tiền mặt" id="repay_new">
+<!--                                    </div>-->
+<!--                                    <div class="form-group">-->
+<!--                                        <label for="tranferWallet">Chuyển vào ví</label>-->
+                                        <input type="text" class="form-control text-right" placeholder="Tiền chuyển vào ví" id="tranferToWallet_new">
+<!--                                    </div>-->
+                                </td>
+                            </tr>
+<!--                            <tr>-->
+<!--                                <td class="right">Trả lại</td>-->
+<!--                                <td class="right pr-0">-->
+<!--                                    <div class="input-group mb-3">-->
+<!--                                        <input type="text" class="form-control right" name="repay_new" id="repay_new" disabled>-->
+<!--                                        <div class="input-group-append">-->
+<!--                                            <span class="input-group-text">đ</span>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </td>-->
+<!--                            </tr>-->
+                        </tbody>
+                    </table>
+                    <div class="row mt-2 col-md-12 ml-0">
                         <div class="left skin-line">
-                            <input type="checkbox" id="flag_print_receipt">
-                            <label for="flat-checkbox-1">In hóa đơn</label>
+                            <label for="flat-checkbox-1">
+                                <input type="checkbox" id="flag_print_receipt" checked> In hóa đơn
+                            </label>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row col-md-12 no-margin">
                         <button type="button" class="btn btn-success form-control" id="checkout" title="Thanh toán"
                                 disabled="disabled">
                             <i class="fas fa-shopping-basket"></i> Thanh toán
@@ -243,7 +317,7 @@ Common::authen();
         </div>
     </div>
 </section>
-<div class="iframeArea hidden">
+<div class="iframeArea" style="visibility: hidden;">
 </div>
 <?php require_once('../../common/footer.php'); ?>
 <script type="text/javascript">
@@ -251,13 +325,20 @@ Common::authen();
         set_title("Đổi sản phẩm");
         $("#orderId").change(function () {
             let orderId = $(this).val();
-            console.log(orderId);
-            if(orderId == "") {
+            if(!orderId || orderId === "") {
                 return;
+            }
+            if(orderId.length > 8) {
+                orderId = orderId.substr(8, orderId.length);
             }
             $("#currentOrderId").val(orderId);
             find_order(orderId);
         });
+
+        let order_id = "<?php echo (isset($_GET['oid']) ? $_GET['oid'] : '') ?>";
+        if(order_id) {
+            find_order(order_id);
+        }
 
         $("#cancel_exchange").on("click", function () {
             Swal.fire({
@@ -270,7 +351,7 @@ Common::authen();
                 confirmButtonText: 'Ok'
             }).then((result) => {
                 if (result.value) {
-                    window.location.reload();
+                    window.location.href = "<?php Common::getPath() ?>src/view/exchange";
                 }
             });
         });
@@ -300,11 +381,11 @@ Common::authen();
             }
         });
 
-        $("#voucher").change(function (event) {
-            let voucher = $(this).val();
-            onchange_voucher(voucher, event);
-            event.preventDefault();
-        });
+        // $("#voucher").change(function (event) {
+        //     let voucher = $(this).val();
+        //     onchange_voucher(voucher, event);
+        //     event.preventDefault();
+        // });
         $('#voucher').keypress(function (event) {
             let keycode = (event.keyCode ? event.keyCode : event.which);
             if (keycode == '13') {
@@ -314,47 +395,42 @@ Common::authen();
             }
         });
 
-        $("#payment_new").change(function () {
+        $("#payment_new").on('change',function () {
             let payment = $(this).val();
             payment = replaceComma(payment);
             paymentChange(payment);
         });
-        $("#payment_new").blur(function () {
-            let payment = $(this).val();
-            payment = replaceComma(payment);
-            paymentChange(payment);
-        });
-        $('#payment_new').keypress(function (event) {
-            let keycode = (event.keyCode ? event.keyCode : event.which);
-            if (keycode == '13') {
-                let payment = $(this).val();
-                payment = replaceComma(payment);
-                paymentChange(payment);
+        // $('#payment_new').keypress(function (event) {
+        //     let keycode = (event.keyCode ? event.keyCode : event.which);
+        //     if (keycode == '13') {
+        //         let payment = $(this).val();
+        //         payment = replaceComma(payment);
+        //         paymentChange(payment);
+        //     }
+        // });
+        $("#checkout").click(function () {
+            if(validate_form_checkout()) {
+                Swal.fire({
+                    title: 'Bạn có chắc chắn muốn tạo đơn hàng này?',
+                    text: "",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ok'
+                }).then((result) => {
+                    if (result.value) {
+                        processDataCheckout();
+                    }
+                });
             }
         });
-        $("#checkout").click(function () {
-            Swal.fire({
-                title: 'Bạn có chắc chắn muốn tạo đơn hàng này?',
-                text: "",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ok'
-            }).then((result) => {
-                if (result.value) {
-                    processDataCheckout();
-                }
-            });
-        });
         $("#sel_payment").change(function () {
-            if ($(this).val() == 0) {
-                $("#payment").show();
-                $("#payment").focus();
+            if ($(this).val() === 0) {
+                $("#payment").show().focus();
                 validate_form();
             } else {
-                $("#payment").val("");
-                $("#payment").hide();
+                $("#payment").val("").hide();
                 validate_form();
             }
         });
@@ -365,7 +441,76 @@ Common::authen();
             let val = $(this).val();
             $(this).val(formatNumber(val));
         });
+
+        $("#totalBallanceInWallet").click(function () {
+            $("#totalUsePoint").val($(this).text()).trigger("change");
+        });
+        totalUsedPointChange();
+        transferToWallet();
+        reverse_repay();
     });
+    
+    function validate_form_checkout() {
+        let total_checkout_new = Number(replaceComma($("#total_checkout_new").text()));
+        let payment_new = $("#payment_new").val();
+        if(total_checkout_new > 0) {
+            if(!payment_new) {
+                $("#payment_new").addClass("is-invalid").focus();
+                toastr.error("Bạn chưa nhập số tiền thanh toán");
+                return false;
+            } else {
+                $("#payment_new").removeClass("is-invalid");
+            }
+        }
+        return true;
+    }
+
+    function reverse_repay() {
+        $("#reverse").click(function () {
+            let repay = $("#repay_new").val();
+            let transferToWallet = $("#tranferToWallet_new").val();
+            $("#repay_new").val(transferToWallet);
+            $("#tranferToWallet_new").val(repay);
+        });
+    }
+
+    function transferToWallet() {
+        $("#tranferToWallet_new").on('change',function() {
+            let value = $(this).val();
+            let repayNew = Number(replaceComma($("#repay_new").val()));
+            if(value && repayNew) {
+                if(isNaN(value) || Number(value) > repayNew) {
+                    $(this).addClass("is-invalid");
+                    return;
+                } else {
+                    $(this).removeClass("is-invalid");
+                }
+                repayNew = repayNew - Number(value);
+                $("#repay_new").val(formatNumber(repayNew));
+            }
+            $(this).val(formatNumber(value));
+        });
+    }
+
+    function totalUsedPointChange() {
+        $("#totalUsePoint").on('change',function () {
+            let totalBallanceInWallet = Number(replaceComma($("#totalBallanceInWallet").text()));
+            let totalUsePoint = Number(replaceComma($(this).val()));
+            if(totalUsePoint > totalBallanceInWallet) {
+                $(this).addClass("is-invalid");
+                toastr.error("Số tiền sử dụng không được vượt quá số tiền trong ví");
+                disableCheckOutBtn();
+                return;
+            } else {
+                $(this).removeClass("is-invalid");
+                enableCheckOutBtn();
+            }
+            $(this).val(formatNumber(totalUsePoint));
+            // calculate_total_point();
+            recalculateTotalReduce();
+            recalculateTotalCheckout();
+        });
+    }
 
     function exchangeBtn(e, noRow) {
         $(e).parent().children("#productName_" + noRow).val("");
@@ -392,16 +537,13 @@ Common::authen();
                 orderId: orderId
             },
             success: function (order) {
-                console.log(JSON.stringify(order));
                 $.each(order, function (key, value) {
-                    console.log(value);
                     if (value.length > 0) {
-                        $("#orderId").val("");
-                        $("#orderId").addClass("hidden");
+                        $("#orderId").val("").addClass("hidden");
                         let details = value[0].details;
                         for (let i = 0; i < details.length; i++) {
-                            let reduce = details[i].reduce;
-                            if (reduce == 0) {
+                            let reduce = details[i].discount;
+                            if (reduce === 0) {
                                 reduce = "";
                             } else if (reduce > 0 && reduce < 100) {
                                 reduce = reduce + "%";
@@ -419,13 +561,13 @@ Common::authen();
                                 + '<td class="hidden"><input type="hidden" name="sku" id="sku_' + noRow + '" class="form-control" value="' + details[i].sku + '"></td>'
                                 + '<td class="hidden"><input type="hidden" name="orderDetailId" id="orderDetailId_' + noRow + '" class="form-control" value="' + details[i].order_detail_id + '"></td>'
                                 + '<td><span class="product-sku" id="sku_' + noRow + '">' + details[i].sku + '</span></td>'
-                                + '<td><span class="product-name" id="name_' + noRow + '">' + details[i].product_name + '</span></td>'
+                                + '<td><span class="product-name" id="name_' + noRow + '">' + details[i].name + '</span></td>'
                                 + '<td><span class="size" id="size_' + noRow + '">' + details[i].size + '</span></td>'
                                 + '<td><span class="color" id="color_' + noRow + '">' + details[i].color + '</span></td>'
-                                + '<td><span class="price" id="price_' + noRow + '">' + details[i].price + ' <small> đ</small></span></td>'
+                                + '<td><span class="price" id="price_' + noRow + '">' + details[i].retail + ' <small><sup>đ</sup></small></span></td>'
                                 + '<td><span name="qty" id="qty_' + noRow + '">' + details[i].quantity + '</span></td>'
                                 + '<td><span name="reduce" id="reduce_' + noRow + '">' + formatNumber(reduce) + '</span></td>'
-                                + '<td><div><span class="intoMoney" id="intoMoney_' + noRow + '">' + details[i].intoMoney + '</span> <small> đ</small></div></td>'
+                                + '<td><div><span class="intoMoney" id="intoMoney_' + noRow + '">' + details[i].intoMoney + '</span> <small><sup>đ</sup></small></div></td>'
                                 + '<td><button type="button" id="exchange_' + noRow + '" class="btn btn-info form-control" onclick="exchangeBtn(this, ' + noRow + ')" title="Đổi hàng"><i class="fas fa-sync"></i> Đổi hàng</button>'
                                 + '<button type="button" id="cancelExchange_' + noRow + '" class="btn btn-danger form-control hidden" onclick="cancelExchangeBtn(this, ' + noRow + ')" title="Hủy đổi hàng"><i class="fas fa-ban"></i> Hủy</button>'
                                 + '<input type="text" value="" placeholder="Nhập mã sản phẩm" id="productName_' + noRow + '" onchange="find_product(this, '+details[i].sku+', 1, ' + noRow + ')" class="hidden form-control mt-2 mb-2">'
@@ -433,40 +575,78 @@ Common::authen();
                                 + '</td>'
                                 + '</tr>');
                         }
-                        $("#productId").prop("disabled", "");
-                        $("#discount").prop("disabled", "");
+                        // $("#productId").prop("disabled", "");
+                        // $("#discount").prop("disabled", "");
                         $("#voucher").prop("disabled", "");
-                        $("#sel_payment").prop("disabled", "");
-                        $("#payment").prop("disabled", "");
+                        // $("#sel_payment").prop("disabled", "");
+                        // $("#payment").prop("disabled", "");
 
-                        $("#orderInfo").text("Thông tin hoá đơn #" + orderId);
-                        $("#orderInfo").removeClass("hidden");
-                        $("#orderDate").text("Ngày mua hàng: " + value[0].order_date);
-                        $("#orderDate").removeClass("hidden");
-                        $("#productId").removeClass("hidden");
-                        $("#productId").prev("label").removeClass("hidden");
+                        $("#orderInfo").text("Thông tin hoá đơn #" + orderId).removeClass("hidden");
+                        // $("#orderInfo").removeClass("hidden");
+                        $("#orderDate").text("Ngày mua hàng: " + value[0].order_date).removeClass("hidden");
+                        // $("#orderDate").removeClass("hidden");
+                        $("#productId").removeClass("hidden").prop("disabled", "").prev("label").removeClass("hidden");
+                        // $("#productId").prev("label").removeClass("hidden");
                         $("#cancel_exchange").removeClass("hidden");
+                        if(value[0].customer_id && Number(value[0].customer_id) > 0) {
+                            $("#customer_info").removeClass("hidden");
+                            $("#customer_id").val(value[0].customer_id);
+                            $("#customer_name").text(value[0].customerName);
+                            setTimeout(function () {
+                                get_total_point(value[0].customer_id);
+                            },200);
+                        } else {
+                            $("#customer_info").addClass("hidden");
+                            $("#customer_id").val(0);
+                            $("#customer_name").text('Khách lẻ');
+                        }
+                        if(value[0].wallet && Number(value[0].wallet) > 0) {
+                            $(".wallet").removeClass("hidden");
+                            $("#wallet").text(formatNumber(value[0].wallet));
+                        } else {
+                            $(".wallet").addClass("hidden");
+                            $("#wallet").text('');
+                        }
+                        if(value[0].saved && Number(value[0].saved) > 0) {
+                            $(".saved").removeClass("hidden");
+                            $("#saved").text(formatNumber(value[0].saved));
+                        } else {
+                            $(".saved").addClass("hidden");
+                            $("#saved").text('');
+                        }
                         $("#totalAmount").text(value[0].total_amount);
-                        $("#discount").text(value[0].discount);
+                        $("#discount").text(value[0].discount).prop("disabled", "");
                         $("#totalReduce").text(value[0].total_reduce);
                         $("#totalCheckout").text(value[0].total_checkout);
-                        $("#repay").text(value[0].repay);
-                        $("#payment").text(value[0].customer_payment);
-                        if (value[0].customer_payment != "" && value[0].customer_payment != 0) {
+                        // $("#repay").text(value[0].repay);
+                        if(value[0].repay) {
+                            $("#repay").text(formatNumber(value[0].repay));
+                            $(".repay").removeClass("hidden");
+                        } else {
+                            $("#repay").text("");
+                            $(".repay").addClass("hidden");
+                        }
+                        if(value[0].transfer_to_wallet) {
+                            $("#transferToWallet").text(formatNumber(value[0].transfer_to_wallet));
+                            $(".transferToWallet").removeClass("hidden");
+                        } else {
+                            $("#transferToWallet").text("");
+                            $(".transferToWallet").addClass("hidden");
+                        }
+                        // else {
+                        //     $("#repay_type").text('');
+                        // }
+                        $("#payment").prop("disabled", "").text(value[0].customer_payment);
+                        if (value[0].customer_payment && value[0].customer_payment !== 0) {
+                            let payment = 'Tiền mặt';
                             switch (value[0].payment_type) {
-                                case 0:
-                                    $("#sel_payment").text("Tiền mặt");
-                                    break;
                                 case 1:
-                                    $("#sel_payment").text("Chuyển khoản");
+                                    payment = "Chuyển khoản";
                                     break;
                                 case 2:
-                                    $("#sel_payment").text("Nợ");
-                                    break;
-                                default:
-                                    $("#sel_payment").text("Tiền mặt");
-                                    break;
+                                    payment = "Nợ";
                             }
+                            $("#sel_payment").prop("disabled", "").text(payment);
                         }
                     } else {
                         Swal.fire({
@@ -474,7 +654,6 @@ Common::authen();
                             title: 'Đã xảy ra lỗi',
                             text: "Không tìm thấy đơn hàng #" + orderId
                         });
-                        return;
                     }
                 });
             },
@@ -538,8 +717,6 @@ Common::authen();
 
     function find_product(e, curr_sku, qty, noRow) {
         let sku = $(e).val();
-        console.log("sku: "+sku);
-        console.log("curr_sku: "+curr_sku);
         if (sku === "") {
             return;
         }
@@ -562,7 +739,6 @@ Common::authen();
                 sku: sku
             },
             success: function (products) {
-                console.log(JSON.stringify(products));
                 if(products.length > 0) {
                     let retail = products[0].retail;
                     retail = replaceComma(retail);
@@ -583,6 +759,8 @@ Common::authen();
                     $(e).parent().parent().find("td:eq(1)").append('<input type="hidden" name="prodIdNew" id="prodId_new_' + noRow + '" class="form-control new" value="' + products[0].product_id + '">');
                     $(e).parent().parent().find("td:eq(2)").children(":first").addClass("old");
                     $(e).parent().parent().find("td:eq(2)").append('<input type="hidden" name="variantIdNew" id="variantId_new_' + noRow + '" class="form-control new" value="' + products[0].variant_id + '">');
+                    $(e).parent().parent().find("td:eq(1)").children(":first").addClass("old");
+                    $(e).parent().parent().find("td:eq(1)").append('<input type="hidden" name="profitNew" id="profit_new_' + noRow + '" class="form-control new" value="' + products[0].profit + '">');
                     $(e).parent().parent().find("td:eq(3)").children(":first").addClass("old");
                     $(e).parent().parent().find("td:eq(3)").append('<input type="hidden" name="skuNew" id="sku_new_' + noRow + '" class="form-control new" value="' + products[0].sku + '">');
                     $(e).parent().parent().find("td:eq(4)").children(":first").addClass("old");
@@ -596,7 +774,7 @@ Common::authen();
                     $(e).parent().parent().find("td:eq(8)").children(":first").addClass("old");
                     $(e).parent().parent().find("td:eq(8)").append('<span class="color-new new" id="color_new_' + noRow + '">' + products[0].color + '</span>');
                     $(e).parent().parent().find("td:eq(9)").children(":first").addClass("old");
-                    $(e).parent().parent().find("td:eq(9)").append('<span class="price-new new" id="price_new_' + noRow + '">' + products[0].retail + '</span> <small class="new"> đ</small>');
+                    $(e).parent().parent().find("td:eq(9)").append('<span class="price-new new" id="price_new_' + noRow + '">' + products[0].retail + '</span><sup>đ</sup>');
                     $(e).parent().parent().find("td:eq(10)").children(":first").addClass("old");
                     $(e).parent().parent().find("td:eq(10)").append('<input type="number" name="qtyNew" id="qty_new_' + noRow + '" class="new form-control" min="1" value="' + qty + '" onblur="on_change_qty(\'price_new_' + noRow + '\', \'qty_new_' + noRow + '\', \'intoMoney_new_' + noRow + '\', \'reduce_new_' + noRow + '\', \'intoMoney_' + noRow + '\', \'diff_money_new_' + noRow + '\')">');
                     $(e).parent().parent().find("td:eq(11)").children(":first").addClass("old");
@@ -612,11 +790,10 @@ Common::authen();
                     } else if(diff_money < 0 ) {
                         style = "color: red;";
                     }
-                    $(e).parent().parent().find("td:eq(12)").append('<div><span class="intoMoney new" id="intoMoney_new_' + noRow + '">' + formatNumber(into_money) + '</span> <small class="new"> đ</small></div>');
-                    $(e).parent().parent().find("td:eq(12)").append('<div class="old diff_money" style="'+style+'"><span id="diff_money_new_' + noRow + '">' + formatNumber(diff_money) + '</span> <small> đ</small></div>');
+                    $(e).parent().parent().find("td:eq(12)").append('<div><span class="intoMoney new" id="intoMoney_new_' + noRow + '">' + formatNumber(into_money) + '</span><sup>đ</sup></div>');
+                    $(e).parent().parent().find("td:eq(12)").append('<div class="old diff_money" style="'+style+'"><span id="diff_money_new_' + noRow + '">' + formatNumber(diff_money) + '</span><sup> đ</sup></div>');
                     $(e).parent().find("[id=del_" + noRow + "]").removeClass("hidden");
-                    $(e).addClass("hidden");
-                    $(e).val("");
+                    $(e).addClass("hidden").val("");
                     calculateTotal();
                     $("#checkout").prop("disabled", "");
                 } else {
@@ -671,14 +848,15 @@ Common::authen();
                         + '<td class="hidden"><input type="hidden" name="prodIdAddNew" id="prodId_add_new_' + noRow + '" class="form-control" value="' + products[0].product_id + '"></td>'
                         + '<td class="hidden"><input type="hidden" name="variantIdAddNew" id="variantId_add_new_' + noRow + '" class="form-control" value="' + products[0].variant_id + '"></td>'
                         + '<td class="hidden"><input type="hidden" name="skuAddNew" id="sku_add_new_' + noRow + '" class="form-control" value="' + products[0].sku + '"></td>'
+                        + '<td class="hidden"><input type="hidden" name="profitAddNew" id="profit_add_new_' + noRow + '" class="form-control" value="' + products[0].profit + '"></td>'
                         + '<td><span class="product-sku-add-new">' + products[0].sku + '</span></td>'
                         + '<td><span class="product-name-add-new" id="name_add_new_' + noRow + '">' + products[0].name + '</span></td>'
                         + '<td><span class="size-add-new" id="size_add_new_' + noRow + '">' + products[0].size + '</span></td>'
                         + '<td><span class="color-add-new" id="color_add_new_' + noRow + '">' + products[0].color + '</span></td>'
-                        + '<td><span class="price-add-new" id="price_add_new_' + noRow + '">' + products[0].retail + '</span><span> đ</span></td>'
+                        + '<td><span class="price-add-new" id="price_add_new_' + noRow + '">' + products[0].retail + '</span><sup> đ</sup></td>'
                         + '<td><input type="number" name="qtyAddNew" id="qty_add_new_' + noRow + '" class="form-control" min="1" value="'+qty+'" onchange="on_change_qty(\'price_' + noRow + '\', \'qty_' + noRow + '\', \'intoMoney_' + noRow + '\', \'reduce_' + noRow + '\')"></td>'
                         + '<td><input type="text" name="reduceAddNew" id="reduce_add_new_' + noRow + '" class="form-control" value="' + discount + '" onblur="on_change_reduce(\'price_add_new_' + noRow + '\',\'qty_add_new_' + noRow + '\', \'intoMoney_add_new_' + noRow + '\', \'reduce_add_new_' + noRow + '\',\'\', \'diff_money_add_new_' + noRow + '\')"></td>'
-                        + '<td><span class="intoMoney" id="diff_money_add_new_' + noRow + '">' + products[0].retail + '</span><span> đ</span></td>'
+                        + '<td><span class="intoMoney" id="diff_money_add_new_' + noRow + '">' + products[0].retail + '</span><sup> đ</sup></td>'
                         + '<td><button type="button" class="btn btn-danger form-control add-new-prod" title="Xóa"  onclick="del_product(this, \'product-' + noRow + '\')"><i class="fa fa-trash" aria-hidden="true"></i> Xóa</button></td>'
                         + '</tr>');
                     $('[id=reduce_add_new_' + noRow + ']').trigger("change");
@@ -706,23 +884,92 @@ Common::authen();
     }
 
     function calculateTotal() {
+        let totalAmount = calculateTotalAmountInList();
+        let discountOld = discount_old(totalAmount);
+        let discountNew =  discount_new(totalAmount);
+        let totalCheckout = Number(totalAmount) - Number(discountNew) + Number(discountOld);
+        if(totalCheckout > 0) {
+            // let payment = replaceComma($("#payment_new").val());
+            // let repay = 0;
+            // if (payment != 0 && totalCheckout > 0) {
+            //     repay = Number(payment) - Number(totalCheckout);
+            // }
+            // $("#repay_new").val(formatNumber(repay));
+            $("#discount_new").prop("disabled", "");
+            $(".discount-new").removeClass("hidden");
+            // $("#sel_payment_new").prop("disabled", "");
+            // $("#payment_new").prop("disabled", "");
+            // $(".payment-new").removeClass("hidden");
+            // disableCheckOutBtn();
+        } else {
+            // $("#repay_new").val(formatNumber(Math.abs(totalCheckout)));
+            $("#discount_new").prop("disabled", true);
+            $(".discount-new").addClass("hidden");
+            // $("#sel_payment_new").prop("disabled", true);
+            // $("#payment_new").val("").prop("disabled", true);
+            // $(".payment-new").addClass("hidden");
+            // enableCheckOutBtn();
+
+        }
+        // $("#repay_new").prop("disabled", "");
+        $("#total_amount_new").text(formatNumber(totalAmount));
+        // if(totalAmount < 0) {
+        //     $(".wallet").addClass("hidden");
+        // } else {
+        //     $(".wallet").removeClass("hidden");
+        // }
+        $("#total_checkout_new").text(formatNumber(totalCheckout));
+        calculate_total_point();
+    }
+    function calculate_total_point() {
+        let currentPoint = Number(replaceComma($("#totalBallanceInWallet").text()));
+        if (currentPoint && Number(currentPoint) > 0) {
+            let total_checkout_new = Number(replaceComma($("#total_checkout_new").text()));
+            if (total_checkout_new > 0) {
+                let totalUsePoint = 0;
+                if(total_checkout_new > currentPoint) {
+                    totalUsePoint = currentPoint;
+                } else {
+                    totalUsePoint = total_checkout_new;
+                }
+                $("#totalUsePoint").val(formatNumber(totalUsePoint)).removeClass("hidden");
+
+                recalculateTotalReduce();
+                // recalculate total checkout
+                recalculateTotalCheckout();
+            } else {
+                $("#totalUsePoint").addClass("hidden");
+                // $(".wallet").addClass("hidden");
+                $("#totalReduceNew").text("0");
+                $(".total-reduce-new").addClass("hidden");
+            }
+            payment_box();
+            calculate_saved_point();
+            calculate_repay_new();
+        } else {
+            $("#totalUsePoint").addClass("hidden");
+        }
+    }
+    function calculateTotalAmountInList() {
         let noRow = $("#noRow").val();
         noRow = Number(noRow);
         let totalAmount = 0;
         for (let i = 1; i <= noRow; i++) {
             if ($("[id=diff_money_new_" + i + "]") && $("[id=diff_money_new_" + i + "]").text() !== "") {
                 let diff_money = $("[id=diff_money_new_" + i + "]").text();
-                console.log(diff_money);
                 diff_money = replaceComma(diff_money);
                 totalAmount += Number(diff_money);
             }
             if ($("[id=diff_money_add_new_" + i + "]") && $("[id=diff_money_add_new_" + i + "]").text() !== "") {
                 let diff_money_add_new = $("[id=diff_money_add_new_" + i + "]").text();
-                console.log(diff_money_add_new);
                 diff_money_add_new = replaceComma(diff_money_add_new);
                 totalAmount += Number(diff_money_add_new);
             }
         }
+        return totalAmount;
+    }
+
+    function discount_old(totalAmount) {
         let discountOld = replaceComma($("#discount").text());
         if(totalAmount >= 0 || discountOld == "") {
             discountOld = 0;
@@ -732,30 +979,16 @@ Common::authen();
             $("#add_more_discount").removeClass("hidden");
             $("#add_more_discount span").text("+"+formatNumber(discountOld));
         }
-        let discountNew = $("#discount_new").val();
-        discountNew = replaceComma(discountNew);
-        let totalCheckout = Number(totalAmount) - Number(discountNew) + Number(discountOld);
-        if(totalCheckout > 0) {
-            let payment = replaceComma($("#payment_new").val());
-            let repay = 0;
-            if (payment != 0 && totalCheckout > 0) {
-                repay = Number(payment) - Number(totalCheckout);
-            }
-            $("#repay_new").val(formatNumber(repay));
-            $("#discount_new").prop("disabled", "");
-            $("#sel_payment_new").prop("disabled", "");
-            $("#payment_new").prop("disabled", "");
-            // disableCheckOutBtn();
-        } else {
-            $("#repay_new").val(formatNumber(Math.abs(totalCheckout)));
-            $("#discount_new").prop("disabled", true);
-            $("#sel_payment_new").prop("disabled", true);
-            $("#payment_new").prop("disabled", true);
-            // enableCheckOutBtn();
+        return Number(discountOld);
+    }
+
+    function discount_new(totalAmount) {
+        let discountNew = replaceComma($("#discount_new").val());
+        if(discountNew.indexOf("%") > -1) {
+            discountNew = Number(replacePercent(discountNew));
+            discountNew = discountNew * totalAmount / 100;
         }
-        $("#repay_new").prop("disabled", "");
-        $("#surcharge").text(formatNumber(totalAmount));
-        $("#total_checkout_new").text(formatNumber(totalCheckout));
+        return Number(discountNew);
     }
 
     function del_product_new(e, noRow) {
@@ -812,7 +1045,7 @@ Common::authen();
         let discount1 = replaceComma(discount);
         if (discount1.indexOf("%") > -1) {
             discount1 = replacePercent(discount1);
-            if (discount1 < 1 || discount1 > 50) {
+            if (discount1 < 1 || discount1 > 100) {
                 $("#discount_new").addClass("is-invalid");
                 disableCheckOutBtn();
                 return false;
@@ -820,7 +1053,7 @@ Common::authen();
                 $("#discount_new").removeClass("is-invalid");
             }
         } else {
-            if (!validateNumber(discount1, 'discount_new')) {
+            if (discount1 !== "" && !validateNumber(discount1, 'discount_new')) {
                 disableCheckOutBtn();
                 return false;
             }
@@ -840,7 +1073,7 @@ Common::authen();
         	payment += "000";
         }
         $("#payment_new").val(formatNumber(payment));
-        if (payment != "" && Number(totalCheckout) > 0 && Number(payment) < Number(totalCheckout)) {
+        if (payment !== "" && Number(totalCheckout) > 0 && Number(payment) < Number(totalCheckout)) {
             $("#payment_new").addClass("is-invalid");
             disableCheckOutBtn();
             return;
@@ -848,29 +1081,29 @@ Common::authen();
             $("#payment_new").removeClass("is-invalid");
             enableCheckOutBtn();
         }
-        let repay = 0;
-        if (payment != 0 && totalCheckout > 0) {
-            repay = Number(payment) - Number(totalCheckout);
-        }
-        $("#repay_new").val(formatNumber(repay));
+        // let repay = '';
+        // if (payment !== 0 && totalCheckout > 0) {
+        //     repay = Number(payment) - Number(totalCheckout);
+        // }
+        // $("#repay_new").val(formatNumber(repay));
+        calculate_repay_new();
     }
 
     function processDataCheckout() {
         // order information
         let currentOrderId = Number($("#currentOrderId").val());
-        let total_amount = replaceComma($("#surcharge").text());
+        let total_amount = replaceComma($("#total_amount_new").text());
         let total_checkout = replaceComma($("#total_checkout_new").text());
         let payment_type = $("#sel_payment_new").val();
         let customer_payment = replaceComma($("#payment_new").val());
-        let repay = replaceComma($("#repay_new").val());
         let flag_print_receipt = $("#flag_print_receipt").is(':checked');
-        let discount_old = replaceComma($("#discount").text());
+        // let discount_old = replaceComma($("#discount").text());
         let discount = replaceComma($("#discount_new").val());
         if (discount.indexOf("%") > -1) {
             discount = discount.replace("%", "");
             discount = (discount * total_checkout) / 100;
         }
-        let total_reduce = Number(discount) + Number(discount_old);
+        let total_reduce = replaceComma($("#totalReduceNew").text());
         // equal
         let paymentExchangeType = 0;
         if(total_checkout > 0) {
@@ -880,15 +1113,40 @@ Common::authen();
             // Guest received back
             paymentExchangeType = 2;
         }
+        let repay = replaceComma($("#repay_new").val());
+        let transferToWallet = replaceComma($("#tranferToWallet_new").val());
+        // let repayType = 0;
+        let totalBallanceInWallet = 0;
+        let totalUsePoint = 0;
+        let totalRemainPoint = 0;
+        let totalSavedPoint = 0;
+        // let walletRepay = 0;
+        let customer_id = $("#customer_id").val();
+        if(customer_id && Number(customer_id) > 0) {
+            // repayType = Number($("input[name='repayType']:checked").val());
+            // if(repayType === 1) {
+            //     walletRepay = Number(repay);
+            // }
+            totalBallanceInWallet = Number(replaceComma($("#totalBallanceInWallet").text()));
+            totalUsePoint = Number(replaceComma($("#totalUsePoint").val()));
+            if (!totalBallanceInWallet || totalBallanceInWallet === 0) {
+                totalUsePoint = 0;
+            }
+            totalRemainPoint = totalBallanceInWallet - totalUsePoint;
+            totalSavedPoint = Number(replaceComma($("#total_saved_point").text()));
+        }
         let data = {};
         data["total_amount"] = Math.abs(total_amount);
         data["total_reduce"] = total_reduce;
         data["discount"] = discount;
+        data["wallet"] = totalUsePoint;
         data["total_checkout"] = Math.abs(total_checkout);
         data["customer_payment"] = customer_payment;
         data["payment_type"] = payment_type;
         data["repay"] = repay;
-        data["customer_id"] = 0;
+        data["transfer_to_wallet"] = transferToWallet;
+        // data["repay_type"] = repayType;
+        data["customer_id"] = customer_id;
         data["type"] = 2;// exchange product
         data["flag_print_receipt"] = flag_print_receipt;
         data["voucher_code"] = "";
@@ -896,6 +1154,10 @@ Common::authen();
         data["current_order_id"] = currentOrderId;
         data["payment_exchange_type"] = paymentExchangeType;
         data["source"] = 0;// shop
+        data["wallet_used"] = totalUsePoint;
+        data["wallet_saved"] = totalSavedPoint;
+        data["wallet_repay"] = transferToWallet;
+        data["wallet_remain"] = totalRemainPoint;
 
         //order detail information
         let curr_products = [];
@@ -912,14 +1174,18 @@ Common::authen();
                 let price = replaceComma($(value).find("span.price").text());
                 let quantity = $(value).find("span[name=qty]").text();
                 let reduce = replaceComma($(value).find("span[name=reduce]").text());
+                let reduce_type = 0;
                 let reduce_percent = "";
                 if (reduce.indexOf("%") > -1) {
                     reduce = replacePercent(reduce);
                     reduce_percent = reduce;
                     reduce = (reduce * price) / 100;
+                    reduce_type = 0;
                 } else {
                     reduce_percent = Math.round(reduce * 100 / (price * quantity));
+                    reduce_type = 1;
                 }
+                let profit = replaceComma($(value).find("input[name=profit]").val());
                 let curr_product = {};
                 curr_product["product_id"] = product_id;
                 curr_product["variant_id"] = variant_id;
@@ -929,8 +1195,9 @@ Common::authen();
                 curr_product["quantity"] = quantity;
                 curr_product["reduce"] = reduce;
                 curr_product["reduce_percent"] = reduce_percent;
+                curr_product["reduce_type"] = reduce_type;
                 curr_product["product_exchange"] = 0;
-
+                curr_product["profit"] = profit;
                 curr_products.push(curr_product);
 
                 //exchange_product
@@ -941,14 +1208,18 @@ Common::authen();
                 let price_new = replaceComma($(value).find("span.price-new").text());
                 let quantity_new = $(value).find("input[name=qtyNew]").val();
                 let reduce_new = replaceComma($(value).find("input[name=reduceNew]").val());
+                let reduce_new_type = 0;
                 let reduce_percent_new = "";
                 if (reduce_new.indexOf("%") > -1) {
                     reduce_new = replacePercent(reduce_new);
                     reduce_percent_new = reduce_new;
                     reduce_new = (reduce_new * price_new) / 100;
+                    reduce_new_type = 0;
                 } else {
                     reduce_percent_new = Math.round(reduce_new * 100 / (price_new * quantity_new));
+                    reduce_new_type = 1;
                 }
+                let profit_new = replaceComma($(value).find("input[name=profitNew]").val());
                 let product = {};
                 product["product_id"] = product_id_new;
                 product["variant_id"] = variant_id_new;
@@ -958,8 +1229,9 @@ Common::authen();
                 product["quantity"] = quantity_new;
                 product["reduce"] = reduce_new;
                 product["reduce_percent"] = reduce_percent_new;
+                product["reduce_type"] = reduce_new_type;
                 product["product_exchange"] = sku;
-
+                product["profit"] = profit_new;
                 exchange_products.push(product);
             }
             // add new product
@@ -971,14 +1243,18 @@ Common::authen();
                 let price_add_new = replaceComma($(value).find("span.price-add-new").text());
                 let quantity_add_new = $(value).find("input[name=qtyAddNew]").val();
                 let reduce_add_new = replaceComma($(value).find("input[name=reduceAddNew]").val());
+                let reduce_type = 0;
                 let reduce_percent_add_new = "";
                 if (reduce_add_new.indexOf("%") > -1) {
                     reduce_add_new = replacePercent(reduce_add_new);
                     reduce_percent_add_new = reduce_add_new;
                     reduce_add_new = (reduce_add_new * price_add_new) / 100;
+                    reduce_type = 0;
                 } else {
                     reduce_percent_add_new = Math.round(reduce_add_new * 100 / (price_add_new * quantity_add_new));
+                    reduce_type = 1;
                 }
+                let profit_add_new = replaceComma($(value).find("input[name=profitAddNew]").val());
                 let new_product = {};
                 new_product["product_id"] = product_id_add_new;
                 new_product["variant_id"] = variant_id_add_new;
@@ -988,8 +1264,9 @@ Common::authen();
                 new_product["quantity"] = quantity_add_new;
                 new_product["reduce"] = reduce_add_new;
                 new_product["reduce_percent"] = reduce_percent_add_new;
+                new_product["reduce_type"] = reduce_type;
                 new_product["product_exchange"] = 0;
-
+                new_product["profit"] = profit_add_new;
                 add_new_products.push(new_product);
             }
         });
@@ -997,14 +1274,17 @@ Common::authen();
             Swal.fire({
                     type: 'error',
                     title: 'Đã xảy ra lỗi',
-                    text: "Bạn hãy thử tạo lại đơn hàng hoặc liên hệ quản trị viên hệ thống!"
+                    text: "Không tồn tại sản phẩm đổi!"
                 });
             return;
         }
         data["curr_products"] = curr_products;
         data["exchange_products"] = exchange_products;
         data["add_new_products"] = add_new_products;
+
+
         console.log(JSON.stringify(data));
+
         $.ajax({
             dataType: 'json',
             url: '<?php Common::getPath() ?>src/controller/exchange/ExchangeController.php',
@@ -1015,11 +1295,11 @@ Common::authen();
             type: 'POST',
             success: function (data) {
                 let orderId = data.orderId;
+                console.log(orderId);
                 let filename = data.fileName;
-                console.log('filename: ' + filename);
                 $(".iframeArea").html("");
                 if (typeof filename !== "undefined" && filename !== "") {
-                    $(".iframeArea").html('<iframe src="<<?php Common::getPath() ?>src/controller/exchange/pdf/' + filename + '" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
+                    $(".iframeArea").html('<iframe src="<?php Common::getPath() ?>src/controller/exchange/pdf/receipt.html" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
                 }
                 // toastr.success('Đơn hàng #' + orderId + ' đã được tạo thành công.');
                 // resetData();
@@ -1205,14 +1485,120 @@ Common::authen();
         $("#totalCheckout").text(0);
         $("#payment").val("");
         $("#repay").text(0);
+        $("#repay_type").text("");
         $("#noRow").val(0);
         $(".msg").html("");
         $("#flag_print_receipt").prop("checked", false);
         $(".voucher_info").addClass("hidden");
-        $("#voucher").val("");
         $("#voucher_value").val("");
-        $("#voucher").prop("disabled", "");
+        $("#voucher").val("").prop("disabled", "");
         disableCheckOutBtn();
+    }
+
+    function get_total_point(customer_id) {
+        if (!customer_id) {
+            console.log("Error! customer_id is null. " + customer_id);
+            return;
+        }
+        $.ajax({
+            url: "<?php Common::getPath() ?>src/controller/Wallet/WalletController.php",
+            dataType: 'TEXT',
+            type: 'post',
+            data: {
+                customerId: customer_id,
+                method: 'get_ballance_in_wallet'
+            },
+            success: function (res) {
+                if(res) {
+                    $(".wallet").removeClass("hidden");
+                    $("#totalBallanceInWallet").text(formatNumber(res));
+                    setTimeout(function () {
+                        calculate_total_point();
+                    }, 200);
+                } else {
+                    $(".wallet").addClass("hidden");
+                }
+            }
+        });
+    }
+
+
+    function recalculateTotalCheckout() {
+        let total_reduce = Number(replaceComma($("#totalReduceNew").text()));
+        let total_amount = Number(replaceComma($("#total_amount_new").text()));
+        let total_checkout = total_amount - total_reduce;
+        $("#total_checkout_new").text(formatNumber(total_checkout));
+    }
+
+    function recalculateTotalReduce() {
+        let totalUsePoint  = Number(replaceComma($("#totalUsePoint").val()));
+        let total_amount = Number(replaceComma($("#total_amount_new").text()));
+        let discountNew = replaceComma($("#discount_new").val());
+        if(discountNew.indexOf("%") > -1) {
+            discountNew = Math.round(replacePercent(discountNew) * total_amount / 100);
+        }
+        // recalculate total reduce
+        let total_reduce = totalUsePoint + Number(discountNew);
+        $("#totalReduceNew").text(formatNumber(total_reduce));
+        $(".total-reduce-new").removeClass("hidden");
+    }
+
+    function payment_box() {
+        let total_checkout = Number(replaceComma($("#total_checkout_new").text()));
+        if(total_checkout > 0) {
+            $(".payment-new").removeClass("hidden");
+            $("#sel_payment_new").val(0).trigger("change").prop("disabled", "");
+            $("#payment_new").val("").prop("disabled", "");
+        } else {
+            $(".payment-new").addClass("hidden");
+            $("#sel_payment_new").val(0).trigger("change").prop("disabled", true);
+            $("#payment_new").val("").prop("disabled", true);
+        }
+    }
+
+    function calculate_saved_point() {
+        let total_checkout = Number(replaceComma($("#total_checkout_new").text()));
+        // if (total_checkout > 0) {
+            let discount = Number(replaceComma($("#discount").val()));
+            let total_saved_point = Math.round(total_checkout * 5 / 100);
+            total_saved_point = formatNumber(total_saved_point);
+            $("#total_saved_point").text(total_saved_point);
+            $(".saved-point").removeClass("hidden");
+        // } else {
+        //     $("#total_saved_point").text("0");
+        //     $(".saved-point").addClass("hidden");
+        // }
+    }
+    function calculate_saved_point() {
+        let total_checkout = Number(replaceComma($("#total_checkout_new").text()));
+        if (total_checkout > 0) {
+            let discount = Number(replaceComma($("#discount_new").val()));
+            let total_saved_point = Math.round(total_checkout * 5 / 100);
+            total_saved_point = formatNumber(total_saved_point - discount);
+            $("#total_saved_point").text(total_saved_point);
+            $(".saved-point").removeClass("hidden");
+        }
+    }
+
+    function calculate_repay_new() {
+        $(".repay-new").removeClass("hidden");
+        $("#repay_new").val("");
+        // $(".repay_method").addClass("hidden");
+        let total_checkout = Number(replaceComma($("#total_checkout_new").text()));
+        if(total_checkout < 0) {
+            $("#repay_new").val(formatNumber(Math.abs(total_checkout)));
+            // $(".repay_method").removeClass("hidden");
+            $("#tranferToWallet_new").val("");
+        } else {
+            let payment_new = Number(replaceComma($("#payment_new").val()));
+            if(payment_new > total_checkout) {
+                $("#repay_new").val(formatNumber(payment_new - total_checkout));
+                $(".repay-new").removeClass("hidden");
+            } else {
+                $("#repay_new").val("");
+                $(".repay-new").addClass("hidden");
+            }
+        }
     }
 </script>
 </body>

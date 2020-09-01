@@ -1073,13 +1073,11 @@ Common::authen();
                     let pastedData = e.originalEvent.clipboardData.getData('text');
                     $("[id=img_by_color_" + no + "]").prop('src', pastedData).removeClass('hidden');
                     onchange_image_color(no, pastedData);
-                    $(this).val(pastedData);
                 });
             } else {
                 $("[id=link_image_" + no + "]").bind("paste", function (e) {
                     let pastedData = e.originalEvent.clipboardData.getData('text');
                     $("[id=img_" + no + "]").prop('src', pastedData).removeClass('hidden');
-                    $(this).val(pastedData);
                 });
                 $("[id=image_type_" + no + "]").val("");
             }

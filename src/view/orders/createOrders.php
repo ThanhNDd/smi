@@ -107,9 +107,9 @@ Common::authen();
                         <div class="col">
                             <label>Nguồn đặt hàng</label>
                             <select class="form-control order-source" id="order_source">
-                                <option value="Facebook" selected="selected">Facebook</option>
-                                <option value="Website">Website</option>
-                                <option value="Shopee">Shopee</option>
+                                <option value="2" selected="selected">Facebook</option>
+                                <option value="1">Website</option>
+                                <option value="3">Shopee</option>
                             </select>
                         </div>
                         <div class="col">
@@ -482,11 +482,6 @@ Common::authen();
         function check_exist_customer(phone) {
             $("#customer_phone").removeClass("is-invalid");
             if(!validate_phone(phone)) {
-                // Swal.fire({
-                //     type: 'error',
-                //     title: 'Đã xảy ra lỗi',
-                //     text: 'Số điện thoại chưa đúng!',
-                // });
                 toastr.error("Số điện thoại chưa đúng");
                 $("#customer_phone").addClass("is-invalid");
                 return;
@@ -726,7 +721,7 @@ Common::authen();
             let source = 0;// shop
             let order_type = $('#order_type').val();
             data["customer_id"] = $("#customer_id").val();
-            if (order_type === "1") {
+            if (order_type == "1") {
                 // online
                 data["bill_of_lading_no"] = $("#bill_of_lading_no").val();
                 data["shipping_fee"] = replaceComma($("#shipping_fee").val());

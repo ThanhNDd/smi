@@ -9,6 +9,8 @@ class OrderDetail {
     private $quantity;
     private $reduce;
     private $reduce_percent;
+    // 0: percent, 1: cash
+    private $reduce_type;
     private $product_name;
     // 0: add new, 1: exchange, 2: new product of exchange order
     private $type;
@@ -172,6 +174,22 @@ class OrderDetail {
         $this->reduce_percent = $reduce_percent;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getReduceType()
+    {
+        return $this->reduce_type;
+    }
+
+    /**
+     * @param mixed $reduce_type
+     */
+    public function setReduceType($reduce_type): void
+    {
+        $this->reduce_type = $reduce_type;
     }
 
     /**

@@ -23,4 +23,10 @@ class Constant
     const UNPUBLISH = 0;
 
     const COOKIE_NAME = 'smisession';
+
+
+    // 0: equal, 1: Additional guests pay, 2: Guest received back
+    const EQUAL = 0;
+    const ADDITION_GUEST_PAY = 1;
+    const GUEST_RECEIVED_BACK = 2;
 }

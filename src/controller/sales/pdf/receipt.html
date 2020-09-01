@@ -1,0 +1,197 @@
+
+            <!DOCTYPE>
+            <html>
+            <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+                <title>Receipt Template</title>
+                <script type="text/javascript" src="../connectcode-javascript-code128a.js"></script>
+                <style type="text/css">
+					@font-face {
+						font-family: "Pony";
+						src: url("../fonts/Pony.ttf");
+					}
+					@font-face {
+						font-family: "Roboto-Regular";
+						src: url("../fonts/Roboto-Regular.ttf");
+					}
+					@font-face {
+						font-family: "EAN-13";
+						src: url("../fonts/EAN-13.ttf");
+					}
+
+					body {
+						margin: 20px 40px 20px 20px !important;
+						font-size: 12px !important;
+					}
+                    #barcode {font-weight: normal; font-style: normal; line-height:normal; sans-serif; font-size: 12pt}
+                    .center {
+                        text-align: center;
+                    }
+                    .left {
+                        text-align: left;
+                        padding-left: 3px;
+                    }
+                    .right {
+                        text-align: right;
+                        padding-right: 3px;
+                    }
+                    p {
+                        margin: 5px;
+						font-family: Roboto-Regular;
+                    }
+                    .container, table {
+                        font-family: Roboto-Regular;
+                    }
+                    .custom-font {
+                        font-size: 12px !important;
+                        font-family: Roboto-Regular !important;
+                    }
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+						font-size: 12px !important;
+                    }
+                    td {
+                        border: 1px solid;
+                        padding: 4px 0;
+                    }
+                    table thead {
+                        font-weight: bold;
+                    }
+                    
+                    .note {
+                        font-size: 11px;
+                        font-family: Roboto-Regular;
+                    }
+					h4.shop-name {
+						margin-bottom: 2px;
+						font-size: 25px;
+						font-family: Pony;
+						letter-spacing: 3px;
+					}
+					.headline {
+						font-size: 11px;
+						font-family: Roboto-Regular;
+						letter-spacing: 3px;
+						margin: 0 !important;
+					}
+                </style>
+            </head>
+            <body>
+                <div class="container p-0 float-left">
+                    <div class="header row">
+                        <div class="center col-12 p-0 m-0">
+                            <h4 class="shop-name">Shop Mẹ Ỉn</h4>
+                            <p class="headline">Thời trang trẻ em</p>
+                            <span>* * * * * * * * * * * *</span>
+                            <p style="margin: 5px 0;">Đ/c: 227 Phố Huyện - TT.Quốc Oai - Hà Nội</p>
+                            <p>Hotline: 0962.926.302</p>
+                            <p>Website: www.shopmein.vn</p>
+                            <p>Facebook: Shop Mẹ Ỉn</p>
+                            <span>* * * * * * * * * * * *</span>
+                            <h4 style="font-size: 15px;margin: 5px;">HÓA ĐƠN THANH TOÁN</h4>
+                            <div id="barcodecontainer" style="width:100%">
+								<div id="barcode" >202009011900</div>
+							</div><p style="display: inline-block;float: left;width:100%;text-align:left;margin-bottom: 0;margin-top: 10px;">
+                                <span>Khách hàng:</span>
+                                <span>155 - Test 3</span>
+                            </p><p style="display: inline-block; float: left;width:100%;text-align:left">
+                                <span>Ngày mua hàng:</span>
+                                <span>01/09/2020 - 15:15:40</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="body center">
+                        <table class="center">
+                            <thead>
+                                <tr>
+                                    <td class="center" style="width: 30px;">Stt</td>
+                                    <td colspan="4" class="left">Tên sản phẩm</td>
+                                </tr>
+                                <tr>
+                                    <td class="left"></td>
+                                    <td class="center" style="width: 30px;">SL</td>
+                                    <td class="right" style="width: 65px;">Giá</td>
+                                    <td class="right" style="width: 40px;">Giảm giá</td>
+                                    <td class="right" style="width: 65px;">Thành tiền</td>
+                                </tr>
+                            </thead><tbody><tr>
+                        <td class="center">1</td>
+                        <td colspan="4" class="left">Váy bikini</td>
+                    </tr>
+                    <tr>
+                        <td class="left"></td>
+                        <td class="center">1</td>
+                        <td class="right">200,000<sup>đ</sup></td>
+                        <td class="right"></td>
+                        <td class="right">200,000<sup>đ</sup></td>
+                    </tr></tbody><tfoot>
+                            <tr>
+                                <td colspan="4" class="right">Tổng tiền</td>
+                                <td class="right">200,000<sup>đ</sup></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" class="right">Giảm trên tổng đơn</td>
+                                <td class="right">0<sup>đ</sup></td>
+                            </tr><tr>
+                                <td colspan="4" class="right">Trừ trong ví</td>
+                                <td class="right">0<sup>đ</sup></td>
+                            </tr><tr>
+                                <td colspan="4" class="right">Tổng Giảm trừ</td>
+                                <td class="right">0<sup>đ</sup></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" class="right">Tổng thanh toán</td>
+                                <td class="right">200,000<sup>đ</sup></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" class="right">Khách thanh toán</td>
+                                <td class="right"><p style="margin-right: 0">200,000<sup>đ</sup></p>
+                                    <small>Tiền mặt</small>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" rowspan="2" class="right">Trả lại</td>
+                                <td class="right">Tiền mặt</td>
+                                <td class="right">
+                                    <p style="margin-right: 0;margin-bottom:0;">0<sup>đ</sup></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="right">Chuyển vào ví</td>
+                                <td class="right">
+                                    <p style="margin-right: 0;margin-bottom:0;">0<sup>đ</sup></p>
+                                </td>
+                            </tr><tr>
+                                <td colspan="4" class="right">Tích lũy trên đơn hàng</td>
+                                <td class="right">
+									10,000<sup>đ</sup>
+								</td>
+                            </tr></tfoot>
+                    </table>
+                    <p class="left">Lưu ý:</p>
+                    <p class="left note">- Hàng đổi trả kèm theo hóa đơn trong vòng 2 ngày</p>
+                    <p class="left note">- Hàng sale không được đổi trả</p>
+                    <p class="left note">- Kiểm tra hàng trước khi ra về</p><p class="left note">- Tiền tích lũy sẽ được cộng vào ví trong vòng 24h</p>
+					<p class="left note">- Tiền trả lại được chuyển vào ví sẽ có hiệu lực ngay</p><span>* * * * * * * * * * * *</span>
+                    <p class="center">Xin cám ơn Quý khách</p>
+                    <p class="center">Hẹn gặp lại</p>
+                </div>
+            </div>
+            <script type="text/javascript">
+                /* <![CDATA[ */
+                  function get_object(id) {
+                   var object = null;
+                   if (document.layers) {
+                    object = document.layers[id];
+                   } else if (document.all) {
+                    object = document.all[id];
+                   } else if (document.getElementById) {
+                    object = document.getElementById(id);
+                   }
+                   return object;
+                  }
+                get_object("barcode").innerHTML=DrawHTMLBarcode_Code128A(get_object("barcode").innerHTML,"yes","in",0,1.5,0.3,"bottom","center","","black","white");
+                /* ]]> */
+                </script>
+        </body>
+        </html>

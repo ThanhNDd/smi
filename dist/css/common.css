@@ -131,3 +131,23 @@ input, button, select, .select2-container--bootstrap4 .select2-selection {
 .no-padding {
 	padding: 0 !important;
 }
+
+.btn-flat {
+	border-radius: 0px !important;
+}
+
+.c-pointer {
+	cursor: pointer;
+}
+
+.disabled {
+	color: grey;
+	cursor: not-allowed;
+}
+div.dataTables_length {
+	display: inline-block;
+}
+div.dataTables_paginate {
+	display: inline-block;
+	float: right;
+}

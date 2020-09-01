@@ -537,11 +537,14 @@ Common::authen();
 
     function format_image(data) {
         let image = data.image;
-        let json = JSON.parse(image);
-        let src = json[0].src;
-        let type = json[0].type;
-        if(type === "upload") {
-            src = '<?php Common::path_img() ?>' + src;
+        let src = '';
+        if(image && image !== '[]') {
+            let json = JSON.parse(image);
+            let type = json[0].type;
+            src = json[0].src;
+            if(type === "upload") {
+                src = '<?php Common::path_img() ?>' + src;
+            }
         }
         return "<a href='"+src+"' target='_blank'><img src='" + src + "' width='100px' id='thumbnail' onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"'></a>";
     }

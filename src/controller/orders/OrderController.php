@@ -2,13 +2,16 @@
 // require '../../common/WooAPI.php';
 require_once("../../common/common.php");
 include("../../common/DBConnection.php");
+include("../../dao/CommonDAO.php");
 include("../../dao/ProductDAO.php");
 include("../../dao/CheckoutDAO.php");
 include("../../dao/CustomerDAO.php");
+include("../../dao/WalletDAO.php");
 include("../../common/cities/Zone.php");
 include("../../model/Order/Order.php");
 include("../../model/Order/OrderDetail.php");
 include("../../model/Customer/Customer.php");
+include("../../model/Wallet/Wallet.php");
 include("PrintReceiptOnline.php");
 include("../sales/PrinterReceipt.php");
 include("../exchange/PrinterReceiptExchange.php");
@@ -22,6 +25,9 @@ $checkoutDAO->setConn($db->getConn());
 
 $customerDAO = new CustomerDAO();
 $customerDAO->setConn($db->getConn());
+
+$walletDAO = new WalletDAO();
+$walletDAO->setConn($db->getConn());
 
 $zone = new Zone();
 
@@ -39,6 +45,21 @@ if (isset($_POST["method"]) && $_POST["method"] == "print_receipt") {
             // on shop
             $order = $checkoutDAO->find_order_by_order_id($order_id);
             $details = $checkoutDAO->find_order_detail_by_order_id($order_id);
+            $customer_id = $order->getCustomer_id();
+            $customer_name = '';
+            if(!empty($customer_id)) {
+                $customer = $customerDAO->find_by_id($customer_id);
+                if(!empty($customer)) {
+                    $customer_name = $customer[0]["name"];
+                }
+            }
+            $wallet_saved = 0;
+            $wallet = $walletDAO->findWalletByOrderId($order_id);
+            if(!empty($wallet)) {
+                $wallet_saved = $wallet->getSaved();
+            }
+            $order->setCustomerName($customer_name);
+            $order->setPointSave($wallet_saved);
             $printer = new PrinterReceipt();
             $filename = $printer->print($order, $details);
             $response_array['fileName'] = $filename;
@@ -62,7 +83,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "print_receipt") {
                     array_push($exchange_products, $details[$i]);
                 }
             }
-            print_r($curr_products);
+//            print_r($curr_products);
             $curr_arr = get_details($curr_products, $order_id, 1); // product exchange
             if (count($curr_arr) <= 0) {
                 throw new Exception("Have no product!!");
@@ -72,6 +93,21 @@ if (isset($_POST["method"]) && $_POST["method"] == "print_receipt") {
                 throw new Exception("Have no product exchange!!");
             }
             $add_new_arr = get_details($add_new_products, $order_id, 0); // add new product
+            $customer_id = $order->getCustomer_id();
+            $customer_name = '';
+            if(!empty($customer_id)) {
+                $customer = $customerDAO->find_by_id($customer_id);
+                if(!empty($customer)) {
+                    $customer_name = $customer[0]["name"];
+                }
+            }
+            $wallet_saved = 0;
+            $wallet = $walletDAO->findWalletByOrderId($order_id);
+            if(!empty($wallet)) {
+                $wallet_saved = $wallet->getSaved();
+            }
+            $order->setCustomerName($customer_name);
+            $order->setPointSave($wallet_saved);
             $printer = new PrinterReceiptExchange();
             $filename = $printer->print($order, $exchange_arr, $curr_arr, $add_new_arr);
             $response_array['fileName'] = $filename;
@@ -96,17 +132,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "edit_order") {
 }
 
 
-if (isset($_POST["method"]) && $_POST["method"] == "get_info_total_checkout") {
-    try {
-        Common::authen_get_data();
-        $start_date = $_POST["start_date"];
-        $end_date = $_POST["end_date"];
-        $info_total = $checkoutDAO->get_info_total_checkout($start_date, $end_date);
-        echo json_encode($info_total);
-    } catch (Exception $ex) {
-        throw new Exception($ex);
-    }
-}
+
 
 if (isset($_POST["method"]) && $_POST["method"] == "delete_order") {
 
@@ -114,9 +140,10 @@ if (isset($_POST["method"]) && $_POST["method"] == "delete_order") {
         Common::authen_get_data();
         $order_id = $_POST["order_id"];
         // update quantity of product will be deleted
-        $rowUpdated = $checkoutDAO->update_qty_by_order_id($order_id);
+        $checkoutDAO->update_qty_by_order_id($order_id);
         // detele status order. Status Deleted = 1
         $checkoutDAO->delete_order($order_id);
+        $walletDAO->delete_wallet_by_order($order_id);
         $repsonse = "success";
         echo json_encode($repsonse);
     } catch (Exception $ex) {
@@ -162,12 +189,69 @@ if (isset($_GET["orders"]) && $_GET["orders"] == "loadDataVillage") {
         throw new Exception($ex);
     }
 }
+
+if (isset($_GET["method"]) && $_GET["method"] == "get_info_total_checkout") {
+    try {
+        Common::authen_get_data();
+        $start_date = '';
+        $end_date = '';
+        if(isset($_GET["start_date"]) && isset($_GET["end_date"])) {
+            $start_date = $_GET["start_date"];
+            $end_date = $_GET["end_date"];
+        }
+        $order_id = '';
+        if(isset($_GET["order_id"])) {
+            $order_id = $_GET["order_id"];
+        }
+        $customer_id = '';
+        if(isset($_GET["phone"])) {
+            $phone = $_GET["phone"];
+            $customer = $customerDAO->find_by_phone($phone);
+            if(!empty($customer)) {
+                $customer_id = $customer[0]["id"];
+            } else {
+                echo json_encode(array());
+                return;
+            }
+        }
+        if(isset($_GET["customer_id"])) {
+            $customer_id = $_GET["customer_id"];
+        }
+        $info_total = $checkoutDAO->get_info_total_checkout($start_date, $end_date, $order_id, $customer_id);
+        echo json_encode($info_total);
+    } catch (Exception $ex) {
+        throw new Exception($ex);
+    }
+}
+
 if (isset($_GET["method"]) && $_GET["method"] == "find_all") {
     try {
         Common::authen_get_data();
-        $start_date = $_GET["start_date"];
-        $end_date = $_GET["end_date"];
-        $orders = $checkoutDAO->find_all($start_date, $end_date);
+        $start_date = '';
+        $end_date = '';
+        if(isset($_GET["start_date"]) && isset($_GET["end_date"])) {
+            $start_date = $_GET["start_date"];
+            $end_date = $_GET["end_date"];
+        }
+        $order_id = '';
+        if(isset($_GET["order_id"])) {
+            $order_id = $_GET["order_id"];
+        }
+        $customer_id = '';
+        if(isset($_GET["phone"])) {
+            $phone = $_GET["phone"];
+            $customer = $customerDAO->find_by_phone($phone);
+            if(!empty($customer)) {
+                $customer_id = $customer[0]["id"];
+            } else {
+                echo json_encode(array());
+                return;
+            }
+        }
+        if(isset($_GET["customer_id"])) {
+            $customer_id = $_GET["customer_id"];
+        }
+        $orders = $checkoutDAO->find_all($start_date, $end_date, $order_id, $customer_id);
         echo json_encode($orders);
     } catch (Exception $e) {
         throw new Exception($e);
@@ -176,10 +260,8 @@ if (isset($_GET["method"]) && $_GET["method"] == "find_all") {
 if (isset($_POST["method"]) && $_POST["method"] == "find_detail") {
     try {
         Common::authen_get_data();
-        $start_date = $_POST["start_date"];
-        $end_date = $_POST["end_date"];
         $order_id = $_POST["order_id"];
-        $orders = $checkoutDAO->find_detail($start_date, $end_date, $order_id);
+        $orders = $checkoutDAO->find_detail($order_id);
         echo json_encode($orders);
     } catch (Exception $e) {
         throw new Exception($e);

@@ -33,7 +33,7 @@ require_once("common.php");
   <!-- DataTables -->
 <!--<link rel="stylesheet" href="--><?php //Common::getPath()?><!--plugins/datatables/jquery.dataTables.css" type="text/css" />-->
   <link rel="stylesheet" href="<?php Common::getPath()?>plugins/datatables/dataTables.bootstrap4.min.css" type="text/css" />
-<!--  <link rel="stylesheet" href="--><?php //Common::getPath()?><!--plugins/datatables/responsive.bootstrap4.min.css" type="text/css" />-->
+  <link rel="stylesheet" href="<?php Common::getPath()?>plugins/datatables/responsive.bootstrap4.min.css" type="text/css" />
 
   <link rel="stylesheet" href="<?php Common::getPath()?>plugins/datatables/extensions/button/css/buttons.dataTables.min.css" type="text/css" />
 

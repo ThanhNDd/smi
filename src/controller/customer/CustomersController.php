@@ -159,3 +159,4 @@ if (isset($_POST["method"]) && $_POST["method"] == "active_customer") {
   }
   $db->commit();
 }
+

@@ -5,12 +5,16 @@ class Order {
     private $total_reduce;
     private $total_reduce_percent;
     private $discount;
+    private $wallet;
     private $total_amount;
     private $total_checkout;
     private $customer_payment;
     private $payment_type;
     private $repay;
+    private $transfer_to_wallet;
+//    private $repay_type;
     private $customer_id;
+    private $customer_name;
     private $type;
     private $bill_of_lading_no;
     private $shipping_fee;
@@ -24,6 +28,8 @@ class Order {
     private $order_refer;
     private $payment_exchange_type;
     private $source;
+    private $point_used;
+    private $point_save;
     private $created_date;
     private $updated_date;
 
@@ -113,6 +119,22 @@ class Order {
         $this->discount = $discount;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getWallet()
+    {
+        return $this->wallet;
+    }
+
+    /**
+     * @param mixed $wallet
+     */
+    public function setWallet($wallet): void
+    {
+        $this->wallet = $wallet;
     }
 
     /**
@@ -214,6 +236,38 @@ class Order {
     }
 
     /**
+     * @return mixed
+     */
+    public function getTransferToWallet()
+    {
+        return $this->transfer_to_wallet;
+    }
+
+    /**
+     * @param mixed $transfer_to_wallet
+     */
+    public function setTransferToWallet($transfer_to_wallet): void
+    {
+        $this->transfer_to_wallet = $transfer_to_wallet;
+    }
+
+//    /**
+//     * @return mixed
+//     */
+//    public function getRepayType()
+//    {
+//        return $this->repay_type;
+//    }
+//
+//    /**
+//     * @param mixed $repay_type
+//     */
+//    public function setRepayType($repay_type): void
+//    {
+//        $this->repay_type = $repay_type;
+//    }
+
+    /**
      * Get the value of customer_id
      */
     public function getCustomer_id()
@@ -231,6 +285,22 @@ class Order {
         $this->customer_id = $customer_id;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCustomerName()
+    {
+        return $this->customer_name;
+    }
+
+    /**
+     * @param mixed $customer_name
+     */
+    public function setCustomerName($customer_name): void
+    {
+        $this->customer_name = $customer_name;
     }
 
     /**
@@ -523,6 +593,38 @@ class Order {
     public function setSource($source): void
     {
         $this->source = $source;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPointUsed()
+    {
+        return $this->point_used;
+    }
+
+    /**
+     * @param mixed $point_used
+     */
+    public function setPointUsed($point_used): void
+    {
+        $this->point_used = $point_used;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPointSave()
+    {
+        return $this->point_save;
+    }
+
+    /**
+     * @param mixed $point_save
+     */
+    public function setPointSave($point_save): void
+    {
+        $this->point_save = $point_save;
     }
 
 }

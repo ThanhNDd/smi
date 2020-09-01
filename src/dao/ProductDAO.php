@@ -68,13 +68,14 @@ class ProductDAO
                         B.sku,
                         B.retail,
                         B.quantity, 
-                        case when B.size ='Free Size' then B.color else concat(B.size,'-',B.color) end as size
+                        B.size,
+                        B.color
                     from 
                         smi_products A left join smi_variations B on A.id = B.product_id 
                     where 
                         B.sku in (" . $skus . ")
                     order by 
-                        A.id, B.id, B.color, B.size";
+                        A.id desc, B.sku";
             $result = mysqli_query($this->conn, $sql);
             $data = array();
             foreach ($result as $k => $row) {
@@ -83,7 +84,8 @@ class ProductDAO
                     'sku' => $row["sku"],
                     'price' => number_format($row["retail"]),
                     'quantity' => $row["quantity"],
-                    'size' => $row["size"]
+                    'size' => $row["size"],
+                    'color' => $row["color"]
                 );
                 array_push($data, $product);
             }
@@ -258,7 +260,9 @@ class ProductDAO
                             A.social_publish,
                             A.material,
                             A.origin,
-                            A.short_description
+                            A.short_description,
+                            A.category_id,
+                              A.type
                     FROM `smi_products` A
                     LEFT JOIN smi_variations B ON A.id = B.product_id
                     where
@@ -272,7 +276,9 @@ class ProductDAO
                               A.social_publish,
                               A.material,
                               A.origin,
-                              A.short_description
+                              A.short_description,
+                              A.category_id,
+                              A.type
                     ORDER BY A.created_at DESC";
             $result = mysqli_query($this->conn, $sql);
             $data = array();
@@ -290,6 +296,8 @@ class ProductDAO
                     'material' => $row["material"],
                     'origin' => $row["origin"],
                     'short_description' => $row["short_description"],
+                    'category_id' => $row["category_id"],
+                    'type' => $row["type"]
                 );
                 array_push($data, $product);
             }
@@ -842,7 +850,8 @@ class ProductDAO
     {
         try {
             if($product_type == 1) {
-                $stmt = $this->getConn()->prepare("update smi_variations a, (select case when a.quantity > 0 then a.quantity - $qty else 0 end as qty from smi_variations a where a.sku = $sku) b set a.quantity = b.qty where sku = $sku");
+                $stmt = $this->getConn()->prepare("update smi_variations a, (select case when a.quantity > 0 then a.quantity - ? else 0 end as qty from smi_variations a where a.sku = ?) b set a.quantity = b.qty where sku = ?");
+                $stmt->bind_param("iss", $qty, $sku, $sku);
             } else {
                 $stmt = $this->getConn()->prepare("update smi_variations set quantity = quantity + $qty where sku = ?");
                 $stmt->bind_param("s", $sku);

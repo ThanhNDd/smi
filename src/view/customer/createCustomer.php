@@ -173,7 +173,7 @@ Common::authen();
                           let data = res[0];
                           reset_data_customer();
                           setDataInform(data);
-                          open_modal();
+                          open_modal("#create_customer");
                       } else {
                           toastr.error('Không tìm thấy dữ liệu!!!');
                       }
@@ -396,34 +396,34 @@ Common::authen();
               $("#name").removeClass("is-invalid");
           }
 
-          let cityId = $(".select-city").val();
-          if (!cityId || cityId === "-1") {
-              $(".select-city").addClass("is-invalid");
-              is_valid = false;
-          } else {
-              $(".select-city").removeClass("is-invalid");
-          }
-          let districtId = $(".select-district").val();
-          if (!districtId || districtId === "-1") {
-              $(".select-district").addClass("is-invalid");
-              is_valid = false;
-          } else {
-              $(".select-district").removeClass("is-invalid");
-          }
-          let villageId = $(".select-village").val();
-          if (!villageId || villageId === "-1") {
-              $(".select-village").addClass("is-invalid");
-              is_valid = false;
-          } else {
-              $(".select-village").removeClass("is-invalid");
-          }
-          let add = $("#address").val();
-          if (!add) {
-              $("#address").addClass("is-invalid");
-              is_valid = false;
-          } else {
-              $("#address").removeClass("is-invalid");
-          }
+          // let cityId = $(".select-city").val();
+          // if (!cityId || cityId === "-1") {
+          //     $(".select-city").addClass("is-invalid");
+          //     is_valid = false;
+          // } else {
+          //     $(".select-city").removeClass("is-invalid");
+          // }
+          // let districtId = $(".select-district").val();
+          // if (!districtId || districtId === "-1") {
+          //     $(".select-district").addClass("is-invalid");
+          //     is_valid = false;
+          // } else {
+          //     $(".select-district").removeClass("is-invalid");
+          // }
+          // let villageId = $(".select-village").val();
+          // if (!villageId || villageId === "-1") {
+          //     $(".select-village").addClass("is-invalid");
+          //     is_valid = false;
+          // } else {
+          //     $(".select-village").removeClass("is-invalid");
+          // }
+          // let add = $("#address").val();
+          // if (!add) {
+          //     $("#address").addClass("is-invalid");
+          //     is_valid = false;
+          // } else {
+          //     $("#address").removeClass("is-invalid");
+          // }
           let facebook = $("#facebook").val();
           let linkFB = $("#link_fb").val();
           $("#facebook").removeClass("is-invalid");
@@ -497,9 +497,9 @@ Common::authen();
                           hide_loading();
                           console.log(data);
                           if(data === "success") {
-                              let success = "Tạo mới thành công";
+                              let success = "tạo mới thành công";
                               if (id) {
-                                  success = "Cập nhật thành công";
+                                  success = "cập nhật thành công";
                               }
                               Swal.fire({
                                   type: 'success',
@@ -519,9 +519,12 @@ Common::authen();
                                       if($("#name").length > 0) {
                                           $("#name").val(name);
                                       }
+                                      if($("#out_customer_name").length > 0) {
+                                          check_exist_customer(phone_number);
+                                      }
                                   }
                               });
-                          } if(data === "not_existed_phone") {
+                          } else if(data === "not_existed_phone") {
                               toastr.error('Chưa nhập số điện thoại');
                               $("#phone_number").addClass("is-invalid");
                               $("#customer_exist").val("not_phone");
@@ -553,14 +556,10 @@ Common::authen();
 
       function reset_data_customer() {
           $(".modal-customer").text("Tạo mới khách hàng");
-          // $("#create_new_customer").text("Tạo mới");
           $("#id").val("");
           $("#name").val("").removeClass('is-invalid');
           $("#phone_number").val("").removeClass('is-invalid');
           $("#email").val("").removeClass('is-invalid');
-          // $(".select-city").val(-1).trigger("change").removeClass('is-invalid');
-          // $(".select-district").val(-1).trigger("change").removeClass('is-invalid');
-          // $(".select-village").val(-1).trigger("change").removeClass('is-invalid');
           reset_select2('.select-city');
           reset_select2('.select-district');
           reset_select2('.select-village');
@@ -570,132 +569,4 @@ Common::authen();
           $("#facebook").val('');
           $("#link_fb").val('');
       }
-
-
-
-      // function validateEmail(email) {
-      //     let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      //     return re.test(String(email).toLowerCase());
-      // }
-
-      // function replaceComma(value) {
-      //     return value.replace(/,/g, '');
-      // }
-      //
-      // function replacePercent(value) {
-      //     return value.replace(/%/g, '');
-      // }
-
-      // function open_modal() {
-      //     $('#create-customer').modal({
-      //         backdrop: 'static',
-      //         keyboard: false,
-      //         show: true
-      //     });
-      // }
-
-      //function generate_select2_city(city_id) {
-      //    show_overlay();
-      //    $.ajax({
-      //        dataType: "json",
-      //        url: "<?php //Common::getPath() ?>//src/controller/orders/OrderController.php",
-      //        data: {
-      //            orders: 'loadDataCity'
-      //        },
-      //        type: 'GET',
-      //        success: function (data) {
-      //            $('.select-city').select2({
-      //                data: data.results,
-      //                theme: 'bootstrap4',
-      //                placeholder: 'Lựa chọn'
-      //            });
-      //            hiden_overlay();
-      //            if (city_id) {
-      //                $(".select-city").val(city_id).trigger("change");
-      //            }
-      //        },
-      //        error: function (data, errorThrown) {
-      //            console.log(data.responseText);
-      //            console.log(errorThrown);
-      //            hiden_overlay();
-      //        }
-      //    });
-      //}
-
-      //function generate_select2_district(cityId, districtId) {
-      //    show_overlay();
-      //    $('.select-district').empty();
-      //    $.ajax({
-      //        dataType: "json",
-      //        url: "<?php //Common::getPath() ?>//src/controller/orders/OrderController.php",
-      //        data: {
-      //            orders: 'loadDataDistrict',
-      //            cityId: cityId
-      //        },
-      //        type: 'GET',
-      //        success: function (data) {
-      //            console.log(data.results);
-      //            $('.select-district').select2({
-      //                data: data.results,
-      //                theme: 'bootstrap4',
-      //            });
-      //            hiden_overlay();
-      //            let select = $('.select-district');
-      //            let option = $('<option></option>').attr('selected', true).text("Lựa chọn").val(-1);
-      //            option.prependTo(select);
-      //            select.trigger('change');
-      //            if (typeof districtId != "undefined" && districtId !== '') {
-      //                districtId = districtId.padStart(3, '0');
-      //                $(".select-district").val(districtId).trigger("change");
-      //            }
-      //        },
-      //        error: function (data, errorThrown) {
-      //            console.log(data.responseText);
-      //            console.log(errorThrown);
-      //            hiden_overlay();
-      //        }
-      //    });
-      //}
-      //
-      //function generate_select2_village(districtId, villageId) {
-      //    show_overlay();
-      //    $('.select-village').empty();
-      //    $.ajax({
-      //        dataType: "json",
-      //        url: "<?php //Common::getPath() ?>//src/controller/orders/OrderController.php",
-      //        data: {
-      //            orders: 'loadDataVillage',
-      //            districtId: districtId
-      //        },
-      //        type: 'GET',
-      //        success: function (data) {
-      //            $('.select-village').select2({
-      //                data: data.results,
-      //                theme: 'bootstrap4',
-      //            });
-      //            let select = $('.select-village');
-      //            let option = $('<option></option>').attr('selected', true).text("Lựa chọn").val(-1);
-      //            option.prependTo(select);
-      //            select.trigger('change');
-      //            hiden_overlay();
-      //            if (typeof villageId != "undefined" && villageId !== '') {
-      //                villageId = villageId.padStart(5, '0');
-      //                $(".select-village").val(villageId).trigger("change");
-      //            }
-      //        },
-      //        error: function (data, errorThrown) {
-      //            console.log(data.responseText);
-      //            console.log(errorThrown);
-      //            hiden_overlay();
-      //        }
-      //    });
-      //}
-
-      // function show_overlay() {
-      //     $("#create-order .overlay").removeClass("hidden");
-      // }
-      // function hiden_overlay() {
-      //     $("#create-customer .overlay").addClass("hidden");
-      // }
-
   </script>

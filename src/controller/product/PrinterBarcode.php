@@ -3,18 +3,18 @@ require __DIR__ . '/../../../vendor/autoload.php';
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 require_once("../../common/common.php");
 /**
- * 
+ *
  */
 class PrinterBarcode
-{   
+{
     function __construct()
     {
-        
-    }  
+
+    }
 
     function print(array $data)
     {
-        try {  
+        try {
             $mpdf = new \Mpdf\Mpdf([
                 'margin_left' => 0,
                 'margin_right' => 0,
@@ -29,72 +29,59 @@ class PrinterBarcode
             if(count($data) == 1)
             {
                 $content = $this->getHeader();
-                $content .= '<table>
-                            <tr>
-                                <td colspan="3" class="center">
-                                    <h3>'.$data[0]["name"].'</h3>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="3" class="center">
-                                    <barcode code="'.$data[0]["sku"].'" type="C128A" size="2" height="0.5" class="barcode" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="left"><h3>'.$data[0]["size"].'</h3></td>
-                                <td class="center"><h2>'.$data[0]["sku"].'</h2></td>
-                                <td class="right"><h3>'.$data[0]["price"].' đ</h3></td>
-                            </tr>
-                        </table>';
+//                $content .= '<table>
+//                            <tr>
+//                                <td colspan="3" class="center">
+//                                    <h3>'.$data[0]["name"].'</h3>
+//                                </td>
+//                            </tr>
+//                            <tr>
+//                                <td colspan="3" class="center">
+//                                    <barcode code="'.$data[0]["sku"].'" type="C128A" size="2" height="0.5" class="barcode" />
+//                                </td>
+//                            </tr>
+//                            <tr>
+//                                <td class="left"><b>'.$data[0]["size"].'</b><br><b>'.$data[0]["color"].'</b></td>
+//                                <td class="center"><h2>'.$data[0]["sku"].'</h2></td>
+//                                <td class="right"><b>'.$data[0]["price"].' đ</b></td>
+//                            </tr>
+//                        </table>';
+                $content .= $this->getContent($data[0]);
                 $content .= $this->getFooter();
                 $mpdf->AddPage();
                 $mpdf->WriteHTML($content);
             } else
             {
-                $i = 0;
+//                $i = 0;
                 foreach ($data as $d) {
-                    if($i % 2 == 0)
-                    {
-                        $content = "";
+//                    if($i % 2 == 0)
+//                    {
                         $content = $this->getHeader();
-                    } 
-                    $content .= '<table>
-                                    <tr>
-                                        <td colspan="3" class="center">
-                                            <h3>'.$d["name"].'</h3>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="3" class="center">
-                                            <barcode code="'.$d["sku"].'" type="C128A" size="2" height="0.5" class="barcode" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="left"><b>'.$d["size"].'</b></td>
-                                        <td class="center"><h2>'.$d["sku"].'</h2></td>
-                                        <td class="right"><b>'.$d["price"].' đ</b></td>
-                                    </tr>
-                                </table>';
-                    if($i % 2 != 0 || count($data)-1 == $i)
-                    {
+//                    }
+                    $content .= $this->getContent($d);
+//                    if($i % 2 != 0 || count($data)-1 == $i)
+//                    {
                         $content .= $this->getFooter();
                         $mpdf->AddPage();
                         $mpdf->WriteHTML($content);
                         //$i = 0;
-                    } 
-                    $i++;                     
+//                    }
+//                    $i++;
                 }
             }
+
+
+
             // $this->rrmdir("pdf");
-            $folder_path = "pdf"; 
-            $files = glob($folder_path.'/*');  
+            $folder_path = "pdf";
+            $files = glob($folder_path.'/*');
             // Deleting all the files in the list 
-            foreach($files as $file) { 
+            foreach($files as $file) {
                 if(is_file($file))  {
                     // Delete the given file 
-                    unlink($file);  
+                    unlink($file);
                 }
-            } 
+            }
             //mkdir("pdf", 0777, true);
             $filename = "barcode".time().".pdf";
             $mpdf->Output("pdf/".$filename, 'F');
@@ -106,9 +93,36 @@ class PrinterBarcode
         }
     }
 
+    function getContent($data) {
+        return '<table>
+                        <tr>
+                            <td colspan="3" class="center">
+                                <h3>'.$data["name"].'</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="center">
+                                <barcode code="'.$data["sku"].'" type="C128A" size="2" height="0.5" class="barcode" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="center"><h2>'.$data["sku"].'</h2></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="left">Size: <b>'.$data["size"].'</b></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="left">Màu: <b>'.$data["color"].'</b></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="left">Giá: <b>'.$data["price"].' <sup>đ</sup></b></td>
+                        </tr>
+                    </table>';
+    }
+
     function getHeader()
     {
-           $content = '<!DOCTYPE>
+        $content = '<!DOCTYPE>
             <html>
             <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
                 <title>Receipt Template</title>
@@ -130,15 +144,15 @@ class PrinterBarcode
                     }
                     .container, table {
                         width: 150px;
-                        font-size: 15px;
+                        font-size: 17px;
                         font-family: sans-serif;
+                        margin-top: 20px;
                     }
                     table {
                         width: 100%;
                         border-collapse: collapse;
                     }
                     td {
-                        //border: 1px solid;
                         padding: 4px 0;
                     }
                     table thead {
@@ -150,7 +164,7 @@ class PrinterBarcode
                 <div class="container">';
         return $content;
     }
-               
+
     function getFooter()
     {
         $content = '</div>

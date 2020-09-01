@@ -38,6 +38,13 @@ class PrintReceiptOnline
             $filename = "receiptonline".time().".pdf";
             $mpdf->Output("pdf/".$filename, 'F');
             chmod("pdf/".$filename, 0775);
+
+
+            $myfile = fopen("pdf/receipt.html", "w") or die("Unable to open file!");
+            fwrite($myfile, $html);
+            fclose($myfile);
+
+
             return $filename;
         } catch (Exception $e) {
             echo "Couldn't print to this printer: " . $e -> getMessage() . "\n";
@@ -69,7 +76,6 @@ class PrintReceiptOnline
                         margin: 5px;
                     }
                     .container, table {
-                        width: 219px;
                         font-size: 13px;
                         font-family: sans-serif;
                     }
@@ -88,10 +94,6 @@ class PrintReceiptOnline
                     }
                     table thead {
                         font-weight: bold;
-                    }
-                    @media print {
-                        body {transform: scale(.7);}
-                        table {page-break-inside: avoid;}
                     }
                 </style>
             </head>

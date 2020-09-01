@@ -29,6 +29,8 @@ require_once("common.php");
 
 <script src="<?php Common::getPath()?>plugins/datatables/jquery.dataTables.js"></script>
 <script src="<?php Common::getPath()?>plugins/datatables/dataTables.bootstrap4.js"></script>
+<!--<script src="--><?php //Common::getPath()?><!--plugins/datatables/dataTables.responsive.min.js"></script>-->
+<!--<script src="--><?php //Common::getPath()?><!--plugins/datatables/responsive.bootstrap4.min.js"></script>-->
 <!--<script src="<?php /*Common::getPath()*/?>plugins/datatables/dataTables.select.min.js" type="text/javascript"></script>-->
 <script src="<?php Common::getPath()?>plugins/datatables/dataTables.buttons.min.js" type="text/javascript"></script>
 <script src="<?php Common::getPath()?>plugins/datatables/extensions/button/js/buttons.html5.min.js"></script>

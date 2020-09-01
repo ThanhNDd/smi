@@ -143,35 +143,43 @@ Common::authen();
                         </button>
                     </section>
                 </div>
-<!--                <div class="row col-12 m-3">-->
-<!--                    <section>-->
-<!--                        <div class="form-inline" style="display: inline-block">-->
-<!--                            <input type="text" value="" name="search_sku" id="search_sku"-->
-<!--                                   placeholder="Nhập mã sản phẩm" class="form-control">-->
-<!--                            <input type="text" value="" name="search_name" id="search_name"-->
-<!--                                   placeholder="Nhập tên sản phẩm" class="form-control">-->
-<!--                            <button id="search" class="btn btn-secondary btn-flat"><i class="fa fa-search"></i> Tìm kiếm</button>-->
-<!--                        </div>-->
-<!--                    </section>-->
-<!--                </div>-->
+<!--                <section class="row col-12 m-3">-->
+<!--                    <div class="form-inline d-inline-block">-->
+<!--                        <select class="select2" id="search_category" multiple="multiple" data-placeholder="Chọn điều kiện tìm kiếm" style="width: 100%;">-->
+<!--                            <option>Bé trai</option>-->
+<!--                            <option>Bé gái</option>-->
+<!--                            <option>Phụ kiện</option>-->
+<!--                            <option>Gấu bông</option>-->
+<!--                            <option>Giày</option>-->
+<!--                            <option>Dép</option>-->
+<!--                            <option>Washington</option>-->
+<!--                        </select>-->
+<!--                        <button id="search" class="btn btn-secondary btn-flat"><i class="fa fa-search"></i> Tìm kiếm</button>-->
+<!--                    </div>-->
+<!--                </section>-->
+                <div class="row col-md-12 mt-2 ml-3">
+                    <button class="btn btn-info expandall" id="expandall">Expand all</button>
+                </div>
                 <!-- /.card-header -->
                 <div class="card-body m-3">
                     <table id="example" class="table table-bordered table-striped">
                         <thead>
                         <tr>
-                            <th class="center clearAll">
+                            <td class="center clearAll">
                                 <i class="fa fa-trash" aria-hidden="true" style="color: red;cursor: pointer;"></i>
-                            </th>
-                            <th class="">Id</th>
-                            <th>Hình ảnh</th>
+                            </td>
+                            <th class="">ID</th>
+                            <td>Hình ảnh</td>
                             <th>Tên sản phẩm</th>
                             <th>Giá bán lẻ</th>
                             <th>Giảm giá</th>
                             <th>Giá sale</th>
+                            <th>Danh mục</th>
+                            <th>Giới tính</th>
                             <th>Chất liệu</th>
                             <th>Xuất xứ</th>
-                            <th>Publish</th>
-                            <th>Hành động</th>
+                            <td>Publish</td>
+                            <td>Hành động</td>
                         </tr>
                         </thead>
                         <tbody>
@@ -196,17 +204,20 @@ Common::authen();
     $(document).ready(function () {
         set_title("Danh sách sản phẩm");
         count_out_of_stock();
+
+        $('#example thead th').each( function () {
+            var title = $(this).text();
+            $(this).html( '<input type="text" class="form-control" placeholder="'+title+'" />' );
+        } );
+
         generate_datatable();
-        // $('#example').on('draw.dt', function() {
-        //     document.body.scrollTop = 0;
-        //     document.documentElement.scrollTop = 0;
-        // });
+        custom_select2('#search_category', select_cats);
 
         $(".print-barcode").on("click", function () {
             let data = [];
             $.each($("#example tbody td input[type='checkbox']:checked"), function () {
                 let id = $(this).attr("id");
-                if (id != "selectall") {
+                if (id != "selectall" && !isNaN(id)) {
                     data.push($(this).attr("id"));
                 }
             });
@@ -232,7 +243,7 @@ Common::authen();
                     update_discount_all(e);
                 }
             })
-        })
+        });
 
         $("#btn_update_out_of_stock").on("click", function (e) {
             $(this).children("i.show_loading_update").removeClass("hidden");
@@ -316,11 +327,23 @@ Common::authen();
                     d.status = 0;
                 }
             },
+            ordering: false,
+            "dom": '<"top"flp<"clear">>rt<"bottom"ip<"clear">>',
+
             select: "single",
             deferRender: true,
             rowId: 'extn',
             "initComplete": function() {
                 init_select2();
+                // Apply the search
+                this.api().columns().every( function () {
+                    var that = this;
+                    $( 'input', this.header() ).on( 'keyup change clear', function () {
+                        if ( that.search() !== this.value ) {
+                            that.search( this.value ).draw();
+                        }
+                    });
+                } );
             },
             "columns": [
                 {
@@ -359,6 +382,14 @@ Common::authen();
                     width: "50px"
                 },
                 {
+                    "data": format_category,
+                    width: "50px"
+                },
+                {
+                    "data": format_gender,
+                    width: "50px"
+                },
+                {
                     "data": "material",
                     width: "50px"
                 },
@@ -375,7 +406,19 @@ Common::authen();
                     width: "50px"
                 }
             ],
-            "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]]
+            "lengthMenu": [[25, 50, 100, 200, 500], [25, 50, 100, 200, 500]]
+        });
+        
+        $("#expandall").click(function () {
+            let cls = $(this).attr("class");
+            if(cls.indexOf('expandall') > -1) {
+                $(this).removeClass('expandall');
+                $(this).html('Collapse all');
+            } else {
+                $(this).addClass('expandall');
+                $(this).html('Expand all');
+            }
+            table.rows(':not(.parent)').nodes().to$().find('td:first-child').trigger('click');
         });
 
         // Add event listener for opening and closing details
@@ -482,9 +525,11 @@ Common::authen();
                         source: substringMatcher(materials),
                         limit: 10
                     });
-                    if(arr[0].material) {
-                        $('#select_material').typeahead('val', arr[0].material);
-                    }
+                    setTimeout(function(){
+                        if(arr[0].material) {
+                            $('#select_material').typeahead('val', arr[0].material);
+                        }
+                    },200);
 
                     let color = arr[0].colors;
                     for(let i=0; i<color.length; i++) {
@@ -862,6 +907,28 @@ Common::authen();
                 hide_loading();
             }
         });
+    }
+
+    function format_gender(data) {
+        let gender_id = data.type;
+        for(let i=0; i<select_types.length; i++) {
+            let id = select_types[i].id;
+            if(id === gender_id) {
+                return select_types[i].text;
+            }
+        }
+        return '';
+    }
+
+    function format_category(data) {
+        let category_id = data.category_id;
+        for(let i=0; i<select_cats.length; i++) {
+            let id = select_cats[i].id;
+            if(id === category_id) {
+                return select_cats[i].text;
+            }
+        }
+        return '';
     }
 
     function format_publish(data) {

@@ -47,20 +47,28 @@ Common::authen();
     <div class="row pt-2">
         <div class="col-md-8 col-sm-12">
             <div class="card">
-                <div class="card-header border-transparent pb-0">
-                    <div class="form-group col-md-4 float-left mb-0">
-                        <div class="input-group">
+                <div class="card-header border-transparent pb-0 pl-0 pr-0">
+                    <div class="form-group col-md-12 mb-0">
+                        <div class="input-group col-md-3 float-left mt-1">
                             <div class="input-group-prepend">
-                  <span class="input-group-text">
-                    <i class="far fa-calendar-alt"></i>
-                  </span>
+                          <span class="input-group-text">
+                            <i class="far fa-calendar-alt"></i>
+                          </span>
                             </div>
                             <input type="text" class="form-control float-left" id="reservation">
                         </div>
-                        <!-- /.input group -->
-                    </div>
-                    <div class="float-right">
-                        <a href="javascript:void(0)" class="btn btn-sm btn-info float-left order-create">Tạo mới</a>
+                        <div class="col-md-1 floadt-left d-inline-block mt-1">
+                            <input type="text" class="form-control col-md-12" placeholder="Mã ĐH" id="search_order_id">
+                        </div>
+                        <div class="col-md-1 floadt-left d-inline-block mt-1">
+                            <input type="text" class="form-control col-md-12" placeholder="Mã KH" id="search_customer_id">
+                        </div>
+                        <div class="col-md-2 floadt-left d-inline-block mt-1">
+                            <input type="text" class="form-control col-md-12" placeholder="Số điện thoại" id="search_phone">
+                        </div>
+                        <div class="col-md-1 float-right mt-1">
+                            <a href="javascript:void(0)" class="btn btn-sm btn-info order-create float-right">Tạo mới</a>
+                        </div>
                     </div>
                 </div>
                 <!-- /.card-header -->
@@ -98,49 +106,36 @@ Common::authen();
                         <div class="info-box">
                             <span class="info-box-icon bg-info elevation-1"><i class="fas fa-dollar-sign"></i></span>
                             <div class="info-box-content col-12 row">
-                                <div class="col-6">
+                                <div class="col-md-6 col-sm-12 text-left">
                                     <span class="info-box-text">Tổng tiền</span>
                                     <span class="info-box-number">
-                                        <h5 class="total_money">
-                                          <sup>đ</sup>
-                                        </h5>
+                                        <h5 class="total_money">0 <sup>đ</sup></h5>
                                      </span>
                                 </div>
-<!--                                <div class="col-4">-->
-<!--                                    <h1 class="display-5 text-danger text-right total_orders"></h1>-->
-<!--                                </div>-->
-                                <div class="col-6 float-right">
-                                    <h1 class="text-danger text-left no-margin d-inline-block col-md-12"><span class="total_orders d-inline-block text-right col-md-6 float-left">0</span> <small style="font-size: 30%;color: #676a6c;">Đơn</small></h1>
-                                    <h5 class="text-danger text-left no-margin d-inline-block col-md-12"><span class="total_products d-inline-block text-right col-md-6 float-left" style="color: #676a6c;">0</span> <small style="font-size: 60%;color: #676a6c;">Sản phẩm</small></h5>
+                                <div class="col-md-6 col-sm-12 text-left pl-0">
+                                    <h1 class="text-danger no-margin d-inline-block col-md-12 pl-0"><span class="total_orders col-md-6 pl-0 pr-0">0</span> <small style="font-size: 30%;color: #676a6c;">Đơn</small></h1>
+                                    <h5 class="text-danger text-left col-md-12 pl-0"><span class="total_products text-left col-md-6" style="color: #676a6c;">0</span> <small style="font-size: 60%;color: #676a6c;">Sản phẩm</small></h5>
                                 </div>
                             </div>
                         </div>
-                        <!-- /.info-box -->
                     </div>
                     <!-- /.col -->
                     <div class="col-12 col-sm-12 col-md-12">
                         <div class="info-box mb-3">
                             <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-store"></i></span>
                             <div class="info-box-content col-12 row">
-                                <div class="col-6">
+                                <div class="col-md-6 col-sm-12 text-left">
                                     <span class="info-box-text">Shop</span>
                                     <span class="info-box-number">
-                                        <h5 class="total_on_shop">
-                                            <sup>đ</sup>
-                                        </h5>
-                                    </span>
+                                        <h5 class="total_on_shop">0 <sup>đ</sup></h5>
+                                     </span>
                                 </div>
-<!--                                <div class="col-4">-->
-<!--                                    <h1 class="display-5 text-right count_on_shop"></h1>-->
-<!--                                </div>-->
-                                <div class="col-6 float-right">
-                                    <h1 class="text-danger text-left no-margin d-inline-block col-md-12"><span class="count_on_shop d-inline-block text-right col-md-6 float-left">0</span> <small style="font-size: 30%;color: #676a6c;">Đơn</small></h1>
-                                    <h5 class="text-danger text-left no-margin d-inline-block col-md-12"><span class="total_product_on_shop d-inline-block text-right col-md-6 float-left" style="color: #676a6c;">0</span> <small style="font-size: 60%;color: #676a6c;">Sản phẩm</small></h5>
+                                <div class="col-md-6 col-sm-12 text-left pl-0">
+                                    <h1 class="text-danger no-margin d-inline-block col-md-12 pl-0"><span class="count_on_shop col-md-6 pl-0 pr-0">0</span> <small style="font-size: 30%;color: #676a6c;">Đơn</small></h1>
+                                    <h5 class="text-danger text-left col-md-12 pl-0"><span class="total_product_on_shop text-left col-md-6" style="color: #676a6c;">0</span> <small style="font-size: 60%;color: #676a6c;">Sản phẩm</small></h5>
                                 </div>
                             </div>
-                            <!-- /.info-box-content -->
                         </div>
-                        <!-- /.info-box -->
                     </div>
                     <!-- /.col -->
                     <!-- fix for small devices only -->
@@ -149,50 +144,36 @@ Common::authen();
                         <div class="info-box mb-3">
                             <span class="info-box-icon bg-success elevation-1"><i class="fas fa-globe"></i></span>
                             <div class="info-box-content col-12 row">
-                                <div class="col-6">
+                                <div class="col-md-6 col-sm-12 text-left">
                                     <span class="info-box-text">Online</span>
                                     <span class="info-box-number">
-                                        <h5 class="total_online">
-                                          <sup>đ</sup>
-                                        </h5>
-                                    </span>
+                                        <h5 class="total_online">0 <sup>đ</sup></h5>
+                                     </span>
                                 </div>
-<!--                                <div class="col-4">-->
-<!--                                    <h1 class="display-5 text-right count_online"></h1>-->
-<!--                                </div>-->
-                                <div class="col-6 float-right">
-                                    <h1 class="text-danger text-left no-margin d-inline-block col-md-12"><span class="count_online d-inline-block text-right col-md-6 float-left">0</span> <small style="font-size: 30%;color: #676a6c;">Đơn</small></h1>
-                                    <h5 class="text-danger text-left no-margin d-inline-block col-md-12"><span class="total_product_online d-inline-block text-right col-md-6 float-left" style="color: #676a6c;">0</span> <small style="font-size: 60%;color: #676a6c;">Sản phẩm</small></h5>
+                                <div class="col-md-6 col-sm-12 text-left pl-0">
+                                    <h1 class="text-danger no-margin d-inline-block col-md-12 pl-0"><span class="count_online col-md-6 pl-0 pr-0">0</span> <small style="font-size: 30%;color: #676a6c;">Đơn</small></h1>
+                                    <h5 class="text-danger text-left col-md-12 pl-0"><span class="total_product_online text-left col-md-6" style="color: #676a6c;">0</span> <small style="font-size: 60%;color: #676a6c;">Sản phẩm</small></h5>
                                 </div>
                             </div>
-                            <!-- /.info-box-content -->
                         </div>
-                        <!-- /.info-box -->
                     </div>
                     <div class="clearfix hidden-md-up"></div>
                     <div class="col-12 col-sm-12 col-md-12">
                         <div class="info-box mb-3">
                             <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-sync-alt"></i></span>
                             <div class="info-box-content col-12 row">
-                                <div class="col-6">
+                                <div class="col-md-6 col-sm-12 text-left">
                                     <span class="info-box-text">Đổi hàng</span>
                                     <span class="info-box-number">
-                                        <h5 class="total_exchange">
-                                          <sup>đ</sup>
-                                        </h5>
-                                    </span>
+                                        <h5 class="total_exchange">0 <sup>đ</sup></h5>
+                                     </span>
                                 </div>
-<!--                                <div class="col-4">-->
-<!--                                    <h1 class="display-5 text-right count_exchange"></h1>-->
-<!--                                </div>-->
-                                <div class="col-6 float-right">
-                                    <h1 class="text-danger text-left no-margin d-inline-block col-md-12"><span class="count_exchange d-inline-block text-right col-md-6 float-left">0</span> <small style="font-size: 30%;color: #676a6c;">Đơn</small></h1>
-                                    <h5 class="text-danger text-left no-margin d-inline-block col-md-12"><span class="total_product_exchange d-inline-block text-right col-md-6 float-left" style="color: #676a6c;">0</span> <small style="font-size: 60%;color: #676a6c;">Sản phẩm</small></h5>
+                                <div class="col-md-6 col-sm-12 text-left pl-0">
+                                    <h1 class="text-danger no-margin d-inline-block col-md-12 pl-0"><span class="count_exchange col-md-6 pl-0 pr-0">0</span> <small style="font-size: 30%;color: #676a6c;">Đơn</small></h1>
+                                    <h5 class="text-danger text-left col-md-12 pl-0"><span class="total_product_exchange text-left col-md-6" style="color: #676a6c;">0</span> <small style="font-size: 60%;color: #676a6c;">Sản phẩm</small></h5>
                                 </div>
                             </div>
-                            <!-- /.info-box-content -->
                         </div>
-                        <!-- /.info-box -->
                     </div>
                 </div>
             </div>
@@ -248,7 +229,7 @@ Common::authen();
             </div>
         </div>
 </section>
-<div class="iframeArea hidden"></div>
+<div class="iframeArea" style="visibility: hidden"></div>
 <!-- /.content -->
 <?php include 'createOrders.php'; ?>
 <input type="hidden" id="startDate">
@@ -256,6 +237,7 @@ Common::authen();
 </div>
 <?php require_once ('../../common/footer.php'); ?>
 <script>
+    let table;
     $(document).ready(function () {
         // set title for page
         set_title("Danh sách đơn hàng");
@@ -268,8 +250,8 @@ Common::authen();
         let end_date = year + "-" + month + "-" + day;
         $("#startDate").val(start_date);
         $("#endDate").val(end_date);
-        generate_datatable();
-        get_info_total_checkout(start_date, end_date);
+        generate_datatable('date');
+        get_info_total_checkout('date');
 
         //Date range picker
         $('#reservation').daterangepicker({
@@ -277,17 +259,178 @@ Common::authen();
                 format: 'DD/MM/YYYY',
             }
         }, function (start, end, label) {
+            $("#search_phone").val("");
+            $("#search_customer_id").val("");
+            $("#search_order_id").val("");
             let start_date = start.format('YYYY-MM-DD');
             let end_date = end.format('YYYY-MM-DD');
             $("#startDate").val(start_date);
             $("#endDate").val(end_date);
-            generate_datatable();
-            get_info_total_checkout(start_date, end_date);
+            generate_datatable('date');
+            get_info_total_checkout('date');
+        });
+
+        $( "#search_order_id" ).on( "keydown", function( event ) {
+            let key = event.which;
+            if(key === 13) {
+                $("#search_phone").val("");
+                $("#search_customer_id").val("");
+                let order_id = $(this).val();
+                if(order_id) {
+                    generate_datatable('order_id');
+                    get_info_total_checkout('order_id');
+                } else {
+                    generate_datatable('date');
+                    get_info_total_checkout('date');
+                }
+            }
+        });
+        $( "#search_phone" ).on( "keydown", function( event ) {
+            let key = event.which;
+            if(key === 13) {
+                $("#search_order_id").val("");
+                $("#search_customer_id").val("");
+                let phone = $(this).val();
+                if(phone) {
+                    generate_datatable('phone');
+                    get_info_total_checkout('phone');
+                } else {
+                    generate_datatable('date');
+                    get_info_total_checkout('date');
+                }
+            }
+        });
+        $( "#search_customer_id" ).on( "keydown", function( event ) {
+            let key = event.which;
+            if(key === 13) {
+                $("#search_order_id").val("");
+                $("#search_phone").val("");
+                let customer_id = $(this).val();
+                if(customer_id) {
+                    generate_datatable('customer_id');
+                    get_info_total_checkout('customer_id');
+                } else {
+                    generate_datatable('date');
+                    get_info_total_checkout('date');
+                }
+            }
         });
     });
-    let table;
 
-    function generate_datatable() {
+    function get_data_search(type) {
+        if(type === 'date') {
+            return {
+                method: 'find_all',
+                start_date:$("#startDate").val(),
+                end_date: $("#endDate").val()
+            }
+        } else if(type === 'order_id') {
+            return {
+                method: 'find_all',
+                order_id: $("#search_order_id").val()
+            }
+        } else if(type === 'phone') {
+            return {
+                method: 'find_all',
+                phone: $("#search_phone").val()
+            }
+        } else if(type === 'customer_id') {
+            return {
+                method: 'find_all',
+                customer_id: $("#search_customer_id").val()
+            }
+        }
+        return '';
+    }
+
+    function get_data_search_info_total(type) {
+        if(type === 'date') {
+            return {
+                method: 'get_info_total_checkout',
+                start_date:$("#startDate").val(),
+                end_date: $("#endDate").val()
+            }
+        } else if(type === 'order_id') {
+            return {
+                method: 'get_info_total_checkout',
+                order_id: $("#search_order_id").val()
+            }
+        } else if(type === 'phone') {
+            return {
+                method: 'get_info_total_checkout',
+                phone: $("#search_phone").val()
+            }
+        } else if(type === 'customer_id') {
+            return {
+                method: 'get_info_total_checkout',
+                customer_id: $("#search_customer_id").val()
+            }
+        }
+        return '';
+    }
+
+    function get_data_param_detail(type, order_id) {
+        if(type === 'date') {
+            return {
+                method: 'find_detail',
+                order_id: order_id,
+                start_date:$("#startDate").val(),
+                end_date: $("#endDate").val()
+            }
+        } else if(type === 'order_id') {
+            return {
+                method: 'find_detail',
+                order_id: $("#search_order_id").val()
+            }
+        } else if(type === 'phone') {
+            return {
+                method: 'find_detail',
+                phone: $("#search_phone").val()
+            }
+        } else if(type === 'customer_id') {
+            return {
+                method: 'find_detail',
+                phone: $("#search_customer_id").val()
+            }
+        }
+        return '';
+    }
+    function get_info_total_checkout(type) {
+        $.ajax({
+            url: '<?php Common::getPath() ?>src/controller/orders/OrderController.php',
+            type: "GET",
+            dataType: "json",
+            data: get_data_search_info_total(type),
+            success: function (res) {
+                $(".total_money").html((res.total_checkout ? res.total_checkout : 0) + " <sup>đ</sup>");
+                $(".total_orders").html(res.count_total ? res.count_total : 0);
+                $(".total_products").html(res.total_product ? res.total_product : 0);
+                $(".total_on_shop").html((res.total_on_shop ? res.total_on_shop : 0) + " <sup>đ</sup>");
+                $(".count_on_shop").html(res.count_on_shop ? res.count_on_shop : 0);
+                $(".total_product_on_shop").html(res.total_product_on_shop ? res.total_product_on_shop : 0);
+                $(".total_online").html((res.total_online ? res.total_online : 0) + " <sup>đ</sup>");
+                $(".count_online").html(res.count_online ? res.count_online : 0);
+                $(".total_product_online").html(res.total_product_online ? res.total_product_online : 0);
+                $(".total_exchange").html((res.total_exchange ? res.total_exchange : 0) + " <sup>đ</sup>");
+                $(".count_exchange").html(res.count_exchange ? res.count_exchange : 0);
+                $(".total_product_exchange").html(res.total_product_exchange ? res.total_product_exchange : 0);
+                $(".total_cash").html((res.total_cash ? res.total_cash : 0) + " <sup>đ</sup>");
+                $(".total_transfer").html((res.total_transfer ? res.total_transfer : 0) + " <sup>đ</sup>");
+                $(".total_profit").html((res.total_profit ? res.total_profit : 0) + " <sup>đ</sup>");
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                });
+                hide_loading();
+            }
+        });
+    }
+    function generate_datatable(type) {
         if ($.fn.dataTable.isDataTable('#example')) {
             table.destroy();
             table.clear();
@@ -297,12 +440,9 @@ Common::authen();
             'ajax': {
                 "type": "GET",
                 "url": "<?php Common::getPath() ?>src/controller/orders/OrderController.php",
-                "data": function (d) {
-                    d.method = 'find_all';
-                    d.start_date = $("#startDate").val();
-                    d.end_date = $("#endDate").val();
-                }
+                "data": get_data_search(type)
             },
+            "dom": '<"top"flp<"clear">>rt<"bottom"p<"clear">>',
             searching: false,
             ordering: false,
             scrollY: '50vh',
@@ -386,8 +526,6 @@ Common::authen();
                     data: {
                         method: "find_detail",
                         order_id: order_id,
-                        start_date: start_date,
-                        end_date: end_date
                     },
                     success: function (res) {
                         console.log(res);
@@ -453,7 +591,7 @@ Common::authen();
                         },
                         success: function (res) {
                             table.ajax.reload();
-                            get_info_total_checkout($("#startDate").val(), $("#endDate").val());
+                            get_info_total_checkout('date');
                             toastr.success('Đơn hàng đã được xoá thành công.');
                         },
                         error: function (data, errorThrown) {
@@ -519,10 +657,12 @@ Common::authen();
                 let filename = res.fileName;
                 $(".iframeArea").html("");
                 if (typeof filename !== "underfined" && filename !== "") {
-                    $(".iframeArea").html('<iframe src="<?php Common::getPath() ?>src/controller/orders/pdf/' + filename + '" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
-                    let objFra = document.getElementById('receiptContent');
-                    objFra.contentWindow.focus();
-                    objFra.contentWindow.print();
+                    $(".iframeArea").html('<iframe src="<?php Common::getPath() ?>src/controller/orders/pdf/receipt.html" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
+                    setTimeout(function () {
+                        let objFra = document.getElementById('receiptContent');
+                        objFra.contentWindow.focus();
+                        objFra.contentWindow.print();
+                    },500);
                 }
             },
             error: function (data, errorThrown) {
@@ -554,7 +694,8 @@ Common::authen();
                     $("#customer_id").val(value[0].customer_id);
                     $("#bill_of_lading_no").val(value[0].bill_of_lading_no);
                     $("#shipping_fee").val(value[0].shipping_fee);
-                    // $("#customer_name").val(value[0].customerName);
+                    $("#customer_name").val(value[0].customerName);
+                    $("#customer_phone").typeahead('val', value[0].phone);
                     // $("#phone_number").val(value[0].phone);
                     // $("#email").val(value[0].email);
                     // generate_select2_city(value[0].city_id);
@@ -623,7 +764,6 @@ Common::authen();
 
     function format_order_detail(data, row_data) {
         console.log(data);
-        let order_type = row_data.type;
         let payment_exchange_type = row_data.payment_exchange_type;
         let order_refer = row_data.order_refer;
         let details = data.details;
@@ -701,41 +841,44 @@ Common::authen();
         let voucher_value = 0;
         // let order_type = data.type;
         let d = '<div class="card">' +
-            '<div class="card-body">';
-        if (order_type === "1") {
-            // online
-            d += '<div class="row">' +
-                '<div class="col-3 col-sm-3 col-md-3"><small>Mã khách hàng</small> <h5>' + data.customer_id + '</h5></div>' +
-                '<div class="col-6 col-sm-6 col-md-6"><small>Tên khách hàng</small> <h5>' + data.customer_name + '</h5></div>' +
-                '<div class="col-3 col-sm-3 col-md-3"><small>Số điện thoại</small> <h5>' + data.phone + '</h5></div>' +
-                '</div>' +
-                '<div class="row col-12"><small>Địa chỉ</small> <h5 class="col-12 pl-0">' + data.address + '</h5></div>';
-        } else {
-            d += '<div class="row">' +
-                '<div class="col-3 col-sm-3 col-md-3"><small>Khách hàng</small> <h5>Khách lẻ</h5></div>';
+            '<div class="card-body">' +
+            '<div class="row">';
+            if (data.customer_id && Number(data.customer_id) > 0) {
+                // online
+                d += '<div class="col-3 col-sm-3 col-md-3"><small>Mã khách hàng</small> <h5>' + data.customer_id + '</h5></div>' +
+                    '<div class="col-6 col-sm-6 col-md-6"><small>Tên khách hàng</small> <h5>' + data.customer_name + '</h5></div>' +
+                    '<div class="col-3 col-sm-3 col-md-3"><small>Số điện thoại</small> <h5>' + data.phone + '</h5></div>';
+                if(data.address) {
+                    d +='<div class="row col-12"><small>Địa chỉ</small> <h5 class="col-12 pl-0">' + data.address + '</h5></div>';
+                }
+            } else {
+                d += '<div class="col-3 col-sm-3 col-md-3"><small>Khách hàng</small> <h5>Khách lẻ</h5></div>';
+            }
             if (data.voucher_code != null && data.voucher_code !== "") {
                 voucher_value = Number((intoMoney * 10) / 100);
                 d += '<div class="col-3 col-sm-3 col-md-3"><small>Mã giảm giá</small> <h5>' + data.voucher_code + ' <small>(-10%)(' + formatNumber(voucher_value) + ' đ)</small></h5></div>';
             }
-            if (order_refer != null && order_refer !== "" && order_refer !== 0) {
+            if (order_refer && Number(order_refer) !== 0) {
                 d += '<div class="col-3 col-sm-3 col-md-3"><small>Mã đơn đổi</small> <h5>' + order_refer + '</h5></div>';
             }
             d += '</div>';
-        }
 
         let discount = Number(replaceComma(data.discount));
         profit = profit - discount - voucher_value;
 
         d += '<div class="row">' +
-            '<div class="col-3 col-sm-3 col-md-3"><small>Chiết khấu trên tổng đơn hàng</small> <h5>' + data.discount + ' <sup>đ</sup></h5></div>' +
-            '<div class="col-3 col-sm-3 col-md-3"><small>Tổng giảm trừ</small> <h5>' + data.total_reduce + ' <sup>đ</sup></h5></div>';
-        let total_checkout = data.total_checkout;
-        if (payment_exchange_type === '2') {
-            total_checkout = '-' + total_checkout;
+                '<div class="col-2 col-sm-2 col-md-2"><small>Tổng đơn hàng</small> <h5>' + data.total_amount + ' <sup>đ</sup></h5></div>' +
+                '<div class="col-2 col-sm-2 col-md-2"><small>CK trên tổng đơn</small> <h5>' + data.discount + ' <sup>đ</sup></h5></div>';
+        if (data.customer_id && Number(data.customer_id) > 0) {
+            d += '<div class="col-2 col-sm-2 col-md-2"><small>Tiền trong Ví</small> <h5>' + data.wallet + ' <sup>đ</sup></h5></div>';
         }
-        d += '<div class="col-3 col-sm-3 col-md-3"><small>Tổng tiền thanh toán</small> <h5>' + total_checkout + ' <sup>đ</sup></h5></div>' +
-            '<div class="col-3 col-sm-3 col-md-3" style="display: block;"><small>-</small> <h5>' + formatNumber(profit) + ' <sup>đ</sup></h5></div>' +
-            '</div>' +
+        d += '<div class="col-2 col-sm-2 col-md-2"><small>Tổng giảm trừ</small> <h5>' + data.total_reduce + ' <sup>đ</sup></h5></div>';
+            let total_checkout = data.total_checkout;
+            if (payment_exchange_type === '2') {
+                total_checkout = '-' + total_checkout;
+            }
+        d += '<div class="col-2 col-sm-2 col-md-2"><small>Tổng tiền thanh toán</small> <h5>' + total_checkout + ' <sup>đ</sup></h5></div>' +
+            '<div class="col-2 col-sm-2 col-md-2" style="display: block;"><small>-</small> <h5>' + formatNumber(profit) + ' <sup>đ</sup></h5></div>' +
             '</div>' +
             '</div>' +
             '</div>';
@@ -784,9 +927,11 @@ Common::authen();
 
     function format_action(data) {
         let order_type = data.type;
+        let order_id = data.order_id;
         let content = '';
         // online
         // if (data.type == 1) {
+        content += '<a href="<?php Common::getPath() ?>src/view/exchange/?oid='+order_id+'" target="_blank" class="exchange mr-1 text-success" title="Đổi hàng"><i class="fas fa-reply"></i></a>';
         content += '<a href="javascript:void(0);" class="print_receipt mr-1 text-info" title="In hoá đơn"><i class="fa fa-print"></i></a>';
 
         // }
@@ -827,11 +972,11 @@ Common::authen();
     function format_source(data) {
         let source = data.source;
         switch (source) {
-            case '1' :
+            case 1 :
                 return '<span class="badge badge-success">Website</span>';
-            case '2':
+            case 2:
                 return '<span class="badge badge-primary">Facebook</span>';
-            case '3':
+            case 3:
                 return '<span class="badge badge-danger">Shopee</span>';
             default:
                 return '<span class="badge badge-warning">Cửa hàng</span>';
@@ -888,45 +1033,7 @@ Common::authen();
         }
     }
 
-    function get_info_total_checkout(start_date, end_date) {
-        $.ajax({
-            url: '<?php Common::getPath() ?>src/controller/orders/OrderController.php',
-            type: "POST",
-            dataType: "json",
-            data: {
-                method: "get_info_total_checkout",
-                start_date: start_date,
-                end_date: end_date
-            },
-            success: function (res) {
-                $(".total_money").html(res.total_checkout + " <sup>đ</sup>");
-                $(".total_orders").html(res.count_total);
-                $(".total_products").html(res.total_product);
-                $(".total_on_shop").html(res.total_on_shop + " <sup>đ</sup>");
-                $(".count_on_shop").html(res.count_on_shop);
-                $(".total_product_on_shop").html(res.total_product_on_shop);
-                $(".total_online").html(res.total_online + " <sup>đ</sup>");
-                $(".count_online").html(res.count_online);
-                $(".total_product_online").html(res.total_product_online);
-                $(".total_exchange").html(res.total_exchange + " <sup>đ</sup>");
-                $(".count_exchange").html(res.count_exchange);
-                $(".total_product_exchange").html(res.total_product_exchange);
-                $(".total_cash").html(res.total_cash + " <sup>đ</sup>");
-                $(".total_transfer").html(res.total_transfer + " <sup>đ</sup>");
-                $(".total_profit").html(res.total_profit + " <sup>đ</sup>");
-            },
-            error: function (data, errorThrown) {
-                console.log(data.responseText);
-                console.log(errorThrown);
-                Swal.fire({
-                    type: 'error',
-                    title: 'Đã xảy ra lỗi',
-                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-                })
-                hide_loading();
-            }
-        });
-    }
+
 
     // function show_loading() {
     //     $("#create-product .overlay").removeClass("hidden");

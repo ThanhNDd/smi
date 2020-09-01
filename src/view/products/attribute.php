@@ -462,10 +462,10 @@
             id: '1',
             text: 'Bé gái'
         },
-        // {
-        //     id: '2',
-        //     text: 'Trai gái'
-        // },
+        {
+            id: '2',
+            text: 'Trai gái'
+        },
         {
             id: '3',
             text: 'Sơ sinh'
@@ -511,6 +511,14 @@
         {
             id: '9',
             text: 'Đồ bơi'
+        },
+        {
+            id: '10',
+            text: 'Balo'
+        },
+        {
+            id: '11',
+            text: 'Gấu bông'
         }
     ];
     let select_origin = [
