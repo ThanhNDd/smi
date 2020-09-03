@@ -83,6 +83,9 @@ Common::authen();
                             <th class="w10">#</th>
                             <th class="hidden"></th>
                             <th class="hidden"></th>
+                            <th class="hidden"></th>
+                            <th class="hidden"></th>
+                            <th class="hidden"></th>
                             <th class="w30">ID</th>
                             <th class="w200">Tên sản phẩm</th>
                             <th class="w30">Size</th>
@@ -337,6 +340,7 @@ Common::authen();
 
         let order_id = "<?php echo (isset($_GET['oid']) ? $_GET['oid'] : '') ?>";
         if(order_id) {
+            $("#currentOrderId").val(order_id);
             find_order(order_id);
         }
 
@@ -496,7 +500,7 @@ Common::authen();
         $("#totalUsePoint").on('change',function () {
             let totalBallanceInWallet = Number(replaceComma($("#totalBallanceInWallet").text()));
             let totalUsePoint = Number(replaceComma($(this).val()));
-            if(totalUsePoint > totalBallanceInWallet) {
+            if(totalUsePoint !== 0 && totalUsePoint > totalBallanceInWallet) {
                 $(this).addClass("is-invalid");
                 toastr.error("Số tiền sử dụng không được vượt quá số tiền trong ví");
                 disableCheckOutBtn();
@@ -509,6 +513,7 @@ Common::authen();
             // calculate_total_point();
             recalculateTotalReduce();
             recalculateTotalCheckout();
+            calculate_repay_new();
         });
     }
 
@@ -560,6 +565,7 @@ Common::authen();
                                 + '<td class="hidden"><input type="hidden" name="variantId" id="variantId_' + noRow + '" class="form-control" value="' + details[i].variant_id + '"></td>'
                                 + '<td class="hidden"><input type="hidden" name="sku" id="sku_' + noRow + '" class="form-control" value="' + details[i].sku + '"></td>'
                                 + '<td class="hidden"><input type="hidden" name="orderDetailId" id="orderDetailId_' + noRow + '" class="form-control" value="' + details[i].order_detail_id + '"></td>'
+                                + '<td class="hidden"><input type="hidden" name="profit" id="profit_' + noRow + '" class="form-control" value="' + details[i].profit + '"></td>'
                                 + '<td><span class="product-sku" id="sku_' + noRow + '">' + details[i].sku + '</span></td>'
                                 + '<td><span class="product-name" id="name_' + noRow + '">' + details[i].name + '</span></td>'
                                 + '<td><span class="size" id="size_' + noRow + '">' + details[i].size + '</span></td>'
@@ -759,28 +765,28 @@ Common::authen();
                     $(e).parent().parent().find("td:eq(1)").append('<input type="hidden" name="prodIdNew" id="prodId_new_' + noRow + '" class="form-control new" value="' + products[0].product_id + '">');
                     $(e).parent().parent().find("td:eq(2)").children(":first").addClass("old");
                     $(e).parent().parent().find("td:eq(2)").append('<input type="hidden" name="variantIdNew" id="variantId_new_' + noRow + '" class="form-control new" value="' + products[0].variant_id + '">');
-                    $(e).parent().parent().find("td:eq(1)").children(":first").addClass("old");
-                    $(e).parent().parent().find("td:eq(1)").append('<input type="hidden" name="profitNew" id="profit_new_' + noRow + '" class="form-control new" value="' + products[0].profit + '">');
                     $(e).parent().parent().find("td:eq(3)").children(":first").addClass("old");
-                    $(e).parent().parent().find("td:eq(3)").append('<input type="hidden" name="skuNew" id="sku_new_' + noRow + '" class="form-control new" value="' + products[0].sku + '">');
+                    $(e).parent().parent().find("td:eq(3)").append('<input type="hidden" name="profitNew" id="profit_new_' + noRow + '" class="form-control new" value="' + products[0].profit + '">');
                     $(e).parent().parent().find("td:eq(4)").children(":first").addClass("old");
-                    $(e).parent().parent().find("td:eq(4)").append('<input type="hidden" name="orderDetailIdNew" id="orderDetailId_new_' + noRow + '" class="form-control new" value="' + products[0].order_detail_id + '">');
+                    $(e).parent().parent().find("td:eq(4)").append('<input type="hidden" name="skuNew" id="sku_new_' + noRow + '" class="form-control new" value="' + products[0].sku + '">');
                     $(e).parent().parent().find("td:eq(5)").children(":first").addClass("old");
-                    $(e).parent().parent().find("td:eq(5)").append('<span class="product-sku-new new" id="sku_new_' + noRow + '">' + products[0].sku + '</span>');
+                    $(e).parent().parent().find("td:eq(5)").append('<input type="hidden" name="orderDetailIdNew" id="orderDetailId_new_' + noRow + '" class="form-control new" value="' + products[0].order_detail_id + '">');
                     $(e).parent().parent().find("td:eq(6)").children(":first").addClass("old");
-                    $(e).parent().parent().find("td:eq(6)").append('<span class="product-name-new new" id="name_new_' + noRow + '">' + products[0].name + '</span>');
+                    $(e).parent().parent().find("td:eq(6)").append('<span class="product-sku-new new" id="sku_new_' + noRow + '">' + products[0].sku + '</span>');
                     $(e).parent().parent().find("td:eq(7)").children(":first").addClass("old");
-                    $(e).parent().parent().find("td:eq(7)").append('<span class="size-new new" id="size_new_' + noRow + '">' + products[0].size + '</span>');
+                    $(e).parent().parent().find("td:eq(7)").append('<span class="product-name-new new" id="name_new_' + noRow + '">' + products[0].name + '</span>');
                     $(e).parent().parent().find("td:eq(8)").children(":first").addClass("old");
-                    $(e).parent().parent().find("td:eq(8)").append('<span class="color-new new" id="color_new_' + noRow + '">' + products[0].color + '</span>');
+                    $(e).parent().parent().find("td:eq(8)").append('<span class="size-new new" id="size_new_' + noRow + '">' + products[0].size + '</span>');
                     $(e).parent().parent().find("td:eq(9)").children(":first").addClass("old");
-                    $(e).parent().parent().find("td:eq(9)").append('<span class="price-new new" id="price_new_' + noRow + '">' + products[0].retail + '</span><sup>đ</sup>');
+                    $(e).parent().parent().find("td:eq(9)").append('<span class="color-new new" id="color_new_' + noRow + '">' + products[0].color + '</span>');
                     $(e).parent().parent().find("td:eq(10)").children(":first").addClass("old");
-                    $(e).parent().parent().find("td:eq(10)").append('<input type="number" name="qtyNew" id="qty_new_' + noRow + '" class="new form-control" min="1" value="' + qty + '" onblur="on_change_qty(\'price_new_' + noRow + '\', \'qty_new_' + noRow + '\', \'intoMoney_new_' + noRow + '\', \'reduce_new_' + noRow + '\', \'intoMoney_' + noRow + '\', \'diff_money_new_' + noRow + '\')">');
+                    $(e).parent().parent().find("td:eq(10)").append('<span class="price-new new" id="price_new_' + noRow + '">' + products[0].retail + '</span><sup>đ</sup>');
                     $(e).parent().parent().find("td:eq(11)").children(":first").addClass("old");
-                    $(e).parent().parent().find("td:eq(11)").append('<input type="text" name="reduceNew" id="reduce_new_' + noRow + '" class="new form-control" value="' + discount + '" onblur="on_change_reduce(\'price_new_' + noRow + '\',\'qty_new_' + noRow + '\', \'intoMoney_new_' + noRow + '\', \'reduce_new_' + noRow + '\', \'intoMoney_' + noRow + '\', \'diff_money_new_' + noRow + '\')">');
+                    $(e).parent().parent().find("td:eq(11)").append('<input type="number" name="qtyNew" id="qty_new_' + noRow + '" class="new form-control" min="1" value="' + qty + '" onblur="on_change_qty(\'price_new_' + noRow + '\', \'qty_new_' + noRow + '\', \'intoMoney_new_' + noRow + '\', \'reduce_new_' + noRow + '\', \'intoMoney_' + noRow + '\', \'diff_money_new_' + noRow + '\')">');
                     $(e).parent().parent().find("td:eq(12)").children(":first").addClass("old");
-                    let into_money_old = $(e).parent().parent().find("td:eq(12)").children(":first").text();
+                    $(e).parent().parent().find("td:eq(12)").append('<input type="text" name="reduceNew" id="reduce_new_' + noRow + '" class="new form-control" value="' + discount + '" onblur="on_change_reduce(\'price_new_' + noRow + '\',\'qty_new_' + noRow + '\', \'intoMoney_new_' + noRow + '\', \'reduce_new_' + noRow + '\', \'intoMoney_' + noRow + '\', \'diff_money_new_' + noRow + '\')">');
+                    $(e).parent().parent().find("td:eq(13)").children(":first").addClass("old");
+                    let into_money_old = $(e).parent().parent().find("td:eq(13)").children(":first").text();
                     into_money_old = replaceComma(into_money_old);
                     into_money_old = into_money_old.replace("đ","");
                     let diff_money = into_money - into_money_old;
@@ -790,8 +796,8 @@ Common::authen();
                     } else if(diff_money < 0 ) {
                         style = "color: red;";
                     }
-                    $(e).parent().parent().find("td:eq(12)").append('<div><span class="intoMoney new" id="intoMoney_new_' + noRow + '">' + formatNumber(into_money) + '</span><sup>đ</sup></div>');
-                    $(e).parent().parent().find("td:eq(12)").append('<div class="old diff_money" style="'+style+'"><span id="diff_money_new_' + noRow + '">' + formatNumber(diff_money) + '</span><sup> đ</sup></div>');
+                    $(e).parent().parent().find("td:eq(13)").append('<div><span class="intoMoney new" id="intoMoney_new_' + noRow + '">' + formatNumber(into_money) + '</span><sup>đ</sup></div>');
+                    $(e).parent().parent().find("td:eq(13)").append('<div class="old diff_money" style="'+style+'"><span id="diff_money_new_' + noRow + '">' + formatNumber(diff_money) + '</span><sup> đ</sup></div>');
                     $(e).parent().find("[id=del_" + noRow + "]").removeClass("hidden");
                     $(e).addClass("hidden").val("");
                     calculateTotal();
@@ -889,66 +895,50 @@ Common::authen();
         let discountNew =  discount_new(totalAmount);
         let totalCheckout = Number(totalAmount) - Number(discountNew) + Number(discountOld);
         if(totalCheckout > 0) {
-            // let payment = replaceComma($("#payment_new").val());
-            // let repay = 0;
-            // if (payment != 0 && totalCheckout > 0) {
-            //     repay = Number(payment) - Number(totalCheckout);
-            // }
-            // $("#repay_new").val(formatNumber(repay));
             $("#discount_new").prop("disabled", "");
             $(".discount-new").removeClass("hidden");
-            // $("#sel_payment_new").prop("disabled", "");
-            // $("#payment_new").prop("disabled", "");
-            // $(".payment-new").removeClass("hidden");
-            // disableCheckOutBtn();
         } else {
-            // $("#repay_new").val(formatNumber(Math.abs(totalCheckout)));
             $("#discount_new").prop("disabled", true);
             $(".discount-new").addClass("hidden");
-            // $("#sel_payment_new").prop("disabled", true);
-            // $("#payment_new").val("").prop("disabled", true);
-            // $(".payment-new").addClass("hidden");
-            // enableCheckOutBtn();
-
         }
-        // $("#repay_new").prop("disabled", "");
         $("#total_amount_new").text(formatNumber(totalAmount));
-        // if(totalAmount < 0) {
-        //     $(".wallet").addClass("hidden");
-        // } else {
-        //     $(".wallet").removeClass("hidden");
-        // }
         $("#total_checkout_new").text(formatNumber(totalCheckout));
         calculate_total_point();
     }
     function calculate_total_point() {
         let currentPoint = Number(replaceComma($("#totalBallanceInWallet").text()));
-        if (currentPoint && Number(currentPoint) > 0) {
+        if (currentPoint && Number(currentPoint) !== 0) {
             let total_checkout_new = Number(replaceComma($("#total_checkout_new").text()));
+            let totalUsePoint = 0;
             if (total_checkout_new > 0) {
-                let totalUsePoint = 0;
                 if(total_checkout_new > currentPoint) {
                     totalUsePoint = currentPoint;
                 } else {
                     totalUsePoint = total_checkout_new;
                 }
                 $("#totalUsePoint").val(formatNumber(totalUsePoint)).removeClass("hidden");
-
                 recalculateTotalReduce();
-                // recalculate total checkout
+                recalculateTotalCheckout();
+            } else if(total_checkout_new < 0) {
+                if(total_checkout_new < currentPoint) {
+                    totalUsePoint = currentPoint;
+                } else {
+                    totalUsePoint = total_checkout_new;
+                }
+                $("#totalUsePoint").val(formatNumber(totalUsePoint)).removeClass("hidden");
+                recalculateTotalReduce();
                 recalculateTotalCheckout();
             } else {
                 $("#totalUsePoint").addClass("hidden");
-                // $(".wallet").addClass("hidden");
                 $("#totalReduceNew").text("0");
                 $(".total-reduce-new").addClass("hidden");
             }
-            payment_box();
-            calculate_saved_point();
-            calculate_repay_new();
         } else {
             $("#totalUsePoint").addClass("hidden");
         }
+        payment_box();
+        calculate_saved_point();
+        calculate_repay_new();
     }
     function calculateTotalAmountInList() {
         let noRow = $("#noRow").val();
@@ -1081,11 +1071,6 @@ Common::authen();
             $("#payment_new").removeClass("is-invalid");
             enableCheckOutBtn();
         }
-        // let repay = '';
-        // if (payment !== 0 && totalCheckout > 0) {
-        //     repay = Number(payment) - Number(totalCheckout);
-        // }
-        // $("#repay_new").val(formatNumber(repay));
         calculate_repay_new();
     }
 
@@ -1301,8 +1286,6 @@ Common::authen();
                 if (typeof filename !== "undefined" && filename !== "") {
                     $(".iframeArea").html('<iframe src="<?php Common::getPath() ?>src/controller/exchange/pdf/receipt.html" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
                 }
-                // toastr.success('Đơn hàng #' + orderId + ' đã được tạo thành công.');
-                // resetData();
                 if (flag_print_receipt === true && typeof filename !== "undefined" && filename !== "") {
                     printReceipt();
                 }
@@ -1313,7 +1296,7 @@ Common::authen();
                     text: "Đơn hàng #" + orderId + " đã được tạo thành công.!"
                 }).then((result) => {
                     if (result.value) {
-                        window.location.reload();
+                        window.location.href = "<?php Common::getPath()?>src/view/exchange";
                     }
                 });
             },
@@ -1341,10 +1324,6 @@ Common::authen();
         objFra.contentWindow.print();
     }
 
-    // function formatNumber(num) {
-    //     return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-    // }
-
     function on_change_reduce(priceId, qtyId, intoMoneyId, reduceId, oldIntoMoneyId, diffMoneyId) {
         let price = get_price(priceId);
         let qty = get_qty(qtyId);
@@ -1371,15 +1350,10 @@ Common::authen();
                 //  validate_form();
                 return;
             }
-            // if(reduce !== "" && reduce < 1000)
-            // {
-            // 	reduce = reduce+"000";
-            // }
             $("[id=" + reduceId + "]").val(formatNumber(reduce));
             if (reduce !== "" && (reduce < 1000 || reduce > (price * qty) / 2)) {
                 $("[id=" + reduceId + "]").addClass("is-invalid");
                 disableCheckOutBtn();
-                //  validate_form();
                 return;
             } else {
                 $("[id=" + reduceId + "]").removeClass("is-invalid");
@@ -1458,24 +1432,6 @@ Common::authen();
     function enableCheckOutBtn() {
         $("#checkout").prop("disabled","");
     }
-
-    // function replaceComma(value) {
-    //     value = value.replace(/,/g, '');
-    //     if(value.indexOf("đ")) {
-    //         value = value.replace(" đ","");
-    //     }
-    //     value = value.replace(/ /g, '');
-    //     return value;
-    // }
-    //
-    // function replacePercent(value) {
-    //     value = value.replace(/%/g, '');
-    //     if(value.indexOf("đ")) {
-    //         value = value.replace("đ","");
-    //     }
-    //     value = value.replace(/ /g, '');
-    //     return value;
-    // }
 
     function resetData() {
         $("#tableProd tbody").html("");
@@ -1558,16 +1514,10 @@ Common::authen();
 
     function calculate_saved_point() {
         let total_checkout = Number(replaceComma($("#total_checkout_new").text()));
-        // if (total_checkout > 0) {
-            let discount = Number(replaceComma($("#discount").val()));
-            let total_saved_point = Math.round(total_checkout * 5 / 100);
-            total_saved_point = formatNumber(total_saved_point);
-            $("#total_saved_point").text(total_saved_point);
-            $(".saved-point").removeClass("hidden");
-        // } else {
-        //     $("#total_saved_point").text("0");
-        //     $(".saved-point").addClass("hidden");
-        // }
+        let total_saved_point = Math.round(total_checkout * 5 / 100);
+        total_saved_point = formatNumber(total_saved_point);
+        $("#total_saved_point").text(total_saved_point);
+        $(".saved-point").removeClass("hidden");
     }
     function calculate_saved_point() {
         let total_checkout = Number(replaceComma($("#total_checkout_new").text()));
@@ -1583,11 +1533,9 @@ Common::authen();
     function calculate_repay_new() {
         $(".repay-new").removeClass("hidden");
         $("#repay_new").val("");
-        // $(".repay_method").addClass("hidden");
         let total_checkout = Number(replaceComma($("#total_checkout_new").text()));
         if(total_checkout < 0) {
             $("#repay_new").val(formatNumber(Math.abs(total_checkout)));
-            // $(".repay_method").removeClass("hidden");
             $("#tranferToWallet_new").val("");
         } else {
             let payment_new = Number(replaceComma($("#payment_new").val()));
