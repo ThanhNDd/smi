@@ -774,17 +774,11 @@ Common::authen();
         }
         let repay = Number(replaceComma($("#repay").val()));
         let transferToWallet = Number(replaceComma($("#tranferToWallet").val()));
-        // let repayType = 0;
         let totalBallanceInWallet = 0;
         let totalUsePoint = 0;
         let totalRemainPoint = 0;
         let totalSavedPoint = 0;
-        // let walletRepay = 0;
         if(customer_id && Number(customer_id) > 0) {
-            // repayType = Number($("input[name='repayType']:checked").val());
-            // if(repayType === 1) {
-            //     walletRepay = Number(repay);
-            // }
             totalBallanceInWallet = Number(replaceComma($("#totalBallanceInWallet").text()));
             totalUsePoint = Number(replaceComma($("#totalUsePoint").val()));
             if (!totalBallanceInWallet || totalBallanceInWallet === 0) {

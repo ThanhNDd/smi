@@ -297,39 +297,32 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $order = new Order();
         $order_type = $data->order_type;
         $cusId = 0;
+        $total_checkout = $data->total_checkout;
+        $total_reduce = 0;
+        $total_reduce_percent = 0;
+        if (!empty($data->total_reduce)) {
+            $total_reduce = $data->total_reduce;
+            $total_reduce_percent = round($total_reduce * 100 / $total_checkout);
+        }
         if ($order_type == 1) {
             //online
-//            $customer = new Customer();
-//            $customer->setName($data->customer_name);
-//            $customer->setPhone($data->phone_number);
-//            $customer->setEmail($data->email);
-//            $customer->setAddress($data->address);
-//            $customer->setCityId($data->cityId);
-//            $customer->setDistrictId($data->districtId);
-//            $customer->setVillageId($data->villageId);
-//            if ($data->customer_id > 0) {
-
-//                $customer->setId($data->customer_id);
-//                $customerDAO->update_customer($customer);
-//            } else {
-//                $cusId = $customerDAO->save_customer($customer);
-//                if (empty($cusId)) {
-//                    throw new Exception("Insert customer is failure", 1);
-//                }
-//            }
             $cusId = $data->customer_id;
             $order->setBill_of_lading_no($data->bill_of_lading_no);
             $order->setShipping_fee($data->shipping_fee);
             $order->setShipping($data->shipping);
             $order->setShipping_unit($data->shipping_unit);
         }
-        $order->setTotal_reduce(null);
-        $order->setTotal_reduce_percent(null);
-        $order->setDiscount($data->discount);
+
         $order->setTotal_amount($data->total_amount);
+        $order->setTotal_reduce($total_reduce);
+        $order->setTotal_reduce_percent($total_reduce_percent);
+        $order->setDiscount($data->discount);
+        $order->setWallet($data->wallet);
         $order->setTotal_checkout($data->total_checkout);
         $order->setCustomer_payment($data->customer_payment);
-        $order->setRepay(null);
+        $order->setPayment_type($data->payment_type);
+        $order->setRepay($data->repay);
+        $order->setTransferToWallet($data->transfer_to_wallet);
         $order->setCustomer_id($cusId);
         $order->setType($order_type);
         $order->setStatus($data->order_status);
@@ -345,6 +338,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
             }
         } else {
             $orderId = $checkoutDAO->saveOrder($order);
+//            echo "|order_id: ".$orderId."|\n";
         }
         if (empty($orderId)) {
             throw new Exception("Insert order is failure", 1);
@@ -354,11 +348,15 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         for ($i = 0; $i < count($details); $i++) {
             $price = 0;
             $qty = 0;
+            $reduce_type = 0;
             if (!empty($details[$i]->price)) {
                 $price = $details[$i]->price;
             }
             if (!empty($details[$i]->quantity)) {
                 $qty = $details[$i]->quantity;
+            }
+            if (!empty($details[$i]->reduce_type)) {
+                $reduce_type = $details[$i]->reduce_type;
             }
             $detail = new OrderDetail();
             $detail->setOrder_id($orderId);
@@ -369,6 +367,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
             $detail->setQuantity(empty($details[$i]->quantity) ? 0 : $details[$i]->quantity);
             $detail->setReduce(empty($details[$i]->reduce) ? 0 : $details[$i]->reduce);
             $detail->setReduce_percent(empty($details[$i]->reduce_percent) ? 0 : $details[$i]->reduce_percent);
+            $detail->setReduceType($reduce_type);
             $detail->setProfit($details[$i]->profit);
             $lastId = $checkoutDAO->saveOrderDetail($detail);
             if (empty($lastId)) {
@@ -382,6 +381,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         }
         $response["order_id"] = $orderId;
         echo json_encode($response);
+//        echo "===============\n";
     } catch (Exception $e) {
         $db->rollback();
         throw new Exception($e);

@@ -1,7 +1,7 @@
 <?php
 
 include 'Constant.php';
-
+date_default_timezone_set('Asia/Ho_Chi_Minh');
 class Common
 {
     public static function path()

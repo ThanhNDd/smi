@@ -625,7 +625,7 @@ Common::authen();
                     order_type: order_type
                 },
                 success: function (res) {
-                    console.log(res);
+                    console.log(JSON.stringify(res));
                     set_data_edit_order(order_id, res, order_type);
                 },
                 error: function (data, errorThrown) {
@@ -689,44 +689,24 @@ Common::authen();
             if (value.length != 0) {
                 $("#order_id").val(value[0].order_id);
                 $('#orderDate').val(value[0].order_date);
+                $("#customer_id").val(value[0].customer_id);
+                $("#customer_name").val(value[0].customerName);
+                $("#customer_phone").typeahead('val', value[0].phone);
                 // online
                 if (order_type == 1) {
-                    $("#customer_id").val(value[0].customer_id);
                     $("#bill_of_lading_no").val(value[0].bill_of_lading_no);
                     $("#shipping_fee").val(value[0].shipping_fee);
-                    $("#customer_name").val(value[0].customerName);
-                    $("#customer_phone").typeahead('val', value[0].phone);
-                    // $("#phone_number").val(value[0].phone);
-                    // $("#email").val(value[0].email);
-                    // generate_select2_city(value[0].city_id);
-                    // generate_select2_district(value[0].city_id, value[0].district_id);
-                    // generate_select2_village(value[0].district_id, value[0].village_id);
-                    // $("#address").val(value[0].address);
                     $("#shipping").val(value[0].shipping).trigger("change");
                     $("#bill_of_lading_no").prop("disabled", false);
                     $("#shipping_fee").prop("disabled", false);
-                    // $("#customer_name").prop("disabled", false);
-                    // $("#phone_number").prop("disabled", false);
-                    // $("#email").prop("disabled", false);
                     $(".select-shipping-unit").prop("disabled", false);
-                    // $(".select-city").prop("disabled", false);
-                    // $(".select-district").prop("disabled", false);
-                    // $(".select-village").prop("disabled", false);
-                    // $("#address").prop("disabled", false);
                     $("#shipping").prop("disabled", false);
                 } else if (order_type == 0) {
                     generate_select2_city();
                     // on shop
                     $("#bill_of_lading_no").prop("disabled", true);
                     $("#shipping_fee").prop("disabled", true);
-                    // $("#customer_name").prop("disabled", true);
-                    // $("#phone_number").prop("disabled", true);
-                    // $("#email").prop("disabled", true);
                     $(".select-shipping-unit").prop("disabled", true);
-                    // $(".select-city").prop("disabled", true);
-                    // $(".select-district").prop("disabled", true);
-                    // $(".select-village").prop("disabled", true);
-                    // $("#address").prop("disabled", true);
                     $("#shipping").prop("disabled", true);
                     $("#order_status").val(3).trigger("change");//complete
                 }
@@ -740,21 +720,6 @@ Common::authen();
                 $("#table_list_product tbody").html("");
                 let details = value[0].details;
                 add_product_list(details);
-                // for (let i = 0; i < details.length; i++) {
-                    // add_product_list(details[i]);
-
-                    // $('.count-row').val(i);
-                    // add_new_product();
-                    // $("#detailId_" + (i + 1)).val(details[i].order_detail_id)
-                    // $("#sku_" + (i + 1)).val(details[i].sku).trigger("change");
-                    // $("#prodQty_" + (i + 1)).val(details[i].quantity).trigger("change");
-                    // $("#prodReduce_" + (i + 1)).val(details[i].reduce);
-                    // if (order_type == 1) {
-                    //     $("#prodReduce_" + (i + 1)).prop("disabled", true);
-                    // } else if (order_type == 0) {
-                    //     $("#prodReduce_" + (i + 1)).prop("disabled", false);
-                    // }
-                // }
                 open_modal('#create_order');
             } else {
                 toastr.error('Đã xảy ra lỗi.');

@@ -44,12 +44,13 @@ require_once("common.php");
 <!-- iCheck js -->
 <!-- <script src="<?php Common::getPath()?>plugins/icheck/icheck.min.js"></script> -->
 
-<script src="<?php Common::getPath()?>plugins/moment/moment.min.js"></script>
+<!--<script src="--><?php //Common::getPath()?><!--plugins/moment/moment.min.js"></script>-->
+<script src="<?php Common::getPath()?>plugins/bootstrap4-datetimepicker/build/js/moment.min.js"></script>
 <!-- date-range-picker -->
 <script src="<?php Common::getPath()?>plugins/daterangepicker/daterangepicker.js"></script>
 
 <script src="<?php Common::getPath()?>plugins/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
-<script src="<?php Common::getPath()?>plugins/bootstrap-datepicker/bootstrap-datepicker.vi.min.js"></script>
+<script src="<?php Common::getPath()?>plugins/bootstrap4-datetimepicker/build/js/bootstrap-datetimepicker.js"></script>
 <script src="<?php Common::getPath()?>plugins/summernote/summernote-bs4.min.js"></script>
 <script src="<?php Common::getPath()?>plugins/typeahead/js/typeahead.bundle.js"></script>
 <script src="<?php Common::getPath()?>plugins/typeahead/js/bloodhound.min.js"></script>

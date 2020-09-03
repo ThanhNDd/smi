@@ -43,9 +43,10 @@ Common::authen();
                             <input class="form-control" id="customer_name">
                         </div>
                         <div class="col">
-                            <label>Ngày đặt hàng</label>
-                            <input class="form-control datepicker" id="orderDate" data-date-format="dd/mm/yyyy"
-                                   value="<?php echo date('d/m/Y'); ?>">
+                            <label for="orderDate">Ngày đặt hàng</label>
+                            <div class="input-group mb-1">
+                                <input type="text" class="form-control datetimepicker" id="orderDate" placeholder="Ngày đặt hàng" autocomplete="off" value="<?php echo date('Y-m-d H:i:s'); ?>">
+                            </div>
                         </div>
                         <div class="col">
                             <label>Trạng thái</label>
@@ -58,46 +59,7 @@ Common::authen();
                                 <option value="5">Thất bại</option>
                             </select>
                         </div>
-<!--                        <div class="col">-->
-<!--                            <label>Họ tên <span style="color:red">*</span></label>-->
-<!--                            <input type="text" class="form-control" id="customer_name" placeholder="Họ tên"-->
-<!--                                   autocomplete="off">-->
-<!--                        </div>-->
-<!--                        <div class="col">-->
-<!--                            <label>Email</label>-->
-<!--                            <input type="text" class="form-control" id="email" placeholder="Email" autocomplete="off">-->
-<!--                        </div>-->
-<!--                        <div class="col">-->
-<!--                            <label>Ngày sinh</label>-->
-<!--                            <input class="form-control datepicker" id="birthday" data-date-format="dd/mm/yyyy" placeholder="Nhập ngày sinh">-->
-<!--                        </div>-->
                     </div>
-<!--                    <div class="form-group row">-->
-<!--                        <div class="col">-->
-<!--                            <label>Tỉnh / Thành phố <span style="color:red">*</span></label>-->
-<!--                            <select class="select-city form-control" id="select_city">-->
-<!--                                <option value="-1">Lựa chọn</option>-->
-<!--                            </select>-->
-<!--                        </div>-->
-<!--                        <div class="col">-->
-<!--                            <label>Quận / Huyện <span style="color:red">*</span></label>-->
-<!--                            <select class="select-district form-control" id="select_district">-->
-<!--                                <option value="-1">Lựa chọn</option>-->
-<!--                            </select>-->
-<!--                        </div>-->
-<!--                        <div class="col">-->
-<!--                            <label>Phường xã <span style="color:red">*</span></label>-->
-<!--                            <select class="select-village form-control" id="select_village">-->
-<!--                                <option value="-1">Lựa chọn</option>-->
-<!--                            </select>-->
-<!--                        </div>-->
-<!--                        <div class="col">-->
-<!--                            <label>Địa chỉ <span style="color:red">*</span></label>-->
-<!--                            <input type="text" class="form-control" id="address"-->
-<!--                                   placeholder="Nhập số nhà, thôn xóm ... " autocomplete="off">-->
-<!--                        </div>-->
-
-<!--                    </div>-->
                     <div class="form-group row">
                         <div class="col">
                             <label>Mã vận đơn</label>
@@ -138,34 +100,6 @@ Common::authen();
                 </div>
                 <div class="form-group">
                     <input type="hidden" value="0" class="count-row"/>
-<!--                    <div class="row product">-->
-<!--                        <div class="w130">-->
-<!--                            <label>Mã sản phẩm <span style="color:red">*</span></label>-->
-<!--                        </div>-->
-<!--                        <div class="col-4">-->
-<!--                            <label for="product_name_1">Tên sản phẩm</label>-->
-<!--                        </div>-->
-<!--                        <input type="hidden" id="variantId_1">-->
-<!--                        <div class="w130">-->
-<!--                            <label>Đơn giá</label>-->
-<!--                        </div>-->
-<!--                        <div class="col-1">-->
-<!--                            <label>Số lượng</label>-->
-<!--                        </div>-->
-<!--                        <div class="w130">-->
-<!--                            <label>Giảm trừ</label>-->
-<!--                        </div>-->
-<!--                        <div class="w130">-->
-<!--                            <label>Tổng</label>-->
-<!--                        </div>-->
-<!--                        <div class="col-1 center">-->
-<!--                            <label>Chọn</label>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                    <div class="form-group product-area">-->
-<!---->
-<!--                    </div>-->
-
                     <table class="table table-hover table-striped" id="table_list_product">
                         <thead>
                             <tr>
@@ -182,55 +116,8 @@ Common::authen();
                             </tr>
                         </thead>
                         <tbody>
-<!--                            <tr id="row_1">-->
-<!--                                <td id="detail_id_1" class="hidden"></td>-->
-<!--                                <td id="product_id_1" class="hidden"></td>-->
-<!--                                <td id="variant_id_1" class="hidden"></td>-->
-<!--                                <td id="sku_1"></td>-->
-<!--                                <td id="name_1"></td>-->
-<!--                                <td id="price_1"></td>-->
-<!--                                <td id="quantity_1"></td>-->
-<!--                                <td id="reduce_1"></td>-->
-<!--                                <td id="total_1"></td>-->
-<!--                                <td id="delete_1"><button class="btn btn-danger"><i class="fa fa-trash"></i></button></td>-->
-<!--                            </tr>-->
                         </tbody>
-<!--                        <div class="row" id="product-' + noRow + '" style="padding-top: 10px;">' +-->
-<!--                            '<div class="w130">' +-->
-<!--                                '<input type="hidden" class="form-control" id="detailId_' + noRow + '">' +-->
-<!--                                '<input type="hidden" class="form-control" id="prod_' + noRow + '">' +-->
-<!--                                '<input type="text" class="form-control" id="sku_' + noRow + '" placeholder="Nhập mã sản phẩm" onchange="on_change_product_2(this, ' + noRow + ')" onblur="blur_check(this)" onfocus="onfocus_check(this)">' +-->
-<!--                                '</div>' +-->
-<!--                            '<div class="col-4">' +-->
-<!--                                '<input type="text" class="form-control" id="product_name_' + noRow + '" disabled="disabled">' +-->
-<!--                                '</div>' +-->
-<!--                            '<input type="hidden" id="variantId_' + noRow + '">' +-->
-<!--                            '<div class="w130">' +-->
-<!--                                '<input type="text" class="form-control" id="prodPrice_' + noRow + '" placeholder="0" disabled="disabled" onchange="on_change_qty(\'prodQty_' + noRow + '\', \'prodPrice_' + noRow + '\', \'prodTotal_' + noRow + '\')">' +-->
-<!--                                '</div><div class="col-1">' +-->
-<!--                                '<input type="number" class="form-control" id="prodQty_' + noRow + '" placeholder="0" disabled="disabled"  min="1" onchange="on_change_qty(\'prodQty_' + noRow + '\', \'prodPrice_' + noRow + '\', \'prodTotal_' + noRow + '\', ' + noRow + ', \'prodReduce_' + noRow + '\')">' +-->
-<!--                                '</div>' +-->
-<!--                            '<div class="w130 mr-2">' +-->
-<!--                                '<input type="text" class="form-control" id="prodReduce_' + noRow + '" placeholder="0" min="0" disabled="disabled" onchange="on_change_reduce(this, \'prodQty_' + noRow + '\', \'prodPrice_' + noRow + '\', \'prodTotal_' + noRow + '\', ' + noRow + ')">' +-->
-<!--                                '</div>' +-->
-<!--                            '<div class="w130">' +-->
-<!--                                '<input type="text" class="form-control" id="prodTotal_' + noRow + '" placeholder="0" min="0" disabled="disabled">' +-->
-<!--                                '</div>' +-->
-<!--                            '<div class="col-1">';-->
-<!--                                // if (noRow === 1) {-->
-<!--                                //     content += '<button type="button" class="btn btn-success form-control add-new-prod" title="Thêm sản phẩm" onclick="add_new_product(this, ' + noRow + ');">' +-->
-<!--                                    //         '<i class="fa fa-plus-circle" aria-hidden="true"></i>' +-->
-<!--                                    //         '</button>';-->
-<!--                                // } else {-->
-<!--                                content += '<button type="button" class="btn btn-danger form-control" onclick="del_product(this, \'product-' + noRow + '\',' + noRow + ')" title="Xóa sản phẩm">' +-->
-<!--                                    '<i class="fa fa-minus-circle" aria-hidden="true"></i>' +-->
-<!--                                    '</button>-->
                     </table>
-<!--                    <div class="row col-md-12">-->
-<!--                        <button type="button" class="btn btn-success form-control add-new-prod col-md-1" title="Thêm sản phẩm">-->
-<!--                            <i class="fa fa-plus-circle" aria-hidden="true"></i> Thêm sản phẩm-->
-<!--                        </button>-->
-<!--                    </div>-->
                 </div>
 
                 <div class="form-group total-area">
@@ -257,6 +144,12 @@ Common::authen();
                             <input type="text" class="form-control" id="discount" placeholder="Giảm trừ"
                                    autocomplete="off">
                         </div>
+                    </div>
+                    <div class="row pd-t-5">
+                        <div class="col-9 right pd-t-10">
+                            <label>Tổng giảm trừ</label>
+                        </div>
+                        <h4 class="col-2 right pt-2" id="total_reduce">0</h4>
                     </div>
                     <div class="row pd-t-5">
                         <div class="col-9 right pd-t-10">
@@ -299,38 +192,18 @@ Common::authen();
 
     <?php require_once ('../../common/js.php'); ?>
     <script>
-        // let data_products;
-        // let flagError = 0;
-        // const Toast = Swal.mixin({
-        //     toast: true,
-        //     position: 'top-end',
-        //     showConfirmButton: false,
-        //     timer: 3000
-        // });
         $(document).ready(function () {
-            // $('.datepicker').datepicker({
-            //     format: 'dd/mm/yyyy',
-            //     language: 'vi',
-            //     todayBtn: true,
-            //     todayHighlight: true,
-            //     autoclose: true
-            // });
-
             load_customer_info();
-
             generate_select2('.order-type');
             generate_select2('.order-status');
             generate_select2('.order-source');
             generate_select2('.shipping-unit');
             generate_select2('.payment-type');
-
             create_customer();
-
             $("#order_type").change(function(){
                 let order_type = $(this).val();
                 onchange_order_type(order_type);
             });
-
             $("#payment_type").change(function(){
                 if ($(this).val() === "0") {
                     $("#payment").removeClass("hidden").focus();
@@ -338,7 +211,6 @@ Common::authen();
                     $("#payment").val("").addClass("hidden");
                 }
             });
-
             $("#payment").change(function() {
                 $("#payment").removeClass("is-invalid");
                 let customer_payment = format_money(replaceComma($("#payment").val()));
@@ -364,22 +236,6 @@ Common::authen();
                 add_new_product();
                 open_modal('#create_order');
             });
-            // $('.order-update').click(function () {
-            //     update_data();
-            // });
-
-            // $('.select-city').on('select2:select', function (e) {
-            //     let data = e.params.data;
-            //     let cityId = data.id;
-            //     generate_select2_district(cityId);
-            // });
-            // $('.select-district').on('select2:select', function (e) {
-            //     let data = e.params.data;
-            //     let districtId = data.id;
-            //     generate_select2_village(districtId);
-            //     check_products_list();
-            // });
-
             $('#create_new_order').click(function () {
                 create_new_order();
             });
@@ -396,7 +252,8 @@ Common::authen();
                     check_products_list();
                     val = Number(val);
                     $(e).val(formatNumber(val));
-                    on_change_total();
+                    // on_change_total();
+                    calculate_total();
                 }
             });
             $("#discount").change(function () {
@@ -412,7 +269,8 @@ Common::authen();
                     // check_products_list();
                     val = Number(val);
                     $(e).val(formatNumber(val));
-                    on_change_total();
+                    // on_change_total();
+                    calculate_total();
                 }
             });
 
@@ -438,6 +296,7 @@ Common::authen();
                     val = Number(val);
                     $(e).val(formatNumber(val));
                 }
+                calculate_total();
             });
             $(".add-new-prod").on("click", function () {
                 let curr_row_index = get_row_index();
@@ -532,19 +391,9 @@ Common::authen();
             let customer_phone = $("#customer_phone").val();
             let order_type = $('#order_type').val();
             if (order_type === "1") {
-                // online
-                //     let customer_name = $("#customer_name").val();
-                //     if (!customer_name) {
-                //         $("#customer_name").addClass("is-invalid");
-                //         is_valid = false;
-                //     } else {
-                //         $("#customer_name").removeClass("is-invalid");
-                //     }
-
                 if (!customer_phone) {
                     $("#customer_phone").addClass("is-invalid");
                     is_valid = false;
-                    // toastr.error("Chưa nhập số điện thoại");
                 } else {
                     $("#customer_phone").removeClass("is-invalid");
                 }
@@ -553,35 +402,6 @@ Common::authen();
             if (customer_phone && !customer_id) {
                 check_exist_customer(customer_phone);
             }
-
-            //     let cityId = $(".select-city").val();
-            //     if (!cityId || cityId === "-1") {
-            //         $(".select-city").addClass("is-invalid");
-            //         is_valid = false;
-            //     } else {
-            //         $(".select-city").removeClass("is-invalid");
-            //     }
-            //     let districtId = $(".select-district").val();
-            //     if (!districtId || districtId === "-1") {
-            //         $(".select-district").addClass("is-invalid");
-            //         is_valid = false;
-            //     } else {
-            //         $(".select-district").removeClass("is-invalid");
-            //     }
-            //     let villageId = $(".select-village").val();
-            //     if (!villageId || villageId === "-1") {
-            //         $(".select-village").addClass("is-invalid");
-            //         is_valid = false;
-            //     } else {
-            //         $(".select-village").removeClass("is-invalid");
-            //     }
-            //     let add = $("#address").val();
-            //     if (add) {
-            //         $("#address").addClass("is-invalid");
-            //         is_valid = false;
-            //     } else {
-            //         $("#address").removeClass("is-invalid");
-            //     }
             let table = $("#table_list_product tbody tr").length;
             if (!table || table === 0) {
                 is_valid = false;
@@ -594,7 +414,6 @@ Common::authen();
                         let qty = $("[id=qty_" + row_id + "]").val();
                         if (!qty || qty < 1) {
                             is_valid = false;
-                            // toastr.error("Số lượng sản phẩm không đúng!");
                             $("[id=qty_" + row_id + "]").addClass("is-invalid");
                             // return false;
                         } else {
@@ -604,7 +423,6 @@ Common::authen();
                         if (reduce) {
                             reduce = replaceComma(replacePercent(reduce));
                             if (isNaN(reduce) || Number(reduce) < 0) {
-                                // toastr.error("Giảm giá không đúng!");
                                 $("[id=reduce_" + row_id + "]").addClass("is-invalid");
                                 is_valid = false;
                                 // return false;
@@ -617,7 +435,6 @@ Common::authen();
                     }
                 });
             }
-
             let payment_type = $("#payment_type").val();
             if(payment_type && payment_type === "0") {
                 let customer_payment = format_money(replaceComma($("#payment").val()));
@@ -629,35 +446,9 @@ Common::authen();
                     $("#payment").removeClass("is-invalid");
                 }
             }
-            // let rowProductNumber = get_row_index();
-            // for (let i = 1; i <= rowProductNumber; i++) {
-            //     let sku = $("#sku_" + i).val();
-            //     console.log(sku);
-            //     if (!sku) {
-            //         $("#sku_" + i).addClass("is-invalid");
-            //         is_valid = false;
-            //     } else {
-            //         $("#sku_" + i).removeClass("is-invalid");
-            //     }
-            // }
-
-
-            // else {
-            //     $("#table_list_product tbody tr").each(function () {
-            //         let row_id = $(this).attr("id");
-            //         if(row_id) {
-            //             row_id = row_id.split("_")[1];
-            //             let product_id = $("[id=qty_"+row_id+"]").text();
-            //             let variant_id = $("[id=variant_id_"+row_id+"]").text();
-            //         }
-            //     });
-            // }
-            
-
             if(!is_valid) {
                 toastr.error("Đã xảy ra lỗi");
             }
-
             return is_valid;
         }
 
@@ -680,33 +471,17 @@ Common::authen();
                 $("#bill_of_lading_no").prop("disabled", true);
                 $("#shipping_fee").prop("disabled", true);
                 $("#shipping_unit").prop("disabled", true);
-                // $("#customer_name").prop("disabled", true);
-                // $("#customer_phone").prop("disabled", true);
                 $("#order_source").prop("disabled", true);
                 $("#shipping").prop("disabled", true);
-                // $("#btn_add_customer").prop("disabled", true);
-                // $("#email").prop("disabled", true);
-                // $("#select_city").prop("disabled", true);
-                // $("#select_district").prop("disabled", true);
-                // $("#select_village").prop("disabled", true);
-                // $("#address").prop("disabled", true);
                 $("#payment_type").val("0").trigger("change");
             } else {
                 // online
                 $("#bill_of_lading_no").prop("disabled", "");
                 $("#shipping_fee").prop("disabled", "");
                 $("#shipping_unit").prop("disabled", "");
-                // $("#customer_name").prop("disabled", "").prop("readonly", true);
-                // $("#customer_phone").prop("disabled", "");
                 $("#order_source").prop("disabled", "");
-                // $("#btn_add_customer").prop("disabled", "");
                 $("#shipping").prop("disabled", "");
                 $("#payment_type").val("1").trigger("change");
-                // $("#email").prop("disabled", "");
-                // $("#select_city").prop("disabled", "");
-                // $("#select_district").prop("disabled", "");
-                // $("#select_village").prop("disabled", "");
-                // $("#address").prop("disabled", "");
             }
         }
 
@@ -714,136 +489,103 @@ Common::authen();
             if (!validate_order()) {
                 return;
             }
+            let total_amount = replaceComma($("#total_amount").text());
+            let total_reduce = replaceComma($("#total_reduce").text());
+            let total_checkout = replaceComma($("#total_checkout").text());
+            let discount = replaceComma($("#discount").val());
+            if (discount.indexOf("%") > -1) {
+                discount = discount.replace("%", "");
+                discount = (discount * total_checkout) / 100;
+            }
+            let customer_payment = replaceComma($("#payment").val());
+            let payment_type = $("#payment_type").val();
+            let repay = Number(replaceComma($("#repay").val()));
+            let transferToWallet = 0;
+            // let totalBallanceInWallet = 0;
+            let totalUsePoint = 0;
+            let totalRemainPoint = 0;
+            let totalSavedPoint = 0;
+            let customer_id = $("#customer_id").val();
+            // if(customer_id && Number(customer_id) > 0) {
+            //     totalBallanceInWallet = Number(replaceComma($("#totalBallanceInWallet").text()));
+            //     totalUsePoint = Number(replaceComma($("#totalUsePoint").val()));
+            //     if (!totalBallanceInWallet || totalBallanceInWallet === 0) {
+            //         totalUsePoint = 0;
+            //     }
+            //     totalRemainPoint = totalBallanceInWallet - totalUsePoint;
+            //     totalSavedPoint = Number(replaceComma($("#total_saved_point").text()));
+            // }
+
             let data = {};
             data["order_type"] = $('#order_type').val();
             data["order_id"] = $("#order_id").val();
-
             let source = 0;// shop
             let order_type = $('#order_type').val();
-            data["customer_id"] = $("#customer_id").val();
+            data["customer_id"] = customer_id;
             if (order_type == "1") {
                 // online
                 data["bill_of_lading_no"] = $("#bill_of_lading_no").val();
                 data["shipping_fee"] = replaceComma($("#shipping_fee").val());
                 data["shipping_unit"] = $("#shipping_unit").val();
-                // data["customer_name"] = $("#customer_name").val();
-                // data["phone_number"] = $("#customer_phone").val();
-                // data["email"] = $("#email").val();
-                // data["cityId"] = $(".select-city").val();
-                // data["districtId"] = $(".select-district").val();
-                // data["villageId"] = $(".select-village").val();
-                // data["address"] = $("#address").val();
                 source = $("#order_source").val();
             }
             data["source"] = source;
             data["shipping"] = replaceComma($("#shipping").val());
-            data["discount"] = replaceComma($("#discount").val());
-            data["total_amount"] = replaceComma($("#total_amount").text());
-            data["total_checkout"] = replaceComma($("#total_checkout").text());
-            data["repay"] = replaceComma($("#repay").text());
-            data["payment_type"] = $("#payment_type").val();
+            data["discount"] = discount;
+            data["total_amount"] = total_amount;
+            data["wallet"] = totalUsePoint;
+            data["total_reduce"] = total_reduce;
+            data["total_checkout"] = total_checkout;
+            data["payment_type"] = payment_type;
+            data["repay"] = repay;
+            data["transfer_to_wallet"] = transferToWallet;
             data["order_date"] = $("#orderDate").val();
             data["order_status"] = $("#order_status").val();
-            data["customer_payment"] = replaceComma($("#payment").val());
-
-            // let rowProductNumber = get_row_index();
+            data["customer_payment"] = customer_payment;
+            data["voucher_code"] = '';
+            data["voucher_value"] = '';
+            data["current_order_id"] = 0;
+            data["payment_exchange_type"] = 0;
+            data["wallet_used"] = totalUsePoint;
+            data["wallet_saved"] = totalSavedPoint;
+            data["wallet_repay"] = transferToWallet;
+            data["wallet_remain"] = totalRemainPoint;
 
             let products = [];
             $("#table_list_product tbody tr").each(function () {
                 let row_id = $(this).attr("id");
                 if (row_id) {
+                    let price = replaceComma($("[id=price_" + row_id + "]").text());
+                    let quantity = $("[id=qty_" + row_id + "]").val();
+                    let reduce = Number(replacePercent(replaceComma($("[id=reduce_" + row_id + "]").val())));
+                    let reduce_type = 0;
+                    let reduce_percent = "";
+                    if(reduce > 0) {
+                        if (reduce < 101) {
+                            reduce_percent = reduce;
+                            reduce = (reduce * price) / 100;
+                            reduce_type = 0;
+                        } else {
+                            reduce_percent = Math.round(reduce * 100 / (price * quantity));
+                            reduce_type = 1;
+                        }
+                    }
                     let product = {};
                     row_id = row_id.split("_")[1];
                     product["product_id"] = $("[id=product_id_" + row_id + "]").text();
-                    // let product_id = $("[id=product_id_"+row_id+"]").text();
-                    // if(product_id) {
-                    //     product["product_id"] = product_id;
-                    // } else {
-                    //     return;
-                    // }
                     product["variant_id"] = $("[id=variant_id_" + row_id + "]").text();
-                    // let variant_id = $("[id=variant_id_"+row_id+"]").text();
-                    // if(variant_id) {
-                    //     product["variant_id"] = variant_id;
-                    // } else {
-                    //     return;
-                    // }
                     product["sku"] = $("[id=sku_" + row_id + "]").text();
-                    // let sku = $("[id=sku_"+row_id+"]").text();
-                    // if(sku) {
-                    //     product["sku"] = sku;
-                    // } else {
-                    //     return;
-                    // }
-                    product["price"] = replaceComma($("[id=price_" + row_id + "]").text());
-                    // let price = $("[id=price_"+row_id+"]").text();
-                    // if(price) {
-                    //     product["price"] = replaceComma(price);
-                    // } else {
-                    //     return;
-                    // }
-                    product["quantity"] = $("[id=qty_" + row_id + "]").val();
-                    // let qty = $("[id=qty_"+row_id+"]").val();
-                    // if(qty) {
-                    //     product["quantity"] = qty;
-                    // } else {
-                    //     return;
-                    // }
-                    product["reduce"] = replacePercent(replaceComma($("[id=reduce_" + row_id + "]").val()));
-                    // let reduce = $("[id=reduce_"+row_id+"]").val();
-                    // if(reduce) {
-                    //     product["reduce"] = replacePercent(replaceComma(reduce));
-                    // } else {
-                    //     product["reduce"] = 0;
-                    // }
+                    product["product_name"] = $("[id=product_name_" + row_id + "]").text();
+                    product["price"] = price;
+                    product["quantity"] = quantity;
+                    product["reduce"] = reduce;
+                    product["reduce_percent"] = reduce_percent;
+                    product["reduce_type"] = reduce_type;
+                    product["product_exchange"] = 0;
                     product["profit"] = replaceComma($("[id=profit_" + row_id + "]").text());
-                    // let profit = $("[id=profit_"+row_id+"]").text();
-                    // if(profit) {
-                    //     product["profit"] = replaceComma(profit);
-                    // } else {
-                    //     return;
-                    // }
                     products.push(product);
                 }
             });
-
-
-            // for (let i = 1; i <= rowProductNumber; i++) {
-            //     let product = {};
-            //     let sku = $("#sku_" + i).val();
-            //     if (typeof sku !== "undefined" && sku !== "") {
-            //         product["sku"] = $("#sku_" + i).val();
-            //     } else {
-            //         continue;
-            //     }
-            //
-            //     let detailId = $("#detailId_" + i).val();
-            //     if (typeof detailId !== "undefined" && detailId !== "") {
-            //         product["detail_id"] = $("#detailId_" + i).val();
-            //     }
-            //     let prodId = $("#prod_" + i).val();
-            //     if (typeof prodId !== "undefined" && prodId !== "") {
-            //         product["product_id"] = $("#prod_" + i).val();
-            //     }
-            //     let variantId = $("#variantId_" + i).val();
-            //     if (typeof variantId !== "undefined" && variantId !== "") {
-            //         product["variant_id"] = $("#variantId_" + i).val();
-            //     }
-            //
-            //     let qty = $("#prodQty_" + i).val();
-            //     if (typeof qty !== "undefined" && qty !== "") {
-            //         product["quantity"] = $("#prodQty_" + i).val();
-            //     }
-            //     let price = $("#prodPrice_" + i).val();
-            //     if (typeof price !== "undefined" && price !== "") {
-            //         product["price"] = replaceComma($("#prodPrice_" + i).val());
-            //     }
-            //     let reduce = $("#prodReduce_" + i).val();
-            //     if (typeof reduce !== "undefined" && reduce !== "") {
-            //         product["reduce"] = replaceComma($("#prodReduce_" + i).val());
-            //     }
-            //     products.push(product);
-            // }
             if(products.length === 0) {
                 alert_error_message("Chưa có sản phẩm hoặc thông tin sản phẩm lỗi. Vui lòng kiểm tra lại");
                 return;
@@ -885,11 +627,12 @@ Common::authen();
                             }
                             Swal.fire(msg).then((result) => {
                                 if (result.value) {
-                                    reset_data();
-                                    $("#create_order .close").click();
-                                    hide_loading();
-                                    table.ajax.reload();
-                                    get_info_total_checkout($("#startDate").val(), $("#endDate").val());
+                                    // reset_data();
+                                    // $("#create_order .close").click();
+                                    // hide_loading();
+                                    // table.ajax.reload();
+                                    // get_info_total_checkout('date');
+                                    window.location.reload();
                                 }
                             });
                         },
@@ -1074,11 +817,6 @@ Common::authen();
             val = replacePercent(val);
             val = format_money(val);
             if (isNaN(val) || val < 0) {
-                // Swal.fire({
-                //     type: 'error',
-                //     title: 'Đã xảy ra lỗi',
-                //     text: 'Giá trị nhập vào phải là số!',
-                // });
                 $(e).addClass("is-invalid");
                 return;
             } else {
@@ -1140,23 +878,7 @@ Common::authen();
             $("#total_" + row_index).text(formatNumber(subtotal));
         }
 
-        function calculate_total() {
-            let total = 0;
-            let row_index = 1;
-            $("#table_list_product tbody tr").each(function () {
-                let subtotal = $("#total_" + row_index).text();
-                if (subtotal && subtotal !== '') {
-                    total += Number(replaceComma(subtotal));
-                }
-                row_index++;
-            });
-            $("#total_amount").text(formatNumber(total));
 
-            let shipping = $("#shipping").val();
-            let discount = $("#discount").val();
-            let total_checkout = total + Number(replaceComma(shipping)) - Number(replaceComma(discount));
-            $("#total_checkout").text(formatNumber(total_checkout));
-        }
 
         function delete_product_in_list(rowIndex) {
             Swal.fire({
@@ -1281,33 +1003,48 @@ Common::authen();
             });
         }
 
+        function calculate_total() {
+            let total = 0;
+            let total_reduce = 0;
+            let row_index = 1;
+            $("#table_list_product tbody tr").each(function () {
+                let subtotal = $("#total_" + row_index).text();
+                if (subtotal && subtotal !== '') {
+                    total += Number(replaceComma(subtotal));
+                }
+                let price = Number(replaceComma($("#total_" + row_index).text()));
+                let qty = Number(replaceComma($("#qty_" + row_index).val()));
+                let reduce = Number(replaceComma(replacePercent($("#reduce_" + row_index).val())));
+                if (reduce > 0 ) {
+                    if(reduce < 101) {
+                        total_reduce += reduce * price * qty / 100;
+                        $("#reduce_" + row_index).val(reduce + "%");
+                    } else {
+                        total_reduce += reduce;
+                        $("#reduce_" + row_index).val(formatNumber(reduce));
+                    }
+                }
+                row_index++;
+            });
+            setTimeout(function () {
+                $("#total_amount").text(formatNumber(total));
+                $("#total_reduce").text(formatNumber(total_reduce));
+                let shipping_fee = Number(replaceComma($("#shipping_fee").val()));
+                let shipping = Number(replaceComma($("#shipping").val()));
+                let discount = Number(replaceComma($("#discount").val()));
+                let total_checkout = total + shipping - discount - shipping_fee;
+                $("#total_checkout").text(formatNumber(total_checkout));
+            },300);
 
-
-
-
-
-        
-        
-        
+        }
         function on_change_total() {
-            // let total_amount = 0;
-            // let rowProductNumber = $(".count-row").val();
-            // for (let i = 1; i <= rowProductNumber; i++) {
-            //     let prodTotal = $("#prodTotal_" + i).val();
-            //     if (typeof prodTotal !== "undefined" && prodTotal !== "") {
-            //         prodTotal = Number(replaceComma(prodTotal));
-            //         total_amount += prodTotal;
-            //     }
-            // }
             let total_amount = Number(replaceComma($("#total_amount").text()));
-
             let shipping = $("#shipping").val();
             if (shipping !== "") {
                 shipping = Number(format_money(replaceComma(shipping)));
             }
             let discount = $("#discount").val();
             if (discount !== "") {
-                // discount = format_money(discount);
                 discount = Number(format_money(replaceComma(discount)));
             }
             let total_checkout = total_amount + shipping - discount;
@@ -1325,7 +1062,8 @@ Common::authen();
                 $("[id=" + totalId + "]").val(0);
             }
             $("[id=" + totalId + "]").trigger("change");
-            on_change_total(rowIndex);
+            // on_change_total(rowIndex);
+            calculate_total();
         }
 
         function on_change_reduce(e, qtyId, priceId, totalId, rowIndex) {
@@ -1352,7 +1090,8 @@ Common::authen();
                     $("[id=" + totalId + "]").val(0);
                 }
                 $("[id=" + totalId + "]").trigger("change");
-                on_change_total(rowIndex);
+                // on_change_total(rowIndex);
+                calculate_total();
             }
         }
 
@@ -1369,23 +1108,6 @@ Common::authen();
             }
             $(".count-row").val(idx);
         }
-
-        // function formatNumber(num) {
-        //     return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-        // }
-
-        // function validateEmail(email) {
-        //     let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        //     return re.test(String(email).toLowerCase());
-        // }
-
-        // function replaceComma(value) {
-        //     return value.replace(/,/g, '');
-        // }
-        //
-        // function replacePercent(value) {
-        //     return value.replace(/%/g, '');
-        // }
 
         function onfocus_check(e) {
             $(e).removeClass("is-invalid");
@@ -1435,7 +1157,8 @@ Common::authen();
                                 $("[id=" + prodQty + "]").attr("disabled", "disabled");
                             }
                             $("[id=" + prodQty + "]").trigger("change");
-                            on_change_total(rowIndex);
+                            // on_change_total(rowIndex);
+                            calculate_total();
                             $(".add-new-prod").prop("disabled", false);
                             check_products_list();
                         });
@@ -1472,7 +1195,8 @@ Common::authen();
                 }
                 $("[id=" + prodQty + "]").trigger("change");
                 // $("[id="+totalId+"]").trigger("change");
-                on_change_total();
+                // on_change_total();
+                calculate_total();
             });
         }
 
@@ -1491,8 +1215,9 @@ Common::authen();
                     if (result.value) {
                         $(e).closest("[id='" + p + "']").remove();
                         toastr.success('Sản phẩm đã được xóa thành công.');
-                        on_change_total(rowIndex);
+                        // on_change_total(rowIndex);
                         // check_products_list();
+                        calculate_total();
                         let product_list = get_length_product_list();
                         if(product_list === 0) {
                             set_row_index(1);

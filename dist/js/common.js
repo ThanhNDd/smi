@@ -2,12 +2,32 @@
 $(document).ready(function () {
 
     $('.datepicker').datepicker({
-        format: 'dd/mm/yyyy',
+        format: 'dd/mm/yyyy HH:mi:ss',
         language: 'vi',
         todayBtn: true,
         todayHighlight: true,
         autoclose: true
     });
+
+    if (window.jQuery().datetimepicker) {
+        $('.datetimepicker').datetimepicker({
+            // Formats
+            format: 'YYYY-MM-DD hh:mm:ss',
+            // Your Icons
+            // as Bootstrap 4 is not using Glyphicons anymore
+            icons: {
+                time: 'far fa-clock',
+                date: 'fa fa-calendar',
+                up: 'fa fa-chevron-up',
+                down: 'fa fa-chevron-down',
+                previous: 'fa fa-chevron-left',
+                next: 'fa fa-chevron-right',
+                today: 'fa fa-check',
+                clear: 'fa fa-trash',
+                close: 'fa fa-times'
+            }
+        });
+    }
 
 });
 

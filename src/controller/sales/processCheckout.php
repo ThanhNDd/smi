@@ -75,7 +75,6 @@ if (isset($_POST["type"]) && $_POST["type"] == "checkout") {
         $order->setPayment_type($data->payment_type);
         $order->setRepay($data->repay);
         $order->setTransferToWallet($data->transfer_to_wallet);
-//        $order->setRepayType($data->repay_type);
         $order->setCustomer_id($data->customer_id);
         $order->setType(0);
         $order->setStatus(3);
