@@ -554,6 +554,7 @@ Common::authen();
             let products = [];
             $("#table_list_product tbody tr").each(function () {
                 let row_id = $(this).attr("id");
+                row_id = row_id.replace("row_","");
                 if (row_id) {
                     let price = replaceComma($("[id=price_" + row_id + "]").text());
                     let quantity = $("[id=qty_" + row_id + "]").val();
@@ -571,7 +572,6 @@ Common::authen();
                         }
                     }
                     let product = {};
-                    row_id = row_id.split("_")[1];
                     product["product_id"] = $("[id=product_id_" + row_id + "]").text();
                     product["variant_id"] = $("[id=variant_id_" + row_id + "]").text();
                     product["sku"] = $("[id=sku_" + row_id + "]").text();

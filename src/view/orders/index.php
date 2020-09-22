@@ -270,8 +270,19 @@ Common::authen();
             get_info_total_checkout('date');
         });
 
+        let order_id = "<?php echo (isset($_GET['order_id']) ? $_GET['order_id'] : '') ?>";
+        if(order_id) {
+            $("#search_order_id").val(order_id);
+            setTimeout(function () {
+                $('#search_order_id').trigger(
+                    jQuery.Event( 'keydown', { keyCode: 13, which: 13 } )
+                );
+            },100);
+        }
+
         $( "#search_order_id" ).on( "keydown", function( event ) {
             let key = event.which;
+            console.log(key);
             if(key === 13) {
                 $("#search_phone").val("");
                 $("#search_customer_id").val("");
@@ -285,6 +296,16 @@ Common::authen();
                 }
             }
         });
+
+        let customer_phone = "<?php echo (isset($_GET['customer_phone']) ? $_GET['customer_phone'] : '') ?>";
+        if(customer_phone) {
+            $("#search_phone").val(customer_phone);
+            setTimeout(function () {
+                $('#search_phone').trigger(
+                    jQuery.Event( 'keydown', { keyCode: 13, which: 13 } )
+                );
+            },100);
+        }
         $( "#search_phone" ).on( "keydown", function( event ) {
             let key = event.which;
             if(key === 13) {
@@ -300,6 +321,16 @@ Common::authen();
                 }
             }
         });
+
+        let customer_id = "<?php echo (isset($_GET['customer_id']) ? $_GET['customer_id'] : '') ?>";
+        if(customer_id) {
+            $("#search_customer_id").val(customer_id);
+            setTimeout(function () {
+                $('#search_customer_id').trigger(
+                    jQuery.Event( 'keydown', { keyCode: 13, which: 13 } )
+                );
+            },100);
+        }
         $( "#search_customer_id" ).on( "keydown", function( event ) {
             let key = event.which;
             if(key === 13) {
@@ -508,8 +539,8 @@ Common::authen();
             let tdi = tr.find("i.fa");
             let row = table.row(tr);
             let order_id = row.data().order_id;
-            let start_date = $("#startDate").val();
-            let end_date = $("#endDate").val();
+            // let start_date = $("#startDate").val();
+            // let end_date = $("#endDate").val();
             if (row.child.isShown()) {
                 // This row is already open - close it
                 row.child.hide();
@@ -658,6 +689,7 @@ Common::authen();
                 $(".iframeArea").html("");
                 if (typeof filename !== "underfined" && filename !== "") {
                     $(".iframeArea").html('<iframe src="<?php Common::getPath() ?>src/controller/orders/pdf/receipt.html" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
+                    //$(".iframeArea").html('<iframe src="<?php //Common::getPath() ?>//src/controller/orders/pdf/'+filename+'" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
                     setTimeout(function () {
                         let objFra = document.getElementById('receiptContent');
                         objFra.contentWindow.focus();
@@ -696,7 +728,7 @@ Common::authen();
                 if (order_type == 1) {
                     $("#bill_of_lading_no").val(value[0].bill_of_lading_no);
                     $("#shipping_fee").val(value[0].shipping_fee);
-                    $("#shipping").val(value[0].shipping).trigger("change");
+                    $("#shipping").val(value[0].shipping);
                     $("#bill_of_lading_no").prop("disabled", false);
                     $("#shipping_fee").prop("disabled", false);
                     $(".select-shipping-unit").prop("disabled", false);
@@ -708,12 +740,12 @@ Common::authen();
                     $("#shipping_fee").prop("disabled", true);
                     $(".select-shipping-unit").prop("disabled", true);
                     $("#shipping").prop("disabled", true);
-                    $("#order_status").val(3).trigger("change");//complete
+                    $("#order_status").val(3);//complete
                 }
-                $("#payment_type").val(value[0].payment_type).trigger("change");
+                $("#payment_type").val(value[0].payment_type);
                 $("#payment").val(value[0].customer_payment);
                 $("#total_amount").text(value[0].total_amount);
-                $("#discount").val(value[0].discount).trigger("change");
+                $("#discount").val(value[0].discount);
                 $("#total_checkout").text(value[0].total_checkout);
                 $("#repay").text(value[0].repay);
                 $(".product-area").html("");
@@ -810,21 +842,21 @@ Common::authen();
             '<div class="row">';
             if (data.customer_id && Number(data.customer_id) > 0) {
                 // online
-                d += '<div class="col-3 col-sm-3 col-md-3"><small>Mã khách hàng</small> <h5>' + data.customer_id + '</h5></div>' +
-                    '<div class="col-6 col-sm-6 col-md-6"><small>Tên khách hàng</small> <h5>' + data.customer_name + '</h5></div>' +
-                    '<div class="col-3 col-sm-3 col-md-3"><small>Số điện thoại</small> <h5>' + data.phone + '</h5></div>';
+                d += '<div class="col-2 col-sm-2 col-md-2"><small>Mã khách hàng</small> <h5>' + data.customer_id + '</h5></div>' +
+                    '<div class="col-2 col-sm-2 col-md-2"><small>Tên khách hàng</small> <h5>' + data.customer_name + '</h5></div>' +
+                    '<div class="col-2 col-sm-2 col-md-2"><small>Số điện thoại</small> <h5>' + data.phone + '</h5></div>';
                 if(data.address) {
                     d +='<div class="row col-12"><small>Địa chỉ</small> <h5 class="col-12 pl-0">' + data.address + '</h5></div>';
                 }
             } else {
-                d += '<div class="col-3 col-sm-3 col-md-3"><small>Khách hàng</small> <h5>Khách lẻ</h5></div>';
+                d += '<div class="col-2 col-sm-2 col-md-2"><small>Khách hàng</small> <h5>Khách lẻ</h5></div>';
             }
             if (data.voucher_code != null && data.voucher_code !== "") {
                 voucher_value = Number((intoMoney * 10) / 100);
-                d += '<div class="col-3 col-sm-3 col-md-3"><small>Mã giảm giá</small> <h5>' + data.voucher_code + ' <small>(-10%)(' + formatNumber(voucher_value) + ' đ)</small></h5></div>';
+                d += '<div class="col-2 col-sm-2 col-md-2"><small>Mã giảm giá</small> <h5>' + data.voucher_code + ' <small>(-10%)(' + formatNumber(voucher_value) + ' đ)</small></h5></div>';
             }
             if (order_refer && Number(order_refer) !== 0) {
-                d += '<div class="col-3 col-sm-3 col-md-3"><small>Mã đơn đổi</small> <h5>' + order_refer + '</h5></div>';
+                d += '<div class="col-2 col-sm-2 col-md-2"><small>Mã đơn đổi</small> <h5>' + order_refer + '</h5></div>';
             }
             d += '</div>';
 
@@ -838,6 +870,11 @@ Common::authen();
             d += '<div class="col-2 col-sm-2 col-md-2"><small>Tiền trong Ví</small> <h5>' + data.wallet + ' <sup>đ</sup></h5></div>';
         }
         d += '<div class="col-2 col-sm-2 col-md-2"><small>Tổng giảm trừ</small> <h5>' + data.total_reduce + ' <sup>đ</sup></h5></div>';
+        let shipping_fee = replaceComma(data.shipping_fee);
+        if(shipping_fee) {
+            d += '<div class="col-2 col-sm-2 col-md-2"><small>Phí ship</small> <h5>' + formatNumber(shipping_fee) + ' <sup>đ</sup></h5></div>';
+            profit = profit - Number(shipping_fee);
+        }
             let total_checkout = data.total_checkout;
             if (payment_exchange_type === '2') {
                 total_checkout = '-' + total_checkout;

@@ -19,6 +19,7 @@ class Customer
     public $active;
     public $purchased;
     public $source_register;
+    public $is_add_zalo;
     public $created_at;
     public $updated_at;
 
@@ -308,6 +309,22 @@ class Customer
     public function setUpdatedAt($updated_at): void
     {
         $this->updated_at = $updated_at;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIsAddZalo()
+    {
+        return $this->is_add_zalo;
+    }
+
+    /**
+     * @param mixed $is_add_zalo
+     */
+    public function setIsAddZalo($is_add_zalo): void
+    {
+        $this->is_add_zalo = $is_add_zalo;
     }
 
 }

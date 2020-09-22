@@ -92,6 +92,10 @@ Common::authen();
                                        id="edit_customer">
                                         <i class="fa fa-edit"></i>
                                     </a>
+                                    <a href="javascript:void(0)" class="d-inline-block text-warning hidden"
+                                       id="show_history">
+                                        <i class="fas fa-history"></i>
+                                    </a>
                                 </div>
                                 <div class="input-group mb-3 hidden" id="check_phone_form">
                                     <input type="text" class="form-control" placeholder="Nhập số điện thoại"
@@ -200,6 +204,7 @@ Common::authen();
 </section>
 <div class="iframeArea" style="visibility: hidden"></div>
 <?php require_once '../customer/createCustomer.php'; ?>
+<?php require_once '../wallet/showHistory.php'; ?>
 <?php require_once('../../common/footer.php'); ?>
 <script type="text/javascript">
     $(document).ready(function () {
@@ -301,6 +306,7 @@ Common::authen();
             $("#out_customer_phone").addClass("hidden").val("");
             $("#customer_retail").removeClass("hidden");
             $("#edit_customer").addClass("hidden");
+            $("#show_history").addClass("hidden");
             $("#input_customer_phone").addClass("hidden").val("");
             $(this).addClass("hidden");
             $(".saved-point").addClass("hidden");
@@ -314,6 +320,13 @@ Common::authen();
         $("#edit_customer").click(function () {
             let customer_id = $("#customer_id").val();
             edit_customer(customer_id);
+        });
+
+        $("#show_history").click(function () {
+            let customer_id = $("#customer_id").val();
+            let customer_name = $("#out_customer_name").text();
+            let customer_phone = $("#out_customer_phone").text().trim();
+            show_history(customer_id, customer_name, customer_phone);
         });
 
         $("#totalUsePoint").on('keyup',function () {
@@ -425,6 +438,7 @@ Common::authen();
                     $("#out_customer_phone span").text(res.phone);
                     $("#remove_customer").removeClass("hidden");
                     $("#edit_customer").removeClass("hidden");
+                    $("#show_history").removeClass("hidden");
                     setTimeout(function () {
                         $(".point").removeClass("hidden");
                         get_ballance_in_wallet(res.id);

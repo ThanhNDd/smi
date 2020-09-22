@@ -81,7 +81,6 @@ class CustomerDAO
             $result = mysqli_query($this->conn, $sql);
             $data = array();
             foreach ($result as $k => $row) {
-//                $address = $this->get_address($row);
                 $customer = array(
                     'id' => $row["id"],
                     'avatar' => $row["avatar"],
@@ -94,6 +93,7 @@ class CustomerDAO
                     'birthday' => $row["birthday"] ? date_format(date_create($row["birthday"]), "d/m/Y") : '',
                     'purchased' => $row["purchased"],
                     'active' => $row["active"],
+                    'is_add_zalo' => $row["is_add_zalo"],
                     'created_at' => date_format(date_create($row["created_at"]), "d/m/Y H:i:s"),
                 );
                 array_push($data, $customer);
@@ -261,7 +261,6 @@ class CustomerDAO
                 $where .= " and email = '$value' ";
             }
             $sql = "select count(*) as c from smi_customers where $where";
-//      var_dump($sql);
             $result = mysqli_query($this->conn, $sql);
             $count = 0;
             foreach ($result as $k => $row) {
@@ -305,10 +304,28 @@ class CustomerDAO
             }
             $stmt->close();
         } catch (Exception $e) {
-            throw new Exception($e->getMessage());
+            echo $e->getMessage();
+        }
+
+    }
+    function add_zalo($id, $status)
+    {
+        try {
+            $stmt = $this->getConn()->prepare("update smi_customers SET is_add_zalo = ? WHERE id = ?");
+            if($stmt) {
+                $stmt->bind_param("ii", $status, $id);
+                $result = $stmt->execute();
+                if (!$result) {
+                    throw new Exception($stmt->error);
+                }
+                $stmt->close();
+            } else {
+                throw new Exception($stmt->error);
+            }
+        } catch (Exception $e) {
+            echo $e->getMessage();
         }
     }
-
 
 
     /**

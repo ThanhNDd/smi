@@ -19,3 +19,14 @@ if (isset($_POST["method"]) && $_POST["method"] == "get_ballance_in_wallet") {
         echo $e->getMessage();
     }
 }
+
+if (isset($_POST["method"]) && $_POST["method"] == "show_history") {
+    try {
+        Common::authen_get_data();
+        $customer_id = $_POST["customerId"];
+        $wallet = $dao->find_by_customer_id($customer_id);
+        echo json_encode($wallet);
+    } catch (Exception $e) {
+        throw new Exception($e);
+    }
+}

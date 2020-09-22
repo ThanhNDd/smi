@@ -13,16 +13,17 @@ Common::authen();
     <?php require_once('../../common/css.php'); ?>
     <?php require_once('../../common/js.php'); ?>
     <style>
-      td.details-control {
-        text-align: center;
-        color: forestgreen;
-        cursor: pointer;
-      }
+        td.details-control {
+            text-align: center;
+            color: forestgreen;
+            cursor: pointer;
+        }
 
-      tr.shown td.details-control {
-        text-align: center;
-        color: red;
-      }
+        tr.shown td.details-control {
+            text-align: center;
+            color: red;
+        }
+
         div#table_customer_filter label {
             width: 100%;
             float: left;
@@ -42,34 +43,36 @@ Common::authen();
         /*    border-radius: 0 !important;*/
         /*    margin: 0 !important;*/
         /*}*/
-      /*.dataTables_wrapper .dataTables_paginate .paginate_button:hover {*/
-      /*  background: linear-gradient(to bottom, #ffffff 0%, #ffffff 100%) !important;*/
-      /*  border: #ffffff !important;*/
-      /*}*/
-      .customer-inactive td, .customer-inactive a {
-        color: slategray;
-      }
-      div#table_customer_wrapper {
-          padding: 20px;
-      }
-      /*table.dataTable tbody th, table.dataTable tbody td {*/
-      /*  padding: 3px 10px !important;*/
-      /*}*/
-      /*.dataTable td, .dataTable th {*/
-      /*  font-size: 14px !important;*/
-      /*}*/
-      /*table.dataTable thead th, table.dataTable thead td {*/
-      /*  padding: 5px 10px !important;*/
-      /*}*/
-      /*table.dataTable thead th, table.dataTable thead td {*/
-      /*  border-bottom: 1px solid #1110 !important;*/
-      /*}*/
-      /*.dataTables_wrapper.no-footer .dataTables_scrollBody {*/
-      /*  border-bottom: 1px solid #1110 !important;*/
-      /*}*/
-      /*.dataTables_filter {*/
-      /*  display: none;*/
-      /*}*/
+        /*.dataTables_wrapper .dataTables_paginate .paginate_button:hover {*/
+        /*  background: linear-gradient(to bottom, #ffffff 0%, #ffffff 100%) !important;*/
+        /*  border: #ffffff !important;*/
+        /*}*/
+        .customer-inactive td, .customer-inactive a {
+            color: slategray;
+        }
+
+        div#table_customer_wrapper {
+            padding: 20px;
+        }
+
+        /*table.dataTable tbody th, table.dataTable tbody td {*/
+        /*  padding: 3px 10px !important;*/
+        /*}*/
+        /*.dataTable td, .dataTable th {*/
+        /*  font-size: 14px !important;*/
+        /*}*/
+        /*table.dataTable thead th, table.dataTable thead td {*/
+        /*  padding: 5px 10px !important;*/
+        /*}*/
+        /*table.dataTable thead th, table.dataTable thead td {*/
+        /*  border-bottom: 1px solid #1110 !important;*/
+        /*}*/
+        /*.dataTables_wrapper.no-footer .dataTables_scrollBody {*/
+        /*  border-bottom: 1px solid #1110 !important;*/
+        /*}*/
+        /*.dataTables_filter {*/
+        /*  display: none;*/
+        /*}*/
     </style>
 </head>
 <?php require_once('../../common/header.php'); ?>
@@ -86,19 +89,20 @@ Common::authen();
             </div>
             <table id="table_customer" class="table table-hover table-striped">
                 <thead>
-                    <tr>
-                      <th></th>
-                      <th class="hidden"></th>
-                      <th></th>
-                      <th>Họ tên</th>
-                      <th>Địa chỉ</th>
-                      <th>Số điện thoại</th>
-                      <th>Ngày sinh</th>
-                      <th>Email</th>
-                      <th>Facebook</th>
-                      <th>Số lần mua hàng </th>
-                      <th>Ngày tạo</th>
-                    </tr>
+                <tr>
+                    <th></th>
+                    <th class="hidden"></th>
+                    <th></th>
+                    <th>Họ tên</th>
+                    <th>Địa chỉ</th>
+                    <th>Số điện thoại</th>
+                    <th>Zalo</th>
+                    <th>Ngày sinh</th>
+                    <th>Email</th>
+                    <th>Facebook</th>
+                    <th>Số lần mua hàng</th>
+                    <th>Ngày tạo</th>
+                </tr>
                 </thead>
                 <tbody>
                 </tbody>
@@ -111,45 +115,18 @@ Common::authen();
 <script>
     $(document).ready(function () {
         set_title("Danh sách khách hàng");
-
-        // $('#table_customer thead td').each( function () {
-        //     let width = $(this).attr('width');
-        //     $(this).html( '<input type="text" style="width:'+width+'"  autocomplete="chrome-off"/>' );
-        // } );
         loadall();
         $('[data-toggle="tooltip"]').tooltip();
     });
+
     function loadall() {
         let table = $('#table_customer').DataTable({
             "ajax": '<?php Common::getPath() ?>src/controller/customer/CustomersController.php?method=findall',
-            // initComplete: function () {
-            //     // Apply the search
-            //     this.api().columns().every( function () {
-            //         let that = this;
-            //         $( 'input', this.header() ).on( 'keyup change clear', function () {
-            //             if ( that.search() !== this.value ) {
-            //                 that.search( this.value ).draw();
-            //             }
-            //         } );
-            //     } );
-            // },
-            // searching: false,
             ordering: false,
             select: "single",
             deferRender: true,
             rowId: 'extn',
-            // "scrollX": true,
             "columns": [
-                // {
-                //     "className": 'details-control',
-                //     "orderable": false,
-                //     "data": null,
-                //     "defaultContent": '',
-                //     "render": function () {
-                //         return '<i class="fa fa-plus-square" aria-hidden="true"></i>';
-                //     },
-                //     width: "5px"
-                // },
                 {
                     "data": format_action,
                     "orderable": false,
@@ -158,7 +135,7 @@ Common::authen();
                 {
                     "data": "id",
                     "orderable": false,
-                    "class":'hidden',
+                    "class": 'hidden',
                     width: "40px"
                 },
                 {
@@ -178,6 +155,11 @@ Common::authen();
                 },
                 {
                     "data": "phone",
+                    "orderable": false,
+                    width: "50px"
+                },
+                {
+                    "data": format_add_friend_zalo,
                     "orderable": false,
                     width: "50px"
                 },
@@ -210,10 +192,10 @@ Common::authen();
         });
 
         $('#table_customer tbody').on('click', '.edit_customer', function () {
-               let tr = $(this).closest('tr');
-               let row = table.row(tr);
-               let customerId = row.data().id;
-               edit_customer(customerId);
+            let tr = $(this).closest('tr');
+            let row = table.row(tr);
+            let customerId = row.data().id;
+            edit_customer(customerId);
         });
 
         $('#table_customer tbody').on('click', '.active_customer', function () {
@@ -221,87 +203,55 @@ Common::authen();
             let row = table.row(tr);
             let customerId = row.data().id;
             let active_status = row.data().active == 1 ? 0 : 1;
-            // $(tr).find(".active_customer").html(row.data().active == 1 ? '<i class="text-danger fas fa-lock-open"></i>' : '<i class="text-danger fas fa-lock"></i>')
             active_customer(customerId, active_status, tr);
         });
 
-        // Add event listener for opening and closing details
-        //$('#example tbody').on('click', '.details-control', function () {
-        //    let tr = $(this).closest('tr');
-        //    let tdi = tr.find("i.fa");
-        //    let row = table.row(tr);
-        //    let customerId = row.data().id;
-        //
-        //    if (row.child.isShown()) {
-        //        // This row is already open - close it
-        //        row.child.hide();
-        //        tr.removeClass('shown');
-        //        tdi.first().removeClass('fa-minus-square');
-        //        tdi.first().addClass('fa-plus-square');
-        //    } else {
-        //        // Open this row
-        //        $.ajax({
-        //            url: '<?php //Common::getPath() ?>//src/controller/customer/CustomersController.php',
-        //            type: "POST",
-        //            dataType: "json",
-        //            data: {
-        //                method: "find_detail",
-        //                customer_id: customerId
-        //            },
-        //            success: function (res) {
-        //                console.log(res);
-        //                let data = res.data;
-        //                // let details = res[0].details;
-        //                if (data.length > 0) {
-        //                    row.child(format_detail(data[0].variations)).show();
-        //                    tr.addClass('shown');
-        //                    tdi.first().removeClass('fa-plus-square');
-        //                    tdi.first().addClass('fa-minus-square');
-        //                }
-        //            },
-        //            error: function (data, errorThrown) {
-        //                console.log(data.responseText);
-        //                console.log(errorThrown);
-        //                Swal.fire({
-        //                    type: 'error',
-        //                    title: 'Đã xảy ra lỗi',
-        //                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-        //                })
-        //                hide_loading();
-        //            }
-        //        });
-        //    }
-        //});
+        $('#table_customer tbody').on('click', '.add-zalo', function () {
+            let tr = $(this).closest('tr');
+            let row = table.row(tr);
+            let customerId = row.data().id;
+            let status = row.data().is_add_zalo == 1 ? 0 : 1;
+            add_zalo(customerId, status);
+        });
     }
 
     function format_action(data) {
         let btn = '<a href="javascript:void(0)" data-toggle="tooltip" title="Chỉnh sửa" class="edit_customer"><i class="text-info fas fa-edit"></i></a>&nbsp;' +
             '<a href="javascript:void(0)" data-toggle="tooltip" title="Khoá tài khoản" class="active_customer"><i class="text-danger fas fa-lock"></i></a>';
-        if(data.active == 0) {
+        if (data.active == 0) {
             btn = '<a href="javascript:void(0)" data-toggle="tooltip" title="Chỉnh sửa" class="edit_customer"><i class="text-info fas fa-edit"></i></a>&nbsp;' +
                 '<a href="javascript:void(0)" data-toggle="tooltip" title="Mở khoá tài khoản" class="active_customer"><i class="text-danger fas fa-lock-open"></i></a>';
         }
         return btn;
     }
+
     function format_image(data) {
-        if(data.avatar) {
-            let avatar = '<?php Common::path_avatar(); ?>'+data.avatar;
-            return "<a href='"+avatar+"' target='_blank' data-img='"+avatar+"' data-toggle=\"popover-hover\">" +
+        if (data.avatar) {
+            let avatar = '<?php Common::path_avatar(); ?>' + data.avatar;
+            return "<a href='" + avatar + "' target='_blank' data-img='" + avatar + "' data-toggle=\"popover-hover\">" +
                 "<img src='" + avatar + "' width='40px' class=\"img-circle img-fluid\" onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"'></a>";
         } else {
             return "<img src='<?php Common::image_error()?>' width='40px' class=\"img-circle img-fluid\">";
         }
     }
 
+    function format_add_friend_zalo(data) {
+        let checked = data.is_add_zalo == 0 ? "" : 'checked';
+        return "<div class=\"custom-control custom-switch\">" +
+            "<input type=\"checkbox\" class=\"custom-control-input add-zalo\" id=\"add_zalo_"+data.id+"\" "+checked+">" +
+            "<label class=\"custom-control-label\" for=\"add_zalo_"+data.id+"\"></label>" +
+            "</div>";
+    }
+
     function format_facebook(data) {
-        if(data.facebook && data.link_fb) {
-            return '<a href="'+data.link_fb+'" target="_blank">'+data.facebook+'</a>';
+        if (data.facebook && data.link_fb) {
+            return '<a href="' + data.link_fb + '" target="_blank">' + data.facebook + '</a>';
         }
         return '';
     }
 
     function active_customer(customerId, status) {
-        if(customerId) {
+        if (customerId) {
             $.ajax({
                 url: "<?php Common::getPath() ?>src/controller/customer/CustomersController.php",
                 dataType: 'text',
@@ -314,13 +264,36 @@ Common::authen();
                 success: function (res) {
                     console.log(res);
                     hide_loading();
-                    if(res === 'success') {
+                    if (res === 'success') {
                         toastr.success('Cập nhật thành công!!');
-                        // if(status == 0) {
-                        //     $(row).addClass('customer-inactive');
-                        // } else {
-                        //     $(row).removeClass('customer-inactive');
-                        // }
+                        $('#table_customer').DataTable().ajax.reload();
+                    } else {
+                        toastr.error('Cập nhật không thành công!!!');
+                    }
+                }
+            });
+        } else {
+            hide_loading();
+            toastr.error('Đã xảy ra lỗi!!!');
+        }
+    }
+
+    function add_zalo(customerId, status) {
+        if (customerId) {
+            $.ajax({
+                url: "<?php Common::getPath() ?>src/controller/customer/CustomersController.php",
+                dataType: 'text',
+                type: 'post',
+                data: {
+                    customerId: customerId,
+                    method: 'add_zalo',
+                    status: status
+                },
+                success: function (res) {
+                    console.log(res);
+                    hide_loading();
+                    if (res === 'success') {
+                        toastr.success('Cập nhật thành công!!');
                         $('#table_customer').DataTable().ajax.reload();
                     } else {
                         toastr.error('Cập nhật không thành công!!!');

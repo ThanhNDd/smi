@@ -23,6 +23,8 @@ class PrintReceiptOnline
             ]);
             $html = $this->getContent($data);
 
+//            echo $html;
+
             $mpdf->SetDisplayMode('real');
             $mpdf->SetDisplayPreferences('/FitWindow/NoPrintScaling');
             $mpdf->WriteHTML($html);
@@ -108,7 +110,8 @@ class PrintReceiptOnline
                                 </tr>
                                 <tr>
                                     <td colspan="2" class="center">
-                                        <h1>'.$data[0]['bill'].'</h1>
+                                        <h1 style="margin-top:0px; margin-bottom: 0px;">'.$data[0]['bill'].'</h1>
+                                        <p>('.$data[0]['shipping_unit'].')</p>
                                     </td>
                                 </tr>
                                 <tr>

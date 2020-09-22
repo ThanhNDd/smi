@@ -22,14 +22,6 @@ class WalletDAO
     function getBallanceInWallet($customer_id)
     {
         try {
-//            $sql = "SELECT CASE
-//                               WHEN DATE(created_at) < DATE(NOW()) THEN saved + remain
-//                               ELSE remain
-//                           END AS POINT
-//                    FROM smi_wallet
-//                    WHERE customer_id = $customer_id and order_deleted = 0
-//                    ORDER BY created_at DESC
-//                    LIMIT 1";
             $sql = "SELECT saved+remain+repay as ballance_in_wallet
                     FROM smi_wallet
                     WHERE customer_id = $customer_id and order_deleted = 0
@@ -43,6 +35,36 @@ class WalletDAO
                 }
             }
             return $ballance_in_wallet;
+        } catch (Exception $e) {
+            echo "Open connection database is error exception >> " . $e->getMessage();
+        }
+    }
+
+    function find_by_customer_id($customer_id)
+    {
+        try {
+            $sql = "select * from smi_wallet where customer_id = $customer_id and order_deleted = 0 order by created_at desc";
+            $result = mysqli_query($this->conn, $sql);
+            if (!empty($result)) {
+                $data = array();
+                foreach ($result as $k => $row) {
+                    $wallet = array(
+                        'id' => $row["id"],
+                        'customer_id' => $row["customer_id"],
+                        'order_id' => $row["order_id"],
+                        'saved' => number_format($row["saved"]),
+                        'used' => number_format($row["used"]),
+                        'repay' => number_format($row["repay"]),
+                        'remain' => number_format($row["remain"]),
+                        'created_at' => date_format(date_create($row["created_at"]), "d/m/Y H:i:s"),
+                    );
+                    array_push($data, $wallet);
+                }
+                $arr = array();
+                $arr["data"] = $data;
+                return $arr;
+            }
+            return null;
         } catch (Exception $e) {
             echo "Open connection database is error exception >> " . $e->getMessage();
         }

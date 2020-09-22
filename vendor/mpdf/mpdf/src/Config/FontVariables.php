@@ -286,6 +286,12 @@ class FontVariables
 				"unbatang" => [/* Korean */
 					'R' => "UnBatang_0613.ttf",
 				],
+                "pony" =>  [
+                    'R' => 'Pony.ttf',
+                ],
+                "roboto" =>  [
+                    'R' => 'Roboto-Regular.ttf',
+                ]
 			],
 
 			// Add fonts to this array if they contain characters in the SIP or SMP Unicode planes
@@ -296,6 +302,8 @@ class FontVariables
 				"dejavuserifcondensed",
 				"dejavuserif",
 				"dejavusansmono",
+                "pony",
+                "roboto"
 			],
 
 			// These next 3 arrays do two things:
@@ -309,17 +317,23 @@ class FontVariables
 				'arial', 'helvetica', 'verdana', 'geneva', 'lucida', 'arialnarrow', 'arialblack',
 				'franklin', 'franklingothicbook', 'tahoma', 'garuda', 'calibri', 'trebuchet', 'lucidagrande', 'microsoftsansserif',
 				'trebuchetms', 'lucidasansunicode', 'franklingothicmedium', 'albertusmedium', 'xbriyaz', 'albasuper', 'quillscript',
-				'humanist777', 'humanist777black', 'humanist777light', 'futura', 'hobo', 'segoeprint'
+				'humanist777', 'humanist777black', 'humanist777light', 'futura', 'hobo', 'segoeprint',
+                "pony",
+                "roboto"
 			],
 
 			'serif_fonts' => ['dejavuserifcondensed', 'serif', 'dejavuserif', 'freeserif', 'liberationserif',
 				'timesnewroman', 'times', 'centuryschoolbookl', 'palatinolinotype', 'centurygothic',
 				'bookmanoldstyle', 'bookantiqua', 'cyberbit', 'cambria',
 				'norasi', 'charis', 'palatino', 'constantia', 'georgia', 'albertus', 'xbzar', 'algerian', 'garamond',
+                "pony",
+                "roboto"
 			],
 
 			'mono_fonts' => ['dejavusansmono', 'mono', 'monospace', 'freemono', 'liberationmono', 'courier', 'ocrb', 'ocr-b', 'lucidaconsole',
-				'couriernew', 'monotypecorsiva'
+				'couriernew', 'monotypecorsiva',
+                "pony",
+                "roboto"
 			],
 		];
 	}

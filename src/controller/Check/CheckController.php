@@ -4,6 +4,7 @@ include("../../common/DBConnection.php");
 include("../../model/Check/Check.php");
 include("../../model/Check/CheckDetail.php");
 include("../../model/Check/ResultCheck.php");
+include("../../model/Fee/Fee.php");
 include("../../dao/CheckDAO.php");
 include("../../dao/ProductDAO.php");
 
@@ -123,13 +124,13 @@ if (isset($_POST["method"]) && $_POST["method"] == "checking_finish") {
     // set all quantity of variation to zero before update new quantity
     $product_dao->set_all_quantity_to_zero();
 
-    $check = new Fee();
+    $check = new Check();
     $check->setId($id);
     $check->setStatus(1);// finish
     $check->setProductsChecked($product_checked);
     $check->setMoneyChecked($money_checked);
 
-    $result = $dao->checking_finish($check);
+    $dao->checking_finish($check);
 
     $response_array['success'] = "successfully";
     echo json_encode($response_array);
@@ -145,7 +146,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "create_new_check") {
     Common::authen_get_data();
     $total_products = $_POST["total_products"];
     $total_money = $_POST["total_money"];
-    $check = new Fee();
+    $check = new Check();
     $check->setStatus(0);// checking
     $check->setTotalProducts($total_products);
     $check->setProductsChecked(0);
@@ -204,6 +205,18 @@ if (isset($_POST["method"]) && $_POST["method"] == "save_check_detail") {
     echo $e->getMessage();
   }
   $db->commit();
+}
+if (isset($_POST["method"]) && $_POST["method"] == "save_check_tmp") {
+    try {
+        Common::authen_get_data();
+        $sku = $_POST["sku"];
+        $id = $dao->save_check_temp($sku);
+        echo $id;
+    } catch (Exception $e) {
+        $db->rollback();
+        echo $e->getMessage();
+    }
+    $db->commit();
 }
 
 if (isset($_POST["method"]) && $_POST["method"] == "save_result_check") {

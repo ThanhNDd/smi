@@ -19,7 +19,7 @@ class CheckDAO
         }
     }
 
-    function save_check(Fee $check)
+    function save_check(Check $check)
     {
         try {
             $status = $check->getStatus();
@@ -53,7 +53,7 @@ class CheckDAO
             $data["seq"] = $seq;
             return $data;
         } catch (Exception $e) {
-            throw new Exception($e);
+            echo $e->getMessage();
         }
     }
 
@@ -94,6 +94,22 @@ class CheckDAO
             return $lastid;
         } catch (Exception $e) {
             throw new Exception($e);
+        }
+    }
+
+    function save_check_temp($sku)
+    {
+        try {
+            $stmt = $this->getConn()->prepare("INSERT INTO smi_check_detail (`sku`) VALUES (?)");
+            $stmt->bind_param("s", $sku);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $lastid = mysqli_insert_id($this->conn);
+            $stmt->close();
+            return $lastid;
+        } catch (Exception $e) {
+            echo $e->getMessage();
         }
     }
 
@@ -153,7 +169,7 @@ class CheckDAO
         }
     }
 
-    function checking_finish(Fee $check)
+    function checking_finish(Check $check)
     {
         $id = $check->getId();
         $status = $check->getStatus();

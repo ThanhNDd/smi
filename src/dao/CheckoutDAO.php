@@ -169,7 +169,7 @@ class CheckoutDAO
                             'discount' => number_format($row["discount"]),
                             'total_checkout' => number_format($row["total_checkout"]),
                             'payment_type' => $row["payment_type"],
-                            'order_date' => date_format(date_create($row["order_date"]), "d/m/Y H:i:s"),
+                            'order_date' => $row["order_date"],
                             'source' => $row["source"],
                             'wallet' => $row["wallet"],
                             'saved' => $row["saved"],
@@ -421,13 +421,13 @@ class CheckoutDAO
         try {
             $sql = "select tmp.id,
                       tmp.total_checkout as total_checkout, 
-                      sum(tmp.profit) - tmp.discount as total_profit,
+                      sum(tmp.profit) - tmp.discount - tmp.shipping_fee as total_profit,
                       count(tmp.type) as count_type, 
                       tmp.type,
                       tmp.payment_type,
                       count(tmp.product_id) as product
                     from (
-                      SELECT A.id, A.discount,
+                      SELECT A.id, A.discount, A.shipping_fee,
                             t.p as profit,
 							A.type,  A.payment_type,
                             case A.payment_exchange_type
@@ -475,6 +475,9 @@ class CheckoutDAO
                       tmp.payment_type
                     order by 
                       tmp.type";
+
+//                    echo $sql;
+
             $result = mysqli_query($this->conn, $sql);
             $total_checkout = 0;
             $total_on_shop = 0;
@@ -556,6 +559,7 @@ class CheckoutDAO
                         C.district_id,
                         C.village_id,
                         A.shipping,
+                        A.shipping_fee,
                         A.discount,
                         A.wallet,
                         A.total_amount,
@@ -600,6 +604,7 @@ class CheckoutDAO
                         'phone' => $row["phone"],
                         'address' => $row["full_address"],
                         'shipping' => number_format($row["shipping"]),
+                        'shipping_fee' => number_format($row["shipping_fee"]),
                         'discount' => number_format($row["discount"]),
                         'wallet' => number_format($row["wallet"]),
                         'total_amount' => number_format($row["total_amount"]),
@@ -866,12 +871,12 @@ class CheckoutDAO
             $status = $order->getStatus();
             $payment_type = $order->getPayment_type();
             $order_date = $order->getOrder_date();
-            if (!empty($order->getOrder_date())) {
-                $date = $order->getOrder_date();
-                $date = str_replace('/', '-', $date);
-                $date .= date("H:i:s");
-                $order_date = date('Y-m-d H:i:s', strtotime($date));
-            }
+//            if (!empty($order->getOrder_date())) {
+//                $date = $order->getOrder_date();
+//                $date = str_replace('/', '-', $date);
+//                $date .= date("H:i:s");
+//                $order_date = date('Y-m-d H:i:s', strtotime($date));
+//            }
             $source = $order->getSource();
             $id = $order->getId();
             $stmt = $this->getConn()->prepare("update `smi_orders` SET `total_reduce` = ?, `total_reduce_percent` = ?, `discount` = ?, `total_amount` = ?, `total_checkout` = ?, `customer_payment` = ?, `repay` = ?, `customer_id` = ?, `type` = ?, `bill_of_lading_no` = ?, `shipping_fee` = ?, `shipping` = ?, `shipping_unit` = ?, `status` = ?, `updated_date` = NOW(), `deleted` = b'0', `payment_type` = ?, `order_date` = ?, `source` = ? WHERE `id` = ?");
@@ -960,22 +965,21 @@ class CheckoutDAO
                         A.bill_of_lading_no as bill,
                         B.name,
                         B.phone,
-                        B.address,
-                        B.city_id,
-                        B.district_id,
-                        B.village_id
+                        B.full_address,
+                        A.shipping_unit
                     FROM 
                     smi_orders A inner join smi_customers B on A.customer_id = B.id
                     WHERE A.id = " . $order_id;
             $result = mysqli_query($this->conn, $sql);
             $data = array();
             foreach ($result as $k => $row) {
-                $address = $this->get_address($row);
+//                $address = $this->get_address($row);
                 $order = array(
                     'bill' => $row["bill"],
                     'name' => $row["name"],
                     'phone' => $row["phone"],
-                    'address' => $address
+                    'address' => $row["full_address"],
+                    'shipping_unit' => $row["shipping_unit"],
                 );
                 array_push($data, $order);
             }

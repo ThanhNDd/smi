@@ -106,6 +106,7 @@ Common::authen();
       </div>
     </div>
   </div>
+</div>
   <?php require_once('../../common/js.php'); ?>
   <script>
       $(document).ready(function () {
