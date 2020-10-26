@@ -172,14 +172,15 @@ class PrinterReceipt
                             <thead>
                                 <tr>
                                     <td class="center" style="width: 30px;">Stt</td>
-                                    <td colspan="4" class="left">Tên sản phẩm</td>
+                                    <td class="left" style="width: 80px;">Mã sản phẩm</td>
+                                    <td colspan="3" class="left">Tên sản phẩm</td>
                                 </tr>
                                 <tr>
                                     <td class="left"></td>
                                     <td class="center" style="width: 30px;">SL</td>
-                                    <td class="right" style="width: 65px;">Giá</td>
-                                    <td class="right" style="width: 40px;">Giảm giá</td>
-                                    <td class="right" style="width: 65px;">Thành tiền</td>
+                                    <td class="center" style="width: 65px;">Giá</td>
+                                    <td class="center" style="width: 50px;">Giảm giá</td>
+                                    <td class="center" style="width: 65px;">Thành tiền</td>
                                 </tr>
                             </thead>';
             return $header;
@@ -212,9 +213,21 @@ class PrinterReceipt
                 }
                 $intoMoney = $value->getPrice() * $value->getQuantity() - $reduce_value;
                 $c++;
+//                $body .= '<tr>
+//                        <td class="center">'.$c.'</td>
+//                        <td colspan="4" class="left">'.$value->getProductName().'</td>
+//                    </tr>
+//                    <tr>
+//                        <td class="left"></td>
+//                        <td class="center">'.$value->getQuantity().'</td>
+//                        <td class="right">'.number_format($value->getPrice()).'<sup>đ</sup></td>
+//                        <td class="right">'.$reduce.'</td>
+//                        <td class="right">'.number_format($intoMoney).'<sup>đ</sup></td>
+//                    </tr>';
                 $body .= '<tr>
                         <td class="center">'.$c.'</td>
-                        <td colspan="4" class="left">'.$value->getProductName().'</td>
+                        <td class="left">'.$value->getSku().'</td>
+                        <td colspan="3" class="left">'.$value->getProductName().'</td>
                     </tr>
                     <tr>
                         <td class="left"></td>

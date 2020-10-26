@@ -11,9 +11,9 @@ class PrinterReceiptExchange
         
     }  
 
-    function print(Order $order, array $exchange_arr, array $curr_arr, array $add_new_arr)
+    function print(Order $order, array $exchange_arr, array $curr_arr, array $add_new_arr, array $return_arr)
     {
-        try {  
+        try {
             $mpdf = new \Mpdf\Mpdf([
                 'margin_left' => 0,
                 'margin_right' => 0,
@@ -21,13 +21,49 @@ class PrinterReceiptExchange
                 'margin_bottom' => 5,
                 'tempDir' => __DIR__ . '/tmp'
             ]);
+            $no = 1;
+            $is_curr = false;
+            $is_exchange = false;
+            $is_return = false;
+            $is_add_new = false;
             $html = $this->getHeader($order);
-            $html .= $this->getBody('Sản phẩm đã mua',$curr_arr);
-            $html .= $this->getBody('Sản phẩm đổi',$exchange_arr);
-            if(count($add_new_arr) > 0) {
-                $html .= $this->getBody('Sản phẩm mua mới',$add_new_arr);
+            $html .= '<table class="center">
+                    <thead>
+                        <tr>
+                            <td class="center" style="width: 30px;">Stt</td>
+                            <td class="left" style="width: 70px;">Mã sản phẩm</td>
+                            <td colspan="3" class="left">Tên sản phẩm</td>
+                        </tr>
+                        <tr>
+                            <td class="left"></td>
+                            <td class="center" style="width: 30px;">SL</td>
+                            <td class="center" style="width: 65px;">Giá</td>
+                            <td class="center" style="width: 50px;">Giảm giá</td>
+                            <td class="center" style="width: 65px;">Thành tiền</td>
+                        </tr>
+                    </thead>
+                    <tbody>';
+            if(count($exchange_arr) > 0) {
+                $html .= $this->getBody('Sản phẩm đổi', $exchange_arr, $no);
+                $no++;
+                $is_exchange = true;
             }
-            $html .= $this->getFooter($order);
+            if(count($curr_arr) > 0) {
+                $html .= $this->getBody('Sản phẩm đã mua', $curr_arr, $no);
+                $no++;
+                $is_curr = true;
+            }
+            if(count($return_arr) > 0) {
+                $html .= $this->getBody('Sản phẩm trả lại',$return_arr, $no);
+                $no++;
+                $is_return = true;
+            }
+            if(count($add_new_arr) > 0) {
+                $html .= $this->getBody('Sản phẩm mua mới',$add_new_arr, $no);
+                $is_add_new = true;
+            }
+            $html .=    '</tbody></table>';
+            $html .= $this->getFooter($order, $is_curr, $is_exchange, $is_return, $is_add_new);
 
             $mpdf->SetDisplayMode('real');
             $mpdf->SetDisplayPreferences('/FitWindow/NoPrintScaling');
@@ -42,7 +78,7 @@ class PrinterReceiptExchange
                      unlink($file);
                  }
              }
-            
+
             $filename = "receiptExchange".time().".pdf";
             $mpdf->Output("pdf/".$filename, 'F');
             chmod("pdf/".$filename, 0777);
@@ -51,10 +87,9 @@ class PrinterReceiptExchange
             fwrite($myfile, $html);
             fclose($myfile);
 
-            return $filename;
+            return "receipt.html";
         } catch (Exception $e) {
             echo "Couldn't print to this printer: " . $e -> getMessage() . "\n";
-            throw new Exception($e);
         }
     }
 
@@ -135,6 +170,9 @@ class PrinterReceiptExchange
 						letter-spacing: 3px;
 						margin: 0 !important;
 					}
+					.bg-gray {
+					    background-color: #e5e5e5 !important;
+					}
                 </style>
             </head>
             <body>
@@ -170,25 +208,28 @@ class PrinterReceiptExchange
                     <div class="body">';
         return $header;
     }
-    function getBody($title, $details)
+
+    function getBody($title, $details, $no)
     {
-        $body = '<h4 class="left" style="margin: 5px 0;">'.$title.'</h4>
-                <table class="center">
-                    <thead>
-                        <tr>
-                            <td class="center" style="width: 30px;">Stt</td>
-                            <td class="left">Mã sản phẩm</td>
-                            <td colspan="3" class="left">Tên sản phẩm</td>
-                        </tr>
-                        <tr>
-                            <td class="left"></td>
-                            <td class="center" style="width: 30px;">SL</td>
-                            <td class="center" style="width: 65px;">Giá</td>
-                            <td class="center" style="width: 40px;">%</td>
-                            <td class="center" style="width: 65px;">Thành tiền</td>
-                        </tr>
-                    </thead>
-                    <tbody>';
+//        $body = '<h4 class="left" style="margin: 5px 0;">'.$title.'</h4>
+//                <table class="center">
+//                    <thead>
+//                        <tr>
+//                            <td class="center" style="width: 30px;">Stt</td>
+//                            <td class="left" style="width: 60px;">Mã sản phẩm</td>
+//                            <td colspan="3" class="left">Tên sản phẩm</td>
+//                        </tr>
+//                        <tr>
+//                            <td class="left"></td>
+//                            <td class="center" style="width: 30px;">SL</td>
+//                            <td class="center" style="width: 65px;">Giá</td>
+//                            <td class="center" style="width: 40px;">Giảm giá</td>
+//                            <td class="center" style="width: 65px;">Thành tiền</td>
+//                        </tr>
+//                    </thead>
+//                    <tbody>';
+        $body = "<tr class='bg-gray'><td colspan='5'><h4 class='left' style='margin: 5px 0;'>".$title."</h4></td></tr>";
+        $total = 0;
         $c = 0;
         foreach($details as $key => $value)
         {
@@ -219,14 +260,15 @@ class PrinterReceiptExchange
                         <td class="right">'.$reduce.'</td>
                         <td class="right">'.number_format($intoMoney).'<sup>đ</sup></td>
                     </tr>';
+            $total += $intoMoney;
         }
-        $body .=    '</tbody>
-                </table>';
+        $body .= '<tr><td colspan="4" class="right">Tổng tiền<sup>('.$no.')</sup></td><td class="right">'.number_format($total).'<sup>đ</sup></td></tr>';
+//        $body .=    '</tbody></table>';
         return $body;
     }
 
 
-    function getFooter($order)
+    function getFooter(Order $order, $is_exchange, $is_curr, $is_return, $is_add_new)
     {
         $reduce = 0;
         if(!empty($order->getTotal_reduce()) && $order->getTotal_reduce() != 'NULL')
@@ -243,17 +285,42 @@ class PrinterReceiptExchange
                 $paymentType = 'Nợ';
             }
         }
+        $no = 1;
+        $str = "";
+        if($is_exchange) {
+            $str .= "($no)";
+            $no++;
+        }
+        if($is_curr) {
+            $str .= "-($no)";
+            $no++;
+        }
+        if($is_return) {
+            $str .= "-($no)";
+            $no++;
+        }
+        if($is_add_new) {
+            $str .= "+($no)";
+        }
         $footer =   '<h4 class="left" style="margin: 5px 0;">Tổng hóa đơn</h4>
                     <table>
                         <tfoot>
                             <tr>
-                                <td colspan="4" class="right">Tổng tiền</td>
+                                <td colspan="4" class="right">Tổng tiền<sup>'.$str.'</sup></td>
                                 <td class="right">'.number_format(empty($order->getTotal_amount()) || $order->getTotal_amount() == 'NULL' ? 0 : $order->getTotal_amount()).'<sup>đ</sup></td>
-                            </tr>
-                            <tr>
-                                <td colspan="4" class="right">Giảm trên tổng đơn</td>
-                                <td class="right">'.($order->getDiscount() > 0 && $order->getDiscount() < 100 ? $order->getDiscount()."%" : $order->getDiscount()."<sup>đ</sup>").'</td>
                             </tr>';
+                if(!empty($order->getDiscount())) {
+                    $footer .= '<tr>
+                                <td colspan="4" class="right">Giảm trên tổng đơn</td>
+                                <td class="right">'.($order->getDiscount() > 0 && $order->getDiscount() < 100 ? $order->getDiscount()."%" : number_format($order->getDiscount())."<sup>đ</sup>").'</td>
+                            </tr>';
+                } else {
+                    $footer .= '<tr>
+                                <td colspan="4" class="right">Giảm trên tổng đơn</td>
+                                <td class="right">0<sup>đ</sup></td>
+                            </tr>';
+                }
+
                 if(!empty($order->getCustomerName())) {
                     $footer .= '<tr>
                                 <td colspan="4" class="right">Trừ trong ví</td>
@@ -263,12 +330,24 @@ class PrinterReceiptExchange
                 $footer .=   '<tr>
                                 <td colspan="4" class="right">Tổng Giảm trừ</td>
                                 <td class="right">'.number_format($reduce).'<sup>đ</sup></td>
-                            </tr>
-                            <tr>
-                                <td colspan="4" class="right">Tổng thanh toán</td>
-                                <td class="right">'.number_format(empty($order->getTotal_checkout()) || $order->getTotal_checkout() == 'NULL' ? 0 : ($order->getPaymentExchangeType() == 2 ? "-".$order->getTotal_checkout() : $order->getTotal_checkout())).'<sup>đ</sup></td>
-                            </tr>
-                            <tr>
+                            </tr>';
+                $footer .=   '<tr>
+                                <td colspan="4" class="right">Tổng thanh toán</td>';
+                    if(!empty($order->getTotal_checkout())) {
+                        if($order->getPaymentExchangeType() == 2) {
+                            if(strpos($order->getTotal_checkout(),"-") == false) {
+                                $footer .=   '<td class="right">'.number_format($order->getTotal_checkout()).'<sup>đ</sup></td>';
+                            }  else {
+                                $footer .=   '<td class="right">-'.number_format($order->getTotal_checkout()).'<sup>đ</sup></td>';
+                            }
+                        } else {
+                            $footer .=   '<td class="right">'.number_format($order->getTotal_checkout()).'<sup>đ</sup></td>';
+                        }
+                    } else {
+                        $footer .=   '<td class="right">0<sup>đ</sup></td>';
+                    }
+                $footer .=   '</tr>';
+                $footer .=   '<tr>
                                 <td colspan="4" class="right">Khách thanh toán</td>
                                 <td class="right"><p style="margin-right: 0">'.number_format(empty($order->getCustomer_payment()) || $order->getCustomer_payment() == 'NULL' ? 0 : $order->getCustomer_payment()).'<sup>đ</sup></p>
                                     <small style="margin-top:0">'.$paymentType.'</small>

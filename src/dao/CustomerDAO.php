@@ -74,10 +74,18 @@ class CustomerDAO
         }
     }
 
-    function find_all()
+    function find_all($customer_id, $phone)
     {
         try {
-            $sql = "select * from smi_customers order by created_at desc";
+            $sql = "select * from smi_customers where 1=1";
+            if(!empty($customer_id)) {
+                $sql .= " and id = $customer_id";
+            }
+            if(!empty($phone)) {
+                $sql .= " and phone = '$phone'";
+            }
+            $sql .= " order by created_at desc";
+//            echo $sql;
             $result = mysqli_query($this->conn, $sql);
             $data = array();
             foreach ($result as $k => $row) {

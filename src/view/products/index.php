@@ -25,11 +25,11 @@ Common::authen();
             color: red;
         }
 
-        div#example_wrapper {
+        div#product_datatable {
             margin-top: 10px;
         }
 
-        div#example_filter label {
+        div#product_datatable_filter label {
             width: 100%;
             float: left;
         }
@@ -104,7 +104,7 @@ Common::authen();
         .select_material .twitter-typeahead {
             margin-top: 8px !important;
         }
-        table#example {
+        table#product_datatable {
             width: 100% !important;
         }
     </style>
@@ -131,7 +131,21 @@ Common::authen();
                                    placeholder="Giảm giá" class="form-control w110">
                             <button id="update_all" class="btn btn-primary btn-flat">Áp dụng</button>
                         </div>
-
+                        <div class="form-inline" style="display: inline-block">
+                            <div class="input-group  d-inline-block">
+                                <div class="input-group-prepend d-inline-block">
+                                    <select class="form-control" id="search_operator">
+                                        <option value="=" selected>=</option>
+                                        <option value=">">></option>
+                                        <option value="<"><</option>
+                                    </select>
+                                </div>
+                                <input type="number" class="form-control w110 d-inline-block" placeholder="Số lượng" id="search_qty" min="0">
+                            </div>
+                            <input type="text" class="form-control w110 d-inline-block" placeholder="SKU" id="search_sku">
+                            <button id="search_btn" type="button" class="btn btn-primary btn-flat d-inline-block">Tìm kiếm</button>
+                            <a href="javascript:void(0)" style="color: red" id="clear_search" class="hidden" title="Xóa điều kiện tìm kiếm"><i class="fas fa-times"></i> xóa</a>
+                        </div>
                     </section>
                     <section style="display: inline-block;float: right;padding-top: 1.25rem;">
                         <button type="button" class="btn btn-success btn-flat product-create">
@@ -143,26 +157,12 @@ Common::authen();
                         </button>
                     </section>
                 </div>
-<!--                <section class="row col-12 m-3">-->
-<!--                    <div class="form-inline d-inline-block">-->
-<!--                        <select class="select2" id="search_category" multiple="multiple" data-placeholder="Chọn điều kiện tìm kiếm" style="width: 100%;">-->
-<!--                            <option>Bé trai</option>-->
-<!--                            <option>Bé gái</option>-->
-<!--                            <option>Phụ kiện</option>-->
-<!--                            <option>Gấu bông</option>-->
-<!--                            <option>Giày</option>-->
-<!--                            <option>Dép</option>-->
-<!--                            <option>Washington</option>-->
-<!--                        </select>-->
-<!--                        <button id="search" class="btn btn-secondary btn-flat"><i class="fa fa-search"></i> Tìm kiếm</button>-->
-<!--                    </div>-->
-<!--                </section>-->
                 <div class="row col-md-12 mt-2 ml-3">
                     <button class="btn btn-info expandall" id="expandall">Expand all</button>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body m-3">
-                    <table id="example" class="table table-bordered table-striped">
+                    <table id="product_datatable" class="table table-bordered table-striped">
                         <thead>
                         <tr>
                             <td class="center clearAll">
@@ -172,6 +172,7 @@ Common::authen();
                             <td>Hình ảnh</td>
                             <th>Tên sản phẩm</th>
                             <th>Giá bán lẻ</th>
+                            <th>Số lượng</th>
                             <th>Giảm giá</th>
                             <th>Giá sale</th>
                             <th>Danh mục</th>
@@ -201,29 +202,49 @@ Common::authen();
 <div class="iframeArea hidden"></div>
 <?php require_once('../../common/footer.php'); ?>
 <script>
+    let table;
     $(document).ready(function () {
         set_title("Danh sách sản phẩm");
         count_out_of_stock();
 
-        $('#example thead th').each( function () {
+        $('#product_datatable thead th').each( function () {
             var title = $(this).text();
             $(this).html( '<input type="text" class="form-control" placeholder="'+title+'" />' );
-        } );
+        });
 
+        let operator = "<?php echo (isset($_GET['operator']) ? $_GET['operator'] : '=') ?>";
+        $("#search_operator").val(operator);
+        let qty = "<?php echo (isset($_GET['qty']) ? $_GET['qty'] : '') ?>";
+        $("#search_qty").val(qty);
+        let sku = "<?php echo (isset($_GET['sku']) ? $_GET['sku'] : '') ?>";
+        $("#search_sku").val(sku);
+        if(qty || sku) {
+            $("#clear_search").removeClass("hidden");
+        } else {
+            $("#clear_search").addClass("hidden");
+        }
         generate_datatable();
         custom_select2('#search_category', select_cats);
 
         $(".print-barcode").on("click", function () {
             let data = [];
-            $.each($("#example tbody td input[type='checkbox']:checked"), function () {
+            $.each($("#product_datatable tbody td input[type='checkbox']:checked"), function () {
                 let id = $(this).attr("id");
                 if (id != "selectall" && !isNaN(id)) {
-                    data.push($(this).attr("id"));
+                    let product = {};
+                    product["id"] = $(this).attr("id");
+                    product["qty"] = $("#text_qty_"+id).val();
+                    // data.push($(this).attr("id"));
+                    data.push(product);
+                    // console.log(JSON.stringify(product));
                 }
             });
-            if (data.length > 0) {
-                printBarcode(data);
-            }
+            setTimeout(function () {
+                // console.log(JSON.stringify(data));
+                if (data.length > 0) {
+                    printBarcode(data);
+                }
+            },300);
         });
         $(".clearAll").on("click", function () {
             clearAll();
@@ -243,6 +264,45 @@ Common::authen();
                     update_discount_all(e);
                 }
             })
+        });
+
+        $("#clear_search").on("click", function () {
+            $("#search_operator").val("=");
+            $("#search_qty").val("");
+            $("#search_sku").val("");
+            window.location.href = create_url();
+        });
+
+        $("#search_btn").on( "click", function() {
+            window.location.href = create_url();
+        });
+        $("#search_btn").on( "keydown", function( event ) {
+            let key = event.which;
+            if(key === 13) {
+                window.location.href = create_url();
+            }
+        });
+        $("#search_operator").on( "change", function() {
+            let qty = $("#search_qty").val();
+            if(qty) {
+                window.location.href = create_url();
+            }
+        });
+        $("#search_qty").on( "keydown", function( event ) {
+            let key = event.which;
+            if(key === 13) {
+                // console.log(create_url());
+                $("#search_sku").val("");
+                window.location.href = create_url();
+            }
+        });
+        $("#search_sku").on( "keydown", function( event ) {
+            let key = event.which;
+            if(key === 13) {
+                // console.log(create_url());
+                $("#search_qty").val("");
+                window.location.href = create_url();
+            }
         });
 
         $("#btn_update_out_of_stock").on("click", function (e) {
@@ -265,11 +325,94 @@ Common::authen();
                     $(that).children("i.show_loading_update").addClass("hidden");
                 }
             })
-        })
+        });
     });
-    
+
+
+    //function load_all_distinct_size() {
+    //    $.ajax({
+    //        dataType: 'json',
+    //        url: '<?php //Common::getPath() ?>//src/controller/product/ProductController.php',
+    //        data: {
+    //            method: 'load_size'
+    //        },
+    //        type: 'POST',
+    //        success: function (response) {
+    //            // console.log(response);
+    //            let size = [];
+    //            if(response && response.length > 0) {
+    //                for(i=0; i<response.length; i++) {
+    //                    let data = {};
+    //                    data["id"] = i;
+    //                    data["text"] = response[i];
+    //                    size.push(data);
+    //                }
+    //            }
+    //            $(".search-size").select2({
+    //                data: size,
+    //                placeholder: "Chọn size",
+    //                allowClear: true
+    //            });
+    //        },
+    //        error: function (data, errorThrown) {
+    //            console.log(data.responseText);
+    //            console.log(errorThrown);
+    //            Swal.fire({
+    //                type: 'error',
+    //                title: 'Đã xảy ra lỗi',
+    //                text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+    //            });
+    //        }
+    //    });
+    //}
+    //
+    //function load_all_distinct_color() {
+    //    $.ajax({
+    //        dataType: 'json',
+    //        url: '<?php //Common::getPath() ?>//src/controller/product/ProductController.php',
+    //        data: {
+    //            method: 'load_color'
+    //        },
+    //        type: 'POST',
+    //        success: function (response) {
+    //            // console.log(response);
+    //        },
+    //        error: function (data, errorThrown) {
+    //            console.log(data.responseText);
+    //            console.log(errorThrown);
+    //            Swal.fire({
+    //                type: 'error',
+    //                title: 'Đã xảy ra lỗi',
+    //                text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+    //            });
+    //        }
+    //    });
+    //}
+
+    function create_url() {
+        let url = window.location.href;
+        url = url.split("?")[0];
+        let qty = $("#search_qty").val();
+        let operator = $("#search_operator").val();
+        let sku = $("#search_sku").val();
+        if(!qty && !sku) {
+            return url;
+        }
+        url += "?";
+        if(qty) {
+            url += "qty="+qty.trim()+"&operator="+operator;
+        }
+        if(qty && sku) {
+            url += "&";
+        }
+        if(sku) {
+            url += "sku="+sku.trim();
+        }
+        return url;
+    }
+
     function clearAll() {
-        $.each($("#example tbody td input[type='checkbox']:checked"), function () {
+        $.each($("#product_datatable tbody td input[type='checkbox']:checked"), function () {
             $(this).prop("checked", false);
         });
         $(".number-checked").text(0);
@@ -277,7 +420,7 @@ Common::authen();
 
     function countAllChecked() {
         let count = 0;
-        $.each($("#example tbody td:first-child input[type='checkbox']:checked"), function () {
+        $.each($("#product_datatable tbody td:first-child input[type='checkbox']:checked"), function () {
             let id = $(this).attr("id");
             if (id != "selectall") {
                 count++;
@@ -317,24 +460,25 @@ Common::authen();
     }
 
     function generate_datatable() {
-        let table = $('#example').DataTable({
-            //"ajax": '<?php //Common::getPath() ?>//src/controller/product/ProductController.php?method=findall&status=0',
+        if ($.fn.dataTable.isDataTable('#product_datatable')) {
+            let dt =  $('#product_datatable').DataTable();
+            dt.destroy();
+            dt.clear();
+            dt.ajax.reload();
+        }
+        $('#product_datatable').DataTable({
             'ajax': {
                 "type": "GET",
                 "url": '<?php Common::getPath() ?>src/controller/product/ProductController.php',
-                "data": function (d) {
-                    d.method = 'findall';
-                    d.status = 0;
-                }
+                "data": get_data_search()
             },
             ordering: false,
             "dom": '<"top"flp<"clear">>rt<"bottom"ip<"clear">>',
-
             select: "single",
             deferRender: true,
             rowId: 'extn',
             "initComplete": function() {
-                init_select2();
+                // init_select2();
                 // Apply the search
                 this.api().columns().every( function () {
                     var that = this;
@@ -371,6 +515,11 @@ Common::authen();
                 },
                 {
                     "data": "retail",
+                    width: "50px"
+                },
+                {
+                    "data": "total_quantity",
+                    "class": "center",
                     width: "50px"
                 },
                 {
@@ -422,10 +571,11 @@ Common::authen();
         });
 
         // Add event listener for opening and closing details
-        $('#example tbody').on('click', '.details-control', function () {
+        $('#product_datatable tbody').on('click', '.details-control', function (event) {
+            let dt =  $('#product_datatable').DataTable();
             let tr = $(this).closest('tr');
             let tdi = tr.find("i.fa");
-            let row = table.row(tr);
+            let row = dt.row(tr);
             let productId = row.data().product_id;
             let discount = row.data().discount;
 
@@ -446,10 +596,7 @@ Common::authen();
                         product_id: productId
                     },
                     success: function (res) {
-                        // console.log(res);
                         let data = res.data;
-                        // console.log(JSON.stringify(data));
-                        // let details = res[0].details;
                         if (data.length > 0) {
                             row.child(format_variation(data, discount)).show();
                             tr.addClass('shown');
@@ -464,14 +611,15 @@ Common::authen();
                             type: 'error',
                             title: 'Đã xảy ra lỗi',
                             text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-                        })
+                        });
                         hide_loading();
                     }
                 });
             }
+            event.preventDefault();
         });
 
-        $('#example tbody').on('click', '.edit_product', function () {
+        $('#product_datatable tbody').on('click', '.edit_product', function () {
             let tr = $(this).closest('tr');
             let td = tr.find("td");
             let product_id = $(td[1]).text();
@@ -603,7 +751,7 @@ Common::authen();
         });
 
         // Event click add new row variation
-        $('#example tbody').on('click', '.add_variation', function () {
+        $('#product_datatable tbody').on('click', '.add_variation', function () {
             let tr = $(this).closest('tr');
             let tdi = tr.find("i.fa");
             let row = table.row(tr);
@@ -623,7 +771,7 @@ Common::authen();
         });
 
         // Event click Edit variation
-        $('#example tbody').on('click', '.edit_variation', function () {
+        $('#product_datatable tbody').on('click', '.edit_variation', function () {
             let tr = $(this).closest('tr');
             let td = tr.find("td");
             let sku = tr.attr("class");
@@ -655,7 +803,7 @@ Common::authen();
         });
 
         // Event click Save new variation
-        $('#example tbody').on('click', '.save_variation', function () {
+        $('#product_datatable tbody').on('click', '.save_variation', function () {
             show_loading();
             let tr = $(this).closest('tr');
             let td = tr.find("td");
@@ -688,14 +836,14 @@ Common::authen();
                         type: 'error',
                         title: 'Đã xảy ra lỗi',
                         text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-                    })
+                    });
                     hide_loading();
                 }
             });
         });
 
         // Event click update variation
-        $('#example tbody').on('click', '.update_variation', function () {
+        $('#product_datatable tbody').on('click', '.update_variation', function () {
             show_loading();
             let tr = $(this).closest('tr');
             let td = tr.find("td");
@@ -738,7 +886,7 @@ Common::authen();
         });
 
         // Event click cancel edit variation
-        $('#example tbody').on('click', '.cancel_variation', function () {
+        $('#product_datatable tbody').on('click', '.cancel_variation', function () {
             let tr = $(this).closest('tr');
             let td = tr.find("td");
             let sku = tr.attr("class");
@@ -758,7 +906,7 @@ Common::authen();
         });
 
         // Event click delete product
-        $('#example tbody').on('click', '.delete_variation', function () {
+        $('#product_datatable tbody').on('click', '.delete_variation', function () {
             let tr = $(this).closest('tr');
             let sku = $(tr).attr("class");
 
@@ -800,7 +948,7 @@ Common::authen();
             });
         });
 
-        $('#example tbody').on('click', '.cancal_add_new', function () {
+        $('#product_datatable tbody').on('click', '.cancal_add_new', function () {
             let tr = $(this).closest('tr');
 
             Swal.fire({
@@ -818,7 +966,7 @@ Common::authen();
             });
         });
 
-        $('#example tbody').on('click', '.out_of_stock', function () {
+        $('#product_datatable tbody').on('click', '.out_of_stock', function () {
             let tr = $(this).closest('tr');
             let td = tr.find("td");
             let product_id = $(td[1]).text();
@@ -831,7 +979,7 @@ Common::authen();
             check_stock($(this), product_id);
         });
 
-        $('#example tbody').on('click', '.website-publish', function () {
+        $('#product_datatable tbody').on('click', '.website-publish', function () {
             let tr = $(this).closest('tr');
             let td = tr.find("td");
             let product_id = $(td[1]).text();
@@ -843,7 +991,7 @@ Common::authen();
             social_publish(product_id, 'website', status);
         });
 
-        $('#example tbody').on('click', '.facebook-publish', function () {
+        $('#product_datatable tbody').on('click', '.facebook-publish', function () {
             let tr = $(this).closest('tr');
             let td = tr.find("td");
             let product_id = $(td[1]).text();
@@ -855,7 +1003,7 @@ Common::authen();
             social_publish(product_id, 'facebook', status);
         });
 
-        $('#example tbody').on('click', '.shopee-publish', function () {
+        $('#product_datatable tbody').on('click', '.shopee-publish', function () {
             let tr = $(this).closest('tr');
             let td = tr.find("td");
             let product_id = $(td[1]).text();
@@ -868,7 +1016,7 @@ Common::authen();
         });
 
 
-        $('#example tbody').on('click', '.lazada-publish', function () {
+        $('#product_datatable tbody').on('click', '.lazada-publish', function () {
             let tr = $(this).closest('tr');
             let td = tr.find("td");
             let product_id = $(td[1]).text();
@@ -1132,6 +1280,42 @@ Common::authen();
         });
     }
 
+    function search() {
+        generate_datatable();
+    }
+
+    function get_data_search(type) {
+        let quantity = $("#search_qty").val();
+        let operator = $("#search_operator").val();
+        let sku = $("#search_sku").val();
+        //let operator = "<?php //echo (isset($_GET['operator']) ? $_GET['operator'] : '=') ?>//";
+        //let quantity = "<?php //echo (isset($_GET['qty']) ? $_GET['qty'] : '') ?>//";
+        //let sku = "<?php //echo (isset($_GET['sku']) ? $_GET['sku'] : '') ?>//";
+        //$("#search_sku").val(sku);
+        return {
+            method : 'findall',
+            status : 0,
+            quantity : quantity.trim(),
+            operator : operator.trim(),
+            sku : sku.trim(),
+        }
+        // if(type === 'qty') {
+        //     return {
+        //         method : 'findall',
+        //         status : 0,
+        //         quantity : quantity.trim(),
+        //         operator : operator.trim(),
+        //     }
+        // } else {
+        //     return {
+        //         method : 'findall',
+        //         status : 0,
+        //         sku : sku.trim()
+        //     }
+        // }
+
+    }
+
     function update_discount_all() {
         let discount = $("#discountAll").val();
         // console.log(discount);
@@ -1153,7 +1337,7 @@ Common::authen();
             success: function (res) {
                 // console.log(res);
                 toastr.success('Cập nhật thành công!');
-                let table = $('#example').DataTable();
+                let table = $('#product_datatable').DataTable();
                 table.ajax.reload(init_select2, false);
             },
             error: function (data, errorThrown) {
@@ -1202,7 +1386,7 @@ Common::authen();
             success: function (res) {
                 // console.log(res);
                 toastr.success('Cập nhật thành công!');
-                $("#example").DataTable().ajax.reload(init_select2, false);
+                $("#product_datatable").DataTable().ajax.reload(init_select2, false);
             },
             error: function (data, errorThrown) {
                 console.log(data.responseText);
@@ -1305,7 +1489,7 @@ Common::authen();
                 $(that).prop("disabled", '');
                 $(that).children("i.show_loading_update").addClass("hidden");
                 count_out_of_stock();
-                $("#example").DataTable().ajax.reload(init_select2, false);
+                $("#product_datatable").DataTable().ajax.reload(init_select2, false);
             },
             error: function (data, errorThrown) {
                 console.log(data.responseText);
@@ -1398,14 +1582,21 @@ Common::authen();
             for(let j=0; j<len; j++) {
                 table += '<tr class="' + variations[i][j].sku + '">';
                 table += '<input type="hidden" class="product-id-' + variations[i][j].sku + '" value="' + variations[i][j].product_id + '">';
-                table += '<td class="center"><input type="checkbox" id="' + variations[i][j].sku + '" onclick="check(this)"></td>';
+                table += '<td class="center"><input type="checkbox" id="' + variations[i][j].sku + '" onclick="check(this)" '+(variations[i][j].quantity === "0" ? "disabled" : "")+'></td>';
                 if(j === 0) {
                     table += "<td rowspan=\""+variations[i].length+"\"><img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width=\""+(width_img*len)+"\" src=\""+variations[i][j].image+"\" style=\"max-width: 70px;\"></td>";
                     table += '<td rowspan="'+variations[i].length+'">' + variations[i][j].color + '</td>';
                 }
                 table += '<td>' + variations[i][j].sku + '</td>';
                 table += '<td>' + variations[i][j].size + '</td>';
-                table += '<td id="qty">' + (variations[i][j].quantity === "0" ? "<span class=\"text-danger\">Hết hàng</span>" : variations[i][j].quantity)  + '</td>';
+                if(variations[i][j].quantity === "0") {
+                    table += '<td id="qty"><span class=\"text-danger\">Hết hàng</span></td>';
+                } else {
+                    table += '<td id="qty">' +
+                        '<span id="qty_'+variations[i][j].sku+'">'+variations[i][j].quantity+'</span>' +
+                        '<input type="number" value="'+variations[i][j].quantity+'" class="hidden form-control" width="50px" id="text_qty_'+variations[i][j].sku+'" min="1" max="'+variations[i][j].quantity+'">' +
+                        '</td>';
+                }
                 table += '<td id="retail">' + variations[i][j].retail + '</td>';
                 let sale_price = '';
                 if(discount && discount > 0) {
@@ -1480,8 +1671,16 @@ Common::authen();
         let isCheck = $(e).prop('checked');
         if (isCheck) {
             $(e).prop("checked", "checked");
+            let sku = $(e).attr("id");
+            let qty = $("#qty_"+sku).text();
+            $("#qty_"+sku).addClass("hidden");
+            $("#text_qty_"+sku).val(qty).removeClass("hidden");
         } else {
             $(e).prop("checked", "");
+            let sku = $(e).attr("id");
+            let qty = $("#qty_"+sku).text();
+            $("#qty_"+sku).removeClass("hidden");
+            $("#text_qty_"+sku).val(qty).addClass("hidden");
         }
         countAllChecked();
     }
@@ -1489,9 +1688,11 @@ Common::authen();
     function checkAll(e) {
         let isCheck = $(e).prop('checked');
         if (isCheck) {
-            $(e).parent().parent().parent().parent().find('td input:checkbox').prop("checked", "checked");
+            // $(e).parent().parent().parent().parent().find('td input:checkbox').prop("checked", "checked");
+            $(e).parent().parent().parent().parent().find('td input:checkbox').trigger("click");
         } else {
-            $(e).parent().parent().parent().parent().find('td input:checkbox').prop("checked", "");
+            // $(e).parent().parent().parent().parent().find('td input:checkbox').prop("checked", "");
+            $(e).parent().parent().parent().parent().find('td input:checkbox').trigger("click");
         }
         countAllChecked();
     }

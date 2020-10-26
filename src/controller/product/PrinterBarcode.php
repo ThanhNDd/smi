@@ -12,7 +12,7 @@ class PrinterBarcode
 
     }
 
-    function print(array $data)
+    function print(array $list, array $data)
     {
         try {
             $mpdf = new \Mpdf\Mpdf([
@@ -25,52 +25,47 @@ class PrinterBarcode
             $mpdf->SetDisplayMode('real');
             $mpdf->SetDisplayPreferences('/FitWindow/NoPrintScaling');
 
-            // var_dump($data);
-            if(count($data) == 1)
+            if(count($list) == 1)
             {
-                $content = $this->getHeader();
-//                $content .= '<table>
-//                            <tr>
-//                                <td colspan="3" class="center">
-//                                    <h3>'.$data[0]["name"].'</h3>
-//                                </td>
-//                            </tr>
-//                            <tr>
-//                                <td colspan="3" class="center">
-//                                    <barcode code="'.$data[0]["sku"].'" type="C128A" size="2" height="0.5" class="barcode" />
-//                                </td>
-//                            </tr>
-//                            <tr>
-//                                <td class="left"><b>'.$data[0]["size"].'</b><br><b>'.$data[0]["color"].'</b></td>
-//                                <td class="center"><h2>'.$data[0]["sku"].'</h2></td>
-//                                <td class="right"><b>'.$data[0]["price"].' đ</b></td>
-//                            </tr>
-//                        </table>';
-                $content .= $this->getContent($data[0]);
-                $content .= $this->getFooter();
-                $mpdf->AddPage();
-                $mpdf->WriteHTML($content);
+                $sku = $list[0]["sku"];
+                $qty = 1;
+                for($i =0; $i < count($data); $i++) {
+                    if($data[$i]->id == $sku) {
+                        $qty = $data[$i]->qty;
+                    }
+                }
+                for($i=0; $i < $qty; $i++) {
+                    $content = $this->getHeader();
+                    $content .= $this->getContent($list[0]);
+                    $content .= $this->getFooter();
+                    $mpdf->AddPage();
+                    $mpdf->WriteHTML($content);
+                }
+//                $content = $this->getHeader();
+//                $content .= $this->getContent($list[0]);
+//                $content .= $this->getFooter();
+//                $mpdf->AddPage();
+//                $mpdf->WriteHTML($content);
             } else
             {
-//                $i = 0;
-                foreach ($data as $d) {
-//                    if($i % 2 == 0)
-//                    {
+                foreach ($list as $d) {
+                    $sku = $d["sku"];
+                    $qty = 1;
+                    for($i =0; $i < count($data); $i++) {
+                        if($data[$i]->id == $sku) {
+                            $qty = $data[$i]->qty;
+                        }
+                    }
+                    for($i=0; $i < $qty; $i++) {
                         $content = $this->getHeader();
-//                    }
-                    $content .= $this->getContent($d);
-//                    if($i % 2 != 0 || count($data)-1 == $i)
-//                    {
+                        $content .= $this->getContent($d);
                         $content .= $this->getFooter();
                         $mpdf->AddPage();
                         $mpdf->WriteHTML($content);
-                        //$i = 0;
-//                    }
-//                    $i++;
+                    }
+
                 }
             }
-
-
 
             // $this->rrmdir("pdf");
             $folder_path = "pdf";

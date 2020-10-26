@@ -77,13 +77,14 @@ if (isset($_POST["method"]) && $_POST["method"] == "exchange") {
         } else {
             $response_array = array();
             $curr_arr = get_details($data->curr_products, $orderId, 1); // product exchange
-            if (count($curr_arr) <= 0) {
-                throw new Exception("Have no product!!");
-            }
+//            if (count($curr_arr) <= 0) {
+//                throw new Exception("Not exist product!!");
+//            }
             $exchange_arr = get_details($data->exchange_products, $orderId, 2);// new product of exchange
-            if (count($exchange_arr) <= 0) {
-                throw new Exception("Have no product exchange!!");
-            }
+//            if (count($exchange_arr) <= 0) {
+//                throw new Exception("Not exist product exchange!!");
+//            }
+            $return_arr = get_details($data->return_products, $orderId, 3);// product return
             $add_new_arr = get_details($data->add_new_products, $orderId, 0); // add new product
 
             // save customer point
@@ -113,7 +114,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "exchange") {
                 $order->setCustomerName($customer_name);
                 $order->setPointSave($data->wallet_saved);
                 $printer = new PrinterReceiptExchange();
-                $filename = $printer->print($order, $exchange_arr, $curr_arr, $add_new_arr);
+                $filename = $printer->print($order, $exchange_arr, $curr_arr, $add_new_arr, $return_arr);
                 $response_array['fileName'] = $filename;
             }
             $response_array['orderId'] = $orderId;
@@ -142,18 +143,19 @@ function get_details($details, $orderId, $productType)
         $reduce_percent = 0;
         $profit = 0;
         $product_id = 0;
+        $reduce_type = 0;
+        $sku = '';
+        $variant_id = 0;
         if (!empty($details[$i]->product_id)) {
             $product_id = $details[$i]->product_id;
         } else {
             echo "Product_Id is null";
         }
-        $variant_id = 0;
         if (!empty($details[$i]->variant_id)) {
             $variant_id = $details[$i]->variant_id;
         } else {
             echo "Variant_id is null";
         }
-        $sku = '';
         if (!empty($details[$i]->sku)) {
             $sku = $details[$i]->sku;
         } else {
@@ -177,7 +179,6 @@ function get_details($details, $orderId, $productType)
         if (!empty($details[$i]->reduce_type)) {
             $reduce_type = $details[$i]->reduce_type;
         }
-
         $detail = new OrderDetail();
         $detail->setOrder_id($orderId);
         $detail->setProduct_id($product_id);
@@ -200,7 +201,7 @@ function get_details($details, $orderId, $productType)
                 throw new Exception("SKU is empty");
             }
         } catch (Exception $e) {
-            echo $e->getMessage();
+            echo "CATCH ...".$e->getMessage();
         }
 
     }

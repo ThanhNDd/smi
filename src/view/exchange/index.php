@@ -34,7 +34,7 @@ Common::authen();
         }
 
         .checkout .table th, .table td {
-            /* padding: 0 !important; */
+             padding: 5px !important;
             vertical-align: middle !important;
             border-bottom: 1px solid #dee2e6 !important;
             border-top: none !important;
@@ -42,6 +42,9 @@ Common::authen();
 
         .gray {
             color: gray;
+        }
+        .return-product {
+            background: mistyrose !important;
         }
     </style>
 </head>
@@ -77,7 +80,7 @@ Common::authen();
                         </div>
                     </div>
                     <input type="hidden" id="noRow" value="0">
-                    <table class="table table-bordered table-head-fixed" id="tableProd">
+                    <table class="table table-striped table-hover" id="tableProd">
                         <thead>
                         <tr>
                             <th class="w10">#</th>
@@ -88,8 +91,8 @@ Common::authen();
                             <th class="hidden"></th>
                             <th class="w30">ID</th>
                             <th class="w200">Tên sản phẩm</th>
-                            <th class="w30">Size</th>
-                            <th class="w50">Màu</th>
+                            <th class="w80">Size</th>
+                            <th class="w60">Màu</th>
                             <th class="w110">Đơn giá</th>
                             <th class="w80">SL</th>
                             <th class="w100">Giảm trừ</th>
@@ -111,31 +114,39 @@ Common::authen();
 <!--                    <h3 class="card-title">Thông tin thanh toán</h3>-->
 <!--                </div>-->
                 <div class="card-body" style="height: auto;padding: 20px;">
-                    <table class="table table-hover">
+                    <table class="table table-striped table-hover">
                         <tbody>
                         <tr class="customer_info">
                             <td class="right w90 gray">Khách hàng</td>
                             <td class="right p-0 gray">
                                 <input type="hidden" id="customer_id" value="0">
-                                <span id="customer_name">Khách lẻ</span>
+<!--                                <span id="customer_name">Khách lẻ</span>-->
+                                <div class="d-inline-block">
+                                    <span id="customer_name" class="" style="display: flex;">Khách lẻ</span>
+                                    <span id="customer_phone" class="d-inline-block hidden"></span>
+                                </div>
+                                <a href="javascript:void(0)" class="d-inline-block text-warning hidden"
+                                   id="show_history">
+                                    <i class="fas fa-history"></i>
+                                </a>
                             </td>
                         </tr>
                         <tr>
                             <td class="right w90 gray">Tổng tiền</td>
                             <td class="right p-0 gray">
-                                <h4><span id="totalAmount">0</span> <small><sup>đ</sup></small></h4>
+                                <span><span id="totalAmount">0</span> <small><sup>đ</sup></small></span>
                             </td>
                         </tr>
                         <tr class="wallet">
                             <td class="right gray">Trừ trong ví</td>
                             <td class="right w110 p-0 gray">
-                                <h4><span id="wallet">0</span> <small><sup>đ</sup></small></h4>
+                                <span><span id="wallet">0</span> <small><sup>đ</sup></small></span>
                             </td>
                         </tr>
                         <tr>
-                            <td class="right gray">Khuyến mãi</td>
+                            <td class="right gray">CK trên tổng đơn</td>
                             <td class="right w110 p-0 gray">
-                                <h4><span id="discount">0</span> <small><sup>đ</sup></small></h4>
+                                <span><span id="discount">0</span> <small><sup>đ</sup></small></span>
                             </td>
                         </tr>
                         <tr>
@@ -148,39 +159,39 @@ Common::authen();
                         <tr>
                             <td class="right gray">Tổng Giảm trừ</td>
                             <td class="right w110 p-0 gray">
-                                <h4><span id="totalReduce">0</span> <small><sup>đ</sup></small></h4>
+                                <span><span id="totalReduce">0</span> <small><sup>đ</sup></small></span>
                             </td>
                         </tr>
                         <tr>
                             <td class="right gray">Tổng thanh toán</td>
                             <td class="right w110 p-0 gray">
-                                <h4><span id="totalCheckout">0</span> <small><sup>đ</sup></small></h4>
+                                <span><span id="totalCheckout">0</span> <small><sup>đ</sup></small></span>
                             </td>
                         </tr>
                         <tr>
                             <td class="right gray">Khách thanh toán</td>
                             <td class="right w110 p-0 gray">
-                                <h4 class="mb-0"><span id="payment">0</span> <small><sup>đ</sup></small></h4>
-                                <span id="sel_payment"></span>
+                                <span class="mb-0"><span id="payment">0</span> <small><sup>đ</sup></small></span><br>
+                                <small id="sel_payment"></small>
                             </td>
                         </tr>
                         <tr>
                             <td class="right gray">Trả lại</td>
                             <td class="right w110 p-0 gray">
                                 <div class="repay hidden">
-                                    <h4 class="mb-0"><span id="repay">0</span> <small><sup>đ</sup></small></h4>
-                                    <span>Tiền mặt</span>
+                                    <span class="mb-0"><span id="repay">0</span> <small><sup>đ</sup></small></span><br>
+                                    <small>Tiền mặt</small>
                                 </div>
                                 <div class="transferToWallet hidden">
-                                    <h4 class="mb-0"><span id="transferToWallet">0</span> <small><sup>đ</sup></small></h4>
-                                    <span>Chuyển vào ví</span>
+                                    <span class="mb-0"><span id="transferToWallet">0</span> <small><sup>đ</sup></small></span><br>
+                                    <small>Chuyển vào ví</small>
                                 </div>
                             </td>
                         </tr>
                         <tr class="saved">
                             <td class="right gray">Tích lũy</td>
                             <td class="right w110 p-0 gray">
-                                <h4><span id="saved">0</span> <small><sup>đ</sup></small></h4>
+                                <span><span id="saved">0</span> <small><sup>đ</sup></small></span>
                             </td>
                         </tr>
                         </tbody>
@@ -197,16 +208,22 @@ Common::authen();
                             <tr>
                                 <td class="right w130">Tổng tiền</td>
                                 <td class="right w90 p-0 gray">
-                                    <h4><span style="color: red;" id="total_amount_new">0</span> <small><sup>đ</sup></small></h4>
-                                    <h6 class="hidden"><span style="color: green;" id="add_more_discount">0</span> <small><sup>đ</sup></small></h6>
+                                    <h4 style="margin: 0;"><span style="color: red;" id="total_amount_new">0</span> <small><sup>đ</sup></small></h4>
+                                    <h6 class="hidden"><span style="color: green;" id="add_more_discount">0</span><small><sup>đ</sup></small></h6>
                                 </td>
                             </tr>
+<!--                            <tr class="discount-old hidden">-->
+<!--                                <td class="right w130">Ck trên tổng đơn cũ</td>-->
+<!--                                <td class="right w90 p-0 gray">-->
+<!--                                    <span id="discount_old">0</span><small><sup>đ</sup></small>-->
+<!--                                </td>-->
+<!--                            </tr>-->
                             <tr class="wallet hidden">
                                 <td class="right w90">Số dư trong ví</td>
                                 <td class="right pr-0">
                                     <input type="text" class="form-control text-right" style="font-size: 20px;"
                                            id="totalUsePoint">
-                                    <p class="mt-1 mb-0">Quý khách có <span class="text-primary c-pointer" id="totalBallanceInWallet">0</span> <sup
+                                    <p class="mt-1 mb-0">Quý khách có <span class="text-primary c-pointer" id="totalBallanceInWallet">0</span><sup
                                                 class="text-primary">đ</sup> trong ví</p>
                                 </td>
                             </tr>
@@ -224,13 +241,13 @@ Common::authen();
                             <tr class="total-reduce-new hidden">
                                 <td class="right">Tổng Giảm trừ</td>
                                 <td class="right p-0">
-                                    <h4><span id="totalReduceNew">0</span> <small><sup>đ</sup></small></h4>
+                                    <h4 style="margin: 0;"><span id="totalReduceNew">0</span><small><sup>đ</sup></small></h4>
                                 </td>
                             </tr>
                             <tr>
                                 <td class="right">Tổng thanh toán</td>
                                 <td class="right p-0">
-                                    <h4><span id="total_checkout_new">0</span> <small><sup>đ</sup></small></h4>
+                                    <h4 style="margin: 0;"><span id="total_checkout_new">0</span><small><sup>đ</sup></small></h4>
                                 </td>
                             </tr>
                             <tr class="payment-new hidden">
@@ -249,7 +266,7 @@ Common::authen();
                                     </div>
                                 </td>
                             </tr>
-                            <tr class="saved-point hidden">
+                            <tr class="saved-point">
                                 <td class="right pl-0" colspan="2">
                                     <p class="mb-1">Quý khách sẽ tích lũy được <span class="text-primary"
                                                                                      id="total_saved_point">0</span> <sup
@@ -309,8 +326,7 @@ Common::authen();
                         </div>
                     </div>
                     <div class="row col-md-12 no-margin">
-                        <button type="button" class="btn btn-success form-control" id="checkout" title="Thanh toán"
-                                disabled="disabled">
+                        <button type="button" class="btn btn-success form-control" id="checkout" title="Thanh toán">
                             <i class="fas fa-shopping-basket"></i> Thanh toán
                         </button>
                     </div>
@@ -320,8 +336,8 @@ Common::authen();
         </div>
     </div>
 </section>
-<div class="iframeArea" style="visibility: hidden;">
-</div>
+<div class="iframeArea" style="visibility: hidden;"></div>
+<?php require_once '../wallet/showHistory.php'; ?>
 <?php require_once('../../common/footer.php'); ?>
 <script type="text/javascript">
     $(document).ready(function () {
@@ -447,11 +463,21 @@ Common::authen();
         });
 
         $("#totalBallanceInWallet").click(function () {
-            $("#totalUsePoint").val($(this).text()).trigger("change");
+            let total_checkout_new = Number(replaceComma($("#total_checkout_new").text()));
+            if(total_checkout_new > 0) {
+                $("#totalUsePoint").val($(this).text()).trigger("change");
+            }
         });
         totalUsedPointChange();
         transferToWallet();
         reverse_repay();
+
+        $("#show_history").click(function () {
+            let customer_id = $("#customer_id").val();
+            let customer_name = $("#customer_name").text();
+            let customer_phone = $("#customer_phone").text().trim();
+            show_history(customer_id, customer_name, customer_phone);
+        });
     });
     
     function validate_form_checkout() {
@@ -517,19 +543,37 @@ Common::authen();
         });
     }
 
+    function returnBtn(e, noRow) {
+        $(e).parent().parent().addClass("return-product").addClass("is_return");
+        $(e).parent().children("#cancel_return_" + noRow).removeClass("hidden");
+        $(e).parent().children("#exchange_" + noRow).addClass("hidden");
+        $(e).addClass("hidden");
+        calculateTotal();
+    }
+    function cancelReturnBtn(e, noRow) {
+        $(e).parent().children("#productName_" + noRow).addClass("hidden");
+        $(e).parent().children("#productName_" + noRow).val("");
+        $(e).addClass("hidden");
+        $(e).parent().children("#exchange_" + noRow).removeClass("hidden");
+        $(e).parent().children("#return_" + noRow).removeClass("hidden");
+        $(e).parent().parent().removeClass("return-product").removeClass("is_return");
+        calculateTotal();
+    }
+
     function exchangeBtn(e, noRow) {
         $(e).parent().children("#productName_" + noRow).val("");
         $(e).parent().children("#productName_" + noRow).removeClass("hidden");
         $(e).parent().children("#productName_" + noRow).focus();
         $(e).addClass("hidden");
         $(e).parent().children("#cancelExchange_" + noRow).removeClass("hidden");
+        $(e).parent().children("#return_" + noRow).addClass("hidden");
     }
 
     function cancelExchangeBtn(e, noRow) {
-        $(e).parent().children("#productName_" + noRow).addClass("hidden");
-        $(e).parent().children("#productName_" + noRow).val("");
+        $(e).parent().children("#productName_" + noRow).val("").addClass("hidden");
         $(e).addClass("hidden");
         $(e).parent().children("#exchange_" + noRow).removeClass("hidden");
+        $(e).parent().children("#return_" + noRow).removeClass("hidden");    
     }
 
     function find_order(orderId) {
@@ -542,6 +586,7 @@ Common::authen();
                 orderId: orderId
             },
             success: function (order) {
+                // console.log(JSON.stringify(order));
                 $.each(order, function (key, value) {
                     if (value.length > 0) {
                         $("#orderId").val("").addClass("hidden");
@@ -570,14 +615,16 @@ Common::authen();
                                 + '<td><span class="product-name" id="name_' + noRow + '">' + details[i].name + '</span></td>'
                                 + '<td><span class="size" id="size_' + noRow + '">' + details[i].size + '</span></td>'
                                 + '<td><span class="color" id="color_' + noRow + '">' + details[i].color + '</span></td>'
-                                + '<td><span class="price" id="price_' + noRow + '">' + details[i].retail + ' <small><sup>đ</sup></small></span></td>'
-                                + '<td><span name="qty" id="qty_' + noRow + '">' + details[i].quantity + '</span></td>'
-                                + '<td><span name="reduce" id="reduce_' + noRow + '">' + formatNumber(reduce) + '</span></td>'
+                                + '<td><div><span class="price" id="price_' + noRow + '">' + details[i].retail + ' <small><sup>đ</sup></small></span></div></td>'
+                                + '<td><span class="qty" id="qty_' + noRow + '">' + details[i].quantity + '</span></td>'
+                                + '<td><span class="reduce" id="reduce_' + noRow + '">' + formatNumber(reduce) + '</span></td>'
                                 + '<td><div><span class="intoMoney" id="intoMoney_' + noRow + '">' + details[i].intoMoney + '</span> <small><sup>đ</sup></small></div></td>'
-                                + '<td><button type="button" id="exchange_' + noRow + '" class="btn btn-info form-control" onclick="exchangeBtn(this, ' + noRow + ')" title="Đổi hàng"><i class="fas fa-sync"></i> Đổi hàng</button>'
+                                + '<td><button type="button" id="exchange_' + noRow + '" class="btn btn-info form-control d-inline-block w50" onclick="exchangeBtn(this, ' + noRow + ')" title="Đổi hàng"><i class="fas fa-sync"></i></button>'
                                 + '<button type="button" id="cancelExchange_' + noRow + '" class="btn btn-danger form-control hidden" onclick="cancelExchangeBtn(this, ' + noRow + ')" title="Hủy đổi hàng"><i class="fas fa-ban"></i> Hủy</button>'
                                 + '<input type="text" value="" placeholder="Nhập mã sản phẩm" id="productName_' + noRow + '" onchange="find_product(this, '+details[i].sku+', 1, ' + noRow + ')" class="hidden form-control mt-2 mb-2">'
                                 + '<button type="button" id="del_' + noRow + '" onclick="del_product_new(this, ' + noRow + ')" class="btn btn-danger hidden form-control mt-2 mb-2" title="Xóa sản phẩm đổi"><i class="fas fa-trash"></i> Xóa</button>'
+                                + '<button type="button" id="return_' + noRow + '" class="btn btn-warning form-control d-inline-block w50" onclick="returnBtn(this, ' + noRow + ')" title="Trả hàng"><i class="fas fa-undo-alt"></i></button>'
+                                + '<button type="button" id="cancel_return_' + noRow + '" class="btn btn-danger form-control hidden" onclick="cancelReturnBtn(this, ' + noRow + ')" title="Hủy Trả hàng"><i class="fas fa-ban"></i> Hủy</button>'
                                 + '</td>'
                                 + '</tr>');
                         }
@@ -598,6 +645,8 @@ Common::authen();
                             $("#customer_info").removeClass("hidden");
                             $("#customer_id").val(value[0].customer_id);
                             $("#customer_name").text(value[0].customerName);
+                            $("#customer_phone").text(value[0].phone).removeClass("hidden");
+                            $("#show_history").removeClass("hidden");
                             setTimeout(function () {
                                 get_total_point(value[0].customer_id);
                             },200);
@@ -605,6 +654,8 @@ Common::authen();
                             $("#customer_info").addClass("hidden");
                             $("#customer_id").val(0);
                             $("#customer_name").text('Khách lẻ');
+                            $("#customer_phone").text("").addClass("hidden");
+                            $("#show_history").addClass("hidden");
                         }
                         if(value[0].wallet && Number(value[0].wallet) > 0) {
                             $(".wallet").removeClass("hidden");
@@ -624,6 +675,12 @@ Common::authen();
                         $("#discount").text(value[0].discount).prop("disabled", "");
                         $("#totalReduce").text(value[0].total_reduce);
                         $("#totalCheckout").text(value[0].total_checkout);
+                        // if(value[0].discount) {
+                        //     $("#discount_old").text("-"+value[0].discount);
+                        //     $(".discount-old").removeClass("hidden");
+                        // } else {
+                        //     $(".discount-old").addClass("hidden");
+                        // }
                         // $("#repay").text(value[0].repay);
                         if(value[0].repay) {
                             $("#repay").text(formatNumber(value[0].repay));
@@ -798,6 +855,7 @@ Common::authen();
                     }
                     $(e).parent().parent().find("td:eq(13)").append('<div><span class="intoMoney new" id="intoMoney_new_' + noRow + '">' + formatNumber(into_money) + '</span><sup>đ</sup></div>');
                     $(e).parent().parent().find("td:eq(13)").append('<div class="old diff_money" style="'+style+'"><span id="diff_money_new_' + noRow + '">' + formatNumber(diff_money) + '</span><sup> đ</sup></div>');
+                    $(e).parent().find("[id=cancelExchange_" + noRow + "]").addClass("hidden");
                     $(e).parent().find("[id=del_" + noRow + "]").removeClass("hidden");
                     $(e).addClass("hidden").val("");
                     calculateTotal();
@@ -865,7 +923,9 @@ Common::authen();
                         + '<td><span class="intoMoney" id="diff_money_add_new_' + noRow + '">' + products[0].retail + '</span><sup> đ</sup></td>'
                         + '<td><button type="button" class="btn btn-danger form-control add-new-prod" title="Xóa"  onclick="del_product(this, \'product-' + noRow + '\')"><i class="fa fa-trash" aria-hidden="true"></i> Xóa</button></td>'
                         + '</tr>');
-                    $('[id=reduce_add_new_' + noRow + ']').trigger("change");
+                    setTimeout(function () {
+                        $('[id=reduce_add_new_' + noRow + ']').trigger("blur");
+                    },50);
                     calculateTotal();
                     $("#checkout").prop("disabled", "");
                 } else {
@@ -891,9 +951,10 @@ Common::authen();
 
     function calculateTotal() {
         let totalAmount = calculateTotalAmountInList();
-        let discountOld = discount_old(totalAmount);
+        // let discountOld = discount_old(totalAmount);
         let discountNew =  discount_new(totalAmount);
-        let totalCheckout = Number(totalAmount) - Number(discountNew) + Number(discountOld);
+        // let totalCheckout = Number(totalAmount) - Number(discountNew) + Number(discountOld);
+        let totalCheckout = Number(totalAmount) - Number(discountNew);
         if(totalCheckout > 0) {
             $("#discount_new").prop("disabled", "");
             $(".discount-new").removeClass("hidden");
@@ -904,6 +965,8 @@ Common::authen();
         $("#total_amount_new").text(formatNumber(totalAmount));
         $("#total_checkout_new").text(formatNumber(totalCheckout));
         calculate_total_point();
+        recalculateTotalReduce();
+        recalculateTotalCheckout();
     }
     function calculate_total_point() {
         let currentPoint = Number(replaceComma($("#totalBallanceInWallet").text()));
@@ -919,15 +982,15 @@ Common::authen();
                 $("#totalUsePoint").val(formatNumber(totalUsePoint)).removeClass("hidden");
                 recalculateTotalReduce();
                 recalculateTotalCheckout();
-            } else if(total_checkout_new < 0) {
-                if(total_checkout_new < currentPoint) {
-                    totalUsePoint = currentPoint;
-                } else {
-                    totalUsePoint = total_checkout_new;
-                }
-                $("#totalUsePoint").val(formatNumber(totalUsePoint)).removeClass("hidden");
-                recalculateTotalReduce();
-                recalculateTotalCheckout();
+            // } else if(total_checkout_new < 0) {
+                // if(total_checkout_new < currentPoint) {
+                //     totalUsePoint = currentPoint;
+                // } else {
+                //     totalUsePoint = total_checkout_new;
+                // }
+                // $("#totalUsePoint").val(formatNumber(totalUsePoint)).removeClass("hidden");
+                // recalculateTotalReduce();
+                // recalculateTotalCheckout();
             } else {
                 $("#totalUsePoint").addClass("hidden");
                 $("#totalReduceNew").text("0");
@@ -945,15 +1008,16 @@ Common::authen();
         noRow = Number(noRow);
         let totalAmount = 0;
         for (let i = 1; i <= noRow; i++) {
-            if ($("[id=diff_money_new_" + i + "]") && $("[id=diff_money_new_" + i + "]").text() !== "") {
-                let diff_money = $("[id=diff_money_new_" + i + "]").text();
-                diff_money = replaceComma(diff_money);
-                totalAmount += Number(diff_money);
-            }
-            if ($("[id=diff_money_add_new_" + i + "]") && $("[id=diff_money_add_new_" + i + "]").text() !== "") {
-                let diff_money_add_new = $("[id=diff_money_add_new_" + i + "]").text();
-                diff_money_add_new = replaceComma(diff_money_add_new);
-                totalAmount += Number(diff_money_add_new);
+            let isReturn = $("#order_"+i).attr("class");
+            if(isReturn && isReturn.indexOf("is_return") > -1) {
+                totalAmount += 0 - Number(replaceComma($("#intoMoney_"+i).text()));
+            } else {
+                if ($("[id=diff_money_new_" + i + "]") && $("[id=diff_money_new_" + i + "]").text() !== "") {
+                    totalAmount += Number(replaceComma($("[id=diff_money_new_" + i + "]").text()));
+                }
+                if ($("[id=diff_money_add_new_" + i + "]") && $("[id=diff_money_add_new_" + i + "]").text() !== "") {
+                    totalAmount += Number(replaceComma($("[id=diff_money_add_new_" + i + "]").text()));
+                }
             }
         }
         return totalAmount;
@@ -999,6 +1063,7 @@ Common::authen();
                 $(e).parent().find("[id=productName_" + noRow + "]").removeClass("hidden");
                 $(e).parent().find("[id=productName_" + noRow + "]").focus();
                 $(e).parent().parent().find(".diff_money").remove();
+                $(e).parent().find("[id=cancelExchange_" + noRow + "]").removeClass("hidden");
                 toastr.success('Sản phẩm đã được xóa.');
                 calculateTotal();
             }
@@ -1121,11 +1186,12 @@ Common::authen();
             totalSavedPoint = Number(replaceComma($("#total_saved_point").text()));
         }
         let data = {};
-        data["total_amount"] = Math.abs(total_amount);
+        data["total_amount"] = total_amount;
         data["total_reduce"] = total_reduce;
+        // data["discount_old"] = discount_old;
         data["discount"] = discount;
         data["wallet"] = totalUsePoint;
-        data["total_checkout"] = Math.abs(total_checkout);
+        data["total_checkout"] = total_checkout;
         data["customer_payment"] = customer_payment;
         data["payment_type"] = payment_type;
         data["repay"] = repay;
@@ -1148,6 +1214,7 @@ Common::authen();
         let curr_products = [];
         let exchange_products = [];
         let add_new_products = [];
+        let return_products = [];
         $.each($("#tableProd tbody tr"), function (key, value) {
             //product new
             if($(value).hasClass("has-change")) {
@@ -1157,18 +1224,20 @@ Common::authen();
                 let sku = $(value).find("span.product-sku").text();
                 let product_name = $(value).find("span.product-name").text();
                 let price = replaceComma($(value).find("span.price").text());
-                let quantity = $(value).find("span[name=qty]").text();
-                let reduce = replaceComma($(value).find("span[name=reduce]").text());
+                let quantity = $(value).find("span.qty").text();
+                let reduce = replaceComma($(value).find("span.reduce").text());
                 let reduce_type = 0;
                 let reduce_percent = "";
-                if (reduce.indexOf("%") > -1) {
-                    reduce = replacePercent(reduce);
-                    reduce_percent = reduce;
-                    reduce = (reduce * price) / 100;
-                    reduce_type = 0;
-                } else {
-                    reduce_percent = Math.round(reduce * 100 / (price * quantity));
-                    reduce_type = 1;
+                if(reduce) {
+                    if (reduce.indexOf("%") > -1) {
+                        reduce = replacePercent(reduce);
+                        reduce_percent = reduce;
+                        reduce = (reduce * price) / 100;
+                        reduce_type = 0;
+                    } else {
+                        reduce_percent = Math.round(reduce * 100 / (price * quantity));
+                        reduce_type = 1;
+                    }
                 }
                 let profit = replaceComma($(value).find("input[name=profit]").val());
                 let curr_product = {};
@@ -1195,14 +1264,16 @@ Common::authen();
                 let reduce_new = replaceComma($(value).find("input[name=reduceNew]").val());
                 let reduce_new_type = 0;
                 let reduce_percent_new = "";
-                if (reduce_new.indexOf("%") > -1) {
-                    reduce_new = replacePercent(reduce_new);
-                    reduce_percent_new = reduce_new;
-                    reduce_new = (reduce_new * price_new) / 100;
-                    reduce_new_type = 0;
-                } else {
-                    reduce_percent_new = Math.round(reduce_new * 100 / (price_new * quantity_new));
-                    reduce_new_type = 1;
+                if(reduce_new) {
+                    if (reduce_new.indexOf("%") > -1) {
+                        reduce_new = replacePercent(reduce_new);
+                        reduce_percent_new = reduce_new;
+                        reduce_new = (reduce_new * price_new) / 100;
+                        reduce_new_type = 0;
+                    } else {
+                        reduce_percent_new = Math.round(reduce_new * 100 / (price_new * quantity_new));
+                        reduce_new_type = 1;
+                    }
                 }
                 let profit_new = replaceComma($(value).find("input[name=profitNew]").val());
                 let product = {};
@@ -1219,6 +1290,42 @@ Common::authen();
                 product["profit"] = profit_new;
                 exchange_products.push(product);
             }
+            if($(value).hasClass("is_return")) {
+                let product_id = $(value).find("input[name=prodId]").val();
+                let variant_id = $(value).find("input[name=variantId]").val();
+                let sku = $(value).find("span.product-sku").text();
+                let product_name = $(value).find("span.product-name").text();
+                let price = replaceComma($(value).find("span.price").text());
+                let quantity = $(value).find("span.qty").text();
+                let reduce = replaceComma($(value).find("span.reduce").text());
+                let reduce_type = 0;
+                let reduce_percent = "";
+                if (reduce) {
+                    if (reduce.indexOf("%") > -1) {
+                        reduce = replacePercent(reduce);
+                        reduce_percent = reduce;
+                        reduce = (reduce * price) / 100;
+                        reduce_type = 0;
+                    } else {
+                        reduce_percent = Math.round(reduce * 100 / (price * quantity));
+                        reduce_type = 1;
+                    }
+                }
+                let profit = replaceComma($(value).find("input[name=profit]").val());
+                let product = {};
+                product["product_id"] = product_id;
+                product["variant_id"] = variant_id;
+                product["sku"] = sku;
+                product["product_name"] = product_name;
+                product["price"] = price;
+                product["quantity"] = quantity;
+                product["reduce"] = reduce;
+                product["reduce_percent"] = reduce_percent;
+                product["reduce_type"] = reduce_type;
+                product["product_exchange"] = sku;
+                product["profit"] = profit;
+                return_products.push(product);
+            }
             // add new product
             if($(value).hasClass("add-new-product")) {
                 let product_id_add_new = $(value).find("input[name=prodIdAddNew]").val();
@@ -1230,14 +1337,16 @@ Common::authen();
                 let reduce_add_new = replaceComma($(value).find("input[name=reduceAddNew]").val());
                 let reduce_type = 0;
                 let reduce_percent_add_new = "";
-                if (reduce_add_new.indexOf("%") > -1) {
-                    reduce_add_new = replacePercent(reduce_add_new);
-                    reduce_percent_add_new = reduce_add_new;
-                    reduce_add_new = (reduce_add_new * price_add_new) / 100;
-                    reduce_type = 0;
-                } else {
-                    reduce_percent_add_new = Math.round(reduce_add_new * 100 / (price_add_new * quantity_add_new));
-                    reduce_type = 1;
+                if(reduce_add_new) {
+                    if (reduce_add_new.indexOf("%") > -1) {
+                        reduce_add_new = replacePercent(reduce_add_new);
+                        reduce_percent_add_new = reduce_add_new;
+                        reduce_add_new = (reduce_add_new * price_add_new) / 100;
+                        reduce_type = 0;
+                    } else {
+                        reduce_percent_add_new = Math.round(reduce_add_new * 100 / (price_add_new * quantity_add_new));
+                        reduce_type = 1;
+                    }
                 }
                 let profit_add_new = replaceComma($(value).find("input[name=profitAddNew]").val());
                 let new_product = {};
@@ -1255,18 +1364,18 @@ Common::authen();
                 add_new_products.push(new_product);
             }
         });
-        if(curr_products.length <= 0 || exchange_products.length <= 0) {
-            Swal.fire({
-                    type: 'error',
-                    title: 'Đã xảy ra lỗi',
-                    text: "Không tồn tại sản phẩm đổi!"
-                });
-            return;
-        }
+        // if(curr_products.length <= 0 || exchange_products.length <= 0 || return_products.length <= 0) {
+        //     Swal.fire({
+        //             type: 'error',
+        //             title: 'Đã xảy ra lỗi',
+        //             text: "Không tồn tại sản phẩm đổi!"
+        //         });
+        //     return;
+        // }
         data["curr_products"] = curr_products;
         data["exchange_products"] = exchange_products;
         data["add_new_products"] = add_new_products;
-
+        data["return_products"] = return_products;
 
         console.log(JSON.stringify(data));
 
@@ -1448,7 +1557,7 @@ Common::authen();
         $(".voucher_info").addClass("hidden");
         $("#voucher_value").val("");
         $("#voucher").val("").prop("disabled", "");
-        disableCheckOutBtn();
+        // disableCheckOutBtn();
     }
 
     function get_total_point(customer_id) {
@@ -1489,12 +1598,17 @@ Common::authen();
     function recalculateTotalReduce() {
         let totalUsePoint  = Number(replaceComma($("#totalUsePoint").val()));
         let total_amount = Number(replaceComma($("#total_amount_new").text()));
+        // let discountOld = Number(replaceComma($("#discount_old").text()));
         let discountNew = replaceComma($("#discount_new").val());
         if(discountNew.indexOf("%") > -1) {
             discountNew = Math.round(replacePercent(discountNew) * total_amount / 100);
         }
         // recalculate total reduce
-        let total_reduce = totalUsePoint + Number(discountNew);
+        // let total_reduce = totalUsePoint + Number(discountNew) + Number(discountOld);
+        let total_reduce = 0;
+        if(total_amount > 0) {
+            total_reduce = totalUsePoint + Number(discountNew);
+        }
         $("#totalReduceNew").text(formatNumber(total_reduce));
         $(".total-reduce-new").removeClass("hidden");
     }
@@ -1512,22 +1626,23 @@ Common::authen();
         }
     }
 
+    // function calculate_saved_point() {
+    //     let total_checkout = Number(replaceComma($("#total_checkout_new").text()));
+    //     let total_saved_point = Math.round(total_checkout * 5 / 100);
+    //     total_saved_point = formatNumber(total_saved_point);
+    //     $("#total_saved_point").text(total_saved_point);
+    //     $(".saved-point").removeClass("hidden");
+    // }
     function calculate_saved_point() {
-        let total_checkout = Number(replaceComma($("#total_checkout_new").text()));
-        let total_saved_point = Math.round(total_checkout * 5 / 100);
-        total_saved_point = formatNumber(total_saved_point);
-        $("#total_saved_point").text(total_saved_point);
-        $(".saved-point").removeClass("hidden");
-    }
-    function calculate_saved_point() {
+        let total_saved_point = 0;
         let total_checkout = Number(replaceComma($("#total_checkout_new").text()));
         if (total_checkout > 0) {
             let discount = Number(replaceComma($("#discount_new").val()));
-            let total_saved_point = Math.round(total_checkout * 5 / 100);
+            total_saved_point = Math.round(total_checkout * 5 / 100);
             total_saved_point = formatNumber(total_saved_point - discount);
-            $("#total_saved_point").text(total_saved_point);
-            $(".saved-point").removeClass("hidden");
         }
+        $("#total_saved_point").text(total_saved_point);
+        $(".saved-point").removeClass("hidden");
     }
 
     function calculate_repay_new() {

@@ -5,6 +5,7 @@ class Order {
     private $total_reduce;
     private $total_reduce_percent;
     private $discount;
+    private $discount_old;
     private $wallet;
     private $total_amount;
     private $total_checkout;
@@ -12,7 +13,6 @@ class Order {
     private $payment_type;
     private $repay;
     private $transfer_to_wallet;
-//    private $repay_type;
     private $customer_id;
     private $customer_name;
     private $type;

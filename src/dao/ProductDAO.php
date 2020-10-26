@@ -67,7 +67,6 @@ class ProductDAO
                         A.name ,
                         B.sku,
                         B.retail,
-                        B.quantity, 
                         B.size,
                         B.color
                     from 
@@ -83,7 +82,6 @@ class ProductDAO
                     'name' => $row["name"],
                     'sku' => $row["sku"],
                     'price' => number_format($row["retail"]),
-                    'quantity' => $row["quantity"],
                     'size' => $row["size"],
                     'color' => $row["color"]
                 );
@@ -244,7 +242,7 @@ class ProductDAO
         }
     }
 
-    function find_all($status)
+    function find_all($status, $operator, $qty, $sku)
     {
         try {
             $sql = "SELECT A.id as product_id, 
@@ -262,12 +260,16 @@ class ProductDAO
                             A.origin,
                             A.short_description,
                             A.category_id,
-                              A.type
+                            A.type,
+                            sum(B.quantity) as total_quantity
                     FROM `smi_products` A
                     LEFT JOIN smi_variations B ON A.id = B.product_id
                     where
-                        A.status = $status
-                    GROUP BY A.id,
+                        A.status = $status";
+            if(!empty($sku)) {
+                $sql .= "  and B.sku = $sku";
+            }
+            $sql .= " GROUP BY A.id,
                              A.name,
                              A.image , 
                              A.link , 
@@ -278,8 +280,20 @@ class ProductDAO
                               A.origin,
                               A.short_description,
                               A.category_id,
-                              A.type
-                    ORDER BY A.created_at DESC";
+                              A.type";
+            if(!empty($qty) && !empty($operator)) {
+                if($operator == "=") {
+                    $sql .= " ,B.product_id having sum(B.quantity) = $qty";
+                } else if($operator == ">") {
+                    $sql .= " ,B.product_id having sum(B.quantity) > $qty";
+                } else {
+                    $sql .= " ,B.product_id having sum(B.quantity) < $qty";
+                }
+            }
+            $sql .= " ORDER BY A.created_at DESC";
+
+//            echo $sql."\n";
+
             $result = mysqli_query($this->conn, $sql);
             $data = array();
             foreach ($result as $k => $row) {
@@ -297,7 +311,8 @@ class ProductDAO
                     'origin' => $row["origin"],
                     'short_description' => $row["short_description"],
                     'category_id' => $row["category_id"],
-                    'type' => $row["type"]
+                    'type' => $row["type"],
+                    'total_quantity' => $row["total_quantity"]
                 );
                 array_push($data, $product);
             }

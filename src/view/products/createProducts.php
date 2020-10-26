@@ -1512,18 +1512,6 @@ Common::authen();
                 success: function (response) {
                     // console.log(response);
                     size = response;
-                    // let substringMatcher = function (strs) {
-                    //     return function findMatches(q, cb) {
-                    //         let matches = [];
-                    //         let substrRegex = new RegExp(q, 'i');
-                    //         $.each(strs, function (i, str) {
-                    //             if (substrRegex.test(str)) {
-                    //                 matches.push(str);
-                    //             }
-                    //         });
-                    //         cb(matches);
-                    //     };
-                    // };
                     $('#select_sizes .typeahead').typeahead({
                             hint: true,
                             highlight: true,

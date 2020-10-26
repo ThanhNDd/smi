@@ -10,10 +10,14 @@ $db = new DBConnect();
 $dao = new CustomerDAO();
 $dao->setConn($db->getConn());
 
-if (isset($_GET["method"]) && $_GET["method"] == "findall") {
+if (isset($_GET["method"]) && $_GET["method"] == "find_all") {
     try {
         Common::authen_get_data();
-        $lists = $dao->find_all();
+        $customer_id = isset($_GET["customer_id"]) ? $_GET["customer_id"] : '';
+        $phone = isset($_GET["phone"]) ? $_GET["phone"] : '';
+//        echo $customer_id;
+//        echo $phone;
+        $lists = $dao->find_all($customer_id, $phone);
         echo json_encode($lists);
     } catch (Exception $e) {
         echo $e->getMessage();

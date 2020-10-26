@@ -36,6 +36,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "print_receipt") {
         Common::authen_get_data();
         $order_id = $_POST["order_id"];
         $type = $_POST["type"];
+        $order = new Order();
         if ($type == 1) {
             // print receipt online
             $print_receipt = new PrintReceiptOnline();
@@ -70,6 +71,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "print_receipt") {
             $curr_products = [];
             $exchange_products = [];
             $add_new_products = [];
+            $return_products = [];
             for ($i = 0; $i < count($details); $i++) {
                 $type = $details[$i]->getType();
                 if ($type == 0) {
@@ -81,17 +83,21 @@ if (isset($_POST["method"]) && $_POST["method"] == "print_receipt") {
                 } else if ($type == 2) {
                     // add new of exchange product
                     array_push($exchange_products, $details[$i]);
+                } else if ($type == 3) {
+                    // return product
+                    array_push($return_products, $details[$i]);
                 }
             }
 //            print_r($curr_products);
             $curr_arr = get_details($curr_products, $order_id, 1); // product exchange
-            if (count($curr_arr) <= 0) {
-                throw new Exception("Have no product!!");
-            }
+//            if (count($curr_arr) <= 0) {
+//                throw new Exception("Have no product!!");
+//            }
             $exchange_arr = get_details($exchange_products, $order_id, 2);// new product of exchange
-            if (count($exchange_arr) <= 0) {
-                throw new Exception("Have no product exchange!!");
-            }
+//            if (count($exchange_arr) <= 0) {
+//                throw new Exception("Have no product exchange!!");
+//            }
+            $return_arr = get_details($return_products, $order_id, 3);// product return
             $add_new_arr = get_details($add_new_products, $order_id, 0); // add new product
             $customer_id = $order->getCustomer_id();
             $customer_name = '';
@@ -109,7 +115,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "print_receipt") {
             $order->setCustomerName($customer_name);
             $order->setPointSave($wallet_saved);
             $printer = new PrinterReceiptExchange();
-            $filename = $printer->print($order, $exchange_arr, $curr_arr, $add_new_arr);
+            $filename = $printer->print($order, $exchange_arr, $curr_arr, $add_new_arr, $return_arr);
             $response_array['fileName'] = $filename;
         }
         $response_array['fileName'] = $filename;
@@ -123,8 +129,8 @@ if (isset($_POST["method"]) && $_POST["method"] == "edit_order") {
     try {
         Common::authen_get_data();
         $order_id = $_POST["order_id"];
-        $order_type = $_POST["order_type"];
-        $order = $checkoutDAO->find_by_id($order_id, $order_type);
+//        $order_type = $_POST["order_type"];
+        $order = $checkoutDAO->find_by_id($order_id);
         echo json_encode($order);
     } catch (Exception $ex) {
         throw new Exception($ex);
@@ -217,7 +223,11 @@ if (isset($_GET["method"]) && $_GET["method"] == "get_info_total_checkout") {
         if(isset($_GET["customer_id"])) {
             $customer_id = $_GET["customer_id"];
         }
-        $info_total = $checkoutDAO->get_info_total_checkout($start_date, $end_date, $order_id, $customer_id);
+        $sku = '';
+        if(isset($_GET["sku"])) {
+            $sku = $_GET["sku"];
+        }
+        $info_total = $checkoutDAO->get_info_total_checkout($start_date, $end_date, $order_id, $customer_id, $sku);
         echo json_encode($info_total);
     } catch (Exception $ex) {
         throw new Exception($ex);
@@ -248,10 +258,14 @@ if (isset($_GET["method"]) && $_GET["method"] == "find_all") {
                 return;
             }
         }
+        $sku = '';
+        if(isset($_GET["sku"])) {
+            $sku = $_GET["sku"];
+        }
         if(isset($_GET["customer_id"])) {
             $customer_id = $_GET["customer_id"];
         }
-        $orders = $checkoutDAO->find_all($start_date, $end_date, $order_id, $customer_id);
+        $orders = $checkoutDAO->find_all($start_date, $end_date, $order_id, $customer_id, $sku);
         echo json_encode($orders);
     } catch (Exception $e) {
         throw new Exception($e);
@@ -296,7 +310,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
 
         $order = new Order();
         $order_type = $data->order_type;
-        $cusId = 0;
+        $cusId = $data->customer_id;
         $total_checkout = $data->total_checkout;
         $total_reduce = 0;
         $total_reduce_percent = 0;
@@ -306,7 +320,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         }
         if ($order_type == 1) {
             //online
-            $cusId = $data->customer_id;
+
             $order->setBill_of_lading_no($data->bill_of_lading_no);
             $order->setShipping_fee($data->shipping_fee);
             $order->setShipping($data->shipping);

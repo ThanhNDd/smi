@@ -158,6 +158,7 @@ Common::authen();
       }
 
       function edit_customer(customerId) {
+          console.log(customerId);
           if(customerId) {
               $.ajax({
                   url: "<?php Common::getPath() ?>src/controller/customer/CustomersController.php",
@@ -195,6 +196,9 @@ Common::authen();
               $("#link_image").val(data.avatar ? '<?php Common::path_avatar(); ?>'+data.avatar : '<?php Common::image_error(); ?>').trigger('blur');
           }
           $("#name").val(data.name);
+          console.log(data.city_id);
+          console.log(data.district_id);
+          console.log(data.village_id);
           generate_select2_city(data.city_id);
           generate_select2_district(data.city_id, data.district_id);
           generate_select2_village(data.district_id, data.village_id);
@@ -498,9 +502,9 @@ Common::authen();
                           hide_loading();
                           console.log(data);
                           if(data === "success") {
-                              let success = "tạo mới thành công";
+                              let success = "Tạo mới thành công";
                               if (id) {
-                                  success = "cập nhật thành công";
+                                  success = "Cập nhật thành công";
                               }
                               Swal.fire({
                                   type: 'success',
@@ -521,6 +525,9 @@ Common::authen();
                                           $("#name").val(name);
                                       }
                                       if($("#out_customer_name").length > 0) {
+                                          check_exist_customer(phone_number);
+                                      }
+                                      if (typeof check_exist_customer === 'function') {
                                           check_exist_customer(phone_number);
                                       }
                                   }

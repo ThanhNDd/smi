@@ -425,7 +425,10 @@ Common::authen();
                         if (result.value) {
                             reset_data_customer();
                             $("#phone_number").val(phone);
-                            generate_select2_city();
+                            // generate_select2_city();
+                            generate_select2_city('1');
+                            generate_select2_district('1', '275');
+                            generate_select2_village('275', '09895');
                             open_modal('#create_customer');
                         }
                     })
@@ -951,7 +954,6 @@ Common::authen();
         if (count == 0) {
             if (typeof find_product === 'function') {
                 find_product(prodId, 1);
-
             }
             if (typeof calculateTotal === 'function') {
                 calculateTotal();

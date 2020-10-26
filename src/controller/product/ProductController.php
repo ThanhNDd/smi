@@ -51,13 +51,11 @@ if (isset($_POST["method"]) && $_POST["method"] == "print_barcode") {
         $data = json_decode($data);
         $skus = '';
         for ($i = 0; $i < count($data); $i++) {
-            $skus .= '\'' . $data[$i] . '\',';
+            $skus .= '\'' . $data[$i]->id . '\',';
         }
         $skus = substr($skus, 0, strlen($skus) - 1);
-
         $lists = $dao->get_data_print_barcode($skus);
-        // echo json_encode($lists);
-        $filename = $print_barcode->print($lists);
+        $filename = $print_barcode->print($lists, $data);
         $response_array['fileName'] = $filename;
         echo json_encode($response_array);
     } catch (Exception $ex) {
@@ -199,96 +197,20 @@ if (isset($_POST["type"]) && $_POST["type"] == "edit_product") {
     }
 }
 
-//if (isset($_POST["type"]) && $_POST["type"] == "save_variation") {
-//    try {
-//        Common::authen_get_data();
-//        $product_id = $_POST["product_id"];
-//        $sku = $_POST["sku"];
-//        $color = $_POST["color"];
-//        $size = $_POST["size"];
-//        $qty = $_POST["qty"];
-//        $price = $_POST["price"];
-//        $retail = $_POST["retail"];
-//        $profit = $_POST["profit"];
-//        $percent = $_POST["percent"];
-//        $image = $_POST["image"];
-//
-//        if (empty($product_id) || $product_id == 0) {
-//            throw new Exception("product_id is empty or equal zero");
-//        }
-//
-//        $variation = new Variations();
-//        $variation->setProductId($product_id);
-//        $variation->setSize($size);
-//        $variation->setColor($color);
-//        $variation->setQuantity($qty);
-//        $variation->setPrice($price);
-//        $variation->setRetail($retail);
-//        $variation->setProfit($profit);
-//        $variation->setPercent($percent);
-//        $variation->setSku($sku);
-//        $variation->setImage($image);
-//
-//        $arr = array();
-//        array_push($arr, $variation);
-//        $dao->save_variations($arr);
-//        $response_array['success'] = "successfully";
-//        echo json_encode($response_array);
-//    } catch (Exception $e) {
-//        $db->rollback();
-//        echo $e->getMessage();
-//    }
-//    $db->commit();
-//}
-//
-//if (isset($_POST["type"]) && $_POST["type"] == "update_variation") {
-//    try {
-//        Common::authen_get_data();
-//        $sku = $_POST["sku"];
-//        $color = $_POST["color"];
-//        $size = $_POST["size"];
-//        $qty = $_POST["qty"];
-//
-//        if (empty($sku) || $sku == 0) {
-//            throw new Exception("sku is empty or equal zero");
-//        }
-//        $variation = new Variations();
-//        $variation->setSku($sku);
-//        $variation->setColor($color);
-//        $variation->setSize($size);
-//        $variation->setQuantity($qty);
-//        $dao->update_variation($variation);
-//        $response_array['success'] = "successfully";
-//        echo json_encode($response_array);
-//    } catch (Exception $e) {
-//        $db->rollback();
-//        echo $e->getMessage();
-//    }
-//    $db->commit();
-//}
-//
-//if (isset($_POST["type"]) && $_POST["type"] == "delete_variation") {
-//    try {
-//        Common::authen_get_data();
-//        $variation_id = $_POST["data"];
-//        if (empty($variation_id) || $variation_id == 0) {
-//            throw new Exception("variation_id is empty or equal zero");
-//        }
-//        $dao->delete_variation($variation_id);
-//        $response_array['success'] = "successfully";
-//        echo json_encode($response_array);
-//    } catch (Exception $e) {
-//        $db->rollback();
-//        echo $e->getMessage();
-//    }
-//    $db->commit();
-//}
-
 if (isset($_GET["method"]) && $_GET["method"] == "findall") {
     try {
         Common::authen_get_data();
-        $status = $_GET["status"];
-        $lists = $dao->find_all($status);
+        $status = isset($_GET["status"]) ? $_GET["status"] : '0';
+        $operator = isset($_GET["operator"]) ? $_GET["operator"] : '';
+        $quantity = isset($_GET["quantity"]) ? $_GET["quantity"] : '';
+        $sku = isset($_GET["sku"]) ? $_GET["sku"] : '';
+
+//        var_dump($status."\n");
+//        var_dump($operator."\n");
+//        var_dump($quantity."\n");
+//        var_dump($sku."\n");
+
+        $lists = $dao->find_all($status, $operator, $quantity, $sku);
         echo json_encode($lists);
     } catch (Exception $e) {
         echo $e->getMessage();

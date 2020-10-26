@@ -117,11 +117,33 @@ Common::authen();
         set_title("Danh sách khách hàng");
         loadall();
         $('[data-toggle="tooltip"]').tooltip();
+
+        let customer_id = "<?php echo (isset($_GET['customer_id']) ? $_GET['customer_id'] : '') ?>";
+        if(customer_id) {
+            $("#search_order_id").val(customer_id);
+            setTimeout(function () {
+                $('#search_order_id').trigger(
+                    jQuery.Event( 'keydown', { keyCode: 13, which: 13 } )
+                );
+            },100);
+        }
+
     });
 
     function loadall() {
+        let customer_id = "<?php echo (isset($_GET['customer_id']) ? $_GET['customer_id'] : '') ?>";
+        let phone = "<?php echo (isset($_GET['phone']) ? $_GET['phone'] : '') ?>";
         let table = $('#table_customer').DataTable({
-            "ajax": '<?php Common::getPath() ?>src/controller/customer/CustomersController.php?method=findall',
+            //"ajax": '<?php //Common::getPath() ?>//src/controller/customer/CustomersController.php?method=findall',
+            'ajax': {
+                "type": "GET",
+                "url": '<?php Common::getPath() ?>src/controller/customer/CustomersController.php',
+                "data": function (d) {
+                        d.method = 'find_all';
+                        d.customer_id = customer_id;
+                        d.phone = phone;
+                    }
+            },
             ordering: false,
             select: "single",
             deferRender: true,
