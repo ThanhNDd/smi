@@ -209,8 +209,11 @@ if (isset($_POST["method"]) && $_POST["method"] == "save_check_detail") {
 if (isset($_POST["method"]) && $_POST["method"] == "save_check_tmp") {
     try {
         Common::authen_get_data();
-        $sku = $_POST["sku"];
-        $id = $dao->save_check_temp($sku);
+        $skus = $_POST["skus"];
+        if(count($skus) == 0) {
+            throw new Exception("SKU is not empty!!!");
+        }
+        $id = $dao->save_check_temp($skus);
         echo $id;
     } catch (Exception $e) {
         $db->rollback();

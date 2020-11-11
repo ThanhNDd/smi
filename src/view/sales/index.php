@@ -295,6 +295,7 @@ Common::authen();
                 $(this).next("div").removeClass("hidden");
                 let phone = $(this).val();
                 if (phone) {
+					phone = phone.trim();
                     check_exist_customer(phone);
                 }
             }

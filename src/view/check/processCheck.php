@@ -41,9 +41,9 @@ Common::authen();
                            style="max-height: 575px !important;overflow: auto;display: block;">
                         <thead>
                         <tr>
-                            <th class="hidden">#</th>
                             <th class="w10">#</th>
                             <th class="w70">ID</th>
+                            <th class="w100">Hành động</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -64,7 +64,7 @@ Common::authen();
                         <tbody>
                         <tr>
                             <td class="right">Tổng số sản phẩm</td>
-                            <td class="right"><h2 id="totalQty" style="color: red;">0</h2></td>
+                            <td class="right"><h1 id="totalQty" style="color: red;">0</h1></td>
                         </tr>
 <!--                        <tr>-->
 <!--                            <td class="right w110">Tổng tiền</td>-->
@@ -110,13 +110,65 @@ Common::authen();
         // end document ready
     });
 
+    let total_products = 0;
+    let skus = [];
+    let norow = 0;
     function input_product() {
         $("#productId").change(function () {
             let sku = $(this).val();
-            find_product(sku);
+            skus.push(sku);
+            total_products++;
+            $("#totalQty").text(total_products);
+            // find_product(sku);
             $(this).val("");
+            if(skus.length === 10) {
+                console.log("save temp sku");
+                let sku = skus;
+                save_temp_sku(sku);
+                skus = [];
+            }
+            norow++;
+            append_new_data_in_table_list(norow, sku);
+            // setTimeout(function () {
+            //     if(skus.length > 0) {
+            //         let sku = skus;
+            //         save_temp_sku(sku);
+            //         skus = [];
+            //     }
+            // },300000); //5 minute
         });
     }
+    function save_temp_sku(sku) {
+        $.ajax({
+            dataType: 'TEXT',
+            url: '<?php Common::getPath() ?>src/controller/Check/CheckController.php',
+            data: {
+                method: "save_check_tmp",
+                skus: sku
+            },
+            type: 'POST',
+            success: function (response) {
+                console.log(response);
+                toastr.success("lưu thành công");
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                }).then((result) => {
+                    if (result.value) {
+                        // enabled_input_product();
+                    }
+                });
+            }
+        });
+    }
+
+
+
     function find_product(sku) {
         disabled_input_product();
         $.ajax({
@@ -148,14 +200,22 @@ Common::authen();
             }
         });
     }
-    function append_new_data_in_table_list(id, sku) {
-        let noRow = number_row();
-        $("#tableProd tbody").prepend('<tr id="product-' + noRow + '">'
-            + '<td class="hidden"><input type="hidden" value="' + id + '"></td>'
-            + '<td>' + noRow + '</td>'
+    function append_new_data_in_table_list(norow, sku) {
+        // let noRow = number_row();
+        $("#tableProd tbody").prepend('<tr id="product-' + norow + '">'
+            + '<td>' + norow + '</td>'
             + '<td>' + sku + '</td>'
+            + '<td><a href="javascript:void(0)" onclick="del_sku(sku)"><i class="fa fa-trash text-danger"></i></a></td>'
             + '</tr>');
     }
+
+
+
+
+
+
+
+
     function number_row() {
         let noRow = $("#noRow").val();
         noRow = Number(noRow);

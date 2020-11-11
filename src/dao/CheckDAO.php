@@ -97,11 +97,18 @@ class CheckDAO
         }
     }
 
-    function save_check_temp($sku)
+    function save_check_temp($skus)
     {
         try {
-            $stmt = $this->getConn()->prepare("INSERT INTO smi_check_detail (`sku`) VALUES (?)");
-            $stmt->bind_param("s", $sku);
+            $sql = "INSERT INTO smi_check_tmp_sku (`sku`) VALUES ";
+            for($i=0; $i<count($skus); $i++) {
+                if($i < count($skus) -1 ) {
+                    $sql .= "($skus[$i]),";
+                } else {
+                    $sql .= "($skus[$i])";
+                }
+            }
+            $stmt = $this->getConn()->prepare($sql);
             if(!$stmt->execute()) {
                 throw new Exception($stmt->error);
             }

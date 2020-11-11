@@ -189,7 +189,7 @@ Common::authen();
         <?php require_once '../customer/createCustomer.php'; ?>
     </div>
     <!-- /.modal-dialog -->
-
+</div>
     <?php require_once ('../../common/js.php'); ?>
     <script>
         $(document).ready(function () {
@@ -937,7 +937,7 @@ Common::authen();
                     "<td><input type=\"number\" class=\"form-control w100\" id=\"qty_" + row_num + "\" value=\"" + qty + "\" onchange=\"onchange_in_list(this, " + row_num + ")\"></td>\n" +
                     "<td><input type=\"text\" class=\"form-control w150\" id=\"reduce_" + row_num + "\" value='" + reduce + "' onchange=\"onchange_in_list(this, " + row_num + ")\"></td>\n" +
                     "<td id=\"total_" + row_num + "\" class=\"w150\">" + formatNumber(total) + "</td>\n" +
-                    "<td id=\"delete_" + row_num + "\"><a href=\"javascript:void(0)\" class=\"btn\"><i class=\"fa fa-trash text-danger\"></i></a></td>\n" +
+                    "<td id=\"delete_" + row_num + "\"><a href=\"javascript:void(0)\" onclick='delete_product_in_list(" + row_num + ")' class=\"btn\"><i class=\"fa fa-trash text-danger\"></i></a></td>\n" +
                     "</tr>";
                 row_num++;
             });

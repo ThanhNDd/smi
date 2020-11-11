@@ -115,6 +115,12 @@ require_once("common.php");
                                 <p>Vouchers</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="<?php Common::getPath() ?>src/view/promotion/" class="nav-link">
+                                <i class="fas fa-money-check-alt nav-icon"></i>
+                                <p>Khuyến mãi</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 <li class="nav-item has-treeview menu-open">
