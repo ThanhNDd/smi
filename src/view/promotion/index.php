@@ -94,11 +94,11 @@
                     <div class="container">
                         <div class="row">
                             <div class="form-group col-sm">
-                                <label for="promotion_name">Tên chương trình:</label>
+                                <label for="promotion_name">Tên chương trình</label>
                                 <input type="text" class="form-control" placeholder="Nhập tên chương trình" id="promotion_name">
                             </div>
                             <div class="form-group col-sm">
-                                <label for="reservation">Chọn ngày:</label>
+                                <label for="reservation">Chọn ngày</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                 <span class="input-group-text">
@@ -110,42 +110,53 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="form-group form-check-inline">
-                                <label class="form-check-label">
-                                    <input type="radio" class="form-check-input" name="sale_type">Flash Sale
-                                </label>
+                            <div class="form-group col-sm">
+                                <div class="form-group form-check-inline">
+                                    <label class="form-check-label">
+                                        <input type="radio" class="form-check-input" name="sale_type">Flash Sale
+                                    </label>
+                                </div>
+                                <div class="form-group form-check-inline">
+                                    <label class="form-check-label">
+                                        <input type="radio" class="form-check-input" name="sale_type" checked>Sale
+                                    </label>
+                                </div>
+                                <div class="form-group form-check-inline">
+                                    <label class="form-check-label">
+                                        <input type="checkbox" class="form-check-input" value="" checked>Website
+                                    </label>
+                                </div>
+                                <div class="form-group form-check-inline">
+                                    <label class="form-check-label">
+                                        <input type="checkbox" class="form-check-input" value="">Shop
+                                    </label>
+                                </div>
                             </div>
-                            <div class="form-group form-check-inline">
-                                <label class="form-check-label">
-                                    <input type="radio" class="form-check-input" name="sale_type" checked>Sale
-                                </label>
-                            </div>
-                            <div class="form-group form-check-inline">
-                                <label class="form-check-label">
-                                    <input type="checkbox" class="form-check-input" value="" checked>Website
-                                </label>
-                            </div>
-                            <div class="form-group form-check-inline">
-                                <label class="form-check-label">
-                                    <input type="checkbox" class="form-check-input" value="">Shop
-                                </label>
-                            </div>
-                            <div class="form-group col">
+                            <div class="form-group col-sm">
                                 <button type="button" class="btn btn-outline-info float-right" id="add_new_product">
                                     <i class="fa fa-plus-circle" aria-hidden="true"></i> Thêm sản phẩm
                                 </button>
                             </div>
                         </div>
                         <div class="row">
+                            <div class="form-group col-sm">
+                                <input type="text" class="form-control" placeholder="Giảm theo số tiền cho tất cả" id="sale_money_for_all" disabled>
+                            </div>
+                            <div class="form-group col-sm">
+                                <input type="text" class="form-control" placeholder="Giảm theo % cho tất cả" id="sale_percent_for_all" disabled>
+                            </div>
+                        </div>
+                        <div class="row">
                             <table id="products_list" class="table table-hovered table-striped" style="width: 100%">
                                 <thead>
                                     <tr>
-                                        <th class="hidden"></th>
                                         <th>Hình ảnh</th>
-                                        <th>Mã sản phẩm</th>
                                         <th>Tên sản phẩm</th>
-                                        <th>Giá bán lẻ</th>
-                                        <th>Giá sale</th>
+                                    </tr>
+                                    <tr>
+                                      <th>Mã sản phẩm</th>
+                                      <th>Giá bán lẻ</th>
+                                      <th>Giá sale</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -215,6 +226,8 @@
 <input type="hidden" id="endDate">
 <script>
     let checked_products = [];
+    let list_products = [];
+    let table;
 
     $(document).ready(function () {
         set_title("Danh sách chương trình khuyến mãi");
@@ -239,6 +252,22 @@
         $("#add_product_choice").click(function () {
             add_product_into_list();
         });
+        $( "#sale_money_for_all" ).on( "keydown", function( event ) {
+            let key = event.which;
+            if(key === 13) {
+                $("#sale_percent_for_all").val("");
+                let money = $(this).val();
+                $("#sale_money_for_all").val(formatNumber(money));
+                apply_sale_for_all();
+            }
+        });
+        $( "#sale_percent_for_all" ).on( "keydown", function( event ) {
+            let key = event.which;
+            if(key === 13) {
+                $("#sale_money_for_all").val("");
+                apply_sale_for_all();
+            }
+        });
         $("#submit_promotion").click(function () {
             submit_promotion();
         });
@@ -247,17 +276,46 @@
     function submit_promotion() {
         let table = $("#products_list").DataTable();
         let data = table.rows().data();
-        // let sku = data[0][2];
-        let sale_price = $(data[0][5]).children("#retail_pice_"+sku).val();
-
-        //output the input value of the first row
-        console.log(data);
-
-        // console.log(data);
+        for(let i=0; i<data.length; i++) {
+            // console.log(data[i]);
+            let product_id = data[i][0];
+            let variant_id = data[i][1];
+            let sku = data[i][3];
+            let retail_price = data[i][5];
+            console.log($(data[i][6]).children("#retail_pice_"+sku).val());
+            let sale_price = $("#retail_pice_"+sku).val();
+            let sale_percent = $("#retail_pice_sale_percent_"+sku).val();
+            // console.log(product_id+" - "+variant_id+" - "+sku+" - "+retail_price+" - "+sale_price+" - "+sale_percent);
+        }
     }
 
+    function apply_sale_for_all() {
+        let money = $("#sale_money_for_all").val();
+        let percent = $("#sale_percent_for_all").val();
+        if(money) {
+            money = replaceComma(money);
+            for(let i=0; i<list_products.length; i++) {
+                let price = list_products[i].price;
+                list_products[i].sale_price = money;
+                list_products[i].percent = 100 - Math.round(money / price * 100);
+                if(i === list_products.length-1) {
+                    redraw_table_product_in_list();
+                }
+            }
+        }
+        if(percent) {
+            for(let i=0; i<list_products.length; i++) {
+                let price = list_products[i].price;
+                list_products[i].sale_price = (price - percent * price / 100).toFixed(0);
+                list_products[i].percent = percent;
+                if(i === list_products.length-1) {
+                    redraw_table_product_in_list();
+                }
+            }
+        }
+    }
+    
     function add_product_into_list() {
-        // console.log(JSON.stringify(checked_products));
         $.ajax({
             url: '<?php Common::getPath()?>src/controller/promotion/PromotionController.php',
             type: "POST",
@@ -271,19 +329,25 @@
                 if(res) {
                     $("#products_list tbody").html("");
                     let products = res.data;
+                    console.log(JSON.stringify(products));
                     for(let i=0; i<products.length; i++) {
                         let product = products[i];
-                        let id = product.id;
+                        list_products.push(product);
+                        let product_id = product.product_id;
+                        let variant_id = product.variant_id;
                         let sku = product.sku;
                         let image = product.image;
                         let name = product.name;
                         let size = product.size;
                         let color = product.color;
                         let price = product.price;
+                        let sale_price = product.sale_price;
+                        let percent = product.percent;
                         // let quantity = product.quantity;
 
                         let body = "<tr>";
-                        body += "<td class=\"hidden\">"+id+"</td>";
+                        body += "<td class=\"hidden\">"+product_id+"</td>";
+                        body += "<td class=\"hidden\">"+variant_id+"</td>";
                         body += "<td><img src='"+image+"' width='64px' onerror='this.src=\"<?php Common::getPath() ?>dist/img/img_err.jpg\";'></td>";
                         body += "<td>"+sku+"</td>";
                         body += "<td>"+name+"<br><i style=\"font-size: 11px;\">Màu sắc: "+color+"</i><br><i style=\"font-size: 11px;\">Size: "+size+"</i></td>";
@@ -293,11 +357,11 @@
                                 "      <div class=\"input-group-prepend\">\n" +
                                 "        <span class=\"input-group-text\" style='font-size: 10px'>đ</span>\n" +
                                 "      </div>\n" +
-                                "      <input type='text' id='retail_pice_"+sku+"' value='' class='form-control' style=\"width: 30%;\" onchange='change_sale_price(this, "+sku+", "+price+")'>\n" +
+                                "      <input type='text' id='retail_pice_"+sku+"' value='"+formatNumber(sale_price)+"' class='form-control' style=\"width: 30%;\" onchange='change_sale_price(this, "+sku+", "+price+")'>\n" +
                                 "      <div class=\"input-group-prepend\">\n" +
                                 "        <span class=\"input-group-text\" style='font-size: 10px'>-</span>\n" +
                                 "      </div>\n" +
-                                "      <input type='text' id='retail_pice_sale_percent_"+sku+"' value='' class='form-control' onchange='change_sale_percent(this, "+sku+", "+price+")'>\n" +
+                                "      <input type='text' id='retail_pice_sale_percent_"+sku+"' value='"+percent+"' class='form-control' onchange='change_sale_percent(this, "+sku+", "+price+")'>\n" +
                                 "      <div class=\"input-group-prepend\">\n" +
                                 "        <span class=\"input-group-text\" style='font-size: 10px'>%</span>\n" +
                                 "      </div>\n" +
@@ -305,15 +369,18 @@
                                 "</td>";
                         body += "</tr>";
                         $("#products_list tbody").append(body);
+                        if(i === products.length-1) {
+                            console.log(JSON.stringify(list_products));
+                            table = $('#products_list').DataTable({
+                                "scrollY":        "500px",
+                                "scrollCollapse": true,
+                                "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]]
+                            });
+                            close_modal("#add_product");
+                            $("#sale_money_for_all").prop("disabled", "");
+                            $("#sale_percent_for_all").prop("disabled", "");
+                        }
                     }
-                    setTimeout(function () {
-                        $('#products_list').DataTable({
-                            "scrollY":        "500px",
-                            "scrollCollapse": true,
-                            "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]]
-                        });
-                        close_modal("#add_product");
-                    },300);
                 }
             },
             error: function (data, errorThrown) {
@@ -328,19 +395,96 @@
         });
     }
 
+    function redraw_table_product_in_list() {
+        if ($.fn.dataTable.isDataTable('#products_list')) {
+            table.destroy();
+            table.clear();
+            // table.ajax.reload();
+        }
+        $("#products_list tbody").html("");
+        let products = list_products;
+        for(let i=0; i<products.length; i++) {
+            let product = products[i];
+            let product_id = product.product_id;
+            let variant_id = product.variant_id;
+            let sku = product.sku;
+            let image = product.image;
+            let name = product.name;
+            let size = product.size;
+            let color = product.color;
+            let price = product.price;
+            let sale_price = product.sale_price;
+            let percent = product.percent;
+
+            let body = "<tr>";
+            body += "<td class=\"hidden\">"+product_id+"</td>";
+            body += "<td class=\"hidden\">"+variant_id+"</td>";
+            body += "<td><img src='"+image+"' width='64px' onerror='this.src=\"<?php Common::getPath() ?>dist/img/img_err.jpg\";'></td>";
+            body += "<td>"+sku+"</td>";
+            body += "<td>"+name+"<br><i style=\"font-size: 11px;\">Màu sắc: "+color+"</i><br><i style=\"font-size: 11px;\">Size: "+size+"</i></td>";
+            body += "<td>"+formatNumber(price)+"<sup>đ</sup></td>";
+            body += "<td>" +
+                "<div class=\"input-group mb-3\" style=\"width: 240px;\">" +
+                "      <div class=\"input-group-prepend\">\n" +
+                "        <span class=\"input-group-text\" style='font-size: 10px'>đ</span>\n" +
+                "      </div>\n" +
+                "      <input type='text' id='retail_pice_"+sku+"' value='"+formatNumber(sale_price)+"' class='form-control' style=\"width: 30%;\" onchange='change_sale_price(this, "+sku+", "+price+")'>\n" +
+                "      <div class=\"input-group-prepend\">\n" +
+                "        <span class=\"input-group-text\" style='font-size: 10px'>-</span>\n" +
+                "      </div>\n" +
+                "      <input type='text' id='retail_pice_sale_percent_"+sku+"' value='"+percent+"' class='form-control' onchange='change_sale_percent(this, "+sku+", "+price+")'>\n" +
+                "      <div class=\"input-group-prepend\">\n" +
+                "        <span class=\"input-group-text\" style='font-size: 10px'>%</span>\n" +
+                "      </div>\n" +
+                "    </div>  "+
+                "</td>";
+            body += "</tr>";
+            $("#products_list tbody").append(body);
+            if(i === products.length -1) {
+                console.log(JSON.stringify(list_products));
+                table = $('#products_list').DataTable({
+                    "scrollY":        "500px",
+                    "scrollCollapse": true,
+                    "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]]
+                });
+            }
+        }
+        // setTimeout(function () {
+        //     console.log(JSON.stringify(list_products));
+        //     $('#products_list').DataTable({
+        //         "scrollY":        "500px",
+        //         "scrollCollapse": true,
+        //         "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]]
+        //     });
+        // },300);
+    }
+
+
     function change_sale_price(e, sku, retail) {
         let sale_price = $(e).val();
         sale_price = replaceComma(sale_price);
         let percent = 100 - Math.round(sale_price * 100 / retail);
         $("#retail_pice_"+sku).val(formatNumber(sale_price));
         $("#retail_pice_sale_percent_"+sku).val(percent);
+        set_data_in_json(sale_price, percent, sku);
     }
     function change_sale_percent(e, sku, retail) {
-        let sale_percent = $(e).val();
+        let percent = $(e).val();
         let sale_price = Number(sale_percent * retail / 100);
         sale_price = (retail - sale_price).toFixed(0);
         $("#retail_pice_"+sku).val(formatNumber(sale_price));
-        $("#retail_pice_sale_percent_"+sku).val(sale_percent);
+        $("#retail_pice_sale_percent_"+sku).val(percent);
+        set_data_in_json(sale_price, percent, sku);
+    }
+    function set_data_in_json(sale_price, percent, sku) {
+        for(let i=0; i<list_products.length; i++) {
+            let _sku = list_products[i].sku;
+            if(sku == _sku) {
+                list_products[i].sale_price = sale_price;
+                list_products[i].percent = percent;
+            }
+        }
+        console.log(JSON.stringify(list_products));
     }
     function add_products() {
         $.ajax({
@@ -372,15 +516,15 @@
                         body += "<td>"+product.total_quantity+"</td>";
                         body += "</tr>";
                         $("#table_list_product tbody").append(body);
+                        if(i === products.length -1) {
+                            $('#table_list_product').DataTable({
+                                "scrollY":        "500px",
+                                "scrollCollapse": true,
+                                "lengthMenu": [[8, 25, 50, 100, -1], [8, 25, 50, 100, "All"]]
+                            });
+                            open_modal('#add_product');
+                        }
                     }
-                    setTimeout(function () {
-                        $('#table_list_product').DataTable({
-                            "scrollY":        "500px",
-                            "scrollCollapse": true,
-                            "lengthMenu": [[8, 25, 50, 100, -1], [8, 25, 50, 100, "All"]]
-                        });
-                        open_modal('#add_product');
-                    },300);
                 }
             },
             error: function (data, errorThrown) {

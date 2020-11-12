@@ -208,7 +208,9 @@ class PromotionDAO
     {
         try {
             $ids = implode(",",$product_id);
-            $sql = "SELECT a.id,
+            $sql = "SELECT 
+                            b.id as product_id,
+                            a.id as variant_id,
                            a.image,
                            b.name,
                            a.sku,
@@ -224,14 +226,17 @@ class PromotionDAO
             $data = array();
             foreach ($result as $k => $row) {
                 $product = array(
-                    'id' => $row["id"],
+                    'product_id' => $row["product_id"],
+                    'variant_id' => $row["variant_id"],
                     'image' => $row["image"],
                     'name' => $row["name"],
                     'sku' => $row["sku"],
                     'size' => $row["size"],
                     'color' => $row["color"],
                     'price' => $row["price"],
-                    'quantity' => $row["quantity"]
+                    'quantity' => $row["quantity"],
+                    'sale_price' => "",
+                    'percent' => ""
                 );
                 array_push($data, $product);
             }
