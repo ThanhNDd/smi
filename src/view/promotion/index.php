@@ -152,11 +152,9 @@
                                     <tr>
                                         <th>Hình ảnh</th>
                                         <th>Tên sản phẩm</th>
-                                    </tr>
-                                    <tr>
-                                      <th>Mã sản phẩm</th>
-                                      <th>Giá bán lẻ</th>
-                                      <th>Giá sale</th>
+                                        <th>Mã sản phẩm</th>
+                                        <th>Giá bán lẻ</th>
+                                        <th>Giá sale</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -198,8 +196,8 @@
                         <thead>
                             <tr>
                                 <th></th>
-                                <th>ID</th>
-                                <th>Hình ảnh</th>
+                                <th class="hidden">ID</th>
+                                <th class="center">Hình ảnh</th>
                                 <th>Tên</th>
                                 <th>Giá</th>
                                 <th>Kho</th>
@@ -228,6 +226,7 @@
     let checked_products = [];
     let list_products = [];
     let table;
+    let table_list_product;
 
     $(document).ready(function () {
         set_title("Danh sách chương trình khuyến mãi");
@@ -346,8 +345,6 @@
                         // let quantity = product.quantity;
 
                         let body = "<tr>";
-                        body += "<td class=\"hidden\">"+product_id+"</td>";
-                        body += "<td class=\"hidden\">"+variant_id+"</td>";
                         body += "<td><img src='"+image+"' width='64px' onerror='this.src=\"<?php Common::getPath() ?>dist/img/img_err.jpg\";'></td>";
                         body += "<td>"+sku+"</td>";
                         body += "<td>"+name+"<br><i style=\"font-size: 11px;\">Màu sắc: "+color+"</i><br><i style=\"font-size: 11px;\">Size: "+size+"</i></td>";
@@ -399,7 +396,7 @@
         if ($.fn.dataTable.isDataTable('#products_list')) {
             table.destroy();
             table.clear();
-            // table.ajax.reload();
+            table.ajax.reload();
         }
         $("#products_list tbody").html("");
         let products = list_products;
@@ -487,6 +484,100 @@
         console.log(JSON.stringify(list_products));
     }
     function add_products() {
+        if ($.fn.dataTable.isDataTable('#table_list_product')) {
+            table_list_product.destroy();
+            table_list_product.clear();
+            table_list_product.ajax.reload();
+        }
+        table_list_product = $('#table_list_product').DataTable({
+            'ajax': {
+                "type": "GET",
+                "url": "<?php Common::getPath()?>src/controller/promotion/PromotionController.php",
+                "data": {
+                    "method": 'find_products',
+                }
+            },
+            "scrollY":        "400px",
+            "initComplete":function( settings, json){
+                open_modal('#add_product');
+            },
+            "dom": '<"top"flp<"clear">>rt<"bottom"p<"clear">>',
+            searching: false,
+            ordering: false,
+            scrollCollapse: true,
+            "language": {
+                "emptyTable": "Không có dữ liệu",
+                "oPaginate": {
+                    "sFirst":    	"&lsaquo;",
+                    "sPrevious": 	"&laquo;",
+                    "sNext":     	"&raquo;",
+                    "sLast":     	"&rsaquo;"
+                },
+            },
+            "columns": [
+                {
+                    "data": format_checkbox,
+                    "width": "50px",
+                    class: "center"
+                },
+                {
+                    "data": "product_id",
+                    "width": "50px",
+                    class: "hidden"
+                },
+                {
+                    "data": format_image_
+                },
+                {
+                    "data": "product_name"
+                },
+                {
+                    "data": format_price
+                },
+                {
+                    "data": "total_quantity",
+                    width: "50px"
+                }
+            ],
+            "lengthMenu": [[10, 50, 100, -1], [10, 50, 100, "All"]]
+        });
+    }
+
+    function format_checkbox(data) {
+        let product_id = data.product_id;
+        let checked = false;
+        for(let j=0; j<checked_products.length; j++) {
+            let _product_id = checked_products[j];
+            if(_product_id == product_id) {
+                checked = true;
+            }
+        }
+        let body = "<tr>";
+        if(checked) {
+            body += "<td><input type='checkbox' id='chk_"+product_id+"' onclick='choose_product(this, "+product_id+")' checked></td>";
+        } else {
+            body += "<td><input type='checkbox' id='chk_"+product_id+"' onclick='choose_product(this, "+product_id+")'></td>";
+        }
+        return body;
+    }
+
+    function format_image_(data) {
+        let image = data.image;
+        return "<img src=\""+image+"\" width=\"64px\" onerror='this.src=\"<?php Common::getPath() ?>dist/img/img_err.jpg\";'>";
+    }
+
+    function format_price(data) {
+        let min_price = data.min_retail;
+        let max_price = data.max_retail;
+        if(min_price == max_price) {
+            return formatNumber(min_price)+"<sup>đ</sup>";
+        } else {
+            return formatNumber(min_price)+"<sup>đ</sup> - "+formatNumber(max_price)+"<sup>đ</sup>";
+        }
+    }
+
+
+    function add_products1() {
         $.ajax({
             url: '<?php Common::getPath()?>src/controller/promotion/PromotionController.php',
             type: "POST",
@@ -507,8 +598,20 @@
                         } else {
                             price = formatNumber(product.min_retail) + "<sup>đ</sup> - " + formatNumber(product.max_retail) + "<sup>đ</sup>";
                         }
+                        let checked = false;
+                        for(let j=0; j<checked_products.length; j++) {
+                            let _product_id = checked_products[j];
+                            if(_product_id == product.product_id) {
+                                checked = true;
+                            }
+                        }
                         let body = "<tr>";
-                        body += "<td><input type='checkbox' id='chk_"+product.product_id+"' onclick='choose_product(this, "+product.product_id+")'></td>";
+                        if(checked) {
+                            body += "<td><input type='checkbox' id='chk_"+product.product_id+"' onclick='choose_product(this, "+product.product_id+")' checked></td>";
+                        } else {
+                            body += "<td><input type='checkbox' id='chk_"+product.product_id+"' onclick='choose_product(this, "+product.product_id+")'></td>";
+                        }
+
                         body += "<td>"+product.product_id+"</td>";
                         body += "<td><img src='"+product.image+"' width='64px' onerror='this.src=\"<?php Common::getPath() ?>dist/img/img_err.jpg\";'></td>";
                         body += "<td>"+product.product_name+"</td>";
@@ -517,7 +620,7 @@
                         body += "</tr>";
                         $("#table_list_product tbody").append(body);
                         if(i === products.length -1) {
-                            $('#table_list_product').DataTable({
+                            table_list_product = $('#table_list_product').DataTable({
                                 "scrollY":        "500px",
                                 "scrollCollapse": true,
                                 "lengthMenu": [[8, 25, 50, 100, -1], [8, 25, 50, 100, "All"]]
@@ -538,6 +641,8 @@
             }
         });
     }
+
+
 
     function choose_product(e, product_id) {
         // console.log(checked_products.length);

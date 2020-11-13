@@ -93,7 +93,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
     $db->commit();
 }
 
-if (isset($_POST["method"]) && $_POST["method"] == "find_products") {
+if (isset($_GET["method"]) && $_GET["method"] == "find_products") {
     try {
         Common::authen_get_data();
         $lists = $dao->find_all_products();
