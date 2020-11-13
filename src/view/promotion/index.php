@@ -54,6 +54,9 @@
         div#products_list_wrapper {
             width: 100%;
         }
+        div.dataTables_wrapper div.dataTables_info {
+            float: left;
+        }
     </style>
 </head>
 <?php require_once('../../common/header.php'); ?>
@@ -123,17 +126,17 @@
                                 </div>
                                 <div class="form-group form-check-inline">
                                     <label class="form-check-label">
-                                        <input type="checkbox" class="form-check-input" value="" checked>Website
+                                        <input type="checkbox" class="form-check-input" value="0" name="scope" id="website" checked>Website
                                     </label>
                                 </div>
                                 <div class="form-group form-check-inline">
                                     <label class="form-check-label">
-                                        <input type="checkbox" class="form-check-input" value="">Shop
+                                        <input type="checkbox" class="form-check-input" value="1" name="scope" id="shop">Shop
                                     </label>
                                 </div>
                             </div>
                             <div class="form-group col-sm">
-                                <button type="button" class="btn btn-outline-info float-right" id="add_new_product">
+                                <button type="button" class="btn btn-outline-info float-right" id="add_new_product" style="font-size: 12px;">
                                     <i class="fa fa-plus-circle" aria-hidden="true"></i> Thêm sản phẩm
                                 </button>
                             </div>
@@ -145,6 +148,11 @@
                             <div class="form-group col-sm">
                                 <input type="text" class="form-control" placeholder="Giảm theo % cho tất cả" id="sale_percent_for_all" disabled>
                             </div>
+                            <div class="form-group col-sm">
+                                <button type="button" class="btn btn-danger" id="clear_sale" style="font-size: 12px;padding: 9px;" disabled>
+                                    <i class="fa fa-times-circle" aria-hidden="true"></i> Xóa
+                                </button>
+                            </div>
                         </div>
                         <div class="row">
                             <table id="products_list" class="table table-hovered table-striped" style="width: 100%">
@@ -152,7 +160,6 @@
                                     <tr>
                                         <th>Hình ảnh</th>
                                         <th>Tên sản phẩm</th>
-                                        <th>Mã sản phẩm</th>
                                         <th>Giá bán lẻ</th>
                                         <th>Giá sale</th>
                                     </tr>
@@ -166,10 +173,13 @@
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
-                    <button type="button" class="btn btn-outline-danger btn-flat" id="cancel_promotion">
+<!--                    <button type="button" class="btn btn-outline-danger btn-flat" id="cancel_promotion" style="font-size: 12px;">-->
+<!--                        <i class="fa fa-ban" aria-hidden="true"></i> Hủy bỏ-->
+<!--                    </button>-->
+                    <a href="<?php Common::getPath() ?>src/view/promotion/" class="btn btn-outline-danger btn-flat" style="font-size: 12px;">
                         <i class="fa fa-ban" aria-hidden="true"></i> Hủy bỏ
-                    </button>
-                    <button type="button" class="btn btn-success btn-flat float-right" id="submit_promotion">
+                    </a>
+                    <button type="button" class="btn btn-success btn-flat float-right" id="submit_promotion" style="font-size: 12px;" disabled>
                         <i class="fa fa-check-circle" aria-hidden="true"></i> Tạo chương trình
                     </button>
                 </div>
@@ -192,7 +202,7 @@
             <div class="modal-body">
                 <div class="form-group">
                     <input type="hidden" value="0" class="count-row"/>
-                    <table class="table table-hover table-striped" id="table_list_product" style="width:100%">
+                    <table class="table table-hover table-striped" id="table_choose_product" style="width:100%">
                         <thead>
                             <tr>
                                 <th></th>
@@ -211,7 +221,7 @@
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="add_product_choice" disabled>Thêm <span id="checked_products"></span> sản phẩm</button>
+                <button type="button" class="btn btn-primary" id="add_product_choice" disabled style="font-size: 12px;">Thêm <span id="checked_products"></span> sản phẩm</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -225,14 +235,15 @@
 <script>
     let checked_products = [];
     let list_products = [];
-    let table;
     let table_list_product;
+    let table_choose_product;
 
     $(document).ready(function () {
         set_title("Danh sách chương trình khuyến mãi");
         generate_datatable();
         $('#reservation').daterangepicker({
             timePicker: true,
+            minDate: moment().startOf('hour').add(30, 'minute'),
             startDate: moment().startOf('hour').add(1, 'hour'),
             endDate: moment().startOf('hour').add(25, 'hour'),
             locale: {
@@ -251,11 +262,21 @@
         $("#add_product_choice").click(function () {
             add_product_into_list();
         });
+        $("#clear_sale").click(function () {
+            clear_sale();
+        });
         $( "#sale_money_for_all" ).on( "keydown", function( event ) {
             let key = event.which;
             if(key === 13) {
                 $("#sale_percent_for_all").val("");
                 let money = $(this).val();
+                if(!validate_number(money)) {
+                    $(this).addClass(" is-invalid");
+                    toast_error_message("Nhập chưa đúng");
+                    return;
+                } else {
+                    $(this).removeClass(" is-invalid");
+                }
                 $("#sale_money_for_all").val(formatNumber(money));
                 apply_sale_for_all();
             }
@@ -264,6 +285,14 @@
             let key = event.which;
             if(key === 13) {
                 $("#sale_money_for_all").val("");
+                let percent = $(this).val();
+                if(!validate_number(percent)) {
+                    $(this).addClass(" is-invalid");
+                    toast_error_message("Nhập chưa đúng");
+                    return;
+                } else {
+                    $(this).removeClass(" is-invalid");
+                }
                 apply_sale_for_all();
             }
         });
@@ -273,112 +302,20 @@
     });
 
     function submit_promotion() {
-        let table = $("#products_list").DataTable();
-        let data = table.rows().data();
-        for(let i=0; i<data.length; i++) {
-            // console.log(data[i]);
-            let product_id = data[i][0];
-            let variant_id = data[i][1];
-            let sku = data[i][3];
-            let retail_price = data[i][5];
-            console.log($(data[i][6]).children("#retail_pice_"+sku).val());
-            let sale_price = $("#retail_pice_"+sku).val();
-            let sale_percent = $("#retail_pice_sale_percent_"+sku).val();
-            // console.log(product_id+" - "+variant_id+" - "+sku+" - "+retail_price+" - "+sale_price+" - "+sale_percent);
+        if(!validate_promotion()) {
+            return;
         }
-    }
-
-    function apply_sale_for_all() {
-        let money = $("#sale_money_for_all").val();
-        let percent = $("#sale_percent_for_all").val();
-        if(money) {
-            money = replaceComma(money);
-            for(let i=0; i<list_products.length; i++) {
-                let price = list_products[i].price;
-                list_products[i].sale_price = money;
-                list_products[i].percent = 100 - Math.round(money / price * 100);
-                if(i === list_products.length-1) {
-                    redraw_table_product_in_list();
-                }
-            }
-        }
-        if(percent) {
-            for(let i=0; i<list_products.length; i++) {
-                let price = list_products[i].price;
-                list_products[i].sale_price = (price - percent * price / 100).toFixed(0);
-                list_products[i].percent = percent;
-                if(i === list_products.length-1) {
-                    redraw_table_product_in_list();
-                }
-            }
-        }
-    }
-    
-    function add_product_into_list() {
+        console.log(JSON.stringify(list_products));
         $.ajax({
             url: '<?php Common::getPath()?>src/controller/promotion/PromotionController.php',
             type: "POST",
             dataType: "json",
             data: {
-                method: "find_variations",
-                list_product_id: checked_products
+                method: "add_new",
+                list_products: JSON.stringify(list_products)
             },
             success: function (res) {
-                // console.log(res);
-                if(res) {
-                    $("#products_list tbody").html("");
-                    let products = res.data;
-                    console.log(JSON.stringify(products));
-                    for(let i=0; i<products.length; i++) {
-                        let product = products[i];
-                        list_products.push(product);
-                        let product_id = product.product_id;
-                        let variant_id = product.variant_id;
-                        let sku = product.sku;
-                        let image = product.image;
-                        let name = product.name;
-                        let size = product.size;
-                        let color = product.color;
-                        let price = product.price;
-                        let sale_price = product.sale_price;
-                        let percent = product.percent;
-                        // let quantity = product.quantity;
-
-                        let body = "<tr>";
-                        body += "<td><img src='"+image+"' width='64px' onerror='this.src=\"<?php Common::getPath() ?>dist/img/img_err.jpg\";'></td>";
-                        body += "<td>"+sku+"</td>";
-                        body += "<td>"+name+"<br><i style=\"font-size: 11px;\">Màu sắc: "+color+"</i><br><i style=\"font-size: 11px;\">Size: "+size+"</i></td>";
-                        body += "<td>"+formatNumber(price)+"<sup>đ</sup></td>";
-                        body += "<td>" +
-                                "<div class=\"input-group mb-3\" style=\"width: 240px;\">" +
-                                "      <div class=\"input-group-prepend\">\n" +
-                                "        <span class=\"input-group-text\" style='font-size: 10px'>đ</span>\n" +
-                                "      </div>\n" +
-                                "      <input type='text' id='retail_pice_"+sku+"' value='"+formatNumber(sale_price)+"' class='form-control' style=\"width: 30%;\" onchange='change_sale_price(this, "+sku+", "+price+")'>\n" +
-                                "      <div class=\"input-group-prepend\">\n" +
-                                "        <span class=\"input-group-text\" style='font-size: 10px'>-</span>\n" +
-                                "      </div>\n" +
-                                "      <input type='text' id='retail_pice_sale_percent_"+sku+"' value='"+percent+"' class='form-control' onchange='change_sale_percent(this, "+sku+", "+price+")'>\n" +
-                                "      <div class=\"input-group-prepend\">\n" +
-                                "        <span class=\"input-group-text\" style='font-size: 10px'>%</span>\n" +
-                                "      </div>\n" +
-                                "    </div>  "+
-                                "</td>";
-                        body += "</tr>";
-                        $("#products_list tbody").append(body);
-                        if(i === products.length-1) {
-                            console.log(JSON.stringify(list_products));
-                            table = $('#products_list').DataTable({
-                                "scrollY":        "500px",
-                                "scrollCollapse": true,
-                                "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]]
-                            });
-                            close_modal("#add_product");
-                            $("#sale_money_for_all").prop("disabled", "");
-                            $("#sale_percent_for_all").prop("disabled", "");
-                        }
-                    }
-                }
+                console.log(res);
             },
             error: function (data, errorThrown) {
                 console.log(data.responseText);
@@ -391,87 +328,221 @@
             }
         });
     }
-
-    function redraw_table_product_in_list() {
-        if ($.fn.dataTable.isDataTable('#products_list')) {
-            table.destroy();
-            table.clear();
-            table.ajax.reload();
+    
+    function validate_promotion() {
+        let promotion_name = $("#promotion_name").val();
+        let website = $("#website").prop('checked');
+        let shop = $("#shop").prop('checked');
+        if(!promotion_name) {
+            toast_error_message("Bạn chưa nhập tên chương trình");
+            $("#promotion_name").addClass("is-invalid");
+            return false;
+        } else {
+            $("#promotion_name").removeClass("is-invalid");
         }
-        $("#products_list tbody").html("");
-        let products = list_products;
-        for(let i=0; i<products.length; i++) {
-            let product = products[i];
-            let product_id = product.product_id;
-            let variant_id = product.variant_id;
-            let sku = product.sku;
-            let image = product.image;
-            let name = product.name;
-            let size = product.size;
-            let color = product.color;
-            let price = product.price;
-            let sale_price = product.sale_price;
-            let percent = product.percent;
+        if(!website && !shop) {
+            toast_error_message("Bạn chưa chọn phạm vi khuyến mãi");
+            $("#website").addClass("is-invalid");
+            $("#shop").addClass("is-invalid");
+            return false;
+        } else {
+            $("#website").removeClass("is-invalid");
+            $("#shop").removeClass("is-invalid");
+        }
+        if(list_products.length == 0) {
+            toast_error_message("Bạn chưa thêm sản phẩm");
+            return false;
+        }
+        return true;
+    }
 
-            let body = "<tr>";
-            body += "<td class=\"hidden\">"+product_id+"</td>";
-            body += "<td class=\"hidden\">"+variant_id+"</td>";
-            body += "<td><img src='"+image+"' width='64px' onerror='this.src=\"<?php Common::getPath() ?>dist/img/img_err.jpg\";'></td>";
-            body += "<td>"+sku+"</td>";
-            body += "<td>"+name+"<br><i style=\"font-size: 11px;\">Màu sắc: "+color+"</i><br><i style=\"font-size: 11px;\">Size: "+size+"</i></td>";
-            body += "<td>"+formatNumber(price)+"<sup>đ</sup></td>";
-            body += "<td>" +
-                "<div class=\"input-group mb-3\" style=\"width: 240px;\">" +
-                "      <div class=\"input-group-prepend\">\n" +
-                "        <span class=\"input-group-text\" style='font-size: 10px'>đ</span>\n" +
-                "      </div>\n" +
-                "      <input type='text' id='retail_pice_"+sku+"' value='"+formatNumber(sale_price)+"' class='form-control' style=\"width: 30%;\" onchange='change_sale_price(this, "+sku+", "+price+")'>\n" +
-                "      <div class=\"input-group-prepend\">\n" +
-                "        <span class=\"input-group-text\" style='font-size: 10px'>-</span>\n" +
-                "      </div>\n" +
-                "      <input type='text' id='retail_pice_sale_percent_"+sku+"' value='"+percent+"' class='form-control' onchange='change_sale_percent(this, "+sku+", "+price+")'>\n" +
-                "      <div class=\"input-group-prepend\">\n" +
-                "        <span class=\"input-group-text\" style='font-size: 10px'>%</span>\n" +
-                "      </div>\n" +
-                "    </div>  "+
-                "</td>";
-            body += "</tr>";
-            $("#products_list tbody").append(body);
-            if(i === products.length -1) {
-                console.log(JSON.stringify(list_products));
-                table = $('#products_list').DataTable({
-                    "scrollY":        "500px",
-                    "scrollCollapse": true,
-                    "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]]
-                });
+    function apply_sale_for_all() {
+        let money = $("#sale_money_for_all").val();
+        let percent = $("#sale_percent_for_all").val();
+        if(money) {
+            money = replaceComma(money);
+            for(let i=0; i<list_products.length; i++) {
+                let price = list_products[i].price;
+                list_products[i].sale_price = money;
+                list_products[i].percent = 100 - Math.round(money / price * 100);
+                if(i === list_products.length-1) {
+                    enable_button_clear_sale();
+                    redraw_table_product_in_list();
+                    enable_button_submit_promotion();
+                }
             }
         }
-        // setTimeout(function () {
-        //     console.log(JSON.stringify(list_products));
-        //     $('#products_list').DataTable({
-        //         "scrollY":        "500px",
-        //         "scrollCollapse": true,
-        //         "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]]
-        //     });
-        // },300);
+        if(percent && validate_number(percent)) {
+            for(let i=0; i<list_products.length; i++) {
+                let price = list_products[i].price;
+                list_products[i].sale_price = (price - percent * price / 100).toFixed(0);
+                list_products[i].percent = percent;
+                if(i === list_products.length-1) {
+                    enable_button_clear_sale();
+                    redraw_table_product_in_list();
+                    enable_button_submit_promotion();
+                }
+            }
+        }
+    }
+    function clear_sale() {
+        let money = "";
+        let percent = "";
+        $("#sale_money_for_all").val(money);
+        $("#sale_percent_for_all").val(percent);
+        for(let i=0; i<list_products.length; i++) {
+            list_products[i].sale_price = money;
+            list_products[i].percent = percent;
+            if(i === list_products.length-1) {
+                redraw_table_product_in_list();
+                disable_button_clear_sale();
+                disable_button_submit_promotion();
+                $("#sale_money_for_all").removeClass("is-invalid");
+                $("#sale_percent_for_all").removeClass("is-invalid");
+            }
+        }
+    }
+
+    function enable_button_clear_sale() {
+        $("#clear_sale").prop("disabled", "");
+    }
+    function disable_button_clear_sale() {
+        $("#clear_sale").prop("disabled", true);
+    }
+    function enable_button_submit_promotion() {
+        $("#submit_promotion").prop("disabled", "");
+    }
+    function disable_button_submit_promotion() {
+        $("#submit_promotion").prop("disabled", true);
     }
 
 
+    function add_product_into_list() {
+        if ($.fn.dataTable.isDataTable('#products_list')) {
+            table_list_product.destroy();
+            table_list_product.clear();
+            // table_list_product.ajax.reload();
+        }
+        table_list_product = $('#products_list').DataTable({
+            'ajax': {
+                "type": "GET",
+                "url": "<?php Common::getPath()?>src/controller/promotion/PromotionController.php",
+                "data": {
+                    "method": "find_variations",
+                    "list_product_id": checked_products
+                }
+            },
+            "scrollY":        "500px",
+            "initComplete":function(settings, json){
+                // console.log(JSON.stringify(json));
+                list_products = json.data;
+                close_modal("#add_product");
+                $("#sale_money_for_all").prop("disabled", "");
+                $("#sale_percent_for_all").prop("disabled", "");
+            },
+            "dom": '<"top"flp<"clear">>rt<"bottom"ip<"clear">>',
+            searching: false,
+            ordering: false,
+            scrollCollapse: true,
+            "language": {
+                "emptyTable": "Không có dữ liệu",
+                "oPaginate": {
+                    "sFirst":    	"&lsaquo;",
+                    "sPrevious": 	"&laquo;",
+                    "sNext":     	"&raquo;",
+                    "sLast":     	"&rsaquo;"
+                },
+            },
+            "columns": [
+                {
+                    "data": format_product_image,
+                    class: "center"
+                },
+                {
+                    "data": format_product_name
+                },
+                {
+                    "data": format_price_into_list
+                },
+                {
+                    "data": format_input_sale_price
+                }
+            ],
+            "lengthMenu": [[10, 50, 100, -1], [10, 50, 100, "All"]]
+        });
+    }
+    
+    function format_product_image(data) {
+        let image = data.image;
+        return "<img src='"+image+"' width='64px' onerror='this.src=\"<?php Common::getPath() ?>dist/img/img_err.jpg\";'>";
+    }
+
+    function format_product_name(data) {
+        let name = data.name;
+        let color = data.color;
+        let size = data.size;
+        let sku = data.sku;
+        return name+"<br><span style=\"font-size: 11px;\"><i>Mã sản phẩm:</i> "+sku+"</span><br>" +
+            "<span style=\"font-size: 11px;\"><i>Màu sắc:</i> "+color+"</span><br>" +
+            "<span style=\"font-size: 11px;\"><i>Size:</i> "+size+"</span>";
+    }
+    function format_price_into_list(data) {
+        let price = data.price;
+        return formatNumber(price)+"<sup>đ</sup>";
+    }
+    function format_input_sale_price(data) {
+        let sku = data.sku;
+        let sale_price = data.sale_price;
+        let percent = data.percent;
+        let price = data.price;
+        return "<div class=\"input-group mb-3\" style=\"width: 240px;\">" +
+            "      <div class=\"input-group-prepend\">\n" +
+            "        <span class=\"input-group-text\" style='font-size: 10px'>đ</span>\n" +
+            "      </div>\n" +
+            "      <input type='text' id='retail_pice_"+sku+"' value='"+formatNumber(sale_price)+"' class='form-control' style=\"width: 30%;\" onchange='change_sale_price(this, "+sku+", "+price+")'>\n" +
+            "      <div class=\"input-group-prepend\">\n" +
+            "        <span class=\"input-group-text\" style='font-size: 10px'>-</span>\n" +
+            "      </div>\n" +
+            "      <input type='text' id='retail_pice_sale_percent_"+sku+"' value='"+percent+"' class='form-control' onchange='change_sale_percent(this, "+sku+", "+price+")'>\n" +
+            "      <div class=\"input-group-prepend\">\n" +
+            "        <span class=\"input-group-text\" style='font-size: 10px'>%</span>\n" +
+            "      </div>\n" +
+            "    </div>  ";
+    }
+
+    function redraw_table_product_in_list() {
+        table_list_product.clear();
+        table_list_product.rows.add( list_products ).draw();
+    }
+
     function change_sale_price(e, sku, retail) {
         let sale_price = $(e).val();
-        sale_price = replaceComma(sale_price);
-        let percent = 100 - Math.round(sale_price * 100 / retail);
-        $("#retail_pice_"+sku).val(formatNumber(sale_price));
-        $("#retail_pice_sale_percent_"+sku).val(percent);
+        let percent = "";
+        if(sale_price) {
+            sale_price = replaceComma(sale_price);
+            percent = 100 - Math.round(sale_price * 100 / retail);
+            $("#retail_pice_"+sku).val(formatNumber(sale_price));
+            $("#retail_pice_sale_percent_"+sku).val(percent);
+        } else {
+            $("#retail_pice_"+sku).val("");
+            $("#retail_pice_sale_percent_"+sku).val("");
+        }
         set_data_in_json(sale_price, percent, sku);
     }
     function change_sale_percent(e, sku, retail) {
         let percent = $(e).val();
-        let sale_price = Number(sale_percent * retail / 100);
-        sale_price = (retail - sale_price).toFixed(0);
-        $("#retail_pice_"+sku).val(formatNumber(sale_price));
-        $("#retail_pice_sale_percent_"+sku).val(percent);
+        let sale_price = "";
+        if(percent) {
+            sale_price = Number(sale_percent * retail / 100);
+            sale_price = (retail - sale_price).toFixed(0);
+            $("#retail_pice_"+sku).val(formatNumber(sale_price));
+            $("#retail_pice_sale_percent_"+sku).val(percent);
+        } else {
+            $("#retail_pice_"+sku).val("");
+            $("#retail_pice_sale_percent_"+sku).val("");
+        }
         set_data_in_json(sale_price, percent, sku);
+
     }
     function set_data_in_json(sale_price, percent, sku) {
         for(let i=0; i<list_products.length; i++) {
@@ -480,16 +551,37 @@
                 list_products[i].sale_price = sale_price;
                 list_products[i].percent = percent;
             }
+            if(i == list_products.length-1) {
+                console.log("checking ...");
+                checking_button_promotion();
+            }
         }
-        console.log(JSON.stringify(list_products));
+    }
+    function checking_button_promotion() {
+        let is_valid = false;
+        for(let i=0; i<list_products.length; i++) {
+            let sale_price = list_products[i].sale_price;
+            let percent = list_products[i].percent;
+            if(sale_price || percent) {
+                is_valid = true;
+            }
+            if(i == list_products.length-1) {
+                console.log(is_valid);
+                if(is_valid) {
+                    enable_button_submit_promotion();
+                } else {
+                    disable_button_submit_promotion();
+                }
+            }
+        }
     }
     function add_products() {
-        if ($.fn.dataTable.isDataTable('#table_list_product')) {
-            table_list_product.destroy();
-            table_list_product.clear();
-            table_list_product.ajax.reload();
+        if ($.fn.dataTable.isDataTable('#table_choose_product')) {
+            table_choose_product.destroy();
+            table_choose_product.clear();
+            table_choose_product.ajax.reload();
         }
-        table_list_product = $('#table_list_product').DataTable({
+        table_choose_product = $('#table_choose_product').DataTable({
             'ajax': {
                 "type": "GET",
                 "url": "<?php Common::getPath()?>src/controller/promotion/PromotionController.php",
@@ -501,7 +593,7 @@
             "initComplete":function( settings, json){
                 open_modal('#add_product');
             },
-            "dom": '<"top"flp<"clear">>rt<"bottom"p<"clear">>',
+            "dom": '<"top"flp<"clear">>rt<"bottom"ip<"clear">>',
             searching: false,
             ordering: false,
             scrollCollapse: true,
@@ -577,70 +669,9 @@
     }
 
 
-    function add_products1() {
-        $.ajax({
-            url: '<?php Common::getPath()?>src/controller/promotion/PromotionController.php',
-            type: "POST",
-            dataType: "json",
-            data: {
-                method: "find_products"
-            },
-            success: function (res) {
-                console.log(res);
-                if(res) {
-                    $("#table_list_product tbody").html("");
-                    let products = res.data;
-                    for(let i=0; i<products.length; i++) {
-                        let product = products[i];
-                        let price = "";
-                        if(product.min_retail == product.max_retail) {
-                            price = formatNumber(product.min_retail) +"<sup>đ</sup>";
-                        } else {
-                            price = formatNumber(product.min_retail) + "<sup>đ</sup> - " + formatNumber(product.max_retail) + "<sup>đ</sup>";
-                        }
-                        let checked = false;
-                        for(let j=0; j<checked_products.length; j++) {
-                            let _product_id = checked_products[j];
-                            if(_product_id == product.product_id) {
-                                checked = true;
-                            }
-                        }
-                        let body = "<tr>";
-                        if(checked) {
-                            body += "<td><input type='checkbox' id='chk_"+product.product_id+"' onclick='choose_product(this, "+product.product_id+")' checked></td>";
-                        } else {
-                            body += "<td><input type='checkbox' id='chk_"+product.product_id+"' onclick='choose_product(this, "+product.product_id+")'></td>";
-                        }
+    //function add_products1() {
 
-                        body += "<td>"+product.product_id+"</td>";
-                        body += "<td><img src='"+product.image+"' width='64px' onerror='this.src=\"<?php Common::getPath() ?>dist/img/img_err.jpg\";'></td>";
-                        body += "<td>"+product.product_name+"</td>";
-                        body += "<td>"+price+"</td>";
-                        body += "<td>"+product.total_quantity+"</td>";
-                        body += "</tr>";
-                        $("#table_list_product tbody").append(body);
-                        if(i === products.length -1) {
-                            table_list_product = $('#table_list_product').DataTable({
-                                "scrollY":        "500px",
-                                "scrollCollapse": true,
-                                "lengthMenu": [[8, 25, 50, 100, -1], [8, 25, 50, 100, "All"]]
-                            });
-                            open_modal('#add_product');
-                        }
-                    }
-                }
-            },
-            error: function (data, errorThrown) {
-                console.log(data.responseText);
-                console.log(errorThrown);
-                Swal.fire({
-                    type: 'error',
-                    title: 'Đã xảy ra lỗi',
-                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-                })
-            }
-        });
-    }
+    //}
 
 
 
@@ -669,7 +700,7 @@
             // }
             checked_products.splice(checked_products.indexOf(product_id),1);
         }
-        // console.log(checked_products);
+        console.log(checked_products);
         if(checked_products.length > 0) {
             $("#checked_products").text("("+checked_products.length+")");
             $("#add_product_choice").prop("disabled","");

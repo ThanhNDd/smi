@@ -221,7 +221,7 @@ class PromotionDAO
                     FROM smi_products b
                     LEFT JOIN smi_variations a ON b.id = a.product_id
                     WHERE b.id in ($ids)
-                    ORDER BY b.id DESC";
+                    ORDER BY b.id desc, a.sku";
             $result = mysqli_query($this->conn, $sql);
             $data = array();
             foreach ($result as $k => $row) {

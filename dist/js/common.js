@@ -318,6 +318,13 @@ function alert_error_message(msg) {
     });
 }
 
+function toast_error_message(msg) {
+    if(!msg) {
+        msg = "";
+    }
+    toastr.error(msg);
+}
+
 function substringMatcher (strs) {
     return function findMatches(q, cb) {
         let matches = [];

@@ -49,10 +49,13 @@ if (isset($_GET["method"]) && $_GET["method"] == "findall") {
 if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
     try {
         Common::authen_get_data();
-        $data = $_POST["data"];
+        $data = $_POST["list_products"];
         $result = 0;
+        echo $data;
         $data = json_decode($data);
+
         $promotion_id = $data->promotion_id;
+        echo $promotion_id;
 
         $promotion = new Promotion();
         $promotion->setName($data->name);
@@ -90,7 +93,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $db->rollback();
         echo $e->getMessage();
     }
-    $db->commit();
+//    $db->commit();
 }
 
 if (isset($_GET["method"]) && $_GET["method"] == "find_products") {
@@ -103,10 +106,10 @@ if (isset($_GET["method"]) && $_GET["method"] == "find_products") {
     }
 }
 
-if (isset($_POST["method"]) && $_POST["method"] == "find_variations") {
+if (isset($_GET["method"]) && $_GET["method"] == "find_variations") {
     try {
         Common::authen_get_data();
-        $ids = $_POST["list_product_id"];
+        $ids = $_GET["list_product_id"];
         $lists = $dao->find_variations_by_product_id($ids);
         echo json_encode($lists);
     } catch (Exception $e) {
