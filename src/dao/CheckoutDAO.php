@@ -431,7 +431,7 @@ class CheckoutDAO
         try {
             $sql = "select tmp.id,
                       tmp.total_checkout as total_checkout, 
-                      sum(tmp.profit) - tmp.discount - tmp.shipping_fee as total_profit,
+                      sum(tmp.profit) - tmp.discount - tmp.shipping_fee - tmp.wallet as total_profit,
                       count(tmp.type) as count_type, 
                       tmp.type,
                       tmp.payment_type,
@@ -439,6 +439,7 @@ class CheckoutDAO
                     from (
                       SELECT A.id, A.discount, A.shipping_fee,
                             t.p as profit,
+                            A.wallet,
 							A.type,  A.payment_type,
                             A.total_checkout,
                             D.id as 'product_id'
@@ -449,9 +450,9 @@ class CheckoutDAO
                         LEFT JOIN smi_products D ON E.product_id = D.id
                             LEFT JOIN (select B.id,
                             case B.type
-                            when 1 then sum(0 - (B.profit * B.quantity - B.reduce)) 
-                            when 3 then sum(0 - (B.profit * B.quantity - B.reduce)) 
-                            else sum(B.profit * B.quantity - B.reduce) 
+                            when 1 then sum(0 - (B.profit - B.reduce) * B.quantity) 
+                            when 3 then sum(0 - (B.profit - B.reduce) * B.quantity) 
+                            else sum((B.profit - B.reduce) * B.quantity) 
                             end as p
                             from smi_orders A
                         LEFT JOIN smi_order_detail B ON A.id = B.order_id
@@ -644,7 +645,7 @@ class CheckoutDAO
                         'price' => number_format($price),
                         'reduce' => number_format($qty * $reduce),
                         'intoMoney' => number_format($intoMoney),
-                        'profit' => number_format($row["profit"] * $qty - $reduce),
+                        'profit' => number_format(($row["profit"] - $reduce)* $qty),
                         'product_type' => $row["product_type"],
                         'updated_qty' => $row["updated_qty"]
                     );
@@ -668,7 +669,7 @@ class CheckoutDAO
                         'price' => number_format($price),
                         'reduce' => number_format($qty * $reduce),
                         'intoMoney' => number_format($intoMoney),
-                        'profit' => number_format($row["profit"] * $qty - $reduce),
+                        'profit' => number_format(($row["profit"] - $reduce)* $qty),
                         'product_type' => $row["product_type"],
                         'updated_qty' => $row["updated_qty"]
                     );

@@ -851,11 +851,12 @@ Common::authen();
         }
         table += '</tr>' +
             '</thead>';
-        let total_reduce = 0;
+        // let total_reduce = 0;
         let profit = 0;
         let intoMoney = 0;
         for (let i = 0; i < details.length; i++) {
-            total_reduce += Number(replaceComma(details[i].reduce));
+            // total_reduce += Number(replaceComma(details[i].reduce));
+            let reduce = Number(replaceComma(details[i].reduce));
             intoMoney += Number(replaceComma(details[i].intoMoney));
             let type = details[i].product_type;
             let class_text = "";
@@ -874,6 +875,9 @@ Common::authen();
                 profit += Number(replaceComma(details[i].profit));
                 detail_profit = Number(replaceComma(details[i].profit));
             }
+            console.log(reduce);
+            console.log(detail_profit);
+            // detail_profit = detail_profit - reduce;
             // let updated_qty = JSON.parse(details[i].updated_qty);
             // let shopee = '';
             // let lazada = '';
@@ -953,7 +957,9 @@ Common::authen();
         d += '<div class="row">' +
                 '<div class="col-2 col-sm-2 col-md-2"><small>Tổng đơn hàng</small> <h5>' + data.total_amount + '<sup>đ</sup></h5></div>' +
                 '<div class="col-2 col-sm-2 col-md-2"><small>CK trên tổng đơn</small> <h5>' + data.discount + '<sup>đ</sup></h5></div>';
+
         if (data.customer_id && Number(data.customer_id) > 0) {
+            profit = profit - Number(replaceComma(data.wallet));
             d += '<div class="col-2 col-sm-2 col-md-2"><small>Tiền trong Ví</small> <h5>' + data.wallet + '<sup>đ</sup></h5></div>';
         }
         d += '<div class="col-2 col-sm-2 col-md-2"><small>Tổng giảm trừ</small> <h5>' + data.total_reduce + '<sup>đ</sup></h5></div>';
@@ -971,6 +977,8 @@ Common::authen();
                 }
 
             }
+        // let total_reduce = Number(replaceComma(data.total_reduce));
+        // profit = profit - total_reduce;
         d += '<div class="col-2 col-sm-2 col-md-2"><small>Tổng tiền thanh toán</small> <h5>' + total_checkout + '<sup>đ</sup></h5></div>' +
             '<div class="col-2 col-sm-2 col-md-2" style="display: block;"><small>-</small> <h5>' + formatNumber(profit) + '<sup>đ</sup></h5></div>' +
             '</div>' +
