@@ -87,6 +87,10 @@ Common::authen();
                                 <option value="GHN">Giao Hàng Nhanh</option>
                                 <option value="GHTK">Giao Hàng Tiết Kiệm</option>
                                 <option value="VNP">Việt Nam Post</option>
+                                <option value="VNPN">Việt Nam Post Nhanh</option>
+                                <option value="NINJAVAN">Ninja Van</option>
+                                <option value="BESTEXPRESS">BEST Express</option>
+                                <option value="GRABEXPRESS">GRAB Express</option>
                             </select>
                         </div>
 
@@ -1027,13 +1031,14 @@ Common::authen();
                 row_index++;
             });
             setTimeout(function () {
-                $("#total_amount").text(formatNumber(total));
-                $("#total_reduce").text(formatNumber(total_reduce));
                 let shipping_fee = Number(replaceComma($("#shipping_fee").val()));
                 let shipping = Number(replaceComma($("#shipping").val()));
                 let discount = Number(replaceComma($("#discount").val()));
                 let total_checkout = total + shipping - discount - shipping_fee;
+                total_reduce += discount;
                 $("#total_checkout").text(formatNumber(total_checkout));
+                $("#total_reduce").text(formatNumber(total_reduce));
+                $("#total_amount").text(formatNumber(total));
             },300);
 
         }

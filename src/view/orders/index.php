@@ -290,7 +290,7 @@ Common::authen();
 
         $( "#search_order_id" ).on( "keydown", function( event ) {
             let key = event.which;
-            console.log(key);
+            // console.log(key);
             if(key === 13) {
                 $("#search_phone").val("");
                 $("#search_customer_id").val("");
@@ -491,6 +491,11 @@ Common::authen();
                 $(".total_transfer").html((res.total_transfer ? res.total_transfer : 0) + "<sup>đ</sup>");
                 $(".total_profit").html((res.total_profit ? res.total_profit : 0) + "<sup>đ</sup>");
 
+                $("#percent_profit").html("");
+                $("#percent_onshop").html("");
+                $("#percent_online").html("");
+                $("#percent_exchange").html("");
+
                 let total_checkout = Number(replaceComma(res.total_checkout));
                 let total_profit = Number(replaceComma(res.total_profit));
                 let percent = ((total_profit/total_checkout) * 100).toFixed(2);
@@ -529,7 +534,9 @@ Common::authen();
         if ($.fn.dataTable.isDataTable('#example')) {
             table.destroy();
             table.clear();
-            table.ajax.reload();
+            // if(table.ajax) {
+                table.ajax.reload();
+            // }
         }
         table = $('#example').DataTable({
             'ajax': {
@@ -623,7 +630,7 @@ Common::authen();
                         order_id: order_id,
                     },
                     success: function (res) {
-                        console.log(res);
+                        // console.log(res);
                         let data = res.data;
                         // let details = res[0].details;
                         if (data.length > 0) {
@@ -657,8 +664,8 @@ Common::authen();
             let row = table.row(tr);
             let order_id = row.data().order_id;
             let type = row.data().order_type;
-            console.log(order_id);
-            console.log(type);
+            // console.log(order_id);
+            // console.log(type);
             print_receipt(order_id, type);
         });
 
@@ -721,7 +728,7 @@ Common::authen();
                     order_type: order_type
                 },
                 success: function (res) {
-                    console.log(JSON.stringify(res));
+                    // console.log(JSON.stringify(res));
                     set_data_edit_order(order_id, res, order_type);
                 },
                 error: function (data, errorThrown) {
@@ -783,7 +790,7 @@ Common::authen();
         // enable_btn_add_new();
         $("#order_type").val(order_type).trigger("change");
         $.each(data, function (key, value) {
-            console.log(order_type);
+            // console.log(order_type);
             if (value.length != 0) {
                 $("#order_id").val(value[0].order_id);
                 $('#orderDate').val(value[0].order_date);
@@ -827,6 +834,10 @@ Common::authen();
 
     function format_order_detail(data, row_data) {
         // console.log(data);
+        const SHOP = '0';
+        const ONLINE = '1';
+        const EXCHANGE = '2';
+
         let payment_exchange_type = row_data.payment_exchange_type;
         let order_refer = row_data.order_refer;
         let details = data.details;
@@ -846,7 +857,7 @@ Common::authen();
             '<th class="right"></th>';
             // '<th class="center">Shopee</th>' +
             // '<th class="center">Lazada</th>' +
-        if(order_type === '2') {
+        if(order_type === EXCHANGE) {
             table += '<th class="right">Loại sản phẩm</th>';
         }
         table += '</tr>' +
@@ -856,7 +867,7 @@ Common::authen();
         let intoMoney = 0;
         for (let i = 0; i < details.length; i++) {
             // total_reduce += Number(replaceComma(details[i].reduce));
-            let reduce = Number(replaceComma(details[i].reduce));
+            // let reduce = Number(replaceComma(details[i].reduce));
             intoMoney += Number(replaceComma(details[i].intoMoney));
             let type = details[i].product_type;
             let class_text = "";
@@ -875,8 +886,6 @@ Common::authen();
                 profit += Number(replaceComma(details[i].profit));
                 detail_profit = Number(replaceComma(details[i].profit));
             }
-            console.log(reduce);
-            console.log(detail_profit);
             // detail_profit = detail_profit - reduce;
             // let updated_qty = JSON.parse(details[i].updated_qty);
             // let shopee = '';
@@ -905,7 +914,7 @@ Common::authen();
                 // '<input type="checkbox" class="custom-control-input upd-qty-lazada" id="lazada_'+details[i].sku+'" '+lazada+' onchange="updatedQty(this, \'lazada\', '+details[i].sku+')">' +
                 // '<label class="custom-control-label" for="lazada_'+details[i].sku+'"></label>' +
                 // '</div></td>' +
-                if(order_type === '2') {
+                if(order_type === EXCHANGE) {
                     if (type === '1') {
                         table += '<td class="right"><span class="badge badge-info">Đã mua</span></td>';
                     } else if (type === '2') {
@@ -963,23 +972,31 @@ Common::authen();
             d += '<div class="col-2 col-sm-2 col-md-2"><small>Tiền trong Ví</small> <h5>' + data.wallet + '<sup>đ</sup></h5></div>';
         }
         d += '<div class="col-2 col-sm-2 col-md-2"><small>Tổng giảm trừ</small> <h5>' + data.total_reduce + '<sup>đ</sup></h5></div>';
-        let shipping_fee = replaceComma(data.shipping_fee);
-        if(shipping_fee && shipping_fee > 0) {
-            d += '<div class="col-2 col-sm-2 col-md-2"><small>Phí ship</small> <h5>' + formatNumber(shipping_fee) + '<sup>đ</sup></h5></div>';
-            profit = profit - Number(shipping_fee);
-        }
-            let total_checkout = data.total_checkout;
-            if (payment_exchange_type === '2') {
-                if(total_checkout.indexOf("-") > -1) {
-                    total_checkout = total_checkout;
-                } else {
-                    total_checkout = '-' + total_checkout;
-                }
-
+        if(order_type === ONLINE) {
+            let shipping_fee = replaceComma(data.shipping_fee);
+            if(shipping_fee && shipping_fee > 0) {
+                d += '<div class="col-2 col-sm-2 col-md-2"><small>Phí ship Shop trả</small> <h5>' + formatNumber(shipping_fee) + '<sup>đ</sup></h5></div>';
+                profit = profit - Number(shipping_fee);
             }
-        // let total_reduce = Number(replaceComma(data.total_reduce));
-        // profit = profit - total_reduce;
-        d += '<div class="col-2 col-sm-2 col-md-2"><small>Tổng tiền thanh toán</small> <h5>' + total_checkout + '<sup>đ</sup></h5></div>' +
+            let total_amount = Number(replaceComma(data.total_amount));
+            let shipping = Number(replaceComma(data.shipping));
+            if(shipping && shipping > 0) {
+                d += '<div class="col-2 col-sm-2 col-md-2"><small>Phí ship KH trả</small> <h5>' + formatNumber(shipping) + '<sup>đ</sup></h5></div>';
+                profit += shipping;
+                total_amount += shipping;
+            } else {
+                d += '<div class="col-2 col-sm-2 col-md-2"><small>Phí ship KH trả</small> <h5>Miễn Ship</h5></div>';
+            }
+            total_amount -= Number(replaceComma(data.total_reduce));
+            d +='<div class="col-2 col-sm-2 col-md-2"><small>Tổng tiền Khách thanh toán</small> <h5>' + formatNumber(total_amount)+ '<sup>đ</sup></h5></div>';
+        }
+        let total_checkout = data.total_checkout;
+        if (payment_exchange_type === '2') {
+            if(total_checkout.indexOf("-") < -1) {
+                total_checkout = '-' + total_checkout;
+            }
+        }
+        d +='<div class="col-2 col-sm-2 col-md-2"><small>Tổng tiền Shop nhận</small> <h5>' + total_checkout + '<sup>đ</sup></h5></div>' +
             '<div class="col-2 col-sm-2 col-md-2" style="display: block;"><small>-</small> <h5>' + formatNumber(profit) + '<sup>đ</sup></h5></div>' +
             '</div>' +
             '</div>' +
@@ -1004,7 +1021,7 @@ Common::authen();
                 status: status
             },
             success: function (res) {
-                console.log(res);
+                // console.log(res);
                 toastr.success('Cập nhật thành công!');
             },
             error: function (data, errorThrown) {
@@ -1076,7 +1093,7 @@ Common::authen();
     }
 
     function format_source(data) {
-        let source = data.source;
+        let source = Number(data.source);
         switch (source) {
             case 1 :
                 return '<span class="badge badge-success">Website</span>';
