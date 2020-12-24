@@ -92,6 +92,7 @@ Common::authen();
                                 <th class="left">Loại đơn</th>
                                 <th class="left">Thanh toán</th>
                                 <th class="left">Nguồn</th>
+                                <th class="left">Trạng thái</th>
                                 <th class="left">Hành động</th>
                             </tr>
                             </thead>
@@ -597,6 +598,10 @@ Common::authen();
                     width: "30px"
                 },
                 {
+                    "data": format_status,
+                    width: "30px"
+                },
+                {
                     "data": format_action,
                     width: "50px"
                 }
@@ -1095,6 +1100,21 @@ Common::authen();
     function format_source(data) {
         let source = Number(data.source);
         switch (source) {
+            case 1 :
+                return '<span class="badge badge-success">Website</span>';
+            case 2:
+                return '<span class="badge badge-primary">Facebook</span>';
+            case 3:
+                return '<span class="badge badge-danger">Shopee</span>';
+            default:
+                return '<span class="badge badge-warning">Cửa hàng</span>';
+        }
+    }
+
+    function format_status(data) {
+        let status = Number(data.status);
+        Trang thái đơn hàng. 0: pending, 1: processing, 2: on-hold, 3: completed, 4: cancelled, 5: failed
+        switch (status) {
             case 1 :
                 return '<span class="badge badge-success">Website</span>';
             case 2:
