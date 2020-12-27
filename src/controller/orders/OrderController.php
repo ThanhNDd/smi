@@ -230,7 +230,7 @@ if (isset($_GET["method"]) && $_GET["method"] == "get_info_total_checkout") {
         $info_total = $checkoutDAO->get_info_total_checkout($start_date, $end_date, $order_id, $customer_id, $sku);
         echo json_encode($info_total);
     } catch (Exception $ex) {
-        throw new Exception($ex);
+       echo $ex;
     }
 }
 
@@ -254,7 +254,9 @@ if (isset($_GET["method"]) && $_GET["method"] == "find_all") {
             if(!empty($customer)) {
                 $customer_id = $customer[0]["id"];
             } else {
-                echo json_encode(array());
+                $arr = array();
+                $arr["data"] = [];
+                echo json_encode($arr);
                 return;
             }
         }
@@ -268,7 +270,7 @@ if (isset($_GET["method"]) && $_GET["method"] == "find_all") {
         $orders = $checkoutDAO->find_all($start_date, $end_date, $order_id, $customer_id, $sku);
         echo json_encode($orders);
     } catch (Exception $e) {
-        throw new Exception($e);
+        echo $e->getMessage();
     }
 }
 if (isset($_POST["method"]) && $_POST["method"] == "find_detail") {
