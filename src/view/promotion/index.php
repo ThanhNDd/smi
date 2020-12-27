@@ -57,6 +57,10 @@
         div.dataTables_wrapper div.dataTables_info {
             float: left;
         }
+        #table_choose_product td {
+          padding: 3px;
+          vertical-align: middle;
+        }
     </style>
 </head>
 <?php require_once('../../common/header.php'); ?>
@@ -72,11 +76,12 @@
                     <table id="example" class="table table-hovered table-striped">
                         <thead>
                         <tr>
-                            <th>No.</th>
                             <th class="hidden"></th>
-                            <th>Tên chương trình</th>
+                            <th>Tên</th>
                             <th>Ngày bắt đầu</th>
                             <th>Ngày kết thúc</th>
+                            <th>Loại sale</th>
+                            <th>Phạm vi</th>
                             <th>Trạng thái</th>
                             <th>Hành động</th>
                         </tr>
@@ -96,6 +101,8 @@
                 <div class="card-body" style="min-height: 615px;">
                     <div class="container">
                         <div class="row">
+                            <input type="hidden" class="form-control" id="promotion_id" value="">
+                            <input type="hidden" class="form-control" id="status" value="0">
                             <div class="form-group col-sm">
                                 <label for="promotion_name">Tên chương trình</label>
                                 <input type="text" class="form-control" placeholder="Nhập tên chương trình" id="promotion_name">
@@ -116,12 +123,12 @@
                             <div class="form-group col-sm">
                                 <div class="form-group form-check-inline">
                                     <label class="form-check-label">
-                                        <input type="radio" class="form-check-input" name="sale_type">Flash Sale
+                                        <input type="radio" class="form-check-input" name="sale_type" value="0">Flash Sale
                                     </label>
                                 </div>
                                 <div class="form-group form-check-inline">
                                     <label class="form-check-label">
-                                        <input type="radio" class="form-check-input" name="sale_type" checked>Sale
+                                        <input type="radio" class="form-check-input" name="sale_type" checked value="1">Sale
                                     </label>
                                 </div>
                                 <div class="form-group form-check-inline">
@@ -173,9 +180,6 @@
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
-<!--                    <button type="button" class="btn btn-outline-danger btn-flat" id="cancel_promotion" style="font-size: 12px;">-->
-<!--                        <i class="fa fa-ban" aria-hidden="true"></i> Hủy bỏ-->
-<!--                    </button>-->
                     <a href="<?php Common::getPath() ?>src/view/promotion/" class="btn btn-outline-danger btn-flat" style="font-size: 12px;">
                         <i class="fa fa-ban" aria-hidden="true"></i> Hủy bỏ
                     </a>
@@ -205,12 +209,12 @@
                     <table class="table table-hover table-striped" id="table_choose_product" style="width:100%">
                         <thead>
                             <tr>
-                                <th></th>
+                                <th width="20px"></th>
                                 <th class="hidden">ID</th>
-                                <th class="center">Hình ảnh</th>
+                                <th class="center" width="70px">Hình ảnh</th>
                                 <th>Tên</th>
                                 <th>Giá</th>
-                                <th>Kho</th>
+                                <th width="30px">Kho</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -233,25 +237,35 @@
 <input type="hidden" id="startDate">
 <input type="hidden" id="endDate">
 <script>
+
     let checked_products = [];
     let list_products = [];
     let table_list_product;
     let table_choose_product;
-
+    let table;
+    const TIME_FORMAT = 'YYYY-MM-DD HH:mm';
     $(document).ready(function () {
         set_title("Danh sách chương trình khuyến mãi");
-        generate_datatable();
+        reset_global_variable();
+        update_status_promotion();
+        // generate_datatable();
+
+        let start_date = moment().add(3, 'minute');
+        let end_date = moment().add(25, 'hour');
+        $("#startDate").val(start_date.format(TIME_FORMAT));
+        $("#endDate").val(end_date.format(TIME_FORMAT));
         $('#reservation').daterangepicker({
             timePicker: true,
-            minDate: moment().startOf('hour').add(30, 'minute'),
-            startDate: moment().startOf('hour').add(1, 'hour'),
-            endDate: moment().startOf('hour').add(25, 'hour'),
+            timePicker24Hour: true,
+            minDate: start_date,
+            startDate: start_date,
+            endDate: end_date,
             locale: {
-                format: 'DD/MM/YYYY hh:mm'
+                format: 'DD/MM/YYYY HH:mm'
             }
         }, function (start, end, label) {
-            let start_date = start.format('YYYY-MM-DD hh:mm');
-            let end_date = end.format('YYYY-MM-DD hh:mm');
+            let start_date = start.format(TIME_FORMAT);
+            let end_date = end.format(TIME_FORMAT);
             $("#startDate").val(start_date);
             $("#endDate").val(end_date);
         });
@@ -297,25 +311,59 @@
             }
         });
         $("#submit_promotion").click(function () {
-            submit_promotion();
+            if(!validate_promotion()) {
+                return;
+            }
+            Swal.fire({
+                title: 'Bạn có chắc chắn muốn tạo chương trình này?',
+                text: "",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ok'
+            }).then((result) => {
+                if (result.value) {
+                    submit_promotion();
+                }
+            });
+        });
+
+        let promotion_id = "<?php echo (isset($_GET["pid"]) ? $_GET["pid"] : '') ?>";
+        if(promotion_id) {
+            reset_global_variable();
+            get_data_promotion(promotion_id);
+        }
+
+        $("#promotion_name").on("blur", function() {
+             check_exist_name();
         });
     });
 
-    function submit_promotion() {
-        if(!validate_promotion()) {
-            return;
-        }
-        console.log(JSON.stringify(list_products));
+    function reset_global_variable() {
+        checked_products = [];
+        list_products = [];
+    }
+
+    function check_exist_name() {
+        let name = $("#promotion_name").val();
         $.ajax({
             url: '<?php Common::getPath()?>src/controller/promotion/PromotionController.php',
             type: "POST",
             dataType: "json",
             data: {
-                method: "add_new",
-                list_products: JSON.stringify(list_products)
+                method: "check_exist_name",
+                name: name
             },
             success: function (res) {
-                console.log(res);
+                // console.log(res);
+                if(res.response === "existed") {
+                    toast_error_message("Tên chương trình đã tồn tại");
+                    $("#promotion_name").addClass("is-invalid").addClass("is-existed");
+                } else {
+                    $("#promotion_name").removeClass("is-invalid").removeClass("is-existed");
+                }
+                checking_button_promotion();
             },
             error: function (data, errorThrown) {
                 console.log(data.responseText);
@@ -328,6 +376,160 @@
             }
         });
     }
+
+    function update_status_promotion() {
+        $.ajax({
+            url: '<?php Common::getPath()?>src/controller/promotion/PromotionController.php',
+            type: "POST",
+            dataType: "json",
+            data: {
+                method: "update_status_promotion"
+            },
+            success: function (res) {
+                // console.log(res);
+                generate_datatable();
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                })
+            }
+        });
+    }
+
+    function get_data_promotion(promotion_id) {
+        $.ajax({
+            url: '<?php Common::getPath()?>src/controller/promotion/PromotionController.php',
+            type: "POST",
+            dataType: "json",
+            data: {
+                method: "load_promotion_by_id",
+                promotion_id: promotion_id
+            },
+            success: function (res) {
+                // console.log(res);
+                let promotion = res.promotion[0];
+                let detail = res.detail;
+                let promotion_id = promotion.promotion_id;
+                let name = promotion.name;
+                let status = promotion.status;
+                let start_date = promotion.start_date;
+                let end_date = promotion.end_date;
+
+                $("#promotion_id").val(promotion_id);
+                $("#promotion_name").val(name);
+                $("#status").val(status);
+                $("#startDate").val(moment(start_date, "DD/MM/YYYY hh:mm").format("YYYY-MM-DD hh:mm"));
+                $("#endDate").val(moment(end_date, "DD/MM/YYYY hh:mm").format("YYYY-MM-DD hh:mm"));
+                $('#reservation').daterangepicker({
+                    timePicker: true,
+                    minDate: start_date,
+                    startDate: start_date,
+                    endDate: end_date,
+                    locale: {
+                        format: 'DD/MM/YYYY hh:mm'
+                    }
+                }, function (start, end, label) {
+                    let start_date = start.format('YYYY-MM-DD hh:mm');
+                    let end_date = end.format('YYYY-MM-DD hh:mm');
+                    $("#startDate").val(start_date);
+                    $("#endDate").val(end_date);
+                });
+                let type = promotion.type;
+                $("input[name='sale_type'][value=" + type + "]").prop("checked", true);
+                let scope = promotion.scope;
+                if(scope) {
+                    scope = JSON.parse(scope);
+                    let website = scope.website;
+                    let shop = scope.shop;
+                    if(website == 1) {
+                        $("#website").prop("checked", true);
+                    }
+                    if(shop == 1) {
+                        $("#shop").prop("checked", true);
+                    }
+                }
+                let product_id = 0;
+                for(let i=0; i<detail.length; i++) {
+                    if(product_id != detail[i].product_id) {
+                        product_id = Number(detail[i].product_id);
+                        checked_products.push(product_id);
+                    }
+                    if(i == detail.length-1) {
+                        let is_edit_promotion = true;
+                        add_product_into_list(is_edit_promotion);
+                    }
+                }
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                })
+            }
+        });
+    }
+
+    function submit_promotion() {
+        let scope = {};
+        scope["website"] = $("#website").prop("checked") ? 1 : 0;
+        scope["shop"] = $("#shop").prop("checked") ? 1 : 0;
+        // console.log(JSON.stringify(list_products));
+        let data = {};
+        data["promotion_id"] = $("#promotion_id").val();
+        data["name"] = $("#promotion_name").val().trim();
+        data["start_date"] = $("#startDate").val();
+        data["end_date"] = $("#endDate").val();
+        data["status"] = $("#status").val();
+        data["type"] = $("input[name='sale_type']:checked").val();
+        data["scope"] = JSON.stringify(scope);
+        data["list_products"] = list_products;
+        // console.log(data);
+        $.ajax({
+            url: '<?php Common::getPath()?>src/controller/promotion/PromotionController.php',
+            type: "POST",
+            dataType: "json",
+            data: {
+                method: "add_new",
+                data: JSON.stringify(data)
+            },
+            success: function (res) {
+                console.log(res);
+                Swal.fire({
+                    type: 'succes',
+                    title: 'Thành công',
+                    text: "Chương trình đã được tạo thành công"
+                });
+                setTimeout(function () {
+                    window.location.href = "<?php Common::getPath(); ?>src/view/promotion/";
+                },500);
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                if(data.responseText === "Existed") {
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Đã xảy ra lỗi',
+                        text: "Tên chương trình đã tồn tại"
+                    });
+                    return;
+                }
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Đã có lỗi xảy ra, vui lòng liên hệ quản trị hệ thống để được khắc phục."
+                });
+            }
+        });
+    }
     
     function validate_promotion() {
         let promotion_name = $("#promotion_name").val();
@@ -335,6 +537,10 @@
         let shop = $("#shop").prop('checked');
         if(!promotion_name) {
             toast_error_message("Bạn chưa nhập tên chương trình");
+            $("#promotion_name").addClass("is-invalid");
+            return false;
+        } else if($("#promotion_name").hasClass("is-existed")) {
+            toast_error_message("Tên chương trình đã tồn tại");
             $("#promotion_name").addClass("is-invalid");
             return false;
         } else {
@@ -368,7 +574,7 @@
                 if(i === list_products.length-1) {
                     enable_button_clear_sale();
                     redraw_table_product_in_list();
-                    enable_button_submit_promotion();
+                    checking_button_promotion();
                 }
             }
         }
@@ -380,7 +586,7 @@
                 if(i === list_products.length-1) {
                     enable_button_clear_sale();
                     redraw_table_product_in_list();
-                    enable_button_submit_promotion();
+                    checking_button_promotion();
                 }
             }
         }
@@ -415,9 +621,20 @@
     function disable_button_submit_promotion() {
         $("#submit_promotion").prop("disabled", true);
     }
+    function enable_input_sale_money_for_all() {
+        $("#sale_money_for_all").prop("disabled", "");
+    }
+    function disable_input_sale_money_for_all() {
+        $("#sale_money_for_all").prop("disabled", true);
+    }
+    function enable_input_sale_percent_for_all() {
+        $("#sale_percent_for_all").prop("disabled", "");
+    }
+    function disable_input_sale_percent_for_all() {
+        $("#sale_percent_for_all").prop("disabled", true);
+    }
 
-
-    function add_product_into_list() {
+    function add_product_into_list(is_edit_promotion = false) {
         if ($.fn.dataTable.isDataTable('#products_list')) {
             table_list_product.destroy();
             table_list_product.clear();
@@ -429,7 +646,8 @@
                 "url": "<?php Common::getPath()?>src/controller/promotion/PromotionController.php",
                 "data": {
                     "method": "find_variations",
-                    "list_product_id": checked_products
+                    "list_product_id": checked_products,
+                    "is_edit_promotion": is_edit_promotion
                 }
             },
             "scrollY":        "500px",
@@ -437,12 +655,11 @@
                 // console.log(JSON.stringify(json));
                 list_products = json.data;
                 close_modal("#add_product");
-                $("#sale_money_for_all").prop("disabled", "");
-                $("#sale_percent_for_all").prop("disabled", "");
+                enable_input_sale_money_for_all();
+                enable_input_sale_percent_for_all();
+                checking_button_promotion();
             },
-            "dom": '<"top"flp<"clear">>rt<"bottom"ip<"clear">>',
-            searching: false,
-            ordering: false,
+            // "dom": '<"top"flp<"clear">>rt<"bottom"ip<"clear">>',
             scrollCollapse: true,
             "language": {
                 "emptyTable": "Không có dữ liệu",
@@ -511,8 +728,10 @@
     }
 
     function redraw_table_product_in_list() {
-        table_list_product.clear();
-        table_list_product.rows.add( list_products ).draw();
+        if ($.fn.dataTable.isDataTable('#products_list')) {
+            table_list_product.clear();
+            table_list_product.rows.add( list_products ).draw();
+        }
     }
 
     function change_sale_price(e, sku, retail) {
@@ -552,13 +771,19 @@
                 list_products[i].percent = percent;
             }
             if(i == list_products.length-1) {
-                console.log("checking ...");
+                // console.log("checking ...");
                 checking_button_promotion();
             }
         }
     }
     function checking_button_promotion() {
         let is_valid = false;
+        if($("#promotion_name").hasClass("is-existed")) {
+            disable_button_submit_promotion();
+            return;
+        } else {
+            enable_button_submit_promotion();
+        }
         for(let i=0; i<list_products.length; i++) {
             let sale_price = list_products[i].sale_price;
             let percent = list_products[i].percent;
@@ -566,7 +791,6 @@
                 is_valid = true;
             }
             if(i == list_products.length-1) {
-                console.log(is_valid);
                 if(is_valid) {
                     enable_button_submit_promotion();
                 } else {
@@ -591,9 +815,10 @@
             },
             "scrollY":        "400px",
             "initComplete":function( settings, json){
+                console.log(json);
                 open_modal('#add_product');
             },
-            "dom": '<"top"flp<"clear">>rt<"bottom"ip<"clear">>',
+            // "dom": '<"top"flp<"clear">>rt<"bottom"ip<"clear">>',
             searching: false,
             ordering: false,
             scrollCollapse: true,
@@ -609,16 +834,16 @@
             "columns": [
                 {
                     "data": format_checkbox,
-                    "width": "50px",
+                    "width": "20px",
                     class: "center"
                 },
                 {
                     "data": "product_id",
-                    "width": "50px",
                     class: "hidden"
                 },
                 {
-                    "data": format_image_
+                    "data": format_image_,
+                    "width": "70px"
                 },
                 {
                     "data": "product_name"
@@ -628,7 +853,7 @@
                 },
                 {
                     "data": "total_quantity",
-                    width: "50px"
+                    width: "30px"
                 }
             ],
             "lengthMenu": [[10, 50, 100, -1], [10, 50, 100, "All"]]
@@ -655,7 +880,7 @@
 
     function format_image_(data) {
         let image = data.image;
-        return "<img src=\""+image+"\" width=\"64px\" onerror='this.src=\"<?php Common::getPath() ?>dist/img/img_err.jpg\";'>";
+        return "<img src=\""+image+"\" width=\"40px\" style='border-radius: 50%' onerror='this.src=\"<?php Common::getPath() ?>dist/img/img_err.jpg\";'>";
     }
 
     function format_price(data) {
@@ -667,19 +892,11 @@
             return formatNumber(min_price)+"<sup>đ</sup> - "+formatNumber(max_price)+"<sup>đ</sup>";
         }
     }
-
-
-    //function add_products1() {
-
-    //}
-
-
-
     function choose_product(e, product_id) {
-        // console.log(checked_products.length);
         let isCheck = $(e).prop('checked');
         if (isCheck) {
             $(e).prop("checked", "checked");
+            checked_products.push(product_id);
             // let tr = $(e).parent().parent();
             // let td = tr.find("td");
             // let product = {};
@@ -689,18 +906,10 @@
             // product["price"] = $(td[4]).text();
             // product["quantity"] = $(td[5]).text();
             // checked_products.push(product);
-            checked_products.push(product_id);
         } else {
             $(e).prop("checked", "");
-            // for(let i=0; i<checked_products.length; i++) {
-                // let id = checked_products[i].product_id;
-                // if(id === product_id) {
-                //     checked_products.splice(i,1);
-                // }
-            // }
             checked_products.splice(checked_products.indexOf(product_id),1);
         }
-        console.log(checked_products);
         if(checked_products.length > 0) {
             $("#checked_products").text("("+checked_products.length+")");
             $("#add_product_choice").prop("disabled","");
@@ -716,21 +925,27 @@
         }
     }
     function generate_datatable() {
-        let table = $('#example').DataTable({
+        if ($.fn.dataTable.isDataTable('#example')) {
+            table.destroy();
+            table.clear();
+            table.ajax.reload();
+        }
+        table = $('#example').DataTable({
             'ajax': {
                 "type": "GET",
                 "url": '<?php Common::getPath() ?>src/controller/promotion/PromotionController.php',
                 "data": get_data_search()
             },
+            "scrollY":        "500px",
+            "initComplete":function( settings, json){
+                // console.log(json);
+            },
             responsive: true,
             select: "single",
+            "order": [[ 0, 'desc' ]],
             "columns": [
                 {
                     "data": "id",
-                    width: "5px"
-                },
-                {
-                    "data": "",
                     "class": "hidden"
                 },
                 {
@@ -743,22 +958,28 @@
                     "data": "end_date"
                 },
                 {
+                    "data": format_type
+                },
+                {
+                    "data": format_scope
+                },
+                {
                     "data": format_status
                 },
                 {
                     "data": format_action
                 }
             ],
-            "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]]
+            "lengthMenu": [[10, 25, 50, 100, -1], [25, 50, 100, "All"]]
         });
-        // Event click delete product
-        $('#example tbody').on('click', '.edit_promotion', function () {
+
+        $('#example tbody').on('click', '.end_promotion', function () {
+            show_loading();
             let tr = $(this).closest('tr');
             let row = table.row(tr);
-            let id = row.data().id;
-
+            let promotion_id = row.data().id;
             Swal.fire({
-                title: 'Bạn có chắc chắn muốn hủy bỏ lần kiểm hàng này?',
+                title: 'Bạn có chắc chắn muốn kết thúc chương trình này?',
                 text: "",
                 type: 'warning',
                 showCancelButton: true,
@@ -767,248 +988,101 @@
                 confirmButtonText: 'Ok'
             }).then((result) => {
                 if (result.value) {
-                    show_loading();
-                    $.ajax({
-                        url: '<?php Common::getPath() ?>src/controller/Check/CheckController.php',
-                        type: "POST",
-                        dataType: "json",
-                        data: {
-                            type: "cancel_checking",
-                            data: id
-                        },
-                        success: function (res) {
-                            console.log(res);
-                            toastr.success('Cập nhật thành công!');
-                        },
-                        error: function (data, errorThrown) {
-                            console.log(data.responseText);
-                            console.log(errorThrown);
-                            Swal.fire({
-                                type: 'error',
-                                title: 'Đã xảy ra lỗi',
-                                text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-                            })
-                            hide_loading();
-                        }
-                    });
+                    end_promotion(promotion_id);
                 }
             });
-        });
 
+        });
+    }
+
+    function end_promotion(promotion_id) {
+        $.ajax({
+            url: '<?php Common::getPath() ?>src/controller/promotion/PromotionController.php',
+            type: "POST",
+            dataType: "text",
+            data: {
+                method: "end_promotion",
+                promotion_id: promotion_id
+            },
+            success: function (res) {
+                console.log(res);
+                Swal.fire({
+                    type: 'succes',
+                    title: 'Thành công',
+                    text: "Chương trình đã được kết thúc"
+                });
+                setTimeout(function () {
+                    window.location.href = "<?php Common::getPath(); ?>src/view/promotion/";
+                },1000);
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                });
+                hide_loading();
+            }
+        });
     }
 
     function format_status(data) {
         let status = Number(data.status);
         switch (status) {
             case 0:
-                status = '<span class="badge badge-info">Sắp diễn ra</span>';
+                status = '<mark><span class="text-danger font-italic small">Sắp diễn ra</span></mark>';
                 break;
             case 1:
-                status = '<span class="badge badge-success">Đang hoạt động</span>';
+                status = '<mark><span class="text-success font-italic small">Đang hoạt động</span></mark>';
                 break;
             case 2:
-                status =  '<span class="badge badge-secondary">Đã kết thúc</span>';
+                status =  '<mark><span class="text-secondary font-italic small">Đã kết thúc</span></mark>';
                 break;
             case 3:
-                status =  '<span class="badge badge-danger">Đã hủy bỏ</span>';
+                status =  '<mark><span class="text-danger font-italic small">Đã hủy bỏ</span></mark>';
                 break;
             default:
                 return '';
         }
         return status;
     }
-
+    function format_type(data) {
+        let type = Number(data.type);
+        switch (type) {
+            case 0:
+                return '<mark><span class="text-danger small">False sale</span></mark>';
+            case 1:
+                return '<mark><span class="text-primary small">Sale</span></mark>';
+            default:
+                return '';
+        }
+    }
+    function format_scope(data) {
+        let scope = data.scope;
+        let txt = "";
+        if(scope) {
+            scope = JSON.parse(scope);
+            if(scope.website == 1) {
+                txt += '<mark><span class="text-success small">Website</span></mark><br>';
+            }
+            if(scope.shop == 1) {
+                txt += '<mark><span class="text-danger small">Shop</span></mark>';
+            }
+        }
+        return txt;
+    }
     function format_action(data) {
         let status = data.status;
+        let promotion_id = data.id;
         if(status == 1 || status == 0) {
-            return '<button type="button" class="btn bg-gradient-info btn-sm edit_promotion" title="Sửa chương trinh"><i class="fas fa-edit"></i></button>&nbsp;'
-                + '<button type="button" class="btn bg-gradient-danger btn-sm end_promotion" title="Kết thúc chương trình"><i class="fas fa-eye-slash"></i></button>';
+            return '<a href="<?php Common::getPath(); ?>src/view/promotion?pid='+promotion_id+'" class="text-success edit_promotion" title="Sửa chương trinh"><i class="fas fa-edit"></i></a>&nbsp;'
+                + '<a href="javascipt:void(0)" class="text-danger end_promotion" title="Kết thúc chương trình"><i class="fas fa-eye-slash"></i></a>';
         }
         return '';
     }
 
-    function check_stock(e, product_id) {
-        $.ajax({
-            url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
-            type: "POST",
-            dataType: "json",
-            data: {
-                method: "check_update_out_of_stock",
-                product_id: product_id
-            },
-            success: function (res) {
-                console.log(res);
-                if(res.response === "in_stock") {
-                    Swal.fire({
-                        type: 'error',
-                        title: 'Số lượng sản phẩm vẫn còn',
-                        text: "Bạn vui lòng kiểm tra lại trước khi cập nhật hết hàng."
-                    });
-                    return;
-                } else if(res.response === "success") {
-                    Swal.fire({
-                        title: 'Bạn chắc chắn muốn cập nhật hết hàng cho sản phẩm này?',
-                        text: "",
-                        type: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Ok'
-                    }).then((result) => {
-                        if (result.value) {
-                            update_out_of_stock(e, product_id);
-                        }
-                    });
-                }
-            },
-            error: function (data, errorThrown) {
-                console.log(data.responseText);
-                console.log(errorThrown);
-                Swal.fire({
-                    type: 'error',
-                    title: 'Đã xảy ra lỗi',
-                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-                })
-            }
-        });
-    }
-
-    function update_out_of_stock(e, product_id) {
-        $.ajax({
-            url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
-            type: "POST",
-            dataType: "json",
-            data: {
-                method: "update_stock",
-                product_id: product_id,
-                status: 1 // out of stock
-            },
-            success: function (res) {
-                console.log(res);
-                toastr.success('Cập nhật thành công!');
-                $(e).parent().parent().hide(700);
-                $(e).parent().parent().next().hide(700);
-                count_out_of_stock();
-            },
-            error: function (data, errorThrown) {
-                console.log(data.responseText);
-                console.log(errorThrown);
-                Swal.fire({
-                    type: 'error',
-                    title: 'Đã xảy ra lỗi',
-                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-                })
-            }
-        });
-    }
-
-
-
-    function format_intomoney(data) {
-        let price = replaceComma(data.price);
-        let fee = replaceComma(data.fee_transport);
-        let into_money = Number(price) + Number(fee);
-        if (!isNaN(into_money)) {
-            return formatNumber(into_money);
-        } else {
-            return "";
-        }
-    }
-
-    function format_name(data) {
-        return "<a href='" + data.link + "' target='_blank'>" + data.name + "</a>";
-    }
-
-    function format_image(data) {
-        return "<img src=" + data.image + " width='100px' id='thumbnail'>";
-    }
-
-    function format_variation(variations, isNew) {
-        let table = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
-        table += '<thead>' +
-            '<tr>' +
-            '<th class="center"><input type="checkbox" id="selectall" onclick="checkAll(this)"></th>' +
-            '<th>Mã sản phẩm</th>' +
-            '<th>Màu</th>' +
-            '<th>Size</th>' +
-            '<th>Số lượng</th>' +
-            '<th>Hành động</th>' +
-            '</tr>' +
-            '</thead>' +
-            '<tbody>';
-        for (let i = 0; i < variations.length; i++) {
-            table += '<tr class="' + variations[i].sku + '">' +
-                '<td class="center"><input type="checkbox" id="' + variations[i].sku + '" onclick="check(this)"></td>' +
-                '<input type="hidden" class="product-id-' + variations[i].sku + '" value="' + variations[i].product_id + '">' +
-                '<td>' + variations[i].sku + '</td>' +
-                '<td>' + variations[i].color + '</td>' +
-                '<td>' + variations[i].size + '</td>' +
-                '<td id="qty">' + variations[i].quantity + '</td>' +
-                '<td>' +
-                '<button type="button" class="btn bg-gradient-info btn-sm edit_variation"><i class="fas fa-edit"></i> Sửa</button>&nbsp;' +
-                //'<button type="button" class="btn bg-gradient-danger btn-sm delete_variation"><i class="fas fa-trash"></i> Xóa</button>' +
-                '</td>' +
-                '</tr>';
-        }
-        if (isNew === "isNew") {
-            let new_sku = Number(variations[variations.length - 1].sku) < 10 ? "0" + variations[variations.length - 1].sku : Number(variations[variations.length - 1].sku) + 1;
-            table += '<tr class="' + new_sku + '">' +
-                '<td>' + new_sku + '</td>' +
-                '<td><select class="select-color-' + new_sku + ' form-control w100" id="select_color_' + new_sku + '"><option value="-1"></option></select></td>' +
-                '<td><select class="select-size-' + new_sku + ' form-control w100" id="select_size_' + new_sku + '"><option value="-1"></option></select></td>' +
-                '<td><select class="select-qty-' + new_sku + ' form-control w100" id="select_qty_' + new_sku + '"><option value="-1"></option></select></td>' +
-                '<td>' +
-                '<button type="button" class="btn bg-gradient-primary btn-sm save_variation"><i class="fas fa-save"></i> Lưu</button>&nbsp;' +
-                '</td>' +
-                '<input type="hidden" class="product-id-' + new_sku + '" value="' + variations[variations.length - 1].product_id + '">' +
-                '</tr>';
-        }
-        table += '</tbody>';
-        table += '</table>';
-        return table;
-    }
-
-    function check(e) {
-        let isCheck = $(e).prop('checked');
-        if (isCheck) {
-            $(e).prop("checked", "checked");
-        } else {
-            $(e).prop("checked", "");
-        }
-        countAllChecked();
-    }
-
-    function checkAll(e) {
-        let isCheck = $(e).prop('checked');
-        if (isCheck) {
-            $(e).parent().parent().parent().parent().find('td input:checkbox').prop("checked", "checked");
-        } else {
-            $(e).parent().parent().parent().parent().find('td input:checkbox').prop("checked", "");
-        }
-        countAllChecked();
-    }
-
-    // function formatNumber(num) {
-    //     return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-    // }
-
-    // function replaceComma(value) {
-    //     value = value.trim();
-    //     return value.replace(/,/g, '');
-    // }
-    //
-    // function replacePercent(value) {
-    //     return value.replace(/%/g, '');
-    // }
-
-    function generate_select2(el, data, value) {
-        $(el).select2({
-            data: data
-        });
-        if (value !== "") {
-            $(el).val(value).trigger('change');
-        }
-    }
 </script>
 </body>
 </html>

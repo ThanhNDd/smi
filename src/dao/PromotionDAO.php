@@ -7,20 +7,23 @@ class PromotionDAO
     function find_all()
     {
         try {
-            $sql = "SELECT * FROM `smi_promotion`";
+            $sql = "SELECT * FROM `smi_promotion` order by created_date desc";
             $result = mysqli_query($this->conn, $sql);
             $data = array();
-            foreach ($result as $k => $row) {
-                $promotion = array(
-                    'id' => $row["promotion_id"],
-                    'name' => $row["name"],
-                    'start_date' => $row["start_date"],
-                    'end_date' => $row["end_date"],
-                    'is_active' => $row["is_active"],
-                    'status' => $row["status"],
-                    'created_date' => $row["created_date"]
-                );
-                array_push($data, $promotion);
+            if($result) {
+                foreach ($result as $k => $row) {
+                    $promotion = array(
+                        'id' => $row["id"],
+                        'name' => $row["name"],
+                        'start_date' => date_format(date_create($row["start_date"]), "d/m/Y H:i"),
+                        'end_date' => date_format(date_create($row["end_date"]), "d/m/Y H:i"),
+                        'type' => $row["type"],
+                        'scope' => $row["scope"],
+                        'status' => $row["status"],
+                        'created_date' => $row["created_date"]
+                    );
+                    array_push($data, $promotion);
+                }
             }
             $arr = array();
             $arr["data"] = $data;
@@ -29,6 +32,33 @@ class PromotionDAO
             echo "Open connection database is error exception >> " . $e->getMessage();
         }
     }
+
+  function find_all_by_status($status)
+  {
+    try {
+      $sql = "SELECT * FROM `smi_promotion` where status in ($status)";
+      $result = mysqli_query($this->conn, $sql);
+      $data = array();
+      if($result) {
+        foreach ($result as $k => $row) {
+          $promotion = array(
+            'id' => $row["id"],
+            'name' => $row["name"],
+            'start_date' => date_format(date_create($row["start_date"]), "d/m/Y H:i"),
+            'end_date' => date_format(date_create($row["end_date"]), "d/m/Y H:i"),
+            'type' => $row["type"],
+            'scope' => $row["scope"],
+            'status' => $row["status"],
+            'created_date' => $row["created_date"]
+          );
+          array_push($data, $promotion);
+        }
+      }
+      return $data;
+    } catch (Exception $e) {
+      echo "Open connection database is error exception >> " . $e->getMessage();
+    }
+  }
 
     function find_detail($promotionId)
     {
@@ -83,15 +113,24 @@ class PromotionDAO
             $name = $promotion->getName();
             $start_date = $promotion->getStartDate();
             $end_date = $promotion->getEndDate();
+            $type = $promotion->getType();
+            $scope = $promotion->getScope();
+            $status = $promotion->getStatus();
             $stmt = $this->getConn()->prepare("INSERT INTO smi_promotion (
                                 `name`,
                                 `start_date`,
-                                `end_date`) 
-                            VALUES (?, ?, ?)");
-            $stmt->bind_param("sss",
+                                `end_date`,
+                                `type`,
+                                `status`,
+                                `scope`) 
+                            VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("sssiis",
                 $name,
                 $start_date,
-                $end_date);
+                $end_date,
+                $type,
+                $status,
+                $scope);
             if (!$stmt->execute()) {
                 throw new Exception($stmt->error);
             }
@@ -110,23 +149,43 @@ class PromotionDAO
         $start_date = $promotion->getStartDate();
         $end_date = $promotion->getEndDate();
         $status = $promotion->getStatus();
+        $type = $promotion->getType();
+        $scope = $promotion->getScope();
         $stmt = $this->getConn()->prepare("update smi_promotion SET 
             `name` = ?,
             `start_date` = ?,
             `end_date` = ?,
             `status` = ?,
+            `type` = ?,
+            `scope` = ?,
             `updated_date` = NOW() 
             WHERE `id` = ?");
-        $stmt->bind_param("sssii",
+        $stmt->bind_param("sssiisi",
             $name,
             $start_date,
             $end_date,
             $status,
+            $type,
+            $scope,
             $id);
         if (!$stmt->execute()) {
             echo new Exception($stmt->error);
         }
         $stmt->close();
+    }
+    function update_status_promotion($status, $id)
+    {
+      $stmt = $this->getConn()->prepare("update smi_promotion SET 
+              `status` = ?,
+              `updated_date` = NOW() 
+              WHERE `id` = ?");
+      $stmt->bind_param("ii",
+        $status,
+        $id);
+      if (!$stmt->execute()) {
+        throw new Exception($stmt->error);
+      }
+      $stmt->close();
     }
 
     function save_promotion_detail(PromotionDetail $promotionDetail)
@@ -137,21 +196,24 @@ class PromotionDAO
         $sku = $promotionDetail->getSku();
         $retail_price = $promotionDetail->getRetailPrice();
         $sale_price = $promotionDetail->getSalePrice();
+        $percent = $promotionDetail->getPercent();
         $stmt = $this->getConn()->prepare("INSERT INTO `smi_promotion_detail`
                                             (`promotion_id`,
                                             `product_id`,
                                             `variant_id`,
                                             `sku`,
                                             `retail_price`,
-                                            `sale_price`)
+                                            `sale_price`,
+                                            `percent`)
                                             VALUES
+                                            (?,
                                             ?,
                                             ?,
                                             ?,
                                             ?,
                                             ?,
-                                            ?");
-        $stmt->bind_param("iiisdd", $promotion_id, $product_id, $variant_id, $sku, $retail_price, $sale_price);
+                                            ?)");
+        $stmt->bind_param("iiisddi", $promotion_id, $product_id, $variant_id, $sku, $retail_price, $sale_price, $percent);
         if (!$stmt->execute()) {
             throw new Exception($stmt->error);
         }
@@ -179,8 +241,8 @@ class PromotionDAO
                            json_value(a.social_publish, '$.website') AS website
                     FROM smi_products a
                     LEFT JOIN smi_variations b ON a.id = b.product_id
-                    WHERE a.status = 0 AND JSON_CONTAINS(a.social_publish, 1, '$.website')
-                    GROUP BY a.id
+                    WHERE a.status = 0 AND JSON_CONTAINS(a.social_publish, 1, '$.website')";
+            $sql .= " GROUP BY a.id
                     ORDER BY a.id DESC";
             $result = mysqli_query($this->conn, $sql);
             $data = array();
@@ -204,41 +266,70 @@ class PromotionDAO
         }
     }
 
-    function find_variations_by_product_id($product_id)
+  function find_all_products_using()
+  {
+    try {
+      $sql = "SELECT DISTINCT b.product_id
+              FROM `smi_promotion` a
+              LEFT JOIN smi_promotion_detail b ON a.id = b.promotion_id
+              WHERE a.status <> 2";
+      $result = mysqli_query($this->conn, $sql);
+      $data = array();
+      foreach ($result as $k => $row) {
+        array_push($data, $row["product_id"]);
+      }
+      return $data;
+    } catch (Exception $e) {
+      echo "Open connection database is error exception >> " . $e->getMessage();
+    }
+  }
+
+    function find_variations_by_product_id($product_id, $is_edit_promotion)
     {
         try {
+            $is_edit_promotion = filter_var(    $is_edit_promotion, FILTER_VALIDATE_BOOLEAN);
             $ids = implode(",",$product_id);
             $sql = "SELECT 
                             b.id as product_id,
                             a.id as variant_id,
-                           a.image,
-                           b.name,
-                           a.sku,
-                           a.size,
-                           a.color,
-                           a.price,
-                           a.quantity
-                    FROM smi_products b
-                    LEFT JOIN smi_variations a ON b.id = a.product_id
-                    WHERE b.id in ($ids)
+                             a.image,
+                             b.name,
+                             a.sku,
+                             a.size,
+                             a.color,
+                             a.price,
+                             a.quantity";
+            if($is_edit_promotion) {
+                $sql .=   " ,c.sale_price,
+                             c.percent";
+            }
+            $sql .= " FROM smi_products b
+                    LEFT JOIN smi_variations a ON b.id = a.product_id";
+            if($is_edit_promotion) {
+                $sql .= " INNER JOIN smi_promotion_detail c on a.sku = c.sku";
+            }
+            $sql .= " WHERE b.id in ($ids)
+                    GROUP BY a.sku
                     ORDER BY b.id desc, a.sku";
             $result = mysqli_query($this->conn, $sql);
             $data = array();
-            foreach ($result as $k => $row) {
+            if($result) {
+              foreach ($result as $k => $row) {
                 $product = array(
-                    'product_id' => $row["product_id"],
-                    'variant_id' => $row["variant_id"],
-                    'image' => $row["image"],
-                    'name' => $row["name"],
-                    'sku' => $row["sku"],
-                    'size' => $row["size"],
-                    'color' => $row["color"],
-                    'price' => $row["price"],
-                    'quantity' => $row["quantity"],
-                    'sale_price' => "",
-                    'percent' => ""
+                  'product_id' => $row["product_id"],
+                  'variant_id' => $row["variant_id"],
+                  'image' => $row["image"],
+                  'name' => $row["name"],
+                  'sku' => $row["sku"],
+                  'size' => $row["size"],
+                  'color' => $row["color"],
+                  'price' => $row["price"],
+                  'quantity' => $row["quantity"],
+                  'sale_price' => isset($row["sale_price"]) ? $row["sale_price"] : "",
+                  'percent' => isset($row["percent"]) ? $row["percent"] : ""
                 );
                 array_push($data, $product);
+              }
             }
             $arr = array();
             $arr["data"] = $data;
@@ -247,6 +338,68 @@ class PromotionDAO
             echo "Open connection database is error exception >> " . $e->getMessage();
         }
     }
+
+  function find_by_id($promotion_id)
+  {
+    try {
+      $sql = "SELECT  *  FROM smi_promotion WHERE id = $promotion_id";
+      $result = mysqli_query($this->conn, $sql);
+      $data = array();
+      foreach ($result as $k => $row) {
+        $product = array(
+          'promotion_id' => $row["id"],
+          'name' => $row["name"],
+          'start_date' => date_format(date_create($row["start_date"]), "d/m/Y H:i"),
+          'end_date' => date_format(date_create($row["end_date"]), "d/m/Y H:i"),
+          'type' => $row["type"],
+          'scope' => $row["scope"],
+          'status' => $row["status"]
+        );
+        array_push($data, $product);
+      }
+//      $arr = array();
+//      $arr["data"] = $data;
+      return $data;
+    } catch (Exception $e) {
+      echo "Open connection database is error exception >> " . $e->getMessage();
+    }
+  }
+
+  function find_detail_by_promotion_id($promotion_id)
+  {
+    try {
+      $sql = "SELECT  *  FROM smi_promotion_detail WHERE promotion_id = $promotion_id";
+      $result = mysqli_query($this->conn, $sql);
+      $data = array();
+      foreach ($result as $k => $row) {
+        $product = array(
+          'detail_id' => $row["id"],
+          'promotion_id' => $row["promotion_id"],
+          'product_id' => $row["product_id"],
+          'variant_id' => $row["variant_id"],
+          'sku' => $row["sku"],
+          'retail_price' => $row["retail_price"],
+          'sale_price' => $row["sale_price"],
+          'percent' => $row["percent"]
+        );
+        array_push($data, $product);
+      }
+//      $arr = array();
+//      $arr["data"] = $data;
+      return $data;
+    } catch (Exception $e) {
+      echo "Open connection database is error exception >> " . $e->getMessage();
+    }
+  }
+
+  function check_exist_name($name)
+  {
+    $sql = "select count(*) as c from smi_promotion where name = '$name'";
+    $result = mysqli_query($this->conn, $sql);
+    $row = $result->fetch_assoc();
+    $count = $row['c'];
+    return $count;
+  }
 
     /**
      * Get the value of conn

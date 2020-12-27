@@ -557,15 +557,15 @@ class ProductDAO
 
     function check_stock($product_id)
     {
-        try {
-            $sql = "select count(*) as stock from smi_products a left join smi_variations b on a.id = b.product_id
-                    where a.id = $product_id and b.quantity > 0";
-            $result = mysqli_query($this->conn, $sql);
-            $row = $result->fetch_assoc();
-            $stock = $row['stock'];
-            return $stock;
-        } catch (Exception $e) {
-            throw new Exception($e);
+        $sql = "select count(*) as stock from smi_products a left join smi_variations b on a.id = b.product_id
+                where a.id = $product_id and b.quantity > 0";
+        $result = mysqli_query($this->conn, $sql);
+        if($result) {
+          $row = $result->fetch_assoc();
+          $stock = $row['stock'];
+          return $stock;
+        } else {
+          throw new Exception("error");
         }
     }
 

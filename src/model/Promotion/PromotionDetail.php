@@ -10,6 +10,7 @@ class PromotionDetail
     private $sku;
     private $retail_price;
     private $sale_price;
+    private $percent;
     private $created_date;
     private $updated_date;
 
@@ -123,6 +124,22 @@ class PromotionDetail
     public function setSalePrice($sale_price): void
     {
         $this->sale_price = $sale_price;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPercent()
+    {
+        return $this->percent;
+    }
+
+    /**
+     * @param mixed $percent
+     */
+    public function setPercent($percent): void
+    {
+        $this->percent = $percent;
     }
 
     /**
