@@ -267,7 +267,14 @@ if (isset($_GET["method"]) && $_GET["method"] == "find_all") {
         if(isset($_GET["customer_id"])) {
             $customer_id = $_GET["customer_id"];
         }
-        $orders = $checkoutDAO->find_all($start_date, $end_date, $order_id, $customer_id, $sku);
+        if(isset($_GET["type"])) {
+          $type = $_GET["type"];
+        }
+        $status = '';
+        if(isset($_GET["status"])) {
+          $status = $_GET['status'];
+        }
+        $orders = $checkoutDAO->find_all($start_date, $end_date, $order_id, $customer_id, $sku, $type, $status);
         echo json_encode($orders);
     } catch (Exception $e) {
         echo $e->getMessage();
@@ -322,7 +329,6 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         }
         if ($order_type == 1) {
             //online
-
             $order->setBill_of_lading_no($data->bill_of_lading_no);
             $order->setShipping_fee($data->shipping_fee);
             $order->setShipping($data->shipping);
@@ -350,11 +356,11 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
             $order->setId($data->order_id);
             $orderId = $checkoutDAO->updateOrder($order);
             if (!empty($orderId)) {
+                $checkoutDAO->update_qty_by_order_id($orderId);
                 $checkoutDAO->delete_order_detail_by_order_id($orderId);
             }
         } else {
             $orderId = $checkoutDAO->saveOrder($order);
-//            echo "|order_id: ".$orderId."|\n";
         }
         if (empty($orderId)) {
             throw new Exception("Insert order is failure", 1);

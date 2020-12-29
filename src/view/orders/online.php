@@ -8,7 +8,7 @@ Common::authen();
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="shortcut icon" type="image/x-icon" href="<?php Common::getPath() ?>dist/img/icon.png"/>
-    <title>Quản lý đơn hàng</title>
+    <title>Quản lý đơn hàng online</title>
     <?php require_once('../../common/css.php'); ?>
     <?php require_once('../../common/js.php'); ?>
     <style>
@@ -39,60 +39,205 @@ Common::authen();
         .customer-phone .twitter-typeahead {
             width: 79% !important;
         }
+
+        .info-box:hover {
+          background: #dcd9d996;
+        }
+
+        .info-box.active {
+          border: 1px solid red;
+        }
+        .info-box {
+          cursor: pointer;
+        }
+        div.dataTables_wrapper div.dataTables_info {
+          float: left;
+        }
     </style>
 </head>
 <?php require_once('../../common/header.php'); ?>
 <?php require_once('../../common/menu.php'); ?>
 <section class="content">
     <div class="row pt-2">
-        <div class="col-md-8 col-sm-12">
-            <div class="card">
-                <div class="card-header border-transparent pb-0 pl-0 pr-0">
-                    <div class="form-group col-md-12 mb-0">
-                        <div class="input-group col-md-3 float-left mt-1">
-                            <div class="input-group-prepend">
-                          <span class="input-group-text">
-                            <i class="far fa-calendar-alt"></i>
-                          </span>
-                            </div>
-                            <input type="text" class="form-control float-left" id="reservation">
-                        </div>
-                        <div class="col-md-1 float-left d-inline-block mt-1">
-                            <input type="text" class="form-control col-md-12" placeholder="Mã ĐH" id="search_order_id">
-                        </div>
-                        <div class="col-md-1 float-left d-inline-block mt-1">
-                            <input type="text" class="form-control col-md-12" placeholder="Mã KH" id="search_customer_id">
-                        </div>
-                        <div class="col-md-2 float-left d-inline-block mt-1">
-                            <input type="text" class="form-control col-md-12" placeholder="Số điện thoại" id="search_phone">
-                        </div>
-                        <div class="col-md-2 float-left d-inline-block mt-1">
-                            <input type="text" class="form-control col-md-12" placeholder="Mã sản phẩm" id="search_sku">
-                        </div>
-                        <div class="col-md-1 float-right mt-1">
-                            <a href="javascript:void(0)" class="btn btn-sm btn-info order-create float-right">Tạo mới</a>
-                        </div>
-                    </div>
+      <div class="col-md-12 col-sm-12">
+        <div class="card">
+          <div class="card-body row">
+            <div class="col-md-1 mb-2">
+              <a href="javascript:void(0)" class="btn btn-sm btn-primary order-create btn-flat p-2">
+                <i class="fas fa-plus-circle"></i> Tạo mới
+              </a>
+            </div>
+            <div class="col-md-1 mb-2">
+              <a href="javascript:void(0)" class="btn btn-sm btn-info order-create btn-flat p-2">
+                <i class="fas fa-shipping-fast"></i> Giao hàng
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12 col-sm-12">
+        <div class="card">
+          <div class="card-body row">
+            <div class="col-md-2 mb-2">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="far fa-calendar-alt"></i>
+                  </span>
                 </div>
+                <input type="text" class="form-control float-left" id="reservation">
+              </div>
+            </div>
+            <div class="col-md-2 mb-2">
+              <input type="text" class="form-control col-md-12" placeholder="Mã vận đơn" id="search_bill_id">
+            </div>
+            <div class="col-md-2 mb-2">
+              <input type="text" class="form-control col-md-12" placeholder="Số điện thoại" id="search_phone">
+            </div>
+            <div class="col-md-2 mb-2">
+              <input type="text" class="form-control col-md-12" placeholder="Mã đơn hàng" id="search_order_id">
+            </div>
+            <div class="col-md-2 mb-2">
+              <input type="text" class="form-control col-md-12" placeholder="Mã khách hàng" id="search_customer_id">
+            </div>
+            <div class="col-md-2 mb-2">
+              <input type="text" class="form-control col-md-12" placeholder="Mã sản phẩm" id="search_sku">
+            </div>
+            <div class="col-md-12 text-center">
+              <a href="javascript:void(0)" class="btn btn-sm btn-info order-create btn-flat p-2">
+                <i class="fas fa-search"></i> Tìm kiếm
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12 col-sm-12">
+        <div class="card">
+          <div class="card-body row">
+            <div class="col-md-2">
+              <div class="info-box" id="status_pending">
+                <span class="info-box-icon bg-warning elevation-1"><i class="far fa-clock"></i></span>
+                <div class="info-box-content row">
+                  <div class="ml-1 col text-left">
+                    <span class="info-box-text">Chờ xử lý</span>
+                    <span class="info-box-number">
+                        <h5 class="total_money1">0</h5>
+                     </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /.col -->
+            <div class="col-md-2">
+              <div class="info-box" id="status_packed">
+                <span class="info-box-icon bg-info elevation-1"><i class="fas fa-gift"></i></span>
+                <div class="info-box-content row">
+                  <div class="ml-1 col text-left">
+                    <span class="info-box-text">Đã gói hàng</span>
+                    <span class="info-box-number">
+                        <h5 class="total_on_shop1">0</h5>
+                     </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /.col -->
+            <!-- fix for small devices only -->
+            <div class="col-md-2">
+              <div class="info-box" id="status_passed">
+                <span class="info-box-icon bg-primary elevation-1"><i class="fas fa-shipping-fast"></i></span>
+                <div class="info-box-content row">
+                  <div class="ml-1 col text-left">
+                    <span class="info-box-text">Đã giao</span>
+                    <span class="info-box-number">
+                        <h5 class="total_online1">0</h5>
+                     </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-2">
+              <div class="info-box" id="status_success">
+                <span class="info-box-icon bg-success elevation-1"><i class="fas fa-check-circle"></i></span>
+                <div class="info-box-content row">
+                  <div class="ml-1 col text-left">
+                    <span class="info-box-text">Đã hoàn thành</span>
+                    <span class="info-box-number">
+                      <h5 class="total_exchange1">0</h5>
+                   </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="info-box" id="status_exchange">
+                <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-sync-alt"></i></span>
+                <div class="info-box-content row">
+                  <div class="ml-1 col text-left">
+                    <span class="info-box-text">Đổi size</span>
+                    <span class="info-box-number">
+                      <h5 class="total_exchange1">0</h5>
+                   </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="info-box" id="status_return">
+                <span class="info-box-icon bg-secondary elevation-1"><i class="fas fa-undo-alt"></i></span>
+                <div class="info-box-content row">
+                  <div class="ml-1 col text-left">
+                    <span class="info-box-text">Hoàn trả</span>
+                    <span class="info-box-number">
+                      <h5 class="total_exchange1">0</h5>
+                   </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="info-box" id="status_cancel">
+                <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-window-close"></i></span>
+                <div class="info-box-content row">
+                  <div class="ml-1 col text-left">
+                    <span class="info-box-text">Huỷ</span>
+                    <span class="info-box-number">
+                      <h5 class="total_exchange1">0</h5>
+                   </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-12 col-sm-12">
+            <div class="card">
+<!--                <div class="card-header border-transparent pb-0 pl-0 pr-0">-->
+<!--                    -->
+<!--                </div>-->
                 <!-- /.card-header -->
                 <div class="card-body pt-0">
                     <div class="table-responsive">
                         <table id="example" class="table table-hover table-striped">
                             <thead>
                             <tr>
-                                <th></th>
-                                <th class="w100">ID</th>
-                                <!-- <th>Khách hàng</th> -->
-                                <!-- <th>Số điện thoại</th>
-                                <th>Địa chỉ</th> -->
+                                <th class="center"><input type="checkbox" id="check_all_order"></th>
+                                <th class="center"></th>
+                                <th class="w100 center">ID</th>
+                                 <th>Khách hàng</th>
+                                 <th>SĐT</th>
+                                <th>Địa chỉ</th>
                                 <!--  <th class="right">Phí ship</th> -->
-                                <!-- <th class="right">Chiết khấu</th> -->
+                                 <th class="left">Mã vận đơn</th>
                                 <th class="right">Tổng tiền</th>
                                 <th class="center">Ngày mua hàng</th>
-                                <th class="left">Loại đơn</th>
-                                <th class="left">Thanh toán</th>
+<!--                                <th class="left">Loại đơn</th>-->
+<!--                                <th class="left">Thanh toán</th>-->
                                 <th class="left">Nguồn</th>
-<!--                                <th class="left">Trạng thái</th>-->
+                                <th class="left">Trạng thái</th>
                                 <th class="left">Hành động</th>
                             </tr>
                             </thead>
@@ -103,138 +248,7 @@ Common::authen();
                 <!-- /.card-body -->
             </div>
         </div>
-        <div class="col-md-4 col-sm-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class="col-12 col-sm-12 col-md-12">
-                        <div class="info-box">
-                            <span class="info-box-icon bg-info elevation-1"><i class="fas fa-dollar-sign"></i></span>
-                            <div class="info-box-content col-12 row">
-                                <div class="col-md-6 col-sm-12 text-left">
-                                    <span class="info-box-text">Tổng tiền</span>
-                                    <span class="info-box-number">
-                                        <h5 class="total_money">0<sup>đ</sup></h5>
-                                     </span>
-                                </div>
-                                <div class="col-md-6 col-sm-12 text-left pl-0">
-                                    <h1 class="text-danger no-margin d-inline-block col-md-12 pl-0"><span class="total_orders col-md-6 pl-0 pr-0">0</span> <small style="font-size: 30%;color: #676a6c;">Đơn</small></h1>
-                                    <h5 class="text-danger text-left col-md-12 pl-0"><span class="total_products text-left col-md-6" style="color: #676a6c;">0</span> <small style="font-size: 60%;color: #676a6c;">Sản phẩm</small></h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-12 col-sm-12 col-md-12">
-                        <div class="info-box mb-3">
-                            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-store"></i></span>
-                            <div class="info-box-content col-12 row">
-                                <div class="col-md-6 col-sm-12 text-left">
-                                    <span class="info-box-text">Shop</span>
-                                    <span class="info-box-number">
-                                        <h5 class="total_on_shop">0<sup>đ</sup></h5>
-                                     </span>
-                                    <span class="info-box-text" id="percent_onshop"></span>
-                                </div>
-                                <div class="col-md-6 col-sm-12 text-left pl-0">
-                                    <h1 class="text-danger no-margin d-inline-block col-md-12 pl-0"><span class="count_on_shop col-md-6 pl-0 pr-0">0</span> <small style="font-size: 30%;color: #676a6c;">Đơn</small></h1>
-                                    <h5 class="text-danger text-left col-md-12 pl-0"><span class="total_product_on_shop text-left col-md-6" style="color: #676a6c;">0</span> <small style="font-size: 60%;color: #676a6c;">Sản phẩm</small></h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /.col -->
-                    <!-- fix for small devices only -->
-                    <div class="clearfix hidden-md-up"></div>
-                    <div class="col-12 col-sm-12 col-md-12">
-                        <div class="info-box mb-3">
-                            <span class="info-box-icon bg-success elevation-1"><i class="fas fa-globe"></i></span>
-                            <div class="info-box-content col-12 row">
-                                <div class="col-md-6 col-sm-12 text-left">
-                                    <span class="info-box-text">Online</span>
-                                    <span class="info-box-number">
-                                        <h5 class="total_online">0<sup>đ</sup></h5>
-                                     </span>
-                                    <span class="info-box-text" id="percent_online"></span>
-                                </div>
-                                <div class="col-md-6 col-sm-12 text-left pl-0">
-                                    <h1 class="text-danger no-margin d-inline-block col-md-12 pl-0"><span class="count_online col-md-6 pl-0 pr-0">0</span> <small style="font-size: 30%;color: #676a6c;">Đơn</small></h1>
-                                    <h5 class="text-danger text-left col-md-12 pl-0"><span class="total_product_online text-left col-md-6" style="color: #676a6c;">0</span> <small style="font-size: 60%;color: #676a6c;">Sản phẩm</small></h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="clearfix hidden-md-up"></div>
-                    <div class="col-12 col-sm-12 col-md-12">
-                        <div class="info-box mb-3">
-                            <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-sync-alt"></i></span>
-                            <div class="info-box-content col-12 row">
-                                <div class="col-md-6 col-sm-12 text-left">
-                                    <span class="info-box-text">Đổi hàng</span>
-                                    <span class="info-box-number">
-                                        <h5 class="total_exchange">0<sup>đ</sup></h5>
-                                     </span>
-                                    <span class="info-box-text" id="percent_exchange"></span>
-                                </div>
-                                <div class="col-md-6 col-sm-12 text-left pl-0">
-                                    <h1 class="text-danger no-margin d-inline-block col-md-12 pl-0"><span class="count_exchange col-md-6 pl-0 pr-0">0</span> <small style="font-size: 30%;color: #676a6c;">Đơn</small></h1>
-                                    <h5 class="text-danger text-left col-md-12 pl-0"><span class="total_product_exchange text-left col-md-6" style="color: #676a6c;">0</span> <small style="font-size: 60%;color: #676a6c;">Sản phẩm</small></h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-body">
-                    <div class="col-12 col-sm-12 col-md-12">
-                        <div class="info-box">
-                            <span class="info-box-icon bg-primary elevation-1"><i
-                                        class="far fa-money-bill-alt"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-text">Tiền mặt</span>
-                                <span class="info-box-number">
-                                    <h5 class="total_cash">
-                                      <sup>đ</sup>
-                                    </h5>
-                                </span>
-                            </div>
-                        </div>
-                        <!-- /.info-box -->
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-12 col-sm-12 col-md-12">
-                        <div class="info-box mb-3">
-                            <span class="info-box-icon bg-success elevation-1"><i class="fas fa-credit-card"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-text">Chuyển khoản</span>
-                                <span class="info-box-number">
-                                    <h5 class="total_transfer">
-                                        <sup>đ</sup>
-                                    </h5>
-                                </span>
-                            </div>
-                            <!-- /.info-box-content -->
-                        </div>
-                        <!-- /.info-box -->
-                    </div>
-                    <div class="col-12 col-sm-12 col-md-12" style="display: block;">
-                        <div class="info-box mb-3">
-                            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-wallet"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-text" id="percent_profit"></span>
-                                <span class="info-box-number">
-                                    <h5 class="total_profit">
-                                      <sup>đ</sup>
-                                    </h5>
-                                </span>
-                            </div>
-                            <!-- /.info-box-content -->
-                        </div>
-                        <!-- /.info-box -->
-                    </div>
-                </div>
-            </div>
-        </div>
+    </div>
 </section>
 <div class="iframeArea" style="visibility: hidden"></div>
 <!-- /.content -->
@@ -245,10 +259,18 @@ Common::authen();
 <?php require_once '../wallet/showHistory.php'; ?>
 <?php require_once ('../../common/footer.php'); ?>
 <script>
+    const PENDING = 0;
+    const PACKED = 1;
+    const DELIVERED = 2;
+    const SUCCESS = 3;
+    const EXCHANGE = 4;
+    const RETURN = 5;
+    const CANCEL = 6;
+    let status = [];
     let table;
     $(document).ready(function () {
         // set title for page
-        set_title("Danh sách đơn hàng");
+        set_title("Danh sách đơn hàng online");
 
         let currentDate = new Date();
         let day = currentDate.getDate();
@@ -374,34 +396,104 @@ Common::authen();
                 }
             }
         });
+
+        $(".info-box").click(function () {
+            if($(this).hasClass("active")) {
+                $(this).removeClass("active");
+            } else {
+                $(this).addClass("active");
+            }
+        });
+
+        $("#status_pending").click(function () {
+            // if($(this).hasClass("active")) {
+            //     status = status.filter(item => item !== PENDING);
+            // } else {
+            //     status = status.push(PENDING);
+            // }
+            // generate_datatable('status', status);
+            get_status("#status_pending", PENDING);
+        });
+        $("#status_packed").click(function () {
+            // generate_datatable('status', PACKED);
+            get_status("#status_packed", PACKED);
+        });
+        $("#status_passed").click(function () {
+            // generate_datatable('status', PASSED);
+            get_status("#status_passed", DELIVERED);
+        });
+        $("#status_success").click(function () {
+            // generate_datatable('status', SUCCESS);
+            get_status("#status_success", SUCCESS);
+        });
+        $("#status_exchange").click(function () {
+            // generate_datatable('status', EXCHANGE);
+            get_status("#status_exchange", EXCHANGE);
+        });
+        $("#status_return").click(function () {
+            // generate_datatable('status', RETURN);
+            get_status("#status_return", RETURN);
+        });
+        $("#status_cancel").click(function () {
+            // generate_datatable('status', CANCEL);
+            get_status("#status_cancel", CANCEL);
+        });
     });
 
-    function get_data_search(type) {
+    function get_status(el, stt) {
+        if($(el).hasClass("active")) {
+            status.push(stt);
+        } else {
+            let index = status.indexOf(stt);
+            status.splice(index, 1);
+        }
+        let text_status = '';
+        for(let i = 0; i<status.length; i++) {
+            text_status += status[i]+',';
+        }
+        text_status = text_status.substr(0, text_status.length-1);
+        generate_datatable('status', text_status);
+    }
+
+    function get_data_search(type, status) {
         if(type === 'date') {
             return {
                 method: 'find_all',
                 start_date:$("#startDate").val(),
-                end_date: $("#endDate").val()
+                end_date: $("#endDate").val(),
+                type: 1
             }
         } else if(type === 'order_id') {
             return {
                 method: 'find_all',
-                order_id: $("#search_order_id").val()
+                order_id: $("#search_order_id").val(),
+                type: 1
             }
         } else if(type === 'phone') {
             return {
                 method: 'find_all',
-                phone: $("#search_phone").val()
+                phone: $("#search_phone").val(),
+                type: 1
             }
         } else if(type === 'customer_id') {
             return {
                 method: 'find_all',
-                customer_id: $("#search_customer_id").val()
+                customer_id: $("#search_customer_id").val(),
+                type: 1
             }
         } else if(type === 'sku') {
             return {
                 method: 'find_all',
-                sku: $("#search_sku").val()
+                sku: $("#search_sku").val(),
+                type: 1
+            }
+        } else if(type === 'status') {
+            return {
+                method: 'find_all',
+                type: 1,
+                start_date:$("#startDate").val(),
+                end_date: $("#endDate").val(),
+                status: status
             }
         }
         return '';
@@ -531,24 +623,22 @@ Common::authen();
             }
         });
     }
-    function generate_datatable(type) {
+    function generate_datatable(type, status) {
         if ($.fn.dataTable.isDataTable('#example')) {
             table.destroy();
             table.clear();
-            // if(table.ajax) {
-                table.ajax.reload();
-            // }
+            table.ajax.reload();
         }
         table = $('#example').DataTable({
             'ajax': {
                 "type": "GET",
                 "url": "<?php Common::getPath() ?>src/controller/orders/OrderController.php",
-                "data": get_data_search(type)
+                "data": get_data_search(type, status)
             },
-            "dom": '<"top"flp<"clear">>rt<"bottom"p<"clear">>',
+            "dom": '<"top"flp<"clear">>rt<"bottom"ip<"clear">>',
             searching: false,
-            ordering: false,
-            scrollY: '50vh',
+            // ordering: false,
+            // scrollY: '50vh',
             scrollCollapse: true,
             "language": {
                 "emptyTable": "Không có dữ liệu",
@@ -562,47 +652,85 @@ Common::authen();
             select: "single",
             "columns": [
                 {
-                    "className": 'details-control',
+                    "className": 'check-box center',
+                    "orderable": false,
+                    "data": null,
+                    "defaultContent": '',
+                    "render": format_checkbox,
+                    width: "5px",
+                },
+                {
+                    "className": 'details-control center',
                     "orderable": false,
                     "data": null,
                     "defaultContent": '',
                     "render": function () {
                         return '<i class="fa fa-plus-square" aria-hidden="true"></i>';
                     },
-                    width: "5px"
+                    width: "5px",
                 },
                 {
                     "data": "order_id",
                     width: "30px",
+                    class: 'center',
+                    "orderable": false
+                },
+                {
+                    "data": 'customer_name',
+                    width: "100px",
+                    "orderable": false,
+                    class: 'left'
+                },
+                {
+                    "data": 'customer_phone',
+                    width: "50px",
+                    "orderable": false,
+                    class: 'left'
+                },
+                {
+                    "data": 'customer_address',
+                    "orderable": false,
+                    class: 'left'
+                },
+                {
+                    "data": 'bill_of_lading_no',
+                    width: "50px",
+                    "orderable": false,
+                    class: 'left'
                 },
                 {
                     "data": format_total_checkout,
                     width: "50px",
+                    "orderable": false,
                     class: 'right'
                 },
                 {
                     "data": "order_date",
                     width: "70px",
+                    "orderable": true,
                     class: 'center'
                 },
-                {
-                    "data": format_type,
-                    width: "30px"
-                },
-                {
-                    "data": format_payment,
-                    width: "30px"
-                },
-                {
-                    "data": format_source,
-                    width: "30px"
-                },
                 // {
-                //     "data": format_status,
+                //     "data": format_type,
+                //     width: "30px"
+                // },
+                // {
+                //     "data": format_payment,
                 //     width: "30px"
                 // },
                 {
+                    "data": format_source,
+                    width: "30px",
+                    "orderable": true
+                },
+                {
+                    "data": format_status,
+                    width: "30px",
+                    "orderable": true
+                },
+                {
                     "data": format_action,
+                    "orderable": false,
                     width: "50px"
                 }
             ],
@@ -733,7 +861,7 @@ Common::authen();
                     order_type: order_type
                 },
                 success: function (res) {
-                    // console.log(JSON.stringify(res));
+                    console.log(JSON.stringify(res));
                     set_data_edit_order(order_id, res, order_type);
                 },
                 error: function (data, errorThrown) {
@@ -799,6 +927,7 @@ Common::authen();
             if (value.length != 0) {
                 $("#order_id").val(value[0].order_id);
                 $('#orderDate').val(value[0].order_date);
+                $("#order_status").val(value[0].status).trigger('change');
                 $("#customer_id").val(value[0].customer_id);
                 $("#customer_name").val(value[0].customerName);
                 $("#customer_phone").typeahead('val', value[0].phone);
@@ -818,7 +947,7 @@ Common::authen();
                     $("#shipping_fee").prop("disabled", true);
                     $(".select-shipping-unit").prop("disabled", true);
                     $("#shipping").prop("disabled", true);
-                    $("#order_status").val(3);//complete
+                    // $("#order_status").val(3);//complete
                 }
                 $("#payment_type").val(value[0].payment_type);
                 $("#payment").val(value[0].customer_payment);
@@ -871,8 +1000,6 @@ Common::authen();
         let profit = 0;
         let intoMoney = 0;
         for (let i = 0; i < details.length; i++) {
-            // total_reduce += Number(replaceComma(details[i].reduce));
-            // let reduce = Number(replaceComma(details[i].reduce));
             intoMoney += Number(replaceComma(details[i].intoMoney));
             let type = details[i].product_type;
             let class_text = "";
@@ -891,14 +1018,6 @@ Common::authen();
                 profit += Number(replaceComma(details[i].profit));
                 detail_profit = Number(replaceComma(details[i].profit));
             }
-            // detail_profit = detail_profit - reduce;
-            // let updated_qty = JSON.parse(details[i].updated_qty);
-            // let shopee = '';
-            // let lazada = '';
-            // if(typeof updated_qty != "undefined" && updated_qty != null) {
-            //     shopee = updated_qty.shopee === 0 ? '' : 'checked';
-            //     lazada = updated_qty.lazada === 0 ? '' : 'checked';
-            // }
             table += '<tr class="' + class_text + '">' +
                 '<input type="hidden" id="product_id_' + i + '" value="' + details[i].product_id + '"/>' +
                 '<input type="hidden" id="variant_id_' + i + '" value="' + details[i].variant_id + '"/>' +
@@ -911,14 +1030,6 @@ Common::authen();
                 '<td class="right">' + details[i].reduce + '<sup>đ</sup></td>' +
                 '<td class="right">' + details[i].intoMoney + '<sup>đ</sup></td>' +
                 '<td class="right">' + formatNumber(detail_profit) + '<sup>đ</sup></td>';
-                // '<td class="center"><div class="custom-control custom-switch">' +
-                // '<input type="checkbox" class="custom-control-input upd-qty-shopee" id="shopee_'+details[i].sku+'" '+shopee+' onchange="updatedQty(this, \'shopee\', '+details[i].sku+')">' +
-                // '<label class="custom-control-label" for="shopee_'+details[i].sku+'"></label>' +
-                // '</div></td>' +
-                // '<td class="center"><div class="custom-control custom-switch">' +
-                // '<input type="checkbox" class="custom-control-input upd-qty-lazada" id="lazada_'+details[i].sku+'" '+lazada+' onchange="updatedQty(this, \'lazada\', '+details[i].sku+')">' +
-                // '<label class="custom-control-label" for="lazada_'+details[i].sku+'"></label>' +
-                // '</div></td>' +
                 if(order_type === EXCHANGE) {
                     if (type === '1') {
                         table += '<td class="right"><span class="badge badge-info">Đã mua</span></td>';
@@ -1131,26 +1242,48 @@ Common::authen();
         if (data.status === null) {
             return;
         }
-        let status = data.status;
+        let txt_status = '';
+        let status = Number(data.status);
         switch (status) {
-            case '0' :
-                return '<span class="badge badge-danger">Chưa xử lý</span>';
-            case '1':
-                return '<span class="badge badge-primary">Đang xử lý</span>';
-            case '2':
-                return '<span class="badge badge-info">Đã giao</span>';
-            case '3':
-                return '<span class="badge badge-success">Hoàn thành</span>';
-            case '4':
-                return '<span class="badge badge-danger">Đã hủy</span>';
-            case '5':
-                return '<span class="badge badge-danger">Hoàn hàng</span>';
-            case '6':
-                return '<span class="badge badge-danger">Đổi size</span>';
+            case PENDING :
+                txt_status = '<span class="badge badge-warning">Chưa xử lý</span>';
+                break;
+            case PACKED:
+                txt_status = '<span class="badge badge-info">Đã gói hàng</span>';
+                break;
+            case DELIVERED:
+                txt_status = '<span class="badge badge-primary">Đã giao</span>';
+                break;
+            case SUCCESS:
+                txt_status = '<span class="badge badge-success">Hoàn thành</span>';
+                break;
+            case EXCHANGE:
+                txt_status = '<span class="badge badge-danger">Đổi size</span>';
+                break;
+            case RETURN:
+                txt_status = '<span class="badge badge-secondary">Chuyển hoàn</span>';
+                break;
+            case CANCEL:
+                txt_status = '<span class="badge badge-danger">Đã huỷ</span>';
+                break;
             default:
                 break;
         }
+        return txt_status;
     }
+
+    function format_checkbox(data) {
+        let status = data.status;
+        switch (status) {
+            case '0' :
+                return '<input type="checkbox" class="checked_order">';
+            case '1':
+                return '<input type="checkbox" class="checked_order">';
+            default:
+                return '<input type="checkbox" class="checked_order" disabled>';
+        }
+    }
+
 </script>
 </body>
 </html>

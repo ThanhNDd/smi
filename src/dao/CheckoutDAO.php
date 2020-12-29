@@ -62,14 +62,33 @@ class CheckoutDAO
     function find_by_id($order_id)
     {
         try {
-            // 1 - online
-//            if ($order_type == 1) {
             $sql = "select 
                         a.id as order_id,
                         a.total_reduce,
                         a.bill_of_lading_no,
                         a.shipping_fee,
                         a.shipping_unit,
+                        a.total_amount,
+                        a.shipping,
+                        a.discount,
+                        a.total_checkout,
+                        a.payment_type,
+                        a.order_date,
+                        a.source,
+                        a.wallet,
+                        a.customer_payment as payment,
+                        a.repay,
+                        a.transfer_to_wallet,
+                        a.type as order_type,
+                        a.status,
+                        b.id as order_detail_id,
+                        b.product_id,
+                        b.variant_id,
+                        b.sku,
+                        b.reduce,
+                        b.quantity,
+                        b.price,
+                        b.type as product_type,
                         c.id as customer_id,
                         c.name as customerName,
                         c.phone,
@@ -78,72 +97,18 @@ class CheckoutDAO
                         c.district_id,
                         c.village_id,
                         c.address,
-                        b.id as order_detail_id,
-                        b.product_id,
-                        b.variant_id,
-                        b.sku,
-                        b.reduce,
                         d.name as product_name,
-                        b.quantity,
-                        b.price,
-                        a.total_amount,
-                        a.shipping,
-                        a.discount,
-                        a.total_checkout,
-                        a.payment_type,
                         e.size,
                         e.color,
                         e.profit,
-                        a.order_date,
-                        a.source,
-                        a.wallet,
-                        w.saved,
-                        a.customer_payment as payment,
-                        a.repay,
-                        a.transfer_to_wallet,
-                        a.type as order_type,
-                        b.type as product_type
+                        e.image,
+                        w.saved
                     from smi_orders a left join smi_order_detail b on a.id = b.order_id
                     left join smi_customers c on a.customer_id = c.id
                     left join smi_variations e on b.sku = e.sku
                     left join smi_products d on e.product_id = d.id
                     left join smi_wallet w on a.id = w.order_id
                     where a.id = " . $order_id;
-
-
-//            } else if ($order_type == 0) {
-//                // on shop
-//                $sql = "select
-//                            a.id as order_id,
-//                            b.id as order_detail_id,
-//                            b.product_id,
-//                            b.variant_id,
-//                            b.sku,
-//                            b.reduce,
-//                            d.name as product_name,
-//                            b.quantity,
-//                            b.price,
-//                            a.total_amount,
-//                            a.discount,
-//                            a.total_checkout,
-//                            a.payment_type,
-//                            a.total_reduce,
-//                            a.customer_payment,
-//                            a.repay,
-//                            a.repay_type,
-//                            e.size,
-//                            e.color,
-//                            e.profit,
-//                            a.order_date,
-//                            a.source,
-//                            a.customer_id
-//                        from smi_orders a left join smi_order_detail b on a.id = b.order_id
-//                        left join smi_variations e on b.sku = e.sku
-//                        left join smi_products d on e.product_id = d.id
-//                        where a.id = " . $order_id;
-//            } else {
-//                throw new Exception("Order Type is null or is invalid: $order_type");
-//            }
 
             $result = mysqli_query($this->conn, $sql);
             $data = array();
@@ -153,9 +118,9 @@ class CheckoutDAO
                 $order_type = $row["order_type"];
                 $product_type = $row["product_type"];
                 if ($order_id != $row["order_id"]) {
-//                    if ($order_type == 1) {
                     $order = array(
                         'order_id' => $row["order_id"],
+                        'status' => $row["status"],
                         'total_reduce' => $row["total_reduce"],
                         'bill_of_lading_no' => $row["bill_of_lading_no"],
                         'shipping_fee' => number_format($row["shipping_fee"]),
@@ -182,23 +147,6 @@ class CheckoutDAO
                         'transfer_to_wallet' => $row["transfer_to_wallet"],
                         'details' => array()
                     );
-//                    } else {
-//                        $order = array(
-//                            'order_id' => $row["order_id"],
-//                            'total_amount' => number_format($row["total_amount"]),
-//                            'discount' => number_format($row["discount"]),
-//                            'total_checkout' => number_format($row["total_checkout"]),
-//                            'payment_type' => $row["payment_type"],
-//                            'total_reduce' => number_format($row["total_reduce"]),
-//                            'customer_payment' => number_format($row["customer_payment"]),
-//                            'repay' => number_format($row["repay"]),
-//                            'repay_type' => $row["repay_type"],
-//                            'order_date' => date_format(date_create($row["order_date"]), "d/m/Y"),
-//                            'source' => $row["source"],
-//                            'customer_id' => $row["customer_id"],
-//                            'details' => array()
-//                        );
-//                    }
 
                     $qty = $row["quantity"];
                     $price = $row["price"];
@@ -212,6 +160,7 @@ class CheckoutDAO
                                 'product_id' => $row["product_id"],
                                 'name' => $row["product_name"],
                                 'sku' => $row["sku"],
+                                'image' => $row["image"],
                                 'variant_id' => $row["variant_id"],
                                 'quantity' => $qty,
                                 'retail' => number_format($price),
@@ -230,6 +179,7 @@ class CheckoutDAO
                             'product_id' => $row["product_id"],
                             'name' => $row["product_name"],
                             'sku' => $row["sku"],
+                            'image' => $row["image"],
                             'variant_id' => $row["variant_id"],
                             'quantity' => $qty,
                             'retail' => number_format($price),
@@ -257,6 +207,7 @@ class CheckoutDAO
                                 'product_id' => $row["product_id"],
                                 'name' => $row["product_name"],
                                 'sku' => $row["sku"],
+                                'image' => $row["image"],
                                 'variant_id' => $row["variant_id"],
                                 'quantity' => $qty,
                                 'retail' => number_format($price),
@@ -274,6 +225,7 @@ class CheckoutDAO
                             'product_id' => $row["product_id"],
                             'name' => $row["product_name"],
                             'sku' => $row["sku"],
+                            'image' => $row["image"],
                             'variant_id' => $row["variant_id"],
                             'quantity' => $qty,
                             'retail' => number_format($price),
@@ -375,7 +327,7 @@ class CheckoutDAO
     }
 
 // find all order
-    function find_all($start_date, $end_date, $order_id, $customer_id, $sku)
+    function find_all($start_date, $end_date, $order_id, $customer_id, $sku, $type, $status)
     {
 //        try {
         $sql = "select 
@@ -387,8 +339,18 @@ class CheckoutDAO
                         A.payment_type,
                         A.payment_exchange_type,
                         A.order_refer,
-                        A.source
-                    from smi_orders A ";
+                        A.source,
+                        A.bill_of_lading_no";
+        if(isset($type) && $type == 1) {// online order
+          $sql .= " ,C.id as customer_id,
+                    C.name as customer_name,
+                    C.phone as customer_phone,
+                    C.full_address as customer_address";
+        }
+        $sql .= " from smi_orders A ";
+        if(isset($type) && $type == 1) {// online order
+          $sql .= " inner join smi_customers C on A.customer_id = C.id";
+        }
         if (!empty($sku) && !empty($sku)) {
             $sql .= " left join smi_order_detail B on A.id = B.order_id";
         }
@@ -403,12 +365,27 @@ class CheckoutDAO
         } else if (!empty($customer_id)) {
             $sql .= " and A.customer_id = $customer_id";
         }
+        if(isset($type) && !empty($type)) {
+          $sql .= " and A.type = $type";
+        }
+        if(isset($status) && $status != '') {
+          $sql .= " and A.status in ($status)";
+        }
         $sql .= " and A.deleted = 0 order by A.ID desc";
         $result = mysqli_query($this->conn, $sql);
         $arr = array();
         if ($result) {
             $data = array();
             foreach ($result as $k => $row) {
+              $customer_id = $row["customer_id"];
+              $customer_name = '';
+              $customer_phone = '';
+              $customer_address = '';
+              if(isset($type) && $type == 1) {
+                $customer_name = $row["customer_name"];
+                $customer_phone = $row["customer_phone"];
+                $customer_address = $row["customer_address"];
+              }
                 $order = array(
                     'order_id' => $row["order_id"],
                     'total_checkout' => number_format($row["total_checkout"]),
@@ -418,7 +395,12 @@ class CheckoutDAO
                     'payment_type' => $row["payment_type"],
                     'payment_exchange_type' => $row["payment_exchange_type"],
                     'order_refer' => $row["order_refer"],
-                    'source' => $row["source"]
+                    'source' => $row["source"],
+                    'bill_of_lading_no' => $row["bill_of_lading_no"],
+                    'customer_id' => $customer_id,
+                    'customer_name' => $customer_name,
+                    'customer_phone' => $customer_phone,
+                    'customer_address' => $customer_address,
                 );
                 array_push($data, $order);
             }
@@ -689,121 +671,6 @@ class CheckoutDAO
         }
     }
 
-//    function find_all_2($start_date, $end_date)
-//    {
-//        try {
-//            $sql = "select
-//                        A.id as order_id,
-//                        C.id as customer_id,
-//                        C.name as customer_name,
-//                        C.phone,
-//                        C.email,
-//                        C.address,
-//                        C.city_id,
-//                        C.district_id,
-//                        C.village_id,
-//                        A.shipping,
-//                        A.discount,
-//                        case when A.total_reduce is not null then A.total_amount - A.total_reduce else A.total_amount end as 'total_checkout',
-//                        A.order_date,
-//                        A.type,
-//                        A.status,
-//                        A.total_reduce,
-//                        A.voucher_code,
-//                        D.id as product_id,
-//                        D.name as product_name,
-//                        E.sku,
-//                        E.id as variant_id,
-//                        B.quantity,
-//                        B.price,
-//                        B.reduce,
-//                        E.size,
-//                        E.color,
-//                        A.payment_type,
-//                        D.profit
-//                    from smi_orders A
-//                        left join smi_order_detail B on A.id = B.order_id
-//                        left join smi_customers C on A.customer_id = C.id
-//                        left join smi_variations E on B.variant_id = E.id
-//                        left join smi_products D on E.product_id = D.id
-//                    where
-//                        DATE(order_date) between DATE('" . $start_date . "') and DATE('" . $end_date . "')
-//                        and A.deleted = 0
-//                    order by A.ID desc";
-//            $result = mysqli_query($this->conn, $sql);
-//            $data = array();
-//            $order_id = 0;
-//            $i = 0;
-//            foreach ($result as $k => $row) {
-//                if ($order_id != $row["order_id"]) {
-//                    $address = $this->get_address($row);
-//                    $order = array(
-//                        'order_id' => $row["order_id"],
-//                        'customer_id' => $row["customer_id"],
-//                        'customer_name' => $row["customer_name"],
-//                        'phone' => $row["phone"],
-//                        'address' => $address,
-//                        'shipping' => number_format($row["shipping"]),
-//                        'discount' => number_format($row["discount"]),
-//                        'total_checkout' => number_format($row["total_checkout"]),
-//                        'total_reduce' => number_format($row["total_reduce"]),
-//                        'order_date' => date_format(date_create($row["order_date"]), "d/m/Y H:i:s"),
-//                        'type' => $row["type"],
-//                        'status' => $row["status"],
-//                        'payment_type' => $row["payment_type"],
-//                        'voucher_code' => $row["voucher_code"],
-//                        'details' => array()
-//                    );
-//                    $qty = $row["quantity"];
-//                    $price = $row["price"];
-//                    $reduce = $row["reduce"];
-//                    $intoMoney = $qty * ($price - $reduce);
-//                    $detail = array(
-//                        'product_id' => $row["product_id"],
-//                        'product_name' => $row["product_name"],
-//                        'sku' => $row["sku"],
-//                        'variant_id' => $row["variant_id"],
-//                        'size' => $row["size"],
-//                        'color' => $row["color"],
-//                        'quantity' => $qty,
-//                        'price' => number_format($price),
-//                        'reduce' => number_format($qty * $reduce),
-//                        'intoMoney' => number_format($intoMoney),
-//                        'profit' => number_format($row["profit"] * $qty - $reduce)
-//                    );
-//                    array_push($order['details'], $detail);
-//                    array_push($data, $order);
-//                    $order_id = $row["order_id"];
-//                    $i++;
-//                } else {
-//                    $qty = $row["quantity"];
-//                    $price = $row["price"];
-//                    $reduce = $row["reduce"];
-//                    $intoMoney = $qty * $price - $reduce;
-//                    $detail = array(
-//                        'product_id' => $row["product_id"],
-//                        'product_name' => $row["product_name"],
-//                        'sku' => $row["sku"],
-//                        'variant_id' => $row["variant_id"],
-//                        'size' => $row["size"],
-//                        'color' => $row["color"],
-//                        'quantity' => $qty,
-//                        'price' => number_format($price),
-//                        'reduce' => number_format($qty * $reduce),
-//                        'intoMoney' => number_format($intoMoney),
-//                        'profit' => number_format($row["profit"] * $qty - $reduce)
-//                    );
-//                    array_push($data[$i - 1]['details'], $detail);
-//                }
-//            }
-//            $arr = array();
-//            $arr["data"] = $data;
-//            return $arr;
-//        } catch (Exception $e) {
-//            throw new Exception($e);
-//        }
-//    }
-
     function saveOrder(Order $order)
     {
         try {
@@ -889,12 +756,6 @@ class CheckoutDAO
             $status = $order->getStatus();
             $payment_type = $order->getPayment_type();
             $order_date = $order->getOrder_date();
-//            if (!empty($order->getOrder_date())) {
-//                $date = $order->getOrder_date();
-//                $date = str_replace('/', '-', $date);
-//                $date .= date("H:i:s");
-//                $order_date = date('Y-m-d H:i:s', strtotime($date));
-//            }
             $source = $order->getSource();
             $id = $order->getId();
             $stmt = $this->getConn()->prepare("update `smi_orders` SET `total_reduce` = ?, `total_reduce_percent` = ?, `discount` = ?, `total_amount` = ?, `total_checkout` = ?, `customer_payment` = ?, `repay` = ?, `customer_id` = ?, `type` = ?, `bill_of_lading_no` = ?, `shipping_fee` = ?, `shipping` = ?, `shipping_unit` = ?, `status` = ?, `updated_date` = NOW(), `deleted` = b'0', `payment_type` = ?, `order_date` = ?, `source` = ? WHERE `id` = ?");
@@ -948,34 +809,6 @@ class CheckoutDAO
         }
     }
 
-    function updateOrderDetail(OrderDetail $detail)
-    {
-        try {
-            $order_id = $detail->getOrder_id();
-            $product_id = $detail->getProduct_id();
-            $variant_id = $detail->getVariant_id();
-            $sku = $detail->getSku();
-            $price = $detail->getPrice();
-            $qty = $detail->getQuantity();
-            $reduce = $detail->getReduce();
-            $reduce_percent = $detail->getReduce_percent();
-            $reduce_type = $detail->getReduceType();
-            $type = $detail->getType();
-            $profit = $detail->getProfit();
-            $id = $detail->getId();
-            $stmt = $this->getConn()->prepare("update `smi_order_detail`
-                    SET `order_id` = ?, `product_id` = ?, `variant_id` = ?,
-                    `sku` = ?, `price` = ?, `quantity` = ?, `reduce` = ?, `reduce_percent` = ?, `reduce_type` = ?, `profit` = ? WHERE `id` = ?");
-            $stmt->bind_param("iiisdiddidi", $order_id, $product_id, $variant_id, $sku, $price, $qty, $reduce, $type, $reduce_percent, $reduce_type, $profit, $id);
-            if (!$stmt->execute()) {
-                throw new Exception($stmt->error);
-            }
-            $stmt->close();
-        } catch (Exception $e) {
-            throw new Exception($e);
-        }
-    }
-
     function get_data_print_receipt($order_id)
     {
         try {
@@ -991,7 +824,6 @@ class CheckoutDAO
             $result = mysqli_query($this->conn, $sql);
             $data = array();
             foreach ($result as $k => $row) {
-//                $address = $this->get_address($row);
                 $order = array(
                     'bill' => $row["bill"],
                     'name' => $row["name"],

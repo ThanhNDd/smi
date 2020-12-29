@@ -46,6 +46,12 @@ require_once("common.php");
                                 <p>Đơn hàng</p>
                             </a>
                         </li>
+                      <li class="nav-item">
+                        <a href="<?php Common::getPath() ?>src/view/orders/online.php" class="nav-link">
+                          <i class="far fa-circle nav-icon"></i>
+                          <p>Đơn hàng online</p>
+                        </a>
+                      </li>
                         <li class="nav-item">
                             <a href="<?php Common::getPath() ?>src/view/exchange/" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
