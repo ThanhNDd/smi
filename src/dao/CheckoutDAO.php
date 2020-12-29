@@ -332,6 +332,7 @@ class CheckoutDAO
 //        try {
         $sql = "select 
                         A.id as order_id,
+                        A.total_amount + A.shipping - A.total_reduce as total_amount,
                         A.total_checkout,
                         A.order_date,
                         A.type as order_type,
@@ -388,6 +389,7 @@ class CheckoutDAO
               }
                 $order = array(
                     'order_id' => $row["order_id"],
+                    'total_amount' => number_format($row["total_amount"]),
                     'total_checkout' => number_format($row["total_checkout"]),
                     'order_date' => date_format(date_create($row["order_date"]), "d/m/Y H:i:s"),
                     'order_type' => $row["order_type"],

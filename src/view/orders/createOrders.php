@@ -51,13 +51,15 @@ Common::authen();
                         <div class="col-md-2">
                             <label>Trạng thái</label>
                             <select class="form-control order-status" name="order_status" id="order_status">
-                                <option value="0"  selected="selected">Chưa xử lý</option>
+                                <option value="0" selected="selected">Chưa xử lý</option>
                                 <option value="1">Đã gói hàng</option>
                                 <option value="2">Đã giao</option>
                                 <option value="3">Hoàn thành</option>
                                 <option value="4">Đổi size</option>
                                 <option value="5">Chuyển hoàn</option>
-                                <option value="5">Huỷ</option>
+                                <option value="6">Huỷ</option>
+                                <option value="7">Giao hàng sau</option>
+                                <option value="8">Đợi hàng về</option>
                             </select>
                         </div>
                     </div>
