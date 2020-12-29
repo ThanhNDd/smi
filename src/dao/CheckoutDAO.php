@@ -373,6 +373,10 @@ class CheckoutDAO
           $sql .= " and A.status in ($status)";
         }
         $sql .= " and A.deleted = 0 order by A.ID desc";
+
+//        echo $sql;
+
+
         $result = mysqli_query($this->conn, $sql);
         $arr = array();
         if ($result) {

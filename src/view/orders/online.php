@@ -304,7 +304,7 @@ Common::authen();
         $("#startDate").val(start_date);
         $("#endDate").val(end_date);
         generate_datatable('date');
-        get_info_total_checkout('date');
+        // get_info_total_checkout('date');
 
         //Date range picker
         $('#reservation').daterangepicker({
@@ -321,7 +321,7 @@ Common::authen();
             $("#startDate").val(start_date);
             $("#endDate").val(end_date);
             generate_datatable('date');
-            get_info_total_checkout('date');
+            // get_info_total_checkout('date');
         });
 
         let order_id = "<?php echo(isset($_GET['order_id']) ? $_GET['order_id'] : '') ?>";
@@ -344,10 +344,10 @@ Common::authen();
                 let order_id = $(this).val();
                 if (order_id) {
                     generate_datatable('order_id');
-                    get_info_total_checkout('order_id');
+                    // get_info_total_checkout('order_id');
                 } else {
                     generate_datatable('date');
-                    get_info_total_checkout('date');
+                    // get_info_total_checkout('date');
                 }
             }
         });
@@ -370,10 +370,10 @@ Common::authen();
                 let phone = $(this).val();
                 if (phone) {
                     generate_datatable('phone');
-                    get_info_total_checkout('phone');
+                    // get_info_total_checkout('phone');
                 } else {
                     generate_datatable('date');
-                    get_info_total_checkout('date');
+                    // get_info_total_checkout('date');
                 }
             }
         });
@@ -387,10 +387,10 @@ Common::authen();
                 let sku = $(this).val();
                 if (sku) {
                     generate_datatable('sku');
-                    get_info_total_checkout('sku');
+                    // get_info_total_checkout('sku');
                 } else {
                     generate_datatable('date');
-                    get_info_total_checkout('date');
+                    // get_info_total_checkout('date');
                 }
             }
         });
@@ -412,10 +412,10 @@ Common::authen();
                 let customer_id = $(this).val();
                 if (customer_id) {
                     generate_datatable('customer_id');
-                    get_info_total_checkout('customer_id');
+                    // get_info_total_checkout('customer_id');
                 } else {
                     generate_datatable('date');
-                    get_info_total_checkout('date');
+                    // get_info_total_checkout('date');
                 }
             }
         });
