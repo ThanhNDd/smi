@@ -4,6 +4,21 @@ class CheckoutDAO
 {
     private $conn;
 
+
+    function update_status($order_id, $status)
+    {
+        $stmt = $this->getConn()->prepare("update smi_orders set status = ?, updated_date = NOW() WHERE id in ($order_id)");
+        if ($stmt) {
+            $stmt->bind_param("i", $status);
+            if (!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
+        } else {
+            throw new Exception($this->getConn()->error);
+        }
+    }
+
     function find_order_by_order_id($orderId)
     {
         try {
@@ -370,7 +385,7 @@ class CheckoutDAO
           $sql .= " and A.type = $type";
         }
         if(isset($status) && $status != '') {
-          $sql .= " and A.status in ($status)";
+          $sql .= " and A.status = $status";
         }
         $sql .= " and A.deleted = 0 order by A.ID desc";
 

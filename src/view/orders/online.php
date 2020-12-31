@@ -58,6 +58,9 @@ Common::authen();
         div.dataTables_wrapper div.dataTables_info {
             float: left;
         }
+        .c-pointer {
+            cursor: pointer;
+        }
     </style>
 </head>
 <?php require_once('../../common/header.php'); ?>
@@ -304,6 +307,36 @@ Common::authen();
         </div>
     </div>
 </section>
+<!--<div class="modal fade" tabindex="-1" id="status_modal">-->
+<!--    <div class="modal-dialog">-->
+<!--        <div class="modal-content">-->
+<!--            <div class="modal-header">-->
+<!--                <h5 class="modal-title">Cập nhật trạng thái</h5>-->
+<!--                <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
+<!--                    <span aria-hidden="true">&times;</span>-->
+<!--                </button>-->
+<!--            </div>-->
+<!--            <div class="modal-body">-->
+<!--                <label>Trạng thái</label>-->
+<!--                <select class="form-control order-status" name="order_status" id="order_status">-->
+<!--                    <option value="0" selected="selected">Chưa xử lý</option>-->
+<!--                    <option value="1">Đã gói hàng</option>-->
+<!--                    <option value="2">Đã giao</option>-->
+<!--                    <option value="3">Hoàn thành</option>-->
+<!--                    <option value="4">Đổi size</option>-->
+<!--                    <option value="5">Chuyển hoàn</option>-->
+<!--                    <option value="6">Huỷ</option>-->
+<!--                    <option value="7">Giao hàng sau</option>-->
+<!--                    <option value="8">Đợi hàng về</option>-->
+<!--                </select>-->
+<!--            </div>-->
+<!--            <div class="modal-footer">-->
+<!--                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
+<!--                <button type="button" class="btn btn-primary">Save changes</button>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
 <div class="iframeArea" style="visibility: hidden"></div>
 <!-- /.content -->
 <?php include 'createOrders.php'; ?>
@@ -319,8 +352,8 @@ Common::authen();
     const EXCHANGE = 4;
     const RETURN = 5;
     const CANCEL = 6;
-    const APPOINTMENT = 6;
-    const WAITING = 6;
+    const APPOINTMENT = 7;
+    const WAITING = 8;
 
     let delivery_order_checked = [];
     let order_checked = [];
@@ -355,9 +388,15 @@ Common::authen();
             let end_date = end.format('YYYY-MM-DD');
             $("#startDate").val(start_date);
             $("#endDate").val(end_date);
+            reset_active_class();
             generate_datatable('date');
             // get_info_total_checkout('date');
         });
+
+        var reset_active_class = function() {
+            $(".nav-link").removeClass('active');
+            $("#status_all").addClass('active');
+        }
 
         let order_id = "<?php echo(isset($_GET['order_id']) ? $_GET['order_id'] : '') ?>";
         if (order_id) {
@@ -376,13 +415,12 @@ Common::authen();
                 $("#search_phone").val("");
                 $("#search_customer_id").val("");
                 $("#search_sku").val("");
+                reset_active_class();
                 let order_id = $(this).val();
                 if (order_id) {
                     generate_datatable('order_id');
-                    // get_info_total_checkout('order_id');
                 } else {
                     generate_datatable('date');
-                    // get_info_total_checkout('date');
                 }
             }
         });
@@ -402,6 +440,7 @@ Common::authen();
                 $("#search_order_id").val("");
                 $("#search_customer_id").val("");
                 $("#search_sku").val("");
+                reset_active_class();
                 let phone = $(this).val();
                 if (phone) {
                     generate_datatable('phone');
@@ -419,6 +458,7 @@ Common::authen();
                 $("#search_phone").val("");
                 $("#search_order_id").val("");
                 $("#search_customer_id").val("");
+                reset_active_class();
                 let sku = $(this).val();
                 if (sku) {
                     generate_datatable('sku');
@@ -444,6 +484,7 @@ Common::authen();
             if (key === 13) {
                 $("#search_order_id").val("");
                 $("#search_phone").val("");
+                reset_active_class();
                 let customer_id = $(this).val();
                 if (customer_id) {
                     generate_datatable('customer_id');
@@ -455,13 +496,6 @@ Common::authen();
             }
         });
 
-        // $(".info-box").click(function () {
-        //     if ($(this).hasClass("active")) {
-        //         $(this).removeClass("active");
-        //     } else {
-        //         $(this).addClass("active");
-        //     }
-        // });
         $("#status_all").click(function () {
             $(this).parent().parent().find('a').removeClass('active');
             $(this).addClass('active');
@@ -526,42 +560,7 @@ Common::authen();
         });
     }
 
-    function batch_update_status_order() {
-        $(".show_loading_update_status").removeClass("hidden");
-        $(".fa-save").addClass("hidden");
-        toastr.options.timeOut = 10000;
-        toastr.options.onShown = function() {
-            window.location.reload();
-        };
-        toastr.success("cập nhật thành công");
-        //$.ajax({
-        //    url: '<?php //Common::getPath() ?>//src/controller/orders/OrderController.php',
-        //    type: "GET",
-        //    dataType: "json",
-        //    data: {
-        //        order_checked: order_checked,
-        //        method: "batch_update_status_order"
-        //    },
-        //    success: function (res) {
-        //        console.log(res);
-        //        toastr.options.onShown = function() {
-        //            window.location.reload();
-        //        };
-        //        toastr.success("cập nhật thành công");
-        //    },
-        //    error: function (data, errorThrown) {
-        //        console.log(data.responseText);
-        //        console.log(errorThrown);
-        //        Swal.fire({
-        //            type: 'error',
-        //            title: 'Đã xảy ra lỗi',
-        //            text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-        //        });
-        //        $(".fa-save").removeClass("hidden");
-        //        $(".show_loading_update_status").addClass("hidden");
-        //    }
-        //});
-    }
+
 
     function get_status(el, stt) {
         // if ($(el).hasClass("active")) {
@@ -850,7 +849,7 @@ Common::authen();
                 },
                 {
                     "data": format_status,
-                    width: "30px",
+                    width: "50px",
                     "orderable": true
                 },
                 {
@@ -915,6 +914,47 @@ Common::authen();
             event.preventDefault();
         });
 
+        $('#example tbody').on('click', '.edit-status', function () {
+            show_loading();
+            let tr = $(this).closest('tr');
+            let row = table.row(tr);
+            let status = row.data().status;
+
+            let selectbox = '<div class="select-status">' +
+                                '<select class="form-control p-2">' +
+                                    '<option value="0" '+(status == PENDING ? selected="selected" : '')+'>Chưa xử lý</option>' +
+                                    '<option value="1" '+(status == PACKED ? selected="selected" : '')+'>Đã gói hàng</option>' +
+                                    '<option value="2" '+(status == DELIVERED ? selected="selected" : '')+'>Đã giao</option>' +
+                                    '<option value="3" '+(status == SUCCESS ? selected="selected" : '')+'>Hoàn thành</option>' +
+                                    '<option value="4" '+(status == EXCHANGE ? selected="selected" : '')+'>Đổi size</option>' +
+                                    '<option value="5" '+(status == RETURN ? selected="selected" : '')+'>Chuyển hoàn</option>' +
+                                    '<option value="6" '+(status == CANCEL ? selected="selected" : '')+'>Huỷ</option>' +
+                                    '<option value="7" '+(status == APPOINTMENT ? selected="selected" : '')+'>Giao hàng sau</option>' +
+                                    '<option value="8" '+(status == WAITING ? selected="selected" : '')+'>Đợi hàng về</option>' +
+                                '</select>' +
+                                '<i class="fa fa-save text-secondary c-pointer save-status mt-2" style="font-size: 20px;"></i> ' +
+                                '<i class="fa fa-times-circle text-danger c-pointer cancel-edit-status mt-2" style="font-size: 20px;"></i>' +
+                            '</div>';
+            $(this).closest('.text-status').addClass("hidden").parent().append(selectbox);
+        });
+
+        $('#example tbody').on('click', '.cancel-edit-status', function () {
+            show_loading();
+            let tr = $(this).closest('tr');
+            let row = table.row(tr);
+
+            $(this).closest('.select-status').prev(".text-status").removeClass("hidden");
+            $(this).closest('.select-status').remove();
+        });
+
+        $('#example tbody').on('click', '.save-status', function () {
+            show_loading();
+            let tr = $(this).closest('tr');
+            let row = table.row(tr);
+            let order_id = row.data().order_id;
+            let status = $(this).prev('select').val();
+            update_status(order_id, status);
+        });
 
         $('#example tbody').on('click', '.print_receipt', function () {
             show_loading();
@@ -1024,10 +1064,66 @@ Common::authen();
             }
         });
 
-
-
     }
 
+    function batch_update_status_order() {
+        $(".show_loading_update_status").removeClass("hidden");
+        $(".fa-save").addClass("hidden");
+        let order_ids = '';
+        for (let i = 0; i < order_checked.length; i++) {
+            order_ids += order_checked[i] + ',';
+        }
+        order_ids = order_ids.substr(0, order_ids.length - 1);
+        let status = $("#order_status").val();
+        Swal.fire({
+            title: 'Xác nhận',
+            text: "Bạn có chắc chắn muốn cập nhật trạng thái các đơn hàng này?",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ok'
+        }).then((result) => {
+            if (result.value) {
+                update_status(order_ids, status);
+            } else {
+                $(".show_loading_update_status").addClass("hidden");
+                $(".fa-save").removeClass("hidden");
+            }
+        });
+    }
+    function update_status(order_id, status) {
+        $.ajax({
+            url: '<?php Common::getPath() ?>src/controller/orders/OrderController.php',
+            type: "POST",
+            dataType: "json",
+            data: {
+                method: "update_status",
+                order_id: order_id,
+                status: status
+            },
+            success: function (res) {
+                table.ajax.reload();
+                $(".show_loading_update_status").addClass("hidden");
+                $(".fa-save").removeClass("hidden");
+                $(".order_status_update").prop("disabled", true);
+                $("#order_checked_for_update").text('');
+                $("#check_all_order").prop("checked", '');
+                order_checked = [];
+                toastr.success('Cập nhật trạng thái thành công.');
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                });
+                hide_loading();
+            }
+        });
+    }
 
     function print_receipt(order_id, type) {
         $.ajax({
@@ -1400,42 +1496,50 @@ Common::authen();
         let status = Number(data.status);
         switch (status) {
             case PENDING :
-                txt_status = '<span class="badge badge-warning">Chưa xử lý</span>';
+                txt_status = '<div class="text-status"><span class="badge badge-warning">Chưa xử lý</span> <i class="fa fa-edit text-warning c-pointer edit-status"></i></div>';
                 break;
             case PACKED:
-                txt_status = '<span class="badge badge-info">Đã gói hàng</span>';
+                txt_status = '<div class="text-status"><span class="badge badge-info">Đã gói hàng</span> <i class="fa fa-edit text-info c-pointer edit-status"></i></div>';
                 break;
             case DELIVERED:
-                txt_status = '<span class="badge badge-primary">Đã giao</span>';
+                txt_status = '<div class="text-status"><span class="badge badge-primary">Đã giao</span> <i class="fa fa-edit text-primary c-pointer edit-status"></i></div>';
                 break;
             case SUCCESS:
-                txt_status = '<span class="badge badge-success">Hoàn thành</span>';
+                txt_status = '<div class="text-status"><span class="badge badge-success">Hoàn thành</span> <i class="fa fa-edit text-success c-pointer edit-status"></i></div>';
                 break;
             case EXCHANGE:
-                txt_status = '<span class="badge badge-danger">Đổi size</span>';
+                txt_status = '<div class="text-status"><span class="badge badge-danger">Đổi size</span> <i class="fa fa-edit text-danger c-pointer edit-status"></i></div>';
                 break;
             case RETURN:
-                txt_status = '<span class="badge badge-secondary">Chuyển hoàn</span>';
+                txt_status = '<div class="text-status"><span class="badge badge-secondary">Chuyển hoàn</span> <i class="fa fa-edit text-secondary c-pointer edit-status"></i></div>';
                 break;
             case CANCEL:
-                txt_status = '<span class="badge badge-danger">Đã huỷ</span>';
+                txt_status = '<div class="text-status"><span class="badge badge-danger">Đã huỷ</span> <i class="fa fa-edit text-danger c-pointer edit-status"></i></div>';
+                break;
+            case APPOINTMENT:
+                txt_status = '<div class="text-status"><span class="badge badge-warning">Giao hàng sau</span> <i class="fa fa-edit text-warning c-pointer edit-status"></i></div>';
+                break;
+            case WAITING:
+                txt_status = '<div class="text-status"><span class="badge badge-secondary">Đợi hàng về</span> <i class="fa fa-edit text-secondary c-pointer edit-status"></i></div>';
                 break;
             default:
                 break;
         }
-        return txt_status;
+
+        return  txt_status;
     }
 
     function format_checkbox(data) {
-        let status = data.status;
-        switch (status) {
-            case '0' :
-                return '<input type="checkbox" class="checked_order">';
-            case '1':
-                return '<input type="checkbox" class="checked_order">';
-            default:
-                return '<input type="checkbox" disabled>';
-        }
+        // let status = data.status;
+        // switch (status) {
+        //     case '0' :
+        //         return '<input type="checkbox" class="checked_order">';
+        //     case '1':
+        //         return '<input type="checkbox" class="checked_order">';
+        //     default:
+        //         return '<input type="checkbox" disabled>';
+        // }
+        return '<input type="checkbox" class="checked_order">';
     }
 
 </script>

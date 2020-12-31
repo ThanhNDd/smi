@@ -31,6 +31,22 @@ $walletDAO->setConn($db->getConn());
 
 $zone = new Zone();
 
+
+if (isset($_POST["method"]) && $_POST["method"] == "update_status") {
+    try {
+        Common::authen_get_data();
+        $order_id = $_POST["order_id"];
+        $status = $_POST["status"];
+        $checkoutDAO->update_status($order_id, $status);
+        echo json_encode("success");
+    } catch (Exception $ex) {
+        $db->rollback();
+        echo $ex->getMessage();
+    }
+    $db->commit();
+}
+
+
 if (isset($_POST["method"]) && $_POST["method"] == "print_receipt") {
     try {
         Common::authen_get_data();
