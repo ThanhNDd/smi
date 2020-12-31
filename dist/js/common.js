@@ -27,6 +27,7 @@ $(document).ready(function () {
                 close: 'fa fa-times'
             }
         });
+
     }
 
 });

@@ -51,7 +51,10 @@ Common::authen();
         .info-box {
             cursor: pointer;
         }
-
+        .nav-link.active {
+          background-color: #17a2b8!important;
+          color: white !important;
+        }
         div.dataTables_wrapper div.dataTables_info {
             float: left;
         }
@@ -131,117 +134,149 @@ Common::authen();
                 </div>
             </div>
         </div>
-        <div class="col-md-12 col-sm-12">
-            <div class="card">
-                <div class="card-body row">
-                    <div class="col-md-2">
-                        <div class="info-box" id="status_pending">
-                            <span class="info-box-icon bg-warning elevation-1"><i class="far fa-clock"></i></span>
-                            <div class="info-box-content row">
-                                <div class="ml-1 col text-left">
-                                    <span class="info-box-text">Chờ xử lý</span>
-                                    <h5 class="info-box-number total_money1">0</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="info-box" id="status_packed">
-                            <span class="info-box-icon bg-info elevation-1"><i class="fas fa-gift"></i></span>
-                            <div class="info-box-content row">
-                                <div class="ml-1 col text-left">
-                                    <span class="info-box-text">Đã gói hàng</span>
-                                    <h5 class="info-box-number total_on_shop1">0</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="info-box" id="status_passed">
-                            <span class="info-box-icon bg-primary elevation-1"><i
-                                        class="fas fa-shipping-fast"></i></span>
-                            <div class="info-box-content row">
-                                <div class="ml-1 col text-left">
-                                    <span class="info-box-text">Đã giao</span>
-                                        <h5 class="info-box-number total_online1">0</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="info-box" id="status_success">
-                            <span class="info-box-icon bg-success elevation-1"><i
-                                        class="fas fa-check-circle"></i></span>
-                            <div class="info-box-content row">
-                                <div class="ml-1 col text-left">
-                                    <span class="info-box-text">Đã hoàn thành</span>
-                                    <h5 class="info-box-number total_exchange1">0</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="info-box" id="status_exchange">
-                            <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-sync-alt"></i></span>
-                            <div class="info-box-content row">
-                                <div class="ml-1 col text-left">
-                                    <span class="info-box-text">Đổi size</span>
-                                    <h5 class="info-box-number total_exchange1">0</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="info-box" id="status_return">
-                            <span class="info-box-icon bg-secondary elevation-1"><i class="fas fa-undo-alt"></i></span>
-                            <div class="info-box-content row">
-                                <div class="ml-1 col text-left">
-                                    <span class="info-box-text">Hoàn trả</span>
-                                    <h5 class="info-box-number total_exchange1">0</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="info-box" id="status_cancel">
-                            <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-window-close"></i></span>
-                            <div class="info-box-content row">
-                                <div class="ml-1 col text-left">
-                                    <span class="info-box-text">Huỷ</span>
-                                    <h5 class="info-box-number total_exchange1">0</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="info-box" id="status_appointment">
-                            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-history"></i></span>
-                            <div class="info-box-content row">
-                                <div class="ml-1 col text-left">
-                                    <span class="info-box-text">Hẹn giao sau</span>
-                                    <h5 class="info-box-number total_exchange1">0</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="info-box" id="status_waiting">
-                            <span class="info-box-icon bg-secondary elevation-1"><i class="fas fa-spinner"></i></span>
-                            <div class="info-box-content row">
-                                <div class="ml-1 col text-left">
-                                    <span class="info-box-text">Đợi hàng về</span>
-                                    <h5 class="info-box-number total_exchange1">0</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!--        <div class="col-md-12 col-sm-12">-->
+<!--            <div class="card">-->
+<!--                <div class="card-body row">-->
+<!--                    <div class="col-md-2">-->
+<!--                        <div class="info-box" id="status_pending">-->
+<!--                            <span class="info-box-icon bg-warning elevation-1"><i class="far fa-clock"></i></span>-->
+<!--                            <div class="info-box-content row">-->
+<!--                                <div class="ml-1 col text-left">-->
+<!--                                    <span class="info-box-text">Chờ xử lý</span>-->
+<!--                                    <h5 class="info-box-number total_money1">0</h5>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="col-md-2">-->
+<!--                        <div class="info-box" id="status_packed">-->
+<!--                            <span class="info-box-icon bg-info elevation-1"><i class="fas fa-gift"></i></span>-->
+<!--                            <div class="info-box-content row">-->
+<!--                                <div class="ml-1 col text-left">-->
+<!--                                    <span class="info-box-text">Đã gói hàng</span>-->
+<!--                                    <h5 class="info-box-number total_on_shop1">0</h5>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="col-md-2">-->
+<!--                        <div class="info-box" id="status_delivered">-->
+<!--                            <span class="info-box-icon bg-primary elevation-1"><i-->
+<!--                                        class="fas fa-shipping-fast"></i></span>-->
+<!--                            <div class="info-box-content row">-->
+<!--                                <div class="ml-1 col text-left">-->
+<!--                                    <span class="info-box-text">Đã giao</span>-->
+<!--                                        <h5 class="info-box-number total_online1">0</h5>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="col-md-2">-->
+<!--                        <div class="info-box" id="status_success">-->
+<!--                            <span class="info-box-icon bg-success elevation-1"><i-->
+<!--                                        class="fas fa-check-circle"></i></span>-->
+<!--                            <div class="info-box-content row">-->
+<!--                                <div class="ml-1 col text-left">-->
+<!--                                    <span class="info-box-text">Đã hoàn thành</span>-->
+<!--                                    <h5 class="info-box-number total_exchange1">0</h5>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="col-md-2">-->
+<!--                        <div class="info-box" id="status_exchange">-->
+<!--                            <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-sync-alt"></i></span>-->
+<!--                            <div class="info-box-content row">-->
+<!--                                <div class="ml-1 col text-left">-->
+<!--                                    <span class="info-box-text">Đổi size</span>-->
+<!--                                    <h5 class="info-box-number total_exchange1">0</h5>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="col-md-2">-->
+<!--                        <div class="info-box" id="status_return">-->
+<!--                            <span class="info-box-icon bg-secondary elevation-1"><i class="fas fa-undo-alt"></i></span>-->
+<!--                            <div class="info-box-content row">-->
+<!--                                <div class="ml-1 col text-left">-->
+<!--                                    <span class="info-box-text">Hoàn trả</span>-->
+<!--                                    <h5 class="info-box-number total_exchange1">0</h5>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="col-md-2">-->
+<!--                        <div class="info-box" id="status_cancel">-->
+<!--                            <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-window-close"></i></span>-->
+<!--                            <div class="info-box-content row">-->
+<!--                                <div class="ml-1 col text-left">-->
+<!--                                    <span class="info-box-text">Huỷ</span>-->
+<!--                                    <h5 class="info-box-number total_exchange1">0</h5>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="col-md-2">-->
+<!--                        <div class="info-box" id="status_appointment">-->
+<!--                            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-history"></i></span>-->
+<!--                            <div class="info-box-content row">-->
+<!--                                <div class="ml-1 col text-left">-->
+<!--                                    <span class="info-box-text">Hẹn giao sau</span>-->
+<!--                                    <h5 class="info-box-number total_exchange1">0</h5>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="col-md-2">-->
+<!--                        <div class="info-box" id="status_waiting">-->
+<!--                            <span class="info-box-icon bg-secondary elevation-1"><i class="fas fa-spinner"></i></span>-->
+<!--                            <div class="info-box-content row">-->
+<!--                                <div class="ml-1 col text-left">-->
+<!--                                    <span class="info-box-text">Đợi hàng về</span>-->
+<!--                                    <h5 class="info-box-number total_exchange1">0</h5>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
 
         <div class="col-md-12 col-sm-12">
             <div class="card">
                 <div class="card-body pt-0">
+                  <ul class="nav nav-tabs pt-3">
+                    <li class="nav-item">
+                      <a class="nav-link active" href="javascript:void(0)" id="status_all">Tất cả</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="javascript:void(0)" id="status_pending">Chờ xử lý</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="javascript:void(0)" id="status_packed">Đã gói hàng</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="javascript:void(0)" id="status_delivered">Đã giao</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="javascript:void(0)" id="status_success">Đã hoàn thành</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="javascript:void(0)" id="status_exchange">Đổi size</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="javascript:void(0)" id="status_return">Chuyển hoàn</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="javascript:void(0)" id="status_cancel">Huỷ</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="javascript:void(0)" id="status_appointment">Hẹn giao sau</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="javascript:void(0)" id="status_waiting">Đợi hàng về</a>
+                    </li>
+                  </ul>
                     <div class="table-responsive">
                         <table id="example" class="table table-hover table-striped">
                             <thead>
@@ -274,7 +309,7 @@ Common::authen();
 <?php include 'createOrders.php'; ?>
 <input type="hidden" id="startDate">
 <input type="hidden" id="endDate">
-<?php require_once '../wallet/showHistory.php'; ?>
+<?php //require_once '../wallet/showHistory.php'; ?>
 <?php require_once('../../common/footer.php'); ?>
 <script>
     const PENDING = 0;
@@ -420,39 +455,61 @@ Common::authen();
             }
         });
 
-        $(".info-box").click(function () {
-            if ($(this).hasClass("active")) {
-                $(this).removeClass("active");
-            } else {
-                $(this).addClass("active");
-            }
+        // $(".info-box").click(function () {
+        //     if ($(this).hasClass("active")) {
+        //         $(this).removeClass("active");
+        //     } else {
+        //         $(this).addClass("active");
+        //     }
+        // });
+        $("#status_all").click(function () {
+            $(this).parent().parent().find('a').removeClass('active');
+            $(this).addClass('active');
+            get_status("#status_all", '');
         });
-
         $("#status_pending").click(function () {
+            $(this).parent().parent().find('a').removeClass('active');
+            $(this).addClass('active');
             get_status("#status_pending", PENDING);
         });
         $("#status_packed").click(function () {
+            $(this).parent().parent().find('a').removeClass('active');
+            $(this).addClass('active');
             get_status("#status_packed", PACKED);
         });
-        $("#status_passed").click(function () {
-            get_status("#status_passed", DELIVERED);
+        $("#status_delivered").click(function () {
+            $(this).parent().parent().find('a').removeClass('active');
+            $(this).addClass('active');
+            get_status("#status_delivered", DELIVERED);
         });
         $("#status_success").click(function () {
+            $(this).parent().parent().find('a').removeClass('active');
+            $(this).addClass('active');
             get_status("#status_success", SUCCESS);
         });
         $("#status_exchange").click(function () {
+            $(this).parent().parent().find('a').removeClass('active');
+            $(this).addClass('active');
             get_status("#status_exchange", EXCHANGE);
         });
         $("#status_return").click(function () {
+            $(this).parent().parent().find('a').removeClass('active');
+            $(this).addClass('active');
             get_status("#status_return", RETURN);
         });
         $("#status_cancel").click(function () {
+            $(this).parent().parent().find('a').removeClass('active');
+            $(this).addClass('active');
             get_status("#status_cancel", CANCEL);
         });
         $("#status_appointment").click(function () {
+            $(this).parent().parent().find('a').removeClass('active');
+            $(this).addClass('active');
             get_status("#status_appointment", APPOINTMENT);
         });
         $("#status_waiting").click(function () {
+            $(this).parent().parent().find('a').removeClass('active');
+            $(this).addClass('active');
             get_status("#status_waiting", WAITING);
         });
 
@@ -507,18 +564,18 @@ Common::authen();
     }
 
     function get_status(el, stt) {
-        if ($(el).hasClass("active")) {
-            status.push(stt);
-        } else {
-            let index = status.indexOf(stt);
-            status.splice(index, 1);
-        }
-        let text_status = '';
-        for (let i = 0; i < status.length; i++) {
-            text_status += status[i] + ',';
-        }
-        text_status = text_status.substr(0, text_status.length - 1);
-        generate_datatable('status', text_status);
+        // if ($(el).hasClass("active")) {
+        //     status.push(stt);
+        // } else {
+        //     let index = status.indexOf(stt);
+        //     status.splice(index, 1);
+        // }
+        // let text_status = '';
+        // for (let i = 0; i < status.length; i++) {
+        //     text_status += status[i] + ',';
+        // }
+        // text_status = text_status.substr(0, text_status.length - 1);
+        generate_datatable('status', stt);
     }
 
     function get_data_search(type, status) {

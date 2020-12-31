@@ -20,7 +20,7 @@ Common::authen();
                     <input type="hidden" class="form-control" id="customer_id" value="">
                     <input type="hidden" class="order_type" value="-1"/>
                     <div class="form-group row col-md-12">
-                        <div class="col-md-2">
+                        <div class="col-md-2 hidden">
                             <label>Loại đơn</label>
                             <select class="form-control order-type" name="order_type" id="order_type">
                                 <option value="1">Online</option>
@@ -48,6 +48,12 @@ Common::authen();
                                 <input type="text" class="form-control datetimepicker" id="orderDate" placeholder="Ngày đặt hàng" autocomplete="off" value="<?php echo date('Y-m-d H:i:s'); ?>">
                             </div>
                         </div>
+                      <div class="col-md-2 hidden order-delivery-date">
+                        <label for="orderDeliveryDate">Ngày giao hàng</label>
+                        <div class="input-group mb-1">
+                          <input type="text" class="form-control delivery-date" id="orderDeliveryDate" placeholder="Ngày giao hàng" autocomplete="off" value="<?php echo date('Y-m-d H:i:s'); ?>">
+                        </div>
+                      </div>
                         <div class="col-md-2">
                             <label>Trạng thái</label>
                             <select class="form-control order-status" name="order_status" id="order_status">
@@ -205,6 +211,26 @@ Common::authen();
             generate_select2('.shipping-unit');
             generate_select2('.payment-type');
             create_customer();
+
+            $('.delivery-date').datetimepicker({
+                // Formats
+                format: 'YYYY-MM-DD hh:mm:ss',
+                minDate: $("#orderDate").val(),
+                // Your Icons
+                // as Bootstrap 4 is not using Glyphicons anymore
+                icons: {
+                    time: 'far fa-clock',
+                    date: 'fa fa-calendar',
+                    up: 'fa fa-chevron-up',
+                    down: 'fa fa-chevron-down',
+                    previous: 'fa fa-chevron-left',
+                    next: 'fa fa-chevron-right',
+                    today: 'fa fa-check',
+                    clear: 'fa fa-trash',
+                    close: 'fa fa-times'
+                }
+            });
+
             $("#order_type").change(function(){
                 let order_type = $(this).val();
                 onchange_order_type(order_type);
@@ -332,6 +358,17 @@ Common::authen();
                 let phone = $(this).val();
                 if(keycode === 13 && phone) {
                     check_exist_customer(phone);
+                }
+            });
+
+            $(".order-status").change(function () {
+                console.log($(this).val());
+                if($(this).val() == 7) {
+                    // giao hàng sau
+                    $(".order-delivery-date").removeClass("hidden");
+                } else {
+                    $(".order-delivery-date").addClass("hidden");
+                    $("#orderDeliveryDate").val($("#orderDate").val());
                 }
             });
         });
