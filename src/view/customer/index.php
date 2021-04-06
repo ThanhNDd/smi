@@ -253,7 +253,8 @@ Common::authen();
             return "<a href='" + avatar + "' target='_blank' data-img='" + avatar + "' data-toggle=\"popover-hover\">" +
                 "<img src='" + avatar + "' width='40px' class=\"img-circle img-fluid\" onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"'></a>";
         } else {
-            return "<img src='<?php Common::image_error()?>' width='40px' class=\"img-circle img-fluid\">";
+            //return "<img src='<?php //Common::image_error()?>//' width='40px' class=\"img-circle img-fluid\">";
+            return '<span style="width: 40px;height: 40px;display: inline-block;background: #c5c5c563;border-radius: 50%;"><i class="fas fa-user" style="font-size: 25px;margin-top: 6px;margin-left: 10px;color: #b1b1b18a;"></i></span>';
         }
     }
 

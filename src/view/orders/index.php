@@ -536,7 +536,7 @@ Common::authen();
             table.destroy();
             table.clear();
             // if(table.ajax) {
-                table.ajax.reload();
+            //     table.ajax.reload();
             // }
         }
         table = $('#example').DataTable({
@@ -636,7 +636,7 @@ Common::authen();
                     },
                     success: function (res) {
                         // console.log(res);
-                        let data = res.data;
+                        let data = res.orders;
                         // let details = res[0].details;
                         if (data.length > 0) {
                             row.child(format_order_detail(data[0], row.data())).show();
@@ -944,7 +944,7 @@ Common::authen();
             if (data.customer_id && Number(data.customer_id) > 0) {
                 // online
                 d += '<div class="col-2 col-sm-2 col-md-2"><small>Mã khách hàng</small> <h5><a href="<?php  Common::getPath() ?>src/view/customer/?customer_id='+ data.customer_id +'" target="_blank">' + data.customer_id + '</a></h5></div>' +
-                    '<div class="col-2 col-sm-2 col-md-2">' +
+                    '<div class="col-4 col-sm-4 col-md-4">' +
                     '<small>Tên khách hàng</small>' +
                     '<div> <h5 class="d-inline-block mr-2">' + data.customer_name + '</h5>' +
                     '<a href="javascript:void(0)" class="d-inline-block text-warning" id="show_history" onclick="show_history('+data.customer_id+',\''+data.customer_name+'\',\''+data.phone+'\')"><i class="fas fa-history"></i></a>' +

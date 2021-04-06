@@ -77,7 +77,7 @@ function validate_date(val) {
     return regEmail.test(val);
   }
 
-  let regPhone = /^((09|03|07|08|05)+([0-9]{8})\b)$/;
+  let regPhone = /^((84|0)[3|5|7|8|9])+([0-9]{8})\b$/;
   function validate_phone(val) {
     return regPhone.test(val);
   }

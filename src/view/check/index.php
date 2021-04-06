@@ -84,15 +84,15 @@
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
-                    <table id="example" class="table table-bordered table-striped">
+                    <table id="example" class="table table-hover table-striped">
                         <thead>
                         <tr>
                             <th>No.</th>
                             <th></th>
                             <th>Ngày bắt đầu</th>
                             <th>Ngày kết thúc</th>
-                            <th>Số SP đã kiểm / Tổng số SP</th>
-                            <th>Tồng số tiền đã kiểm / Tổng số tiền</th>
+                            <th>Tổng số SP</th>
+                            <th>Tổng tiền</th>
                             <th>Trạng thái</th>
                             <th>Hành động</th>
                         </tr>
@@ -158,7 +158,6 @@
                         title: 'Đã xảy ra lỗi',
                         text: "Hệ thống đang tồn tại 1 lần kiểm hàng chưa hoàn thành. Bạn có thể tiếp tục hoặc hủy bỏ để tạo mới!!"
                     });
-                    return;
                 } else {
                     create_new_check();
                 }
@@ -327,12 +326,13 @@
                         type: "POST",
                         dataType: "json",
                         data: {
-                            type: "cancel_checking",
+                            method: "cancel_checking",
                             data: id
                         },
                         success: function (res) {
                             console.log(res);
                             toastr.success('Cập nhật thành công!');
+                            window.location.reload();
                         },
                         error: function (data, errorThrown) {
                             console.log(data.responseText);
@@ -352,17 +352,17 @@
     }
 
     function format_total_money(data) {
-        let money_checked = data.money_checked;
+        // let money_checked = data.money_checked;
         let total_money = data.total_money;
-        money_checked = formatNumber(money_checked);
-        total_money = formatNumber(total_money);
-        return money_checked + " <small>đ</small> / " + total_money +" <small>đ</small>";
+        // money_checked = formatNumber(money_checked);
+        // total_money = formatNumber(total_money);
+        return total_money +" <sup>đ</sup>";
     }
 
     function format_total_products(data) {
         let total_products = data.total_products;
-        let products_checked = data.products_checked;
-        return products_checked + " / " + total_products;
+        // let products_checked = data.products_checked;
+        return total_products;
     }
 
     function format_status(data) {
@@ -397,7 +397,7 @@
                 $("#total_products").val(data[0]);
                 $("#total_money").val(data[1]);
                 let alert = '<div class="alert alert-info">' +
-                                'Hiện có <strong>'+data[0]+'</strong> sản phẩm còn hàng trị giá <strong>'+data[1]+'</strong> đ' +
+                                'Hiện có <strong>'+data[0]+'</strong> sản phẩm còn hàng trị giá <strong>'+data[1]+'</strong> <sup>đ</sup>' +
                             '</div>';
                 $("#total_product_display").html(alert);
             },
@@ -418,8 +418,8 @@
                 '<i class="fas fa-undo"></i> Tiếp tục</a>&nbsp;'
                 + '<button type="button" class="btn bg-gradient-danger btn-sm" id="cancel_checking" title="Hủy bỏ"><i class="fas fa-ban"></i> Hủy</button>';
         } else if(status == 1) {
-            return '<a href="<?php Common::getPath() ?>src/view/check/processCheck.php?id='+id+'&seq='+seq+'" class="btn bg-gradient-success btn-sm detail_checked" title="Chi tiết">' +
-                '<i class="fas fa-info-circle"></i> Chi tiết</a>&nbsp;';
+            //return '<a href="<?php //Common::getPath() ?>//src/view/check/processCheck.php?id='+id+'&seq='+seq+'" class="btn bg-gradient-success btn-sm detail_checked" title="Chi tiết">' +
+            //    '<i class="fas fa-info-circle"></i> Chi tiết</a>&nbsp;';
         }
         return '';
     }

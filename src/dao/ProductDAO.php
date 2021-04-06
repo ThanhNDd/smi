@@ -35,18 +35,30 @@ class ProductDAO
     function count_all_product($status)
     {
         try {
-            $sql = "SELECT count(tmp.id) AS total_products,
-                           sum(tmp.total_price) AS total_money
+//            $sql = "SELECT count(tmp.id) AS total_products,
+//                           sum(tmp.total_price) AS total_money
+//                    FROM
+//                      (SELECT a.id,
+//                              a.price,
+//                              sum(b.quantity) AS quantity,
+//                              a.price * sum(b.quantity) AS total_price
+//                       FROM smi_products a
+//                       LEFT JOIN smi_variations b ON a.id = b.product_id
+//                       WHERE a.status = $status
+//                       GROUP BY a.id,
+//                                a.price) AS tmp";
+           $sql = "SELECT sum(t.quantity) AS total_products,
+                       sum(t.total) AS total_money
                     FROM
                       (SELECT a.id,
-                              a.price,
-                              sum(b.quantity) AS quantity,
-                              a.price * sum(b.quantity) AS total_price
+                              a.name,
+                              b.quantity,
+                              b.price,
+                              b.quantity *b.price AS total
                        FROM smi_products a
                        LEFT JOIN smi_variations b ON a.id = b.product_id
-                       WHERE a.status = $status
-                       GROUP BY a.id,
-                                a.price) AS tmp";
+                       WHERE a.status = 0
+                         AND b.quantity >0) AS t";
             $result = mysqli_query($this->conn, $sql);
             $row = $result->fetch_assoc();
             $total_products = $row['total_products'];
@@ -175,9 +187,6 @@ class ProductDAO
                         'type' => $row["type"],
                         'category_id' => $row["category_id"],
                         'fee_transport' => number_format($row["fee_transport"]),
-//                        'price' => number_format($row["price"]),
-//                        'profit' => number_format($row["profit"]),
-//                        'retail' => number_format($row["retail"]),
                         'description' => $row["description"],
                         'material' => $row["material"],
                         'origin' => $row["origin"],
@@ -202,10 +211,6 @@ class ProductDAO
                         'fee' => number_format($row["fee"])
                     );
                     array_push($product['variations'], $variation);
-//                    array_push($colors, $row["color"]);
-//                    array_push($sizes, $row["size"]);
-//                    array_push($product["sizes"], $sizes);
-//                    array_push($product["colors"], $colors);
                     array_push($data, $product);
                     $product_id = $row["product_id"];
                     $i++;
@@ -864,12 +869,13 @@ class ProductDAO
     function update_qty_variation_by_sku($sku, $qty = 1, $product_type = 0)
     {
         try {
-            if($product_type == 1) {
-                $stmt = $this->getConn()->prepare("update smi_variations a, (select case when a.quantity > 0 then a.quantity - ? else 0 end as qty from smi_variations a where a.sku = ?) b set a.quantity = b.qty where sku = ?");
-                $stmt->bind_param("iss", $qty, $sku, $sku);
+            if($product_type == 1) {// product exchange
+              $stmt = $this->getConn()->prepare("update smi_variations set quantity = quantity + $qty where sku = ?");
+              $stmt->bind_param("s", $sku);
             } else {
-                $stmt = $this->getConn()->prepare("update smi_variations set quantity = quantity + $qty where sku = ?");
-                $stmt->bind_param("s", $sku);
+              $stmt = $this->getConn()->prepare("update smi_variations a, (select case when a.quantity > 0 then a.quantity - ? else 0 end as qty from smi_variations a where a.sku = ?) b set a.quantity = b.qty where sku = ?");
+              $stmt->bind_param("iss", $qty, $sku, $sku);
+
             }
             if(!$stmt->execute()) {
                 throw new Exception($stmt->error);
@@ -983,6 +989,121 @@ class ProductDAO
         }
     }
 
+
+    function get_data_for_chat_bot()
+    {
+        try {
+            $sql = "SELECT  a.id,
+                            a.name,
+                            a.image as product_image,
+                            b.color,
+                            b.retail,
+                            b.size,
+                            b.image as variation_image,
+                            a.description,
+                            b.sku
+                    FROM smi_products a
+                    LEFT JOIN smi_variations b ON a.id = b.product_id
+                    WHERE a.id in (1322, 1321, 1320, 1319, 1318, 1317, 1316, 1315)";
+            $result = mysqli_query($this->conn, $sql);
+
+            
+
+            $data = array();
+            $product_id = 0;
+            $i = 0;
+            $c = "";
+            $retails = array();
+            $first_size = "";
+            $last_size = "";
+            foreach ($result as $k => $row) {
+                if ($product_id != $row["id"]) {
+                    $product = array(
+                        'name' => $row["name"],
+                        'description' => $row["description"],
+                        "retail" => $row["retail"],
+                        "color" => $row["color"],
+                        "size" => "first_size - last_size",
+                        "slider" => $row["product_image"],
+                        'image' => $row["variation_image"],
+                        "detail" => array()
+                    );
+                    $color = array(
+                        'sku' => $row["sku"],
+                        'size' => $row["size"],
+                        'image' => $row["variation_image"],
+                        'retail' => number_format($row["retail"]),
+                    );
+                    $product['detail'][$row["color"]] = array();
+                    array_push($product['detail'][$row["color"]], $color);
+                    array_push($data, $product);
+                    $product_id = $row["id"];
+                    $c = $row["color"];
+                    $first_size = $row["size"];
+                    $retails = array();
+                    array_push($retails, $row["retail"]);
+                    $i++;
+
+
+
+
+                } else {
+                    // print_r($data);
+                    
+                    $color = array(
+                        'sku' => $row["sku"],
+                        'size' => $row["size"],
+                        'image' => $row["variation_image"],
+                        'retail' => number_format($row["retail"]),
+                    );
+                    if($c != $row["color"]) {
+                        // $$data[$i - 1]['detail'][$row["color"]] = $color;
+                        $data[$i - 1]['detail'][$row["color"]] = array();
+                        array_push($data[$i - 1]['detail'][$row["color"]], $color);
+
+                        $color_product = $data[$i - 1]["color"];
+                        $color_product .= ", ".$row["color"];
+                        $data[$i - 1]["color"] = $color_product;
+                    } else {
+                        array_push($data[$i - 1]['detail'][$row["color"]], $color);
+                    }
+
+                    $last_size = $row["size"];
+                    $data[$i - 1]["size"] = $first_size." - ".$last_size;
+
+                    array_push($retails, $row["retail"]);
+                    sort($retails);
+                    $retailLength = count($retails);
+                    if($retailLength > 1 && $retails[0] != $retails[$retailLength-1]) {
+                        $data[$i - 1]["retail"] = number_format($retails[0])." - ".number_format($retails[$retailLength-1]);
+                    } else {
+                        $data[$i - 1]["retail"] = number_format($retails[0]);
+                    }
+
+                    $c = $row["color"];
+                }
+            }
+            $products = array();
+            for($i=0; $i<count($data); $i++) {
+                $p = array(
+                    "title" => $data[$i]["name"],
+                    "subtitle" => "Giá: ".$data[$i]["retail"]." VNĐ\nMàu: ".$data[$i]["color"]."\nSize: ".$data[$i]["size"],
+                    "image" => $data[$i]["image"]
+                );
+                $products["product_".($i+1)] = $p;
+            }
+
+            $arr = array();
+            $arr["data"] = $data;
+            $arr["products"] = $products;
+            return $arr;
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+
+
     /**
      * Get the value of conn
      */
@@ -1003,3 +1124,6 @@ class ProductDAO
         return $this;
     }
 }
+
+
+// select t.product_id, GROUP_CONCAT(t.color SEPARATOR ', ') as color from ( select product_id, color from smi_variations where product_id = 1 group by color) t group by t.product_id

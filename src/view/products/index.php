@@ -204,6 +204,10 @@ Common::authen();
 <script>
     let table;
     $(document).ready(function () {
+
+        
+
+
         set_title("Danh sách sản phẩm");
         count_out_of_stock();
 
@@ -326,6 +330,8 @@ Common::authen();
                 }
             })
         });
+    
+        getDataForChatBot();
     });
 
 
@@ -1708,6 +1714,32 @@ Common::authen();
             $(el).val(value).trigger('change');
         }
     }
+
+
+
+    function getDataForChatBot() {
+        $.ajax({
+            url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
+            type: "POST",
+            dataType: "json",
+            data: {
+                method: "get_data_for_chat_bot"
+            },
+            success: function (res) {
+                console.log(JSON.stringify(res));
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                })
+            }
+        });
+    }
+
 </script>
 </body>
 </html>

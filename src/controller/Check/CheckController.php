@@ -16,6 +16,16 @@ $dao->setConn($db->getConn());
 $product_dao = new ProductDAO();
 $product_dao->setConn($db->getConn());
 
+if (isset($_POST["method"]) && $_POST["method"] == "reviews_check") {
+  try {
+    Common::authen_get_data();
+    $result = $dao->reviews_check();
+    echo json_encode($result);
+  } catch (Exception $ex) {
+    echo $ex->getMessage();
+  }
+}
+
 /**
  * Count all product of instock
  */
@@ -26,7 +36,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "count_all_products") {
     $response_array['total'] = $result;
     echo json_encode($response_array);
   } catch (Exception $ex) {
-    throw new Exception($ex);
+    echo $ex->getMessage();
   }
 }
 
@@ -34,11 +44,14 @@ if (isset($_POST["method"]) && $_POST["method"] == "cancel_checking") {
   try {
     Common::authen_get_data();
     $id = $_POST["data"];
-    $result = $dao->update_status($id, 2);// cancel status
-    echo json_encode($result);
-  } catch (Exception $ex) {
-    throw new Exception($ex);
+    $dao->update_status($id, 2);// cancel status
+    echo json_encode('success');
+  } catch (Exception $e) {
+    $db->rollback();
+    echo $e->getMessage();
   }
+  $db->commit();
+
 }
 
 if (isset($_GET["method"]) && $_GET["method"] == "findall") {
@@ -55,7 +68,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "find_detail") {
   try {
     Common::authen_get_data();
     $seq = $_POST["seq"];
-    $result = $dao->find_detail((int)$seq);
+    $result = $dao->find_detail();
     echo json_encode($result);
   } catch (Exception $ex) {
     throw new Exception($ex);
@@ -117,21 +130,9 @@ if (isset($_POST["method"]) && $_POST["method"] == "check_exists_checking") {
 if (isset($_POST["method"]) && $_POST["method"] == "checking_finish") {
   try {
     Common::authen_get_data();
-    $id = $_POST['id'];
-    $product_checked = $_POST['product_checked'];
-    $money_checked = $_POST['money_checked'];
-
-    // set all quantity of variation to zero before update new quantity
-    $product_dao->set_all_quantity_to_zero();
-
-    $check = new Check();
-    $check->setId($id);
-    $check->setStatus(1);// finish
-    $check->setProductsChecked($product_checked);
-    $check->setMoneyChecked($money_checked);
-
-    $dao->checking_finish($check);
-
+    $seq = $_POST['seq'];
+    $data = $_POST['data'];
+    $dao->checking_finish($seq, $data);
     $response_array['success'] = "successfully";
     echo json_encode($response_array);
   } catch (Exception $e) {
@@ -209,11 +210,11 @@ if (isset($_POST["method"]) && $_POST["method"] == "save_check_detail") {
 if (isset($_POST["method"]) && $_POST["method"] == "save_check_tmp") {
     try {
         Common::authen_get_data();
-        $skus = $_POST["skus"];
-        if(count($skus) == 0) {
-            throw new Exception("SKU is not empty!!!");
-        }
-        $id = $dao->save_check_temp($skus);
+        $sku = $_POST["sku"];
+//        if(count($skus) == 0) {
+//            throw new Exception("SKU is not empty!!!");
+//        }
+        $id = $dao->save_check_temp($sku);
         echo $id;
     } catch (Exception $e) {
         $db->rollback();

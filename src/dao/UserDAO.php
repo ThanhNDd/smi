@@ -7,14 +7,19 @@ class UserDAO
     function find_user($username, $password)
     {
         try {
-            $sql = "SELECT password FROM smi_user WHERE username = '$username'";
-            $pwd = mysqli_query($this->conn, $sql);
-            $pwd = mysqli_fetch_array($pwd)['password'];
+            $sql = "SELECT * FROM smi_user WHERE username = '$username'";
+            $result = mysqli_query($this->conn, $sql);
+            $user = mysqli_fetch_array($result);
+            $pwd =  $user['password'];
+            // $pwd = mysqli_fetch_array($pwd)['password'];
             if($pwd == null) {
               return "error";
             }
+            
             $check = crypt($password, $pwd);
             if (hash_equals($check, $pwd)) {
+                Common::set_cookie(1, $user);
+                // echo 'set cookie';
                 return "success";
             } else {
                 return "error";

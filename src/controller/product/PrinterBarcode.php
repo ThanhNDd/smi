@@ -41,11 +41,6 @@ class PrinterBarcode
                     $mpdf->AddPage();
                     $mpdf->WriteHTML($content);
                 }
-//                $content = $this->getHeader();
-//                $content .= $this->getContent($list[0]);
-//                $content .= $this->getFooter();
-//                $mpdf->AddPage();
-//                $mpdf->WriteHTML($content);
             } else
             {
                 foreach ($list as $d) {

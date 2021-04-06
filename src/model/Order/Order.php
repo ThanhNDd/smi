@@ -22,6 +22,8 @@ class Order {
     private $status;
     private $deleted;
     private $order_date;
+    private $appointment_delivery_date;
+    private $delivery_date;
     private $voucher_code;
     private $voucher_value;
     private $order_refer;
@@ -29,6 +31,9 @@ class Order {
     private $source;
     private $point_used;
     private $point_save;
+    private $total_cost;
+    private $description;
+    private $is_print;
     private $created_date;
     private $updated_date;
 
@@ -513,6 +518,38 @@ class Order {
 
         return $this;
     }
+    
+    /**
+    * @return mixed
+    */
+    public function getAppointmentDeliveryDate()
+    {
+        return $this->appointment_delivery_date;
+    }
+
+    /**
+     * @param mixed $appointment_delivery_date
+     */
+    public function setAppointmentDeliveryDate($appointment_delivery_date): void
+    {
+        $this->appointment_delivery_date = $appointment_delivery_date;
+    }
+
+  /**
+   * @return mixed
+   */
+  public function getDeliveryDate()
+  {
+    return $this->delivery_date;
+  }
+
+  /**
+   * @param mixed $delivery_date
+   */
+  public function setDeliveryDate($delivery_date): void
+  {
+    $this->delivery_date = $delivery_date;
+  }
 
     /**
      * @return mixed
@@ -626,4 +663,50 @@ class Order {
         $this->point_save = $point_save;
     }
 
+  /**
+   * @return mixed
+   */
+  public function getTotalCost()
+  {
+    return $this->total_cost;
+  }
+
+  /**
+   * @param mixed $total_cost
+   */
+  public function setTotalCost($total_cost): void
+  {
+    $this->total_cost = $total_cost;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getDescription()
+  {
+    return $this->description;
+  }
+
+  /**
+   * @param mixed $description
+   */
+  public function setDescription($description): void
+  {
+    $this->description = $description;
+  }
+/**
+   * @return mixed
+   */
+  public function getIsPrint()
+  {
+    return $this->is_print;
+  }
+
+  /**
+   * @param mixed $is_print
+   */
+  public function setIsPrint($is_print): boolean
+  {
+    $this->is_print = $is_print;
+  }
 }

@@ -13,8 +13,9 @@
 <div class="login-box">
     <div class="login-logo">
         <img src="<?php Common::getPath() ?>dist/img/icon.png" width="100px">
-        <span style="display: block;">Shop Mẹ Ỉn</span>
+        <!-- <span style="display: block;">Shop Mẹ Ỉn</span> -->
     </div>
+    <p style="display: block;text-align: center;">HỆ THỐNG QUẢN LÝ BÁN HÀNG ONLINE</p>
     <!-- /.login-logo -->
     <div class="card">
         <div class="card-body login-card-body">

@@ -4,6 +4,116 @@ class CheckDAO
 {
     private $conn;
 
+    function reviews_check()
+    {
+      try {
+        $sql = "SELECT c.id,
+                       b.image,
+                       c.name,
+                       b.color,
+                       b.size,
+                       a.sku,
+                       count(a.sku) AS qty,
+                       b.price,
+                       count(a.sku) * b.price AS total
+                FROM `smi_check_tmp` a
+                INNER JOIN smi_variations b ON a.sku = b.sku
+                INNER JOIN smi_products c ON b.product_id = c.id
+                GROUP BY a.sku
+                ORDER BY a.id DESC";
+        $result = mysqli_query($this->conn, $sql);
+        $data = array();
+        $total = 0;
+        $total_product = 0;
+        foreach ($result as $k => $row) {
+          $product = array(
+            'product_id' => $row["id"],
+            'image' => $row["image"],
+            'name' => $row["name"],
+            'color' => $row["color"],
+            'size' => $row["size"],
+            'quantity' => $row["qty"],
+            'sku' => $row["sku"],
+            'price' => number_format($row["price"]),
+            'total' => number_format($row["total"])
+          );
+          array_push($data, $product);
+          $total += $row["total"];
+          $total_product++;
+        }
+        $arr = array();
+        $arr["data"] = $data;
+        $arr["total"] = number_format($total);
+        $arr["total_product"] = number_format($total_product);
+        return $arr;
+      } catch (Exception $e) {
+        echo "Open connection database is error exception >> " . $e->getMessage();
+      }
+    }
+
+    function checking_finish($seq, $data) {
+      try {
+        $this->create_backup_table_variations();
+        $this->reset_quantity();
+        $this->update_all_quantity_by_sku($data);
+        $this->update_check($seq);
+
+      } catch (Exception $e) {
+        echo $e->getMessage();
+      }
+    }
+
+    function update_check($seq) {
+        $stmt = $this->getConn()->prepare("update smi_check a, (select sum(t.quantity) as qty, sum(t.amount) as amount from (
+            select b.quantity, b.price * b.quantity as amount 
+            from smi_products a left join smi_variations b on a.id = b.product_id
+            where b.quantity > 0) as t) b set a.total_products = b.qty, a.total_money = b.amount, a.finished_date = NOW(), a.updated_date = NOW()
+            where a.seq = ?");
+        $stmt->bind_param("i", $seq);
+        if(!$stmt->execute()) {
+          throw new Exception($stmt->error);
+        }
+        $stmt->close();
+    }
+
+    function update_all_quantity_by_sku($data) {
+        $d = json_decode($data, TRUE);
+        $sku = "";
+        $sql = "update `smi_variations` set `quantity` = CASE sku ";
+        for($i=0; $i < count($d); $i++) {
+          $sql .= " WHEN '".$d[$i]['sku']."' THEN '".$d[$i]['qty']."' \n";
+          if($i == count($d) - 1) {
+            $sku .= "'".$d[$i]['sku']."'";
+          } else {
+            $sku .= "'".$d[$i]['sku']."',";
+          }
+        }
+        $sql .= " END WHERE sku in ($sku)";
+
+        $stmt = $this->getConn()->prepare($sql);
+        if(!$stmt->execute()) {
+          throw new Exception($stmt->error);
+        }
+        $stmt->close();
+    }
+
+    function reset_quantity() {
+        $stmt = $this->getConn()->prepare("update smi_variations set quantity = 0");
+        if(!$stmt->execute()) {
+          throw new Exception($stmt->error);
+        }
+        $stmt->close();
+    }
+
+    function create_backup_table_variations() {
+        $table = "smi_variations_bk_".date("Ymdhi");
+        $stmt = $this->getConn()->prepare("CREATE TABLE $table AS SELECT * FROM smi_variations");
+        if(!$stmt->execute()) {
+          throw new Exception($stmt->error);
+        }
+        $stmt->close();
+    }
+
     function update_qty_variations()
     {
         try {
@@ -97,18 +207,25 @@ class CheckDAO
         }
     }
 
-    function save_check_temp($skus)
+    function save_check_temp($sku)
     {
         try {
-            $sql = "INSERT INTO smi_check_tmp_sku (`sku`) VALUES ";
-            for($i=0; $i<count($skus); $i++) {
-                if($i < count($skus) -1 ) {
-                    $sql .= "($skus[$i]),";
-                } else {
-                    $sql .= "($skus[$i])";
-                }
-            }
+//            $skus = substr($skus, 1, -1);
+//            $arr = explode(",", $skus);
+            $sql = "INSERT INTO smi_check_tmp (`sku`) VALUES (?)";
+
+//            for($i=0; $i<count($arr); $i++) {
+//                if(!empty($arr[$i])) {
+//                  if ($i < count($arr) - 1) {
+//                    $sql .= "($arr[$i]),";
+//                  } else {
+//                    $sql .= "($arr[$i])";
+//                  }
+//                }
+//            }
+//            echo $sql;
             $stmt = $this->getConn()->prepare($sql);
+            $stmt->bind_param("s", $sku);
             if(!$stmt->execute()) {
                 throw new Exception($stmt->error);
             }
@@ -136,16 +253,12 @@ class CheckDAO
 
     function update_status($id, $status)
     {
-        try {
-            $stmt = $this->getConn()->prepare("UPDATE `smi_check` SET `status` = ? WHERE `id` = ?");
-            $stmt->bind_param("ii", $id, $status);
-            if(!$stmt->execute()) {
-                throw new Exception($stmt->error);
-            }
-            $stmt->close();
-        } catch (Exception $e) {
-            throw new Exception($e);
+        $stmt = $this->getConn()->prepare("UPDATE `smi_check` SET `status` = ? WHERE `id` = ?");
+        $stmt->bind_param("ii", $status, $id);
+        if(!$stmt->execute()) {
+            throw new Exception($stmt->error);
         }
+        $stmt->close();
     }
 
     function onchange_qty($sku, $qty, $seq)
@@ -171,32 +284,6 @@ class CheckDAO
                 throw new Exception($stmt->error);
             }
             $stmt->close();
-        } catch (Exception $e) {
-            throw new Exception($e);
-        }
-    }
-
-    function checking_finish(Check $check)
-    {
-        $id = $check->getId();
-        $status = $check->getStatus();
-        $product_checked = $check->getProductsChecked();
-        $money_checked = $check->getMoneyChecked();
-        try {
-            $stmt = $this->getConn()->prepare("UPDATE `smi_check`
-                SET
-                `status` = ?,
-                `products_checked` = ?,
-                `finished_date` = NOW(),
-                `money_checked` = ?,
-                `updated_date` = NOW()
-                WHERE `id` = ?");
-            $stmt->bind_param("iidi", $status, $product_checked, $money_checked, $id);
-            if(!$stmt->execute()) {
-                throw new Exception($stmt->error);
-            }
-            $stmt->close();
-            $this->update_qty_variations();
         } catch (Exception $e) {
             throw new Exception($e);
         }
@@ -247,7 +334,7 @@ class CheckDAO
     function find_all()
     {
         try {
-            $sql = "select * from smi_check";
+            $sql = "select * from smi_check order by created_date desc";
             $result = mysqli_query($this->conn, $sql);
             $data = array();
             foreach ($result as $k => $row) {
@@ -274,27 +361,17 @@ class CheckDAO
         }
     }
 
-    function find_detail($seq)
+    function find_detail()
     {
         try {
-            $sql = "select * from smi_check_detail where seq = $seq";
+            $sql = "select * from smi_check_tmp";
             $result = mysqli_query($this->conn, $sql);
             $data = array();
-            if($result->num_rows > 0){
+            if($result){
                 foreach ($result as $k => $row) {
                     $check = array(
                         'id' => $row["id"],
-                        'seq' => $row["seq"],
-                        'check_id' => $row["check_id"],
-                        'product_id' => $row["product_id"],
-                        'variation_id' => $row["variation_id"],
-                        'sku' => $row["sku"],
-                        'quantity' => $row["quantity"],
-                        'size' => $row["size"],
-                        'color' => $row["color"],
-                        'name' => $row["name"],
-                        'price' => $row["price"],
-                        'created_date' => date_format(date_create($row["created_date"]), "d/m/Y"),
+                        'sku' => $row["sku"]
                     );
                     array_push($data, $check);
                 }

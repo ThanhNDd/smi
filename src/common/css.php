@@ -57,3 +57,5 @@ require_once("common.php");
       href="<?php Common::getPath() ?>plugins/bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css">
 <link rel="stylesheet" href="<?php Common::getPath() ?>plugins/summernote/summernote-bs4.css">
 <link rel="stylesheet" href="<?php Common::getPath() ?>plugins/typeahead/css/typeaheadjs.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.css">

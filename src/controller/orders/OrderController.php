@@ -10,6 +10,7 @@ include("../../dao/WalletDAO.php");
 include("../../common/cities/Zone.php");
 include("../../model/Order/Order.php");
 include("../../model/Order/OrderDetail.php");
+include("../../model/Order/OrderLogs.php");
 include("../../model/Customer/Customer.php");
 include("../../model/Wallet/Wallet.php");
 include("PrintReceiptOnline.php");
@@ -31,13 +32,210 @@ $walletDAO->setConn($db->getConn());
 
 $zone = new Zone();
 
+if (isset($_POST["method"]) && $_POST["method"] == "update_print") {
+  try {
+    Common::authen_get_data();
+    $orderId = $_POST["order_id"];
+    if(!empty($orderId)) {
+      $checkoutDAO->update_print($orderId);
+    }
+    echo json_encode("success");
+  } catch (Exception $ex) {
+    $db->rollback();
+    echo $ex->getMessage();
+  }
+  $db->commit();
+}
+
+if (isset($_POST["method"]) && $_POST["method"] == "update_status_by_bills") {
+  try {
+    Common::authen_get_data();
+    $bills = $_POST["bills"];
+    if(!empty($bills)) {
+      $bills = substr($bills,1, -1);
+      $checkoutDAO->update_success_by_bills($bills);
+    }
+    echo json_encode("success");
+  } catch (Exception $ex) {
+    $db->rollback();
+    echo $ex->getMessage();
+  }
+  $db->commit();
+}
+
+if (isset($_POST["method"]) && $_POST["method"] == "count_all_status") {
+  try {
+    Common::authen_get_data();
+    $count_all_status = $checkoutDAO->count_status('','');
+    echo json_encode($count_all_status);
+  } catch (Exception $ex) {
+    echo $ex;
+  }
+}
+
+if (isset($_POST["method"]) && $_POST["method"] == "count_status") {
+  try {
+    Common::authen_get_data();
+    $start_date = '';
+    $end_date = '';
+    if(isset($_POST["start_date"]) && isset($_POST["end_date"])) {
+      $start_date = $_POST["start_date"];
+      $end_date = $_POST["end_date"];
+    }
+    $count_status = $checkoutDAO->count_status($start_date, $end_date);
+    echo json_encode($count_status);
+  } catch (Exception $ex) {
+    echo $ex;
+  }
+}
+
+if (isset($_POST["method"]) && $_POST["method"] == "update_description") {
+  try {
+    Common::authen_get_data();
+    $order_id = $_POST["order_id"];
+    $content_description= $_POST["content_description"];
+    $checkoutDAO->update_description($order_id, $content_description);
+
+    echo json_encode("success");
+  } catch (Exception $ex) {
+    $db->rollback();
+    echo $ex->getMessage();
+  }
+  $db->commit();
+}
+
+if (isset($_POST["method"]) && $_POST["method"] == "update_delivery_date") {
+  try {
+    Common::authen_get_data();
+    $order_id = $_POST["order_id"];
+    $delivery_date = $_POST["delivery_date"];
+    $checkoutDAO->update_delivery_date($order_id, $delivery_date);
+
+    //update Order Logs
+    $orderLogs = new OrderLogs();
+    $orderLogs->setOrderId($order_id);
+    if(empty($delivery_date)) {
+      $orderLogs->setAction("Xoá ngày hẹn giao hàng");
+    } else {
+      $orderLogs->setAction("Cập nhật ngày hẹn giao hàng");
+    }
+
+    try {
+      $checkoutDAO->saveOrderLogs($orderLogs);
+    } catch (Exception $e) {
+      echo $e->getMessage();
+    }
+
+    echo json_encode("success");
+  } catch (Exception $ex) {
+    $db->rollback();
+    echo $ex->getMessage();
+  }
+  $db->commit();
+}
+
+if (isset($_POST["method"]) && $_POST["method"] == "update_bill") {
+  try {
+    Common::authen_get_data();
+    $order_id = $_POST["order_id"];
+    $status = $_POST["status"];
+    $bill_no = $_POST["bill_no"];
+    $shipping_fee = $_POST["shipping_fee"];
+    $checkoutDAO->update_bill($order_id, $status, $bill_no, $shipping_fee);
+
+    //update Order Logs
+    $orderLogs = new OrderLogs();
+    $orderLogs->setOrderId($order_id);
+    $orderLogs->setAction("Cập nhật mã vận đơn");
+    try {
+      $checkoutDAO->saveOrderLogs($orderLogs);
+    } catch (Exception $e) {
+      echo $e->getMessage();
+    }
+
+    echo json_encode("success");
+  } catch (Exception $ex) {
+    $db->rollback();
+    echo $ex->getMessage();
+  }
+  $db->commit();
+}
+
 
 if (isset($_POST["method"]) && $_POST["method"] == "update_status") {
     try {
         Common::authen_get_data();
         $order_id = $_POST["order_id"];
         $status = $_POST["status"];
-        $checkoutDAO->update_status($order_id, $status);
+        $delivery_date = isset($_POST["delivery_date"]) ? $_POST["delivery_date"] : null;
+        $checkoutDAO->update_status($order_id, $status, $delivery_date);
+
+        // update Order Logs
+        switch ($status) {
+          case 0:
+            $text_status = 'CHƯA XỬ LÝ';
+            break;
+          case 1:
+            $text_status = 'ĐÃ GÓI HÀNG';
+            break;
+          case 2:
+            $text_status = 'ĐÃ GIAO';
+            break;
+          case 3:
+            $text_status = 'HOÀN THÀNH';
+            break;
+          case 4:
+            $text_status = 'ĐỔI SIZE';
+            break;
+          case 5:
+            $text_status = 'CHUYỂN HOÀN';
+            break;
+          case 6:
+            $text_status = 'HUỶ';
+            break;
+          case 7:
+            $text_status = 'GIAO HÀNG SAU';
+            break;
+          case 8:
+            $text_status = 'ĐỢI HÀNG VỀ';
+            break;
+          case 9:
+            $text_status = 'CHỜ DUYỆT HOÀN';
+            break;
+          case 10:
+            $text_status = 'ĐÃ DUYỆT HOÀN';
+            break;
+          case 11:
+            $text_status = 'CHỜ ĐỔI SIZE';
+            break;
+          case 12:
+            $text_status = 'ĐÃ ĐỔI SIZE';
+            break;
+          default:
+            $text_status = '';
+        }
+      if(!strrpos($order_id, ',', 0)) {
+        $orderLogs = new OrderLogs();
+        $orderLogs->setOrderId($order_id);
+        $orderLogs->setAction("Cập nhật trạng thái thành ".$text_status);
+        try {
+          $checkoutDAO->saveOrderLogs($orderLogs);
+        } catch (Exception $e) {
+          echo $e->getMessage();
+        }
+      } else {
+        $orderIds = explode(",", $order_id);
+        for($i=0; $i<count($orderIds); $i++) {
+          $orderLogs = new OrderLogs();
+          $orderLogs->setOrderId($orderIds[$i]);
+          $orderLogs->setAction("Cập nhật trạng thái thành " . $text_status);
+          try {
+            $checkoutDAO->saveOrderLogs($orderLogs);
+          } catch (Exception $e) {
+            echo $e->getMessage();
+          }
+        }
+      }
         echo json_encode("success");
     } catch (Exception $ex) {
         $db->rollback();
@@ -154,8 +352,6 @@ if (isset($_POST["method"]) && $_POST["method"] == "edit_order") {
 }
 
 
-
-
 if (isset($_POST["method"]) && $_POST["method"] == "delete_order") {
 
     try {
@@ -166,6 +362,17 @@ if (isset($_POST["method"]) && $_POST["method"] == "delete_order") {
         // detele status order. Status Deleted = 1
         $checkoutDAO->delete_order($order_id);
         $walletDAO->delete_wallet_by_order($order_id);
+
+        //update Order Logs
+        $orderLogs = new OrderLogs();
+        $orderLogs->setOrderId($order_id);
+        $orderLogs->setAction("Xoá đơn hàng");
+        try {
+          $checkoutDAO->saveOrderLogs($orderLogs);
+        } catch (Exception $e) {
+          echo $e->getMessage();
+        }
+
         $repsonse = "success";
         echo json_encode($repsonse);
     } catch (Exception $ex) {
@@ -243,7 +450,19 @@ if (isset($_GET["method"]) && $_GET["method"] == "get_info_total_checkout") {
         if(isset($_GET["sku"])) {
             $sku = $_GET["sku"];
         }
-        $info_total = $checkoutDAO->get_info_total_checkout($start_date, $end_date, $order_id, $customer_id, $sku);
+        $type = '';
+        if(isset($_GET["type"])) {
+          $type = $_GET["type"];
+        }
+        $status = '';
+        if(isset($_GET["status"])) {
+          $status = $_GET['status'];
+        }
+        $bill = '';
+        if(isset($_GET["bill"])) {
+          $bill = $_GET['bill'];
+        }
+        $info_total = $checkoutDAO->get_info_total_checkout($start_date, $end_date, $order_id, $customer_id, $sku, $type, $status, $bill);
         echo json_encode($info_total);
     } catch (Exception $ex) {
        echo $ex;
@@ -280,9 +499,11 @@ if (isset($_GET["method"]) && $_GET["method"] == "find_all") {
         if(isset($_GET["sku"])) {
             $sku = $_GET["sku"];
         }
+//        $customer_id = '';
         if(isset($_GET["customer_id"])) {
             $customer_id = $_GET["customer_id"];
         }
+        $type = '';
         if(isset($_GET["type"])) {
           $type = $_GET["type"];
         }
@@ -290,7 +511,11 @@ if (isset($_GET["method"]) && $_GET["method"] == "find_all") {
         if(isset($_GET["status"])) {
           $status = $_GET['status'];
         }
-        $orders = $checkoutDAO->find_all($start_date, $end_date, $order_id, $customer_id, $sku, $type, $status);
+        $bill = '';
+        if(isset($_GET["bill"])) {
+          $bill = $_GET['bill'];
+        }
+        $orders = $checkoutDAO->find_all($start_date, $end_date, $order_id, $customer_id, $sku, $type, $status, $bill);
         echo json_encode($orders);
     } catch (Exception $e) {
         echo $e->getMessage();
@@ -301,7 +526,11 @@ if (isset($_POST["method"]) && $_POST["method"] == "find_detail") {
         Common::authen_get_data();
         $order_id = $_POST["order_id"];
         $orders = $checkoutDAO->find_detail($order_id);
-        echo json_encode($orders);
+        $order_logs = $checkoutDAO->find_order_logs_by_id($order_id);
+        $arr = array();
+        $arr["orders"] = $orders;
+        $arr["order_logs"] = $order_logs;
+        echo json_encode($arr);
     } catch (Exception $e) {
         throw new Exception($e);
     }
@@ -333,6 +562,8 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $data = $_POST["data"];
         $data = json_decode($data);
 
+        $message_log = 'Tạo mới đơn hàng';
+
         $order = new Order();
         $order_type = $data->order_type;
         $cusId = $data->customer_id;
@@ -343,13 +574,14 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
             $total_reduce = $data->total_reduce;
             $total_reduce_percent = round($total_reduce * 100 / $total_checkout);
         }
-        if ($order_type == 1) {
+//        if ($order_type == 1) {
             //online
+        $bill_of_lading_no = $data->bill_of_lading_no;
             $order->setBill_of_lading_no($data->bill_of_lading_no);
             $order->setShipping_fee($data->shipping_fee);
             $order->setShipping($data->shipping);
             $order->setShipping_unit($data->shipping_unit);
-        }
+//        }
 
         $order->setTotal_amount($data->total_amount);
         $order->setTotal_reduce($total_reduce);
@@ -367,8 +599,11 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $order->setPayment_type($data->payment_type);
         $order->setVoucherValue(0);
         $order->setOrder_date($data->order_date);
+        $order->setDeliveryDate($data->delivery_date);
         $order->setSource($data->source);
+        $order->setDescription($data->description);
         if (isset($data->order_id) && $data->order_id > 0) {
+            $message_log = 'Cập nhật đơn hàng';
             $order->setId($data->order_id);
             $orderId = $checkoutDAO->updateOrder($order);
             if (!empty($orderId)) {
@@ -417,12 +652,23 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
                 throw new Exception("SKU is empty");
             }
         }
+
+        //update Order Logs
+        $orderLogs = new OrderLogs();
+        $orderLogs->setOrderId($orderId);
+        $orderLogs->setAction($message_log);
+        try {
+          $checkoutDAO->saveOrderLogs($orderLogs);
+        } catch (Exception $e) {
+          echo $e->getMessage();
+        }
+
         $response["order_id"] = $orderId;
         echo json_encode($response);
 //        echo "===============\n";
     } catch (Exception $e) {
         $db->rollback();
-        throw new Exception($e);
+        echo $e->getMessage();
     }
     // all Ok
     $db->commit();
