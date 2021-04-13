@@ -8,7 +8,7 @@ Common::authen();
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="shortcut icon" type="image/x-icon" href="<?php Common::getPath() ?>dist/img/icon.png"/>
-    <title>Đổi sản phẩm</title>
+    <title>Đổi sản phẩm online</title>
     <?php require_once('../../common/css.php'); ?>
     <?php require_once('../../common/js.php'); ?>
     <style>
@@ -55,12 +55,23 @@ Common::authen();
         <div class="col-md-9">
             <div class="card card-outline card-primary">
                 <div class="card-header">
-                  <h3 id="orderInfo" class="hidden float-left mr-4"></h3>
-                  <button class="btn btn-danger hidden" id="cancel_exchange"><i
-                      class="far fa-times-circle"></i> Hủy
-                  </button>
-                  <span id="orderDate" class="hidden" style="width: 100%; display: inline-block"></span>
-                  <div class="row mb-3">
+                  <div class="row">
+                      <h3 id="orderInfo" class="hidden float-left mr-4"></h3>
+                      <button class="btn btn-danger hidden" id="cancel_exchange"><i
+                          class="far fa-times-circle"></i> Hủy
+                      </button>
+                  </div>
+                  <div class="row mt-2">
+                    <div class="col-md-3">
+                      <label for="billOfLadingNo">Mã vận đơn: </label>
+                      <div id="billOfLadingNo" class="d-inline-block"></div>
+                    </div>
+                    <div class="col-md-3">
+                      <label for="orderDate">Ngày đặt hàng: </label>
+                      <span id="orderDate"></span>
+                    </div>
+                  </div>
+                  <div class="row">
                     <div class="col-md-3">
                       <input class="form-control" id="orderId" type="text" autofocus="autofocus"
                              autocomplete="off" placeholder="Nhập mã đơn hàng">
@@ -115,17 +126,17 @@ Common::authen();
         </div>
         <div class="col-md-3 checkout">
             <div class="card card-outline card-primary">
-<!--                <div class="card-header">-->
-<!--                    <h3 class="card-title">Thông tin thanh toán</h3>-->
-<!--                </div>-->
+                <div class="card-header">
+                    <h3 class="card-title">Thông tin thanh toán</h3>
+                </div>
                 <div class="card-body" style="height: auto;padding: 20px;">
                     <table class="table table-striped table-hover">
                         <tbody>
                         <tr class="customer_info">
-                            <td class="right w90 gray">Khách hàng</td>
+                            <td class="right w130 gray">Khách hàng</td>
                             <td class="right p-0 gray">
                                 <input type="hidden" id="customer_id" value="0">
-<!--                                <span id="customer_name">Khách lẻ</span>-->
+                                <input type="hidden" id="source_order" value="0">
                                 <div class="d-inline-block">
                                     <span id="customer_name" class="" style="display: flex;">Khách lẻ</span>
                                     <span id="customer_phone" class="d-inline-block hidden"></span>
@@ -142,12 +153,7 @@ Common::authen();
                                 <span><span id="totalAmount">0</span> <small><sup>đ</sup></small></span>
                             </td>
                         </tr>
-                        <tr class="wallet">
-                            <td class="right gray">Trừ trong ví</td>
-                            <td class="right w110 p-0 gray">
-                                <span><span id="wallet">0</span> <small><sup>đ</sup></small></span>
-                            </td>
-                        </tr>
+
                         <tr>
                             <td class="right gray">CK trên tổng đơn</td>
                             <td class="right w110 p-0 gray">
@@ -167,64 +173,75 @@ Common::authen();
                                 <span><span id="totalReduce">0</span> <small><sup>đ</sup></small></span>
                             </td>
                         </tr>
+                        <tr class="wallet">
+                          <td class="right gray">Phí ship KH trả</td>
+                          <td class="right w110 p-0 gray">
+                            <span><span id="shipping">0</span> <small><sup>đ</sup></small></span>
+                          </td>
+                        </tr>
                         <tr>
-                            <td class="right gray">Tổng thanh toán</td>
+                            <td class="right gray">Tổng tiền KH thanh toán</td>
                             <td class="right w110 p-0 gray">
                                 <span><span id="totalCheckout">0</span> <small><sup>đ</sup></small></span>
                             </td>
                         </tr>
-                        <tr>
-                            <td class="right gray">Khách thanh toán</td>
-                            <td class="right w110 p-0 gray">
-                                <span class="mb-0"><span id="payment">0</span> <small><sup>đ</sup></small></span><br>
-                                <small id="sel_payment"></small>
-                            </td>
+                        <tr class="wallet">
+                          <td class="right gray">Phí ship shop trả</td>
+                          <td class="right w110 p-0 gray">
+                            <span><span id="shipping_fee">0</span> <small><sup>đ</sup></small></span>
+                          </td>
                         </tr>
                         <tr>
-                            <td class="right gray">Trả lại</td>
-                            <td class="right w110 p-0 gray">
-                                <div class="repay hidden">
-                                    <span class="mb-0"><span id="repay">0</span> <small><sup>đ</sup></small></span><br>
-                                    <small>Tiền mặt</small>
-                                </div>
-                                <div class="transferToWallet hidden">
-                                    <span class="mb-0"><span id="transferToWallet">0</span> <small><sup>đ</sup></small></span><br>
-                                    <small>Chuyển vào ví</small>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="saved">
-                            <td class="right gray">Tích lũy</td>
-                            <td class="right w110 p-0 gray">
-                                <span><span id="saved">0</span> <small><sup>đ</sup></small></span>
-                            </td>
+                          <td class="right gray">Tổng tiền shop nhận</td>
+                          <td class="right w110 p-0 gray">
+                            <span><span id="totalMoneyReceived">0</span> <small><sup>đ</sup></small></span>
+                          </td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
             <div class="card card-outline card-primary">
-<!--                <div class="card-header">-->
-<!--                    <h3 class="card-title">Thông tin thanh toán đơn hàng mới</h3>-->
-<!--                </div>-->
+                <div class="card-header">
+                    <h3 class="card-title">Thông tin thanh toán mới</h3>
+                </div>
                 <div class="card-body" style="height: auto;padding: 20px;">
                     <table class="table table-hover">
                         <tbody>
                             <tr>
-                                <td class="right w130">Tổng tiền</td>
+                                <td class="right w100">Tổng tiền</td>
                                 <td class="right w90 p-0 gray">
-                                    <h4 style="margin: 0;"><span style="color: red;" id="total_amount_new">0</span> <small><sup>đ</sup></small></h4>
-                                    <h6 class="hidden"><span style="color: green;" id="add_more_discount">0</span><small><sup>đ</sup></small></h6>
+                                    <h4 style="margin: 0;"><span class="text-danger" id="total_amount_new">0</span><small><sup>đ</sup></small></h4>
+                                    <h6 class="hidden"><span class="text-success" id="add_more_discount">0</span><small><sup>đ</sup></small></h6>
                                 </td>
                             </tr>
-                            <tr class="wallet hidden">
-                                <td class="right w90">Số dư trong ví</td>
-                                <td class="right pr-0">
-                                    <input type="text" class="form-control text-right" style="font-size: 20px;"
-                                           id="totalUsePoint">
-                                    <p class="mt-1 mb-0">Quý khách có <span class="text-primary c-pointer" id="totalBallanceInWallet">0</span><sup
-                                                class="text-primary">đ</sup> trong ví</p>
-                                </td>
+                            <tr>
+                              <td class="right">Phí đổi hàng KH trả</td>
+                              <td class="right p-0">
+                                <input type="text" class="form-control" id="shipping_for_customer" placeholder="Phí đổi hàng">
+                              </td>
+                            </tr>
+                            <tr>
+                              <td class="right">Phí ship shop trả</td>
+                              <td class="right p-0">
+                                <input type="text" class="form-control" id="shipping_for_shop" placeholder="Phí ship shop trả">
+                              </td>
+                            </tr>
+                            <tr>
+                              <td class="right">Đơn vị vận chuyển</td>
+                              <td class="right p-0">
+                                <select class="shipping-unit form-control" id="shipping_unit">
+                                  <option value="VTP" selected="selected">Viettel Post</option>
+                                  <option value="J&T">J&T Express</option>
+                                  <option value="GHN">Giao Hàng Nhanh</option>
+                                  <option value="GHTK">Giao Hàng Tiết Kiệm</option>
+                                  <option value="VNP">Việt Nam Post</option>
+                                  <option value="VNPN">Việt Nam Post Nhanh</option>
+                                  <option value="NINJAVAN">Ninja Van</option>
+                                  <option value="BESTEXPRESS">BEST Express</option>
+                                  <option value="GRABEXPRESS">GRAB Express</option>
+                                </select>
+                              </td>
                             </tr>
                             <tr class="discount-new hidden">
                                 <td class="right">Giảm trừ</td>
@@ -253,9 +270,10 @@ Common::authen();
                                 <td class="right">Khách thanh toán</td>
                                 <td class="right pr-0">
                                     <select class="form-control" name="sel_payment_new" id="sel_payment_new" disabled>
-                                        <option value="0" selected="selected">Tiền mặt</option>
+                                        <option value="0">Tiền mặt</option>
                                         <option value="1">Chuyển khoản</option>
                                         <option value="2">Nợ</option>
+                                        <option value="3" selected="selected">COD</option>
                                     </select>
                                     <div class="input-group mt-2">
                                         <input type="text" class="form-control right" name="payment_new" id="payment_new" disabled>
@@ -265,65 +283,8 @@ Common::authen();
                                     </div>
                                 </td>
                             </tr>
-                            <tr class="saved-point">
-                                <td class="right pl-0" colspan="2">
-                                    <p class="mb-1">Quý khách sẽ tích lũy được <span class="text-primary"
-                                                                                     id="total_saved_point">0</span> <sup
-                                                class="text-primary">đ</sup> cho đơn hàng này.</p>
-                                </td>
-                            </tr>
-                            <tr class="repay-new hidden">
-                                <td class="right pl-0 pr-0">
-                                    <span>Trả lại</span>
-                                    <div class="form-group mt-3" style="">
-                                        <a href="javascript:void(0)" class="ml-3" id="reverse"><i class="fas fa-retweet"></i></a>
-                                    </div>
-<!--                                    <div class="repay_method hidden">-->
-<!--                                        <div class="form-check text-left">-->
-<!--                                            <label class="form-check-label">-->
-<!--                                                <input type="radio" class="form-check-input" name="repayType" checked value="0">Tiền mặt-->
-<!--                                            </label>-->
-<!--                                        </div>-->
-<!--                                        <div class="form-check text-left">-->
-<!--                                            <label class="form-check-label">-->
-<!--                                                <input type="radio" class="form-check-input" name="repayType" value="1">Chuyển vào Ví-->
-<!--                                            </label>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-                                </td>
-                                <td class="left">
-<!--                                    <span style="font-size: 20px;" id="repay_new">0 <small><sup>đ</sup></small></span>-->
-<!--                                    <input type="text" class="form-control right" name="repay_new" id="repay_new">-->
-<!--                                    <div class="form-group">-->
-<!--                                        <label for="cash">Tiền mặt</label>-->
-                                        <input type="text" class="form-control mb-2 text-right" placeholder="Tiền mặt" id="repay_new">
-<!--                                    </div>-->
-<!--                                    <div class="form-group">-->
-<!--                                        <label for="tranferWallet">Chuyển vào ví</label>-->
-                                        <input type="text" class="form-control text-right" placeholder="Tiền chuyển vào ví" id="tranferToWallet_new">
-<!--                                    </div>-->
-                                </td>
-                            </tr>
-<!--                            <tr>-->
-<!--                                <td class="right">Trả lại</td>-->
-<!--                                <td class="right pr-0">-->
-<!--                                    <div class="input-group mb-3">-->
-<!--                                        <input type="text" class="form-control right" name="repay_new" id="repay_new" disabled>-->
-<!--                                        <div class="input-group-append">-->
-<!--                                            <span class="input-group-text">đ</span>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </td>-->
-<!--                            </tr>-->
                         </tbody>
                     </table>
-                    <div class="row mt-2 col-md-12 ml-0">
-                        <div class="left skin-line">
-                            <label for="flat-checkbox-1">
-                                <input type="checkbox" id="flag_print_receipt" checked> In hóa đơn
-                            </label>
-                        </div>
-                    </div>
                     <div class="row col-md-12 no-margin">
                         <button type="button" class="btn btn-success form-control" id="checkout" title="Thanh toán">
                             <i class="fas fa-shopping-basket"></i> Thanh toán
@@ -359,8 +320,6 @@ Common::authen();
             find_order(order_id);
         }
 
-
-
         $("#cancel_exchange").on("click", function () {
             Swal.fire({
                 title: 'Bạn có chắc chắn muốn hủy đổi đơn này?',
@@ -384,7 +343,6 @@ Common::authen();
                 sku = parseInt(sku);
             }
             validateProdId(sku, calculateTotal, find_new_product, 1);
-            // find_new_product(sku);
             $(this).val("");
         });
 
@@ -407,14 +365,14 @@ Common::authen();
         //     onchange_voucher(voucher, event);
         //     event.preventDefault();
         // });
-        $('#voucher').keypress(function (event) {
-            let keycode = (event.keyCode ? event.keyCode : event.which);
-            if (keycode == '13') {
-                let voucher = $(this).val();
-                onchange_voucher(voucher, event);
-                event.preventDefault();
-            }
-        });
+        // $('#voucher').keypress(function (event) {
+        //     let keycode = (event.keyCode ? event.keyCode : event.which);
+        //     if (keycode == '13') {
+        //         let voucher = $(this).val();
+        //         onchange_voucher(voucher, event);
+        //         event.preventDefault();
+        //     }
+        // });
 
         $("#payment_new").on('change',function () {
             let payment = $(this).val();
@@ -478,6 +436,24 @@ Common::authen();
             let customer_name = $("#customer_name").text();
             let customer_phone = $("#customer_phone").text().trim();
             show_history(customer_id, customer_name, customer_phone);
+        });
+
+
+        $("#shipping_for_customer").on("change", function(){
+            let val = $(this).val();
+            if(val < 100) {
+                val += '000';
+            }
+            $(this).val(formatNumber(val));
+            calculateTotal();
+        });
+        $("#shipping_for_shop").on("change", function(){
+            let val = $(this).val();
+            if(val < 100) {
+                val += '000';
+            }
+            $(this).val(formatNumber(val));
+            calculateTotal();
         });
     });
     
@@ -624,58 +600,46 @@ Common::authen();
                                 + '<button type="button" id="cancelExchange_' + noRow + '" class="btn btn-danger form-control hidden" onclick="cancelExchangeBtn(this, ' + noRow + ')" title="Hủy đổi hàng"><i class="fas fa-ban"></i> Hủy</button>'
                                 + '<input type="text" value="" placeholder="Nhập mã sản phẩm" id="productName_' + noRow + '" onchange="find_product(this, '+details[i].sku+', 1, ' + noRow + ')" class="hidden form-control mt-2 mb-2">'
                                 + '<button type="button" id="del_' + noRow + '" onclick="del_product_new(this, ' + noRow + ')" class="btn btn-danger hidden form-control mt-2 mb-2" title="Xóa sản phẩm đổi"><i class="fas fa-trash"></i> Xóa</button>'
-                                + '<button type="button" id="return_' + noRow + '" class="btn btn-warning form-control d-inline-block w50" onclick="returnBtn(this, ' + noRow + ')" title="Trả hàng"><i class="fas fa-undo-alt"></i></button>'
+                                + '<button type="button" id="return_' + noRow + '" class="btn btn-danger form-control d-inline-block w50" onclick="returnBtn(this, ' + noRow + ')" title="Trả hàng"><i class="fas fa-undo-alt"></i></button>'
                                 + '<button type="button" id="cancel_return_' + noRow + '" class="btn btn-danger form-control hidden" onclick="cancelReturnBtn(this, ' + noRow + ')" title="Hủy Trả hàng"><i class="fas fa-ban"></i> Hủy</button>'
                                 + '</td>'
                                 + '</tr>');
                         }
-                        // $("#productId").prop("disabled", "");
-                        // $("#discount").prop("disabled", "");
                         $("#voucher").prop("disabled", "");
-                        // $("#sel_payment").prop("disabled", "");
-                        // $("#payment").prop("disabled", "");
 
                         $("#orderInfo").text("Thông tin đơn hàng #" + orderId).removeClass("hidden");
-                        // $("#orderInfo").removeClass("hidden");
-                        $("#orderDate").text("Ngày mua hàng: " + value[0].order_date).removeClass("hidden");
-                        // $("#orderDate").removeClass("hidden");
+                        $("#orderDate").text(value[0].order_date).removeClass("hidden");
+                        let shipping_unit = value[0].shipping_unit;
+                        let bill_of_lading_no = value[0].bill_of_lading_no;
+
+                        if(shipping_unit === 'VTP' && bill_of_lading_no) {
+                            bill_of_lading_no = "<a href='https://viettelpost.vn/thong-tin-don-hang?peopleTracking=sender&orderNumber="+bill_of_lading_no.trim()+"' target='_blank'>"+bill_of_lading_no+"</a>";
+                        }
+                        $("#billOfLadingNo").html(bill_of_lading_no).removeClass("hidden");
+
                         $("#productId").removeClass("hidden").prop("disabled", "").prev("label").removeClass("hidden");
-                        // $("#productId").prev("label").removeClass("hidden");
                         $("#cancel_exchange").removeClass("hidden");
-                        if(value[0].customer_id && Number(value[0].customer_id) > 0) {
-                            $("#customer_info").removeClass("hidden");
-                            $("#customer_id").val(value[0].customer_id);
-                            $("#customer_name").text(value[0].customerName);
-                            $("#customer_phone").text(value[0].phone).removeClass("hidden");
-                            $("#show_history").removeClass("hidden");
-                            setTimeout(function () {
-                                get_total_point(value[0].customer_id);
-                            },200);
-                        } else {
-                            $("#customer_info").addClass("hidden");
-                            $("#customer_id").val(0);
-                            $("#customer_name").text('Khách lẻ');
-                            $("#customer_phone").text("").addClass("hidden");
-                            $("#show_history").addClass("hidden");
-                        }
-                        if(value[0].wallet && Number(value[0].wallet) > 0) {
-                            $(".wallet").removeClass("hidden");
-                            $("#wallet").text(formatNumber(value[0].wallet));
-                        } else {
-                            $(".wallet").addClass("hidden");
-                            $("#wallet").text('');
-                        }
-                        if(value[0].saved && Number(value[0].saved) > 0) {
-                            $(".saved").removeClass("hidden");
-                            $("#saved").text(formatNumber(value[0].saved));
-                        } else {
-                            $(".saved").addClass("hidden");
-                            $("#saved").text('');
-                        }
+                        $("#source_order").val(value[0].source);
+                        $("#customer_info").removeClass("hidden");
+                        $("#customer_id").val(value[0].customer_id);
+                        $("#customer_name").html('<a href="<?php  Common::getPath() ?>src/view/customer/?customer_id=' + value[0].customer_id + '" target="_blank">' + value[0].customerName + '</a>');
+                        $("#customer_phone").text(value[0].phone).removeClass("hidden");
+
                         $("#totalAmount").text(value[0].total_amount);
                         $("#discount").text(value[0].discount).prop("disabled", "");
                         $("#totalReduce").text(value[0].total_reduce);
-                        $("#totalCheckout").text(value[0].total_checkout);
+
+                        $("#shipping").text(value[0].shipping);
+                        $("#shipping_fee").text(value[0].shipping_fee);
+
+                        let total_amount = Number(replaceComma(value[0].total_amount));
+                        total_amount += Number(replaceComma(value[0].shipping));
+                        total_amount -= Number(replaceComma(value[0].total_reduce));
+                        $("#totalCheckout").text(formatNumber(total_amount));
+
+
+                        $("#totalMoneyReceived").text(value[0].total_checkout);
+
                         // if(value[0].discount) {
                         //     $("#discount_old").text("-"+value[0].discount);
                         //     $(".discount-old").removeClass("hidden");
@@ -683,20 +647,20 @@ Common::authen();
                         //     $(".discount-old").addClass("hidden");
                         // }
                         // $("#repay").text(value[0].repay);
-                        if(value[0].repay) {
-                            $("#repay").text(formatNumber(value[0].repay));
-                            $(".repay").removeClass("hidden");
-                        } else {
-                            $("#repay").text("");
-                            $(".repay").addClass("hidden");
-                        }
-                        if(value[0].transfer_to_wallet) {
-                            $("#transferToWallet").text(formatNumber(value[0].transfer_to_wallet));
-                            $(".transferToWallet").removeClass("hidden");
-                        } else {
-                            $("#transferToWallet").text("");
-                            $(".transferToWallet").addClass("hidden");
-                        }
+                        // if(value[0].repay) {
+                        //     $("#repay").text(formatNumber(value[0].repay));
+                        //     $(".repay").removeClass("hidden");
+                        // } else {
+                        //     $("#repay").text("");
+                        //     $(".repay").addClass("hidden");
+                        // }
+                        // if(value[0].transfer_to_wallet) {
+                        //     $("#transferToWallet").text(formatNumber(value[0].transfer_to_wallet));
+                        //     $(".transferToWallet").removeClass("hidden");
+                        // } else {
+                        //     $("#transferToWallet").text("");
+                        //     $(".transferToWallet").addClass("hidden");
+                        // }
                         // else {
                         //     $("#repay_type").text('');
                         // }
@@ -709,6 +673,10 @@ Common::authen();
                                     break;
                                 case 2:
                                     payment = "Nợ";
+                                    break;
+                                case 3:
+                                    payment = "COD";
+                                    break;
                             }
                             $("#sel_payment").prop("disabled", "").text(payment);
                         }
@@ -965,22 +933,22 @@ Common::authen();
         }
         $("#total_amount_new").text(formatNumber(totalAmount));
         $("#total_checkout_new").text(formatNumber(totalCheckout));
-        calculate_total_point();
+        // calculate_total_point();
         recalculateTotalReduce();
         recalculateTotalCheckout();
     }
     function calculate_total_point() {
-        let currentPoint = Number(replaceComma($("#totalBallanceInWallet").text()));
-        if (currentPoint && Number(currentPoint) !== 0) {
+        // let currentPoint = Number(replaceComma($("#totalBallanceInWallet").text()));
+        // if (currentPoint && Number(currentPoint) !== 0) {
             let total_checkout_new = Number(replaceComma($("#total_checkout_new").text()));
             let totalUsePoint = 0;
             if (total_checkout_new > 0) {
-                if(total_checkout_new > currentPoint) {
-                    totalUsePoint = currentPoint;
-                } else {
-                    totalUsePoint = total_checkout_new;
-                }
-                $("#totalUsePoint").val(formatNumber(totalUsePoint)).removeClass("hidden");
+                // if(total_checkout_new > currentPoint) {
+                //     totalUsePoint = currentPoint;
+                // } else {
+                //     totalUsePoint = total_checkout_new;
+                // }
+                // $("#totalUsePoint").val(formatNumber(totalUsePoint)).removeClass("hidden");
                 recalculateTotalReduce();
                 recalculateTotalCheckout();
             // } else if(total_checkout_new < 0) {
@@ -993,15 +961,15 @@ Common::authen();
                 // recalculateTotalReduce();
                 // recalculateTotalCheckout();
             } else {
-                $("#totalUsePoint").addClass("hidden");
+                // $("#totalUsePoint").addClass("hidden");
                 $("#totalReduceNew").text("0");
                 $(".total-reduce-new").addClass("hidden");
             }
-        } else {
-            $("#totalUsePoint").addClass("hidden");
-        }
+        // } else {
+        //     $("#totalUsePoint").addClass("hidden");
+        // }
         payment_box();
-        calculate_saved_point();
+        // calculate_saved_point();
         calculate_repay_new();
     }
     function calculateTotalAmountInList() {
@@ -1147,8 +1115,7 @@ Common::authen();
         let total_checkout = replaceComma($("#total_checkout_new").text());
         let payment_type = $("#sel_payment_new").val();
         let customer_payment = replaceComma($("#payment_new").val());
-        let flag_print_receipt = $("#flag_print_receipt").is(':checked');
-        // let discount_old = replaceComma($("#discount").text());
+        // let flag_print_receipt = $("#flag_print_receipt").is(':checked');
         let discount = replaceComma($("#discount_new").val());
         if (discount.indexOf("%") > -1) {
             discount = discount.replace("%", "");
@@ -1164,53 +1131,54 @@ Common::authen();
             // Guest received back
             paymentExchangeType = 2;
         }
-        let repay = replaceComma($("#repay_new").val());
-        let transferToWallet = replaceComma($("#tranferToWallet_new").val());
-        // let repayType = 0;
-        let totalBallanceInWallet = 0;
-        let totalUsePoint = 0;
-        let totalRemainPoint = 0;
-        let totalSavedPoint = 0;
-        // let walletRepay = 0;
+        // let repay = replaceComma($("#repay_new").val());
+        // let transferToWallet = replaceComma($("#tranferToWallet_new").val());
+        // let totalBallanceInWallet = 0;
+        // let totalUsePoint = 0;
+        // let totalRemainPoint = 0;
+        // let totalSavedPoint = 0;
         let customer_id = $("#customer_id").val();
-        if(customer_id && Number(customer_id) > 0) {
-            // repayType = Number($("input[name='repayType']:checked").val());
-            // if(repayType === 1) {
-            //     walletRepay = Number(repay);
-            // }
-            totalBallanceInWallet = Number(replaceComma($("#totalBallanceInWallet").text()));
-            totalUsePoint = Number(replaceComma($("#totalUsePoint").val()));
-            if (!totalBallanceInWallet || totalBallanceInWallet === 0) {
-                totalUsePoint = 0;
-            }
-            totalRemainPoint = totalBallanceInWallet - totalUsePoint;
-            totalSavedPoint = Number(replaceComma($("#total_saved_point").text()));
-        }
+        let shipping_for_customer = replaceComma($("#shipping_for_customer").val());
+        let shipping_for_shop = replaceComma($("#shipping_for_shop").val());
+        let shipping_unit = $("#shipping_unit").val();
+        let source = $("#source_order").val();
+        // if(customer_id && Number(customer_id) > 0) {
+        //     totalBallanceInWallet = Number(replaceComma($("#totalBallanceInWallet").text()));
+        //     totalUsePoint = Number(replaceComma($("#totalUsePoint").val()));
+        //     if (!totalBallanceInWallet || totalBallanceInWallet === 0) {
+        //         totalUsePoint = 0;
+        //     }
+        //     totalRemainPoint = totalBallanceInWallet - totalUsePoint;
+        //     totalSavedPoint = Number(replaceComma($("#total_saved_point").text()));
+        // }
         let data = {};
         data["total_amount"] = total_amount;
         data["total_reduce"] = total_reduce;
         // data["discount_old"] = discount_old;
         data["discount"] = discount;
-        data["wallet"] = totalUsePoint;
+        // data["wallet"] = totalUsePoint;
         data["total_checkout"] = total_checkout;
         data["customer_payment"] = customer_payment;
         data["payment_type"] = payment_type;
-        data["repay"] = repay;
-        data["transfer_to_wallet"] = transferToWallet;
+        // data["repay"] = repay;
+        // data["transfer_to_wallet"] = transferToWallet;
         // data["repay_type"] = repayType;
         data["customer_id"] = customer_id;
         data["type"] = 2;// exchange product
-        data["flag_print_receipt"] = flag_print_receipt;
-        data["voucher_code"] = "";
-        data["voucher_value"] = "";
+        // data["flag_print_receipt"] = flag_print_receipt;
+        // data["voucher_code"] = "";
+        // data["voucher_value"] = "";
         data["current_order_id"] = currentOrderId;
         data["payment_exchange_type"] = paymentExchangeType;
-        data["source"] = 0;// shop
-        data["wallet_used"] = totalUsePoint;
-        data["wallet_saved"] = totalSavedPoint;
-        data["wallet_repay"] = transferToWallet;
-        data["wallet_remain"] = totalRemainPoint;
-        data["status"] = 3;// success
+        data["source"] = source;
+        data["shipping"] = shipping_for_customer;
+        data["shipping_fee"] = shipping_for_shop;
+        data["shipping_unit"] = shipping_unit;
+        data["status"] = 12;// in exchange
+        // data["wallet_used"] = totalUsePoint;
+        // data["wallet_saved"] = totalSavedPoint;
+        // data["wallet_repay"] = transferToWallet;
+        // data["wallet_remain"] = totalRemainPoint;
 
         //order detail information
         let curr_products = [];
@@ -1381,6 +1349,8 @@ Common::authen();
 
         console.log(JSON.stringify(data));
 
+        // return;
+
         $.ajax({
             dataType: 'json',
             url: '<?php Common::getPath() ?>src/controller/exchange/ExchangeController.php',
@@ -1392,19 +1362,19 @@ Common::authen();
             success: function (data) {
                 let orderId = data.orderId;
                 console.log(orderId);
-                let filename = data.fileName;
-                $(".iframeArea").html("");
-                if (typeof filename !== "undefined" && filename !== "") {
-                    $(".iframeArea").html('<iframe src="<?php Common::getPath() ?>src/controller/exchange/pdf/receipt.html" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
-                }
-                if (flag_print_receipt === true && typeof filename !== "undefined" && filename !== "") {
-                    printReceipt();
-                }
-                $("#create-order .overlay").addClass("hidden");
+                //let filename = data.fileName;
+                //$(".iframeArea").html("");
+                //if (typeof filename !== "undefined" && filename !== "") {
+                //    $(".iframeArea").html('<iframe src="<?php //Common::getPath() ?>//src/controller/exchange/pdf/receipt.html" id="receiptContent" frameborder="0" style="border:0;" width="300" height="300"></iframe>');
+                //}
+                // if (flag_print_receipt === true && typeof filename !== "undefined" && filename !== "") {
+                //     printReceipt();
+                // }
+                // $("#create-order .overlay").addClass("hidden");
                 Swal.fire({
                     type: 'success',
                     title: 'Thành công!',
-                    text: "Đơn hàng #" + orderId + " đã được tạo thành công.!"
+                    text: "Đơn hàng #" + orderId + " đã được đổi thành công.!"
                 }).then((result) => {
                     if (result.value) {
                         window.location.href = "<?php Common::getPath()?>src/view/exchange";
@@ -1598,7 +1568,7 @@ Common::authen();
     }
 
     function recalculateTotalReduce() {
-        let totalUsePoint  = Number(replaceComma($("#totalUsePoint").val()));
+        // let totalUsePoint  = Number(replaceComma($("#totalUsePoint").val()));
         let total_amount = Number(replaceComma($("#total_amount_new").text()));
         // let discountOld = Number(replaceComma($("#discount_old").text()));
         let discountNew = replaceComma($("#discount_new").val());
@@ -1609,8 +1579,11 @@ Common::authen();
         // let total_reduce = totalUsePoint + Number(discountNew) + Number(discountOld);
         let total_reduce = 0;
         if(total_amount > 0) {
-            total_reduce = totalUsePoint + Number(discountNew);
+            // total_reduce = totalUsePoint + Number(discountNew);
+            total_reduce = Number(discountNew);
         }
+        let shipping_fee = Number(replaceComma($("#shipping_for_shop").val()));
+        total_reduce += shipping_fee;
         $("#totalReduceNew").text(formatNumber(total_reduce));
         $(".total-reduce-new").removeClass("hidden");
     }
@@ -1635,17 +1608,17 @@ Common::authen();
     //     $("#total_saved_point").text(total_saved_point);
     //     $(".saved-point").removeClass("hidden");
     // }
-    function calculate_saved_point() {
-        let total_saved_point = 0;
-        let total_checkout = Number(replaceComma($("#total_checkout_new").text()));
-        if (total_checkout > 0) {
-            let discount = Number(replaceComma($("#discount_new").val()));
-            total_saved_point = Math.round(total_checkout * 5 / 100);
-            total_saved_point = formatNumber(total_saved_point - discount);
-        }
-        $("#total_saved_point").text(total_saved_point);
-        $(".saved-point").removeClass("hidden");
-    }
+    // function calculate_saved_point() {
+    //     let total_saved_point = 0;
+    //     let total_checkout = Number(replaceComma($("#total_checkout_new").text()));
+    //     if (total_checkout > 0) {
+    //         let discount = Number(replaceComma($("#discount_new").val()));
+    //         total_saved_point = Math.round(total_checkout * 5 / 100);
+    //         total_saved_point = formatNumber(total_saved_point - discount);
+    //     }
+    //     $("#total_saved_point").text(total_saved_point);
+    //     $(".saved-point").removeClass("hidden");
+    // }
 
     function calculate_repay_new() {
         $(".repay-new").removeClass("hidden");

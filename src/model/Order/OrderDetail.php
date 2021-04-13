@@ -15,6 +15,7 @@ class OrderDetail {
     // 0: add new, 1: exchange, 2: new product of exchange order
     private $type;
     private $profit;
+    private $cost;
 
     /**
      * Get the value of id
@@ -263,5 +264,21 @@ class OrderDetail {
     {
         $this->profit = $profit;
     }
+
+  /**
+   * @return mixed
+   */
+  public function getCost()
+  {
+    return $this->cost;
+  }
+
+  /**
+   * @param mixed $cost
+   */
+  public function setCost($cost): void
+  {
+    $this->cost = $cost;
+  }
 
 }

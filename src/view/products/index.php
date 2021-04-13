@@ -204,6 +204,10 @@ Common::authen();
 <script>
     let table;
     $(document).ready(function () {
+
+        
+
+
         set_title("Danh sách sản phẩm");
         count_out_of_stock();
 
@@ -326,6 +330,8 @@ Common::authen();
                 }
             })
         });
+    
+        getDataForChatBot();
     });
 
 
@@ -1592,7 +1598,7 @@ Common::authen();
                 if(variations[i][j].quantity === "0") {
                     table += '<td id="qty"><span class=\"text-danger\">Hết hàng</span></td>';
                 } else {
-                    table += '<td id="qty">' +
+                    table += '<td id="qty" class="'+(variations[i][j].quantity <= 2 ? 'bg-warning' : '')+'">' +
                         '<span id="qty_'+variations[i][j].sku+'">'+variations[i][j].quantity+'</span>' +
                         '<input type="number" value="'+variations[i][j].quantity+'" class="hidden form-control" width="50px" id="text_qty_'+variations[i][j].sku+'" min="1" max="'+variations[i][j].quantity+'">' +
                         '</td>';
@@ -1708,6 +1714,32 @@ Common::authen();
             $(el).val(value).trigger('change');
         }
     }
+
+
+
+    function getDataForChatBot() {
+        $.ajax({
+            url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
+            type: "POST",
+            dataType: "json",
+            data: {
+                method: "get_data_for_chat_bot"
+            },
+            success: function (res) {
+                console.log(JSON.stringify(res));
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                })
+            }
+        });
+    }
+
 </script>
 </body>
 </html>

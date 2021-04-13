@@ -11,7 +11,7 @@ class Common
         } else {
             $path = "http";
         }
-        $path .= "://{$_SERVER['HTTP_HOST']}/smi/";
+        $path .= "://{$_SERVER['HTTP_HOST']}/online/";
         return $path;
     }
 
@@ -28,13 +28,23 @@ class Common
         return false;
     }
 
-    public static function set_cookie($time = 1) {
+    public static function get_user() {
+        if (isset($_COOKIE["UID"]) && $_COOKIE["UID"]) {
+            return $_COOKIE["UID"];
+        }
+        return 1;
+    }
+
+    public static function set_cookie($time = 1, $user) {
         $expire = time()+3600*24*$time;
         $path = '/';
         $salt = strtr(base64_encode(date("ddMMyyyy")), '+', '.');
         $salt = sprintf("$2y$%02d$", 10) . $salt;
         $value = crypt(Constant::COOKIE_NAME, $salt);
         setcookie(Constant::COOKIE_NAME, $value, $expire ,$path);
+        // set cookie user id
+        setcookie("UID", $user['id'], $expire ,$path);
+        setcookie("display_name", $user['display_name'], $expire ,$path);
     }
 
     public static function redirect_login_page()

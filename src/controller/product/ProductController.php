@@ -353,3 +353,17 @@ if (isset($_POST["method"]) && $_POST["method"] == "load_material") {
         throw new Exception($e);
     }
 }
+
+
+
+
+if (isset($_POST["method"]) && $_POST["method"] == "get_data_for_chat_bot") {
+    try {
+        Common::authen_get_data();
+        $data = $dao->get_data_for_chat_bot();
+        $response_array['data'] = $data;
+        echo json_encode($response_array);
+    } catch (Exception $ex) {
+        throw new Exception($ex);
+    }
+}

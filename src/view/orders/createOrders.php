@@ -49,15 +49,16 @@ Common::authen();
                             </div>
                         </div>
                       <div class="col-md-2 hidden order-delivery-date">
-                        <label for="orderDeliveryDate">Ngày giao hàng</label>
+                        <label for="orderAppointmentDeliveryDate">Ngày giao hàng</label>
                         <div class="input-group mb-1">
-                          <input type="text" class="form-control delivery-date" id="orderDeliveryDate" placeholder="Ngày giao hàng" autocomplete="off" value="<?php echo date('Y-m-d H:i:s'); ?>">
+                          <input type="text" class="form-control delivery-date" id="orderAppointmentDeliveryDate" placeholder="Ngày giao hàng" autocomplete="off" value="<?php echo date('Y-m-d H:i:s'); ?>">
                         </div>
                       </div>
                         <div class="col-md-2">
                             <label>Trạng thái</label>
                             <select class="form-control order-status" name="order_status" id="order_status">
                                 <option value="0" selected="selected">Chưa xử lý</option>
+                                <option value="13">Đã tạo đơn</option>
                                 <option value="1">Đã gói hàng</option>
                                 <option value="2">Đã giao</option>
                                 <option value="3">Hoàn thành</option>
@@ -66,6 +67,10 @@ Common::authen();
                                 <option value="6">Huỷ</option>
                                 <option value="7">Giao hàng sau</option>
                                 <option value="8">Đợi hàng về</option>
+                                <option value="9">Chờ duyệt hoàn</option>
+                                <option value="10">Đã duyệt hoàn</option>
+                                <option value="11">Chờ đổi size</option>
+                                <option value="12">Đã đổi size</option>
                             </select>
                         </div>
                     </div>
@@ -101,6 +106,16 @@ Common::authen();
                                 <option value="BESTEXPRESS">BEST Express</option>
                                 <option value="GRABEXPRESS">GRAB Express</option>
                             </select>
+                        </div>
+                        <div class="col-md-2 hidden">
+                          <label>Phí đổi size</label>
+                          <input type="text" class="form-control" id="exchange_cost"
+                                 placeholder="Phí đổi size" autocomplete="off">
+                        </div>
+                        <div class="col-md-2">
+                          <label>Ghi chú</label>
+                          <input type="text" class="form-control" id="description"
+                                 placeholder="Ghi chú đơn hàng" autocomplete="off" maxlength="100">
                         </div>
                     </div>
                 </div>
@@ -213,11 +228,8 @@ Common::authen();
             create_customer();
 
             $('.delivery-date').datetimepicker({
-                // Formats
                 format: 'YYYY-MM-DD hh:mm:ss',
                 minDate: $("#orderDate").val(),
-                // Your Icons
-                // as Bootstrap 4 is not using Glyphicons anymore
                 icons: {
                     time: 'far fa-clock',
                     date: 'fa fa-calendar',
@@ -347,9 +359,11 @@ Common::authen();
             add_product();
             $('[data-toggle="popover"]').popover();
 
-            $("#customer_phone").on('change', function () {
+            $("#customer_phone").on('blur', function () {
                 let phone = $(this).val();
                 if(phone) {
+                    phone = format_phone(phone);
+                    $("#customer_phone").val(phone);
                     check_exist_customer(phone);
                 }
             });
@@ -357,18 +371,25 @@ Common::authen();
                 let keycode = event.keyCode;
                 let phone = $(this).val();
                 if(keycode === 13 && phone) {
+                    $("#customer_phone").val(format_phone(phone));
                     check_exist_customer(phone);
                 }
             });
 
             $(".order-status").change(function () {
-                console.log($(this).val());
                 if($(this).val() == 7) {
                     // giao hàng sau
                     $(".order-delivery-date").removeClass("hidden");
                 } else {
                     $(".order-delivery-date").addClass("hidden");
-                    $("#orderDeliveryDate").val($("#orderDate").val());
+                    $("#orderAppointmentDeliveryDate").val($("#orderDate").val());
+                }
+
+                if($(this).val() == 11 || $(this).val() == 12 || $(this).val() == 4) {
+                    // chờ đổi size
+                    $("#exchange_cost").closest('div').removeClass("hidden");
+                } else {
+                    $("#exchange_cost").val('').closest('div').addClass("hidden");
                 }
             });
         });
@@ -412,7 +433,7 @@ Common::authen();
                         }).then((result) => {
                             if (result.value) {
                                 reset_data_customer();
-                                $("#phone_number").val(phone);
+                                $("#phone_number").val(format_phone(phone));
                                 generate_select2_city();
                                 open_modal('#create_customer');
                             }
@@ -551,18 +572,36 @@ Common::authen();
             let data = {};
             data["order_type"] = $('#order_type').val();
             data["order_id"] = $("#order_id").val();
-            let source = 0;// shop
+
             let order_type = $('#order_type').val();
             data["customer_id"] = customer_id;
+
+            let source = 0;// shop
+            let bill_of_lading_no = '';
+            let shipping_fee = 0;
+            let shipping_unit = 0;
             if (order_type == "1") {
                 // online
-                data["bill_of_lading_no"] = $("#bill_of_lading_no").val();
-                data["shipping_fee"] = replaceComma($("#shipping_fee").val());
-                data["shipping_unit"] = $("#shipping_unit").val();
+                bill_of_lading_no = $("#bill_of_lading_no").val();
+                shipping_fee = replaceComma($("#shipping_fee").val());
+                shipping_unit = $("#shipping_unit").val();
                 source = $("#order_source").val();
             }
+            data["bill_of_lading_no"] = bill_of_lading_no;
+            data["shipping_fee"] = shipping_fee;
+            data["shipping_unit"] = shipping_unit;
+
+            let order_status = $("#order_status").val();
+            let order_date = $("#orderDate").val();
+            let shipping = $("#shipping").val() ? replaceComma($("#shipping").val()) : 0;
+            let appointment_delivery_date = '';
+            if(order_status == 7) {
+                appointment_delivery_date = $("#orderAppointmentDeliveryDate").val();
+            }
+            let description = $("#description").val();
+
             data["source"] = source;
-            data["shipping"] = replaceComma($("#shipping").val());
+            data["shipping"] = shipping;
             data["discount"] = discount;
             data["total_amount"] = total_amount;
             data["wallet"] = totalUsePoint;
@@ -571,8 +610,9 @@ Common::authen();
             data["payment_type"] = payment_type;
             data["repay"] = repay;
             data["transfer_to_wallet"] = transferToWallet;
-            data["order_date"] = $("#orderDate").val();
-            data["order_status"] = $("#order_status").val();
+            data["order_date"] = order_date;
+            data["appointment_delivery_date"] = appointment_delivery_date;
+            data["order_status"] = Number(order_status);
             data["customer_payment"] = customer_payment;
             data["voucher_code"] = '';
             data["voucher_value"] = '';
@@ -582,6 +622,7 @@ Common::authen();
             data["wallet_saved"] = totalSavedPoint;
             data["wallet_repay"] = transferToWallet;
             data["wallet_remain"] = totalRemainPoint;
+            data["description"] = description;
 
             let products = [];
             $("#table_list_product tbody tr").each(function () {
@@ -689,7 +730,7 @@ Common::authen();
             $("#bill_of_lading_no").val("");
             $("#customer_name").val("");
             $("#customer_phone").val("");
-            $("#order_status").val("1").trigger("change");
+            $("#order_status").val("0").trigger("change");
             $("#shipping_fee").val("");
             $("#shipping").val("");
             $("#discount").val("");
@@ -698,6 +739,7 @@ Common::authen();
             $("#repay").text("0");
             $('#order_id').val("");
             $("#table_list_product tbody").html("");
+            $('#exchange_cost').val("");
 
             // onchange_order_type(1);
         }
@@ -841,12 +883,91 @@ Common::authen();
                     "<td><input type=\"number\" class=\"form-control w100\" id=\"qty_" + row_num + "\" min=\"1\" value=\""+quantity+"\" onchange=\"onchange_in_list(this, " + row_num + ")\"></td>\n" +
                     "<td><input type=\"text\" class=\"form-control w150\" id=\"reduce_" + row_num + "\" value='" + reduce + "' onchange=\"onchange_in_list(this, " + row_num + ", 'reduce')\"></td>\n" +
                     "<td id=\"total_" + row_num + "\" class=\"w150\">" + formatNumber(total) + "</td>\n" +
-                    "<td id=\"delete_" + row_num + "\"><a href=\"javascript:void(0)\" onclick='delete_product_in_list(" + row_num + ")' class=\"btn\"><i class=\"fa fa-trash text-danger\"></i></a></td>\n" +
+                    "<td id=\"delete_" + row_num + "\">" +
+                    '<i class="fa fa-sync text-info c-pointer" title="Đổi sản phẩm" onclick="exchange_product(this)" "></i>' +
+                    '<input type="text" class="form-control hidden" placeholder="Nhập mã sản phẩm" onchange="find_product_exchange(this)">' +
+                    '<i class="fa fa-times-circle text-danger ml-1 c-pointer hidden" title="Huỷ đổi" onclick="cancel_exchange_product(this)" "></i>' +
+                    "<a href=\"javascript:void(0)\" onclick='delete_product_in_list(" + row_num + ")' class=\"btn\"><i class=\"fa fa-trash text-danger\"></i></a></td>\n" +
                     "</tr>";
                 $("#table_list_product tbody").append(content);
                 row_num++;
                 if(k === data.length-1) {
                     calculate_total();
+                }
+            });
+        }
+
+        function exchange_product(e) {
+            $(e).addClass('hidden');
+            $(e).next().removeClass('hidden').focus();
+            $(e).next().next().removeClass('hidden');
+        }
+
+        function cancel_exchange_product(e) {
+            $(e).addClass('hidden');
+            $(e).prev().addClass('hidden').val('');
+            $(e).prev().prev().removeClass('hidden');
+        }
+
+        function find_product_exchange(e) {
+            let sku = $(e).val();
+            $.ajax({
+                url: '<?php Common::getPath() ?>src/controller/sales/processCheckout.php',
+                type: "POST",
+                dataType: "json",
+                data: {
+                    type: "find_product",
+                    sku: sku
+                },
+                success: function (res) {
+                    console.log(res[0].product_id);
+
+                    // let table = '<tr>' +
+                    //     '<input type="hidden" value="' + res[0].product_id + '"/>' +
+                    //     '<input type="hidden" value="' + res[0].variant_id + '"/>' +
+                    //     '<td>' + res[0].sku + '</td>' +
+                    //     '<td>' + res[0].name + '</td>' +
+                    //     '<td>' + res[0].size + '</td>' +
+                    //     '<td>' + res[0].color + '</td>' +
+                    //     '<td><input type="number" class="form-control" value="1"></td>' +
+                    //     '<td class="right">' + res[0].price + '<sup>đ</sup></td>' +
+                    //     '<td class="right">' + res[0].discount + '<sup>đ</sup></td>' +
+                    //     '<td class="right">' + res[0].price + '<sup>đ</sup></td>' +
+                    //     '<td class="right">' + formatNumber(res[0].profit) + '<sup>đ</sup></td>' +
+                    //     '<td><span class="badge badge-success">Đổi</span></td>' +
+                    //     '</tr>';
+
+                    let table = "<tr id=\"row_" + row_num + "\">\n" +
+                        "<td id=\"product_id_" + row_num + "\" class=\"hidden\">" + res[0].product_id + "</td>\n" +
+                        "<td id=\"variant_id_" + row_num + "\" class=\"hidden\">" + res[0].variant_id + "</td>\n" +
+                        "<td id=\"profit_" + row_num + "\" class=\"hidden\">" + res[0].profit + "</td>\n" +
+                        "<td id=\"image_" + row_num + "\" class=\"w100\"><img src='" + res[0].image + "' style=\"border-radius: 50%;\" onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"' width='50px'></td>\n" +
+                        "<td id=\"sku_" + row_num + "\" class=\"w100\">" + res[0].sku + "</td>\n" +
+                        "<td id=\"name_" + row_num + "\" class=\"w200\"><strong>" + res[0].name + "</strong><br><small>Size: " + res[0].size + "</small><br><small>Màu: " + res[0].color + "</small></td>\n" +
+                        "<td id=\"price_" + row_num + "\" class=\"w150\">" + formatNumber(res[0].retail) + "</td>\n" +
+                        "<td><input type=\"number\" class=\"form-control w100\" id=\"qty_" + row_num + "\" min=\"1\" value=\"1\" onchange=\"onchange_in_list(this, " + row_num + ")\"></td>\n" +
+                        "<td><input type=\"text\" class=\"form-control w150\" id=\"reduce_" + row_num + "\" value='" + (res[0].discount > 0 ? res[0].discount : '')+ "' onchange=\"onchange_in_list(this, " + row_num + ", 'reduce')\"></td>\n" +
+                        "<td id=\"total_" + row_num + "\" class=\"w150\">" + formatNumber(res[0].retail) + "</td>\n" +
+                        "<td id=\"delete_" + row_num + "\">" +
+                        "<span class=\"badge badge-info\">Đổi</span>" +
+                        "<a href=\"javascript:void(0)\" onclick='delete_product_in_list(" + row_num + ")' class=\"btn\"><i class=\"fa fa-trash text-danger\"></i></a>" +
+                        "</td>\n" +
+                        "</tr>";
+
+                    $(e).closest('tr').after(table);
+
+                    $(e).addClass('hidden').val('');
+                    $(e).next().addClass('hidden');
+                    $(e).prev().prev().removeClass('hidden');
+                },
+                error: function (data, errorThrown) {
+                    console.log(data.responseText);
+                    console.log(errorThrown);
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Đã xảy ra lỗi',
+                        text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                    })
                 }
             });
         }
@@ -1028,7 +1149,7 @@ Common::authen();
                 console.log(customer.phone);
                 console.log(customer.name);
                 $("#customer_id").val(customer.id);
-                $("#customer_phone").val(customer.phone);
+                $("#customer_phone").val(format_phone(customer.phone));
                 $("#customer_name").val(customer.name);
             });
 
@@ -1050,7 +1171,7 @@ Common::authen();
                 console.log(customer.phone);
                 console.log(customer.name);
                 $("#customer_id").val(customer.id);
-                $("#customer_phone").val(customer.phone);
+                $("#customer_phone").val(format_phone(customer.phone));
                 $("#customer_name").val(customer.name);
             });
         }

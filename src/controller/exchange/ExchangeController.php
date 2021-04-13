@@ -54,27 +54,31 @@ if (isset($_POST["method"]) && $_POST["method"] == "exchange") {
         $order->setTotal_reduce($total_reduce);
         $order->setTotal_reduce_percent($total_reduce_percent);
         $order->setDiscount($data->discount);
-        $order->setWallet($data->wallet);
+        $order->setWallet(0);
         $order->setTotal_checkout($total_checkout);
         $order->setCustomer_payment($data->customer_payment);
         $order->setPayment_type($data->payment_type);
-        $order->setRepay($data->repay);
-        $order->setTransferToWallet($data->transfer_to_wallet);
+//        $order->setRepay($data->repay);
+        $order->setTransferToWallet(0);
 //        $order->setRepayType($data->repay_type);
         $order->setCustomer_id($data->customer_id);
         $order->setType(2); // exchange
-        $order->setStatus(6);// order exchange
-        $order->setVoucherCode($data->voucher_code);
-        $order->setVoucherValue($data->voucher_value);
+//        $order->setVoucherCode($data->voucher_code);
+        $order->setVoucherValue(0);
         $order->setOrderRefer($data->current_order_id);
         $order->setPaymentExchangeType($data->payment_exchange_type);
         $order->setSource($data->source);
         $order->setOrder_date(date('Y-m-d H:i:s'));
+        $order->setShipping($data->shipping);
+        $order->setShipping_fee($data->shipping_fee);
+        $order->setShipping_unit($data->shipping_unit);
+        $order->setStatus($data->status);
         $orderId = $checkoutDAO->saveOrder($order);
         $order->setId($orderId);
         if (empty($orderId)) {
             throw new Exception("Cannot insert order");
         } else {
+            $checkoutDAO->update_status($data->current_order_id, $data->status, '');
             $response_array = array();
             $curr_arr = get_details($data->curr_products, $orderId, 1); // product exchange
 //            if (count($curr_arr) <= 0) {
@@ -88,35 +92,35 @@ if (isset($_POST["method"]) && $_POST["method"] == "exchange") {
             $add_new_arr = get_details($data->add_new_products, $orderId, 0); // add new product
 
             // save customer point
-            if (!empty($orderId) && !empty($data->customer_id)) {
-                $wallet = new Wallet();
-                $wallet->setOrderId($orderId);
-                $wallet->setCustomerId($data->customer_id);
-                $wallet->setSaved($data->wallet_saved);
-                $wallet->setUsed($data->wallet_used);
-                $wallet->setRepay($data->wallet_repay);
-                $wallet->setRemain($data->wallet_remain);
-                $lastId = $walletDAO->save_wallet($wallet);
-                if(empty($lastId)) {
-                    throw new Exception("Error insert customer point!!!");
-                }
-            }
+//            if (!empty($orderId) && !empty($data->customer_id)) {
+//                $wallet = new Wallet();
+//                $wallet->setOrderId($orderId);
+//                $wallet->setCustomerId($data->customer_id);
+//                $wallet->setSaved($data->wallet_saved);
+//                $wallet->setUsed($data->wallet_used);
+//                $wallet->setRepay($data->wallet_repay);
+//                $wallet->setRemain($data->wallet_remain);
+//                $lastId = $walletDAO->save_wallet($wallet);
+//                if(empty($lastId)) {
+//                    throw new Exception("Error insert customer point!!!");
+//                }
+//            }
 
             // printer receipt
-            if ($data->flag_print_receipt) {
-                $customer_name = '';
-                if(!empty($data->customer_id)) {
-                    $customer = $customerDAO->find_by_id($data->customer_id);
-                    if(!empty($customer)) {
-                        $customer_name = $customer[0]["name"];
-                    }
-                }
-                $order->setCustomerName($customer_name);
-                $order->setPointSave($data->wallet_saved);
-                $printer = new PrinterReceiptExchange();
-                $filename = $printer->print($order, $exchange_arr, $curr_arr, $add_new_arr, $return_arr);
-                $response_array['fileName'] = $filename;
-            }
+//            if ($data->flag_print_receipt) {
+//                $customer_name = '';
+//                if(!empty($data->customer_id)) {
+//                    $customer = $customerDAO->find_by_id($data->customer_id);
+//                    if(!empty($customer)) {
+//                        $customer_name = $customer[0]["name"];
+//                    }
+//                }
+//                $order->setCustomerName($customer_name);
+//                $order->setPointSave($data->wallet_saved);
+//                $printer = new PrinterReceiptExchange();
+//                $filename = $printer->print($order, $exchange_arr, $curr_arr, $add_new_arr, $return_arr);
+//                $response_array['fileName'] = $filename;
+//            }
             $response_array['orderId'] = $orderId;
             echo json_encode($response_array);
 

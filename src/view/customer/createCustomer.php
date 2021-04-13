@@ -210,17 +210,19 @@ Common::authen();
 
       function find_customer_by_phone() {
           $("#phone_number").change(function () {
-             let phone = $("#phone_number").val();
-              let id = $("#id").val();
-             if(phone && !id) {
-                 if(!validate_phone(phone)) {
-                     toastr.error('Số điện thoại không đúng định dạng');
-                     $("#phone_number").addClass("is-invalid").focus();
-                 } else {
-                     $('.spinner-phone').removeClass('hidden');
-                     find_customer(phone, 'phone');
-                 }
-             }
+                let phone = $("#phone_number").val();
+                let id = $("#id").val();
+                if(phone && !id) {
+                    let index = phone.indexOf('0');
+                    console.log(index);
+                    if(!validate_phone(phone)) {
+                        toastr.error('Số điện thoại không đúng định dạng');
+                        $("#phone_number").addClass("is-invalid").focus();
+                    } else {
+                        $('.spinner-phone').removeClass('hidden');
+                        find_customer(phone, 'phone');
+                    }
+                }
           });
       }
 
@@ -519,7 +521,7 @@ Common::authen();
                                           $('#table_customer').DataTable().ajax.reload();
                                       }
                                       if($("#customer_phone").length > 0) {
-                                          $("#customer_phone").val(phone_number);
+                                          $("#customer_phone").val(format_phone(phone_number));
                                       }
                                       if($("#name").length > 0) {
                                           $("#name").val(name);

@@ -22,13 +22,14 @@ require_once("common.php");
 <script src="<?php Common::getPath()?>plugins/jquery-mapael/jquery.mapael.min.js"></script>
 <script src="<?php Common::getPath()?>plugins/jquery-mapael/maps/world_countries.min.js"></script>
 <!-- ChartJS -->
-<script src="<?php Common::getPath()?>plugins/chart.js/Chart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
 
 <!-- PAGE SCRIPTS -->
 <!-- <script src="<?php Common::getPath()?>dist/js/pages/dashboard2.js"></script> -->
 
 <script src="<?php Common::getPath()?>plugins/datatables/jquery.dataTables.js"></script>
 <script src="<?php Common::getPath()?>plugins/datatables/dataTables.bootstrap4.js"></script>
+<script src="https://cdn.rawgit.com/ashl1/datatables-rowsgroup/fbd569b8768155c7a9a62568e66a64115887d7d0/dataTables.rowsGroup.js"></script>
 <!--<script src="--><?php //Common::getPath()?><!--plugins/datatables/dataTables.responsive.min.js"></script>-->
 <!--<script src="--><?php //Common::getPath()?><!--plugins/datatables/responsive.bootstrap4.min.js"></script>-->
 <!--<script src="<?php /*Common::getPath()*/?>plugins/datatables/dataTables.select.min.js" type="text/javascript"></script>-->

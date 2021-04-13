@@ -1,198 +1,84 @@
-
-            <!DOCTYPE>
-            <html>
-            <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-                <title>Receipt Template</title>
-                <script type="text/javascript" src="../connectcode-javascript-code128a.js"></script>
-                <style type="text/css">
-					@font-face {
-						font-family: "Pony";
-						src: url("../fonts/Pony.ttf");
-					}
-					@font-face {
-						font-family: "Roboto-Regular";
-						src: url("../fonts/Roboto-Regular.ttf");
-					}
-					@font-face {
-						font-family: "EAN-13";
-						src: url("../fonts/EAN-13.ttf");
-					}
-
-					body {
-						margin: 20px 40px 20px 20px !important;
-						font-size: 12px !important;
-					}
-                    #barcode {font-weight: normal; font-style: normal; line-height:normal; sans-serif; font-size: 12pt}
-                    .center {
-                        text-align: center;
-                    }
-                    .left {
-                        text-align: left;
-                        padding-left: 3px;
-                    }
-                    .right {
-                        text-align: right;
-                        padding-right: 3px;
-                    }
-                    p {
-                        margin: 5px;
-						font-family: Roboto-Regular;
-                    }
-                    .container, table {
-                        font-family: Roboto-Regular;
-                    }
-                    .custom-font {
-                        font-size: 12px !important;
-                        font-family: Roboto-Regular !important;
-                    }
-                    table {
-                        width: 100%;
-                        border-collapse: collapse;
-						font-size: 12px !important;
-                    }
-                    td {
-                        border: 1px solid;
-                        padding: 4px 0;
-                    }
-                    table thead {
-                        font-weight: bold;
-                    }
-                    
-                    .note {
-                        font-size: 11px;
-                        font-family: Roboto-Regular;
-                    }
-					h4.shop-name {
-						margin-bottom: 2px;
-						font-size: 25px;
-						font-family: Pony;
-						letter-spacing: 3px;
-					}
-					.headline {
-						font-size: 11px;
-						font-family: Roboto-Regular;
-						letter-spacing: 3px;
-						margin: 0 !important;
-					}
-                </style>
-            </head>
-            <body>
-                <div class="container p-0 float-left">
-                    <div class="header row">
-                        <div class="center col-12 p-0 m-0">
-                            <h4 class="shop-name">Shop Mẹ Ỉn</h4>
-                            <p class="headline">Thời trang trẻ em</p>
-                            <span>* * * * * * * * * * * *</span>
-                            <p style="margin: 5px 0;">Đ/c: 227 Phố Huyện - TT.Quốc Oai - Hà Nội</p>
-                            <p>Hotline: 0962.926.302</p>
-                            <p>Website: www.shopmein.vn</p>
-                            <p>Facebook: Shop Mẹ Ỉn</p>
-                            <span>* * * * * * * * * * * *</span>
-                            <h4 style="font-size: 15px;margin: 5px;">HÓA ĐƠN THANH TOÁN</h4>
-                            <div id="barcodecontainer" style="width:100%">
-								<div id="barcode" >202010202528</div>
-							</div><p style="display: inline-block; float: left;width:100%;text-align:left">
-                                <span>Ngày mua hàng:</span>
-                                <span>20/10/2020 - 17:26:26</span>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="body center">
-                        <table class="center">
-                            <thead>
-                                <tr>
-                                    <td class="center" style="width: 30px;">Stt</td>
-                                    <td class="left" style="width: 80px;">Mã sản phẩm</td>
-                                    <td colspan="3" class="left">Tên sản phẩm</td>
-                                </tr>
-                                <tr>
-                                    <td class="left"></td>
-                                    <td class="center" style="width: 30px;">SL</td>
-                                    <td class="center" style="width: 65px;">Giá</td>
-                                    <td class="center" style="width: 50px;">Giảm giá</td>
-                                    <td class="center" style="width: 65px;">Thành tiền</td>
-                                </tr>
-                            </thead><tbody><tr>
-                        <td class="center">1</td>
-                        <td class="left">108201</td>
-                        <td colspan="3" class="left">Mũ lưỡi trai</td>
-                    </tr>
-                    <tr>
-                        <td class="left"></td>
-                        <td class="center">1</td>
-                        <td class="right">95,000<sup>đ</sup></td>
-                        <td class="right"></td>
-                        <td class="right">95,000<sup>đ</sup></td>
-                    </tr><tr>
-                        <td class="center">2</td>
-                        <td class="left">107801</td>
-                        <td colspan="3" class="left">Áo cổ 3p dày dokma</td>
-                    </tr>
-                    <tr>
-                        <td class="left"></td>
-                        <td class="center">1</td>
-                        <td class="right">109,000<sup>đ</sup></td>
-                        <td class="right"></td>
-                        <td class="right">109,000<sup>đ</sup></td>
-                    </tr></tbody><tfoot>
-                            <tr>
-                                <td colspan="4" class="right">Tổng tiền</td>
-                                <td class="right">204,000<sup>đ</sup></td>
-                            </tr>
-                            <tr>
-                                <td colspan="4" class="right">Giảm trên tổng đơn</td>
-                                <td class="right">4,000<sup>đ</sup></td>
-                            </tr><tr>
-                                <td colspan="4" class="right">Tổng Giảm trừ</td>
-                                <td class="right">4,000<sup>đ</sup></td>
-                            </tr>
-                            <tr>
-                                <td colspan="4" class="right">Tổng thanh toán</td>
-                                <td class="right">200,000<sup>đ</sup></td>
-                            </tr>
-                            <tr>
-                                <td colspan="4" class="right">Khách thanh toán</td>
-                                <td class="right"><p style="margin-right: 0">200,000<sup>đ</sup></p>
-                                    <small>Tiền mặt</small>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="3" rowspan="2" class="right">Trả lại</td>
-                                <td class="right">Tiền mặt</td>
-                                <td class="right">
-                                    <p style="margin-right: 0;margin-bottom:0;">0<sup>đ</sup></p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="right">Chuyển vào ví</td>
-                                <td class="right">
-                                    <p style="margin-right: 0;margin-bottom:0;">0<sup>đ</sup></p>
-                                </td>
-                            </tr></tfoot>
-                    </table>
-                    <p class="left">Lưu ý:</p>
-                    <p class="left note">- Hàng đổi trả kèm theo hóa đơn trong vòng 2 ngày</p>
-                    <p class="left note">- Hàng sale không được đổi trả</p>
-                    <p class="left note">- Kiểm tra hàng trước khi ra về</p><span>* * * * * * * * * * * *</span>
-                    <p class="center">Xin cám ơn Quý khách</p>
-                    <p class="center">Hẹn gặp lại</p>
+<!DOCTYPE html>
+        <html>
+        <head>
+            <title>Receipt Template</title>
+            <meta charset="utf-8">
+            <style type="text/css">
+                .center {
+                    text-align: center;
+                }
+                .left {
+                    text-align: left;
+                    padding-left: 3px;
+                }
+                .right {
+                    text-align: right;
+                    padding-right: 3px;
+                }
+                p,
+                h3 {
+                    margin: 5px;
+                }
+        
+                .container,
+                table {
+                    font-size: 13px;
+                    font-family: sans-serif;
+                }
+                .custom-font {
+                    font-size: 13px !important;
+                    font-family: sans-serif !important;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                td {
+                    vertical-align: top;
+                    padding-left: 10px !important;
+                }
+                table thead {
+                    font-weight: bold;
+                }
+                body, .container {
+                    width: 220px;
+                    height: 151px;
+                    overflow: hidden;
+                    padding-left: 10px !important;
+                    padding-right: 10px !important;
+                    margin: 0 !important;
+                }
+                .barcode {
+                	margin: 0;
+                	vertical-align: top;
+                	color: #000000;
+                	text-align: center;
+                }
+                .barcodecell {
+                	text-align: center;
+                	vertical-align: middle;
+                	padding: 0;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="body">
+                    <table><tr><td class="left" style="vertical-align: middle;">FB-VIETTEL</td><td class="right" style="padding-right:15px;">1642738174612</td></tr><tr><td colspan="2" align="left">
+                                <barcode code="1642738174612" type="C128B" class="barcode"></barcode>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="left" style="padding: 0;padding-top: 5px;">
+                                <b style="font-size: 12px;">Lưu thị lệ thu - 0963748883</b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="left" style="border-bottom: 1px solid #b1b1b1;font-size: 11px;padding: 0;padding-bottom: 2px;padding-right:10px;">
+                                đội 1 thôn quyết thắng, Xã Thanh Trạch, Huyện Bố Trạch, Quảng Bình</td>
+                        </tr><tr><td colspan="2" class="left" style="font-size: 10px;padding: 0;padding-top:5px;font-weight: bold;">Tổng số sản phẩm: 1</td></tr><tr><td colspan="2" class="left" style="font-size: 10px;padding: 0;">1.Giày vải cổ thấp, Đen, 33-21,5cm. SL:1</td></tr></table>
                 </div>
             </div>
-            <script type="text/javascript">
-                /* <![CDATA[ */
-                  function get_object(id) {
-                   var object = null;
-                   if (document.layers) {
-                    object = document.layers[id];
-                   } else if (document.all) {
-                    object = document.all[id];
-                   } else if (document.getElementById) {
-                    object = document.getElementById(id);
-                   }
-                   return object;
-                  }
-                get_object("barcode").innerHTML=DrawHTMLBarcode_Code128A(get_object("barcode").innerHTML,"yes","in",0,1.5,0.3,"bottom","center","","black","white");
-                /* ]]> */
-                </script>
         </body>
+        
         </html>
