@@ -7,8 +7,8 @@ include("../../common/cities/Zone.php");
 
 $db = new DBConnect();
 
-$dao = new CustomerDAO();
-$dao->setConn($db->getConn());
+$dao = new CustomerDAO($db);
+// $dao->setConn($db->getConn());
 
 if (isset($_GET["method"]) && $_GET["method"] == "find_all") {
     try {
@@ -84,28 +84,17 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $data = json_decode($data);
 
         $customer_id = $data->id;
-        if (!$customer_id) {
+        if (!empty($customer_id)) {
             $phone = $data->phone;
             if (empty($phone)) {
                 echo 'not_existed_phone';
                 return;
-            } else {
-                $checkExist = $dao->find_customer($phone, 'phone');
-                if ($checkExist) {
-                    echo 'existed_phone';
-                    return;
-                }
-            }
-
-            $email = $data->email;
-            if (!empty($email)) {
-                $checkExist = $dao->find_customer($email, 'email');
-                if ($checkExist) {
-                    echo 'existed_email';
-                    return;
-                }
-            }
+            } 
+            // else {
+            //     $customer = $dao->find_customer($phone, 'phone');
+            // }
         }
+
         $customer = new Customer();
         $customer->setName($data->name);
         $customer->setAvatar($data->avatar);
@@ -118,7 +107,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $customer->setCityId($data->cityId);
         $customer->setDistrictId($data->districtId);
         $customer->setVillageId($data->villageId);
-        if ($data->id > 0) {
+        if (!empty($data->id)) {
             $customer->setId($data->id);
             $dao->update_customer($customer);
             echo 'success';

@@ -1099,6 +1099,7 @@ Common::authen();
 
     function format_source(data) {
         let source = Number(data.source);
+        console.log(source);
         switch (source) {
             case 1 :
                 return '<span class="badge badge-success">Website</span>';
@@ -1106,6 +1107,8 @@ Common::authen();
                 return '<span class="badge badge-primary">Facebook</span>';
             case 3:
                 return '<span class="badge badge-danger">Shopee</span>';
+            case 4:
+                return '<span class="badge badge-info">FB TTTE</span>';
             default:
                 return '<span class="badge badge-warning">Cửa hàng</span>';
         }

@@ -4,6 +4,10 @@ class VoucherDAO
 {
     private $conn;
 
+    function __construct($db) {
+        $this->conn = $db->getConn();
+    } 
+
     function find_all()
     {
         try {

@@ -7,6 +7,51 @@ class Zone
         
     }
 
+    public function getCityIdByName($name = null) {
+    	global $tinh_thanhpho;
+		if(!is_array($tinh_thanhpho) || empty($tinh_thanhpho)){
+			include 'tinh_thanhpho.php';
+		}
+		$cityId = null;
+		foreach ($tinh_thanhpho as $key => $value) {
+			if($value == $name) {
+				$cityId = $key; 
+				break;
+			}
+		}
+		return $cityId;
+    }
+
+    public function getDistrictIdByName($districtName = null) {
+    	global $quan_huyen;
+		if(!is_array($quan_huyen) || empty($quan_huyen)){
+			include 'quan_huyen.php';
+		}
+		$districtId = null;
+		foreach ($quan_huyen as $key => $value) {
+			if($value["name"] == $districtName) {
+				$districtId = $value["maqh"]; 
+				break;
+			}
+		}
+		return $districtId;
+    }
+
+    public function getWardIdByName($wardName = null) {
+    	global $xa_phuong_thitran;
+		if(!is_array($xa_phuong_thitran) || empty($xa_phuong_thitran)){
+			include 'xa_phuong_thitran.php';
+		}
+		$wardId = null;
+		foreach ($xa_phuong_thitran as $key => $value) {
+			if($value["name"] == $wardName) {
+				$wardId = $value["xaid"]; 
+				break;
+			}
+		}
+		return $wardId;
+    }
+
 	public function get_name_city($id = ''){
 		global $tinh_thanhpho;
 		if(!is_array($tinh_thanhpho) || empty($tinh_thanhpho)){
@@ -16,7 +61,7 @@ class Zone
 		if($id <10) {
 			$id_tinh = sprintf("%01d", intval($id));
 		}
-		$tinh_thanhpho = (isset($tinh_thanhpho[$id_tinh]))?$tinh_thanhpho[$id_tinh]:'';
+		$tinh_thanhpho = (isset($tinh_thanhpho[$id_tinh])) ? $tinh_thanhpho[$id_tinh] : '';
 		return $tinh_thanhpho;
 	}
 

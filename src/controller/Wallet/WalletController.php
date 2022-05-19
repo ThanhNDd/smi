@@ -6,8 +6,8 @@ include("../../dao/WalletDAO.php");
 
 $db = new DBConnect();
 
-$dao = new WalletDAO();
-$dao->setConn($db->getConn());
+$dao = new WalletDAO($db);
+// $dao->setConn($db->getConn());
 
 if (isset($_POST["method"]) && $_POST["method"] == "get_ballance_in_wallet") {
     try {

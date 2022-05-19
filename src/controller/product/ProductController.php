@@ -8,8 +8,8 @@ include("../../controller/product/PrinterBarcode.php");
 
 $db = new DBConnect();
 
-$dao = new ProductDAO();
-$dao->setConn($db->getConn());
+$dao = new ProductDAO($db);
+// $dao->setConn($db->getConn());
 
 if (isset($_POST["method"]) && $_POST["method"] == "get_max_id") {
     try {
@@ -239,6 +239,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $prodId = $data->product_id;
         $product->setId($data->product_id);
         $product->setName($data->name);
+        $product->setNameForWebsite($data->name_for_website);
         $product->setLink($data->link);
         $product->setFee_transport($data->fee);
         $product->setPrice($data->price);
@@ -279,6 +280,11 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
             $variation->setFee($variations[$i]->fee);
             $variation->setProfit($variations[$i]->profit);
             $variation->setPercent($variations[$i]->percent);
+            $variation->setLength__($variations[$i]->length__);
+            $variation->setWeight($variations[$i]->weight);
+            $variation->setHeight($variations[$i]->height);
+            $variation->setAge($variations[$i]->age);
+            $variation->setDimension($variations[$i]->dimension);
             $variation->setImage($variations[$i]->image);
             $dao->save_variation($variation);
         }

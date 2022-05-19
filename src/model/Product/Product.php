@@ -2,6 +2,7 @@
 class Product {
     private $id;
     private $name;
+    private $name_for_website;
     private $image;
     private $image_type;
     private $link;
@@ -58,6 +59,27 @@ class Product {
     public function setName($name)
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of name for website
+     */ 
+    public function getNameForWebsite()
+    {
+        return $this->name_for_website;
+     
+    }
+
+    /**
+     * Set the value of name
+     *
+     * @return  self
+     */ 
+    public function setNameForWebsite($name_for_website)
+    {
+        $this->name_for_website = $name_for_website;
 
         return $this;
     }

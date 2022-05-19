@@ -187,7 +187,7 @@ Common::authen();
           }
       }
 
-      function setDataInform(data) {
+      async function setDataInform(data) {
           $("#customer_exist").val('');
           $("#id").val(data.id);
           $("#phone_number").val(data.phone);
@@ -199,9 +199,9 @@ Common::authen();
           console.log(data.city_id);
           console.log(data.district_id);
           console.log(data.village_id);
-          generate_select2_city(data.city_id);
-          generate_select2_district(data.city_id, data.district_id);
-          generate_select2_village(data.district_id, data.village_id);
+          await generate_select2_city(data.city_id);
+          await generate_select2_district(data.city_id, data.district_id);
+          await generate_select2_village(data.district_id, data.village_id);
           $("#address").val(data.address);
           $("#birthday").val(format_date(data.birthday));
           $("#facebook").val(data.facebook);

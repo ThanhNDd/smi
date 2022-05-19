@@ -147,124 +147,144 @@ const Toast = Swal.mixin({
 });
 
 function generate_select2_city(city_id) {
-    // show_loading();
-    $.ajax({
-        dataType: "json",
-        url: root_path + "src/controller/orders/OrderController.php",
-        data: {
-            orders: 'loadDataCity'
-        },
-        type: 'GET',
-        success: function (data) {
-            // hide_loading();
-            reset_select2('.select-city');
-            $('.select-city').select2({
-                data: data.results,
-                theme: 'bootstrap4',
-                placeholder: 'Lựa chọn'
-            });
-            // let select = $('.select-city');
-            // let option = $('<option></option>').attr('selected', true).text("Lựa chọn").val(-1);
-            // option.appendTo(select);
-            // select.trigger('change');
-            if (city_id) {
-                $(".select-city").val(city_id).trigger("change");
-            } else {
-                generate_select2_district();
+    return new Promise((resolve) => {
+
+        // show_loading();
+        $.ajax({
+            dataType: "json",
+            url: root_path + "src/controller/orders/OrderController.php",
+            data: {
+                orders: 'loadDataCity'
+            },
+            type: 'GET',
+            success: function (data) {
+                // hide_loading();
+                reset_select2('.select-city');
+                $('.select-city').select2({
+                    data: data.results,
+                    theme: 'bootstrap4',
+                    placeholder: 'Lựa chọn'
+                });
+                // let select = $('.select-city');
+                // let option = $('<option></option>').attr('selected', true).text("Lựa chọn").val(-1);
+                // option.appendTo(select);
+                // select.trigger('change');
+                if (city_id) {
+                    $(".select-city").val(city_id).trigger("change");
+                } else {
+                    generate_select2_district();
+                }
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                // hide_loading();
             }
-        },
-        error: function (data, errorThrown) {
-            console.log(data.responseText);
-            console.log(errorThrown);
-            // hide_loading();
-        }
+        });
+        resolve();
+
     });
 }
 
 function generate_select2_district(cityId, districtId) {
-    // show_loading();
-    if(!cityId) {
-        reset_select2('.select-district');
-        $('.select-district').select2({
-            data: null,
-            theme: 'bootstrap4',
-            placeholder: 'Lựa chọn'
-        });
-        generate_select2_village();
-        // hide_loading();
-    } else {
-        $.ajax({
-            dataType: "json",
-            url: root_path + "src/controller/orders/OrderController.php",
-            data: {
-                orders: 'loadDataDistrict',
-                cityId: cityId
-            },
-            type: 'GET',
-            success: function (data) {
-                // console.log(data.results);
-                // hide_loading();
-                reset_select2('.select-district');
-                $('.select-district').select2({
-                    data: data.results,
-                    theme: 'bootstrap4',
-                    placeholder: 'Lựa chọn'
-                });
-                if (districtId) {
-                    districtId = districtId.padStart(3, '0');
-                    $(".select-district").val(districtId).trigger("change");
-                } else {
-                    generate_select2_village();
+    return new Promise((resolve) => {
+        console.log("cityId: ", cityId);
+        console.log("districtId: ", districtId);
+        // show_loading();
+        if(!cityId) {
+            reset_select2('.select-district');
+            $('.select-district').select2({
+                data: null,
+                theme: 'bootstrap4',
+                placeholder: 'Lựa chọn'
+            });
+            generate_select2_village();
+            // hide_loading();
+        } else {
+            $.ajax({
+                dataType: "json",
+                url: root_path + "src/controller/orders/OrderController.php",
+                data: {
+                    orders: 'loadDataDistrict',
+                    cityId: cityId
+                },
+                type: 'GET',
+                success: function (data) {
+                    // console.log(data.results);
+                    // hide_loading();
+                    reset_select2('.select-district');
+                    $('.select-district').select2({
+                        data: data.results,
+                        theme: 'bootstrap4',
+                        placeholder: 'Lựa chọn'
+                    });
+                    if (districtId) {
+                        if(districtId.length < 3) {
+                            districtId = districtId.padStart(3, '0');
+                        }
+                        $(".select-district").val(districtId).trigger("change");
+                    } else {
+                        generate_select2_village();
+                    }
+                },
+                error: function (data, errorThrown) {
+                    console.log(data.responseText);
+                    console.log(errorThrown);
+                    // hide_loading();
                 }
-            },
-            error: function (data, errorThrown) {
-                console.log(data.responseText);
-                console.log(errorThrown);
-                // hide_loading();
-            }
-        });
-    }
+            });
+        }
+    resolve();
+
+    });
 }
 
 function generate_select2_village(districtId, villageId) {
-    // show_loading();
-    if(!districtId) {
-        reset_select2('.select-village');
-        $('.select-village').select2({
-            data: null,
-            theme: 'bootstrap4',
-            placeholder: 'Lựa chọn'
-        });
-        // hide_loading();
-    } else {
-        $.ajax({
-            dataType: "json",
-            url: root_path + "src/controller/orders/OrderController.php",
-            data: {
-                orders: 'loadDataVillage',
-                districtId: districtId
-            },
-            type: 'GET',
-            success: function (data) {
-                reset_select2('.select-village');
-                $('.select-village').select2({
-                    data: data.results,
-                    theme: 'bootstrap4',
-                    placeholder: 'Lựa chọn'
-                });
-                // hide_loading();
-                if (villageId) {
-                    villageId = villageId.padStart(5, '0');
-                    $(".select-village").val(villageId).trigger("change");
+    return new Promise((resolve) => {
+        // show_loading();
+        if(!districtId) {
+            reset_select2('.select-village');
+            $('.select-village').select2({
+                data: null,
+                theme: 'bootstrap4',
+                placeholder: 'Lựa chọn'
+            });
+            // hide_loading();
+        } else {
+            $.ajax({
+                dataType: "json",
+                url: root_path + "src/controller/orders/OrderController.php",
+                data: {
+                    orders: 'loadDataVillage',
+                    districtId: districtId
+                },
+                type: 'GET',
+                success: function (data) {
+                    reset_select2('.select-village');
+                    $('.select-village').select2({
+                        data: data.results,
+                        theme: 'bootstrap4',
+                        placeholder: 'Lựa chọn'
+                    });
+                    // hide_loading();
+                    if (villageId) {
+                        if(villageId.length < 5) {
+                                villageId = villageId.padStart(5, '0');
+                        }
+                        
+                        $(".select-village").val(villageId).trigger("change");
+                    }
+                },
+                error: function (data, errorThrown) {
+                    console.log(data.responseText);
+                    console.log(errorThrown);
+                    // hide_loading();
                 }
-            },
-            error: function (data, errorThrown) {
-                console.log(data.responseText);
-                console.log(errorThrown);
-                // hide_loading();
-            }
-        });
-    }
+            });
+        }
+        resolve();
+
+    });
 }
 
 function reset_select2(element) {

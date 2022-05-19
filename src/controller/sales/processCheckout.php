@@ -15,20 +15,20 @@ include("../exchange/PrinterReceiptExchange.php");
 
 $db = new DBConnect();
 
-$dao = new ProductDAO();
-$dao->setConn($db->getConn());
+$dao = new ProductDAO($db);
+// $dao->setConn($db->getConn());
 
-$checkout_dao = new CheckoutDAO();
-$checkout_dao->setConn($db->getConn());
+$checkout_dao = new CheckoutDAO($db);
+// $checkout_dao->setConn($db->getConn());
 
-$voucherDAO = new VoucherDAO();
-$voucherDAO->setConn($db->getConn());
+$voucherDAO = new VoucherDAO($db);
+// $voucherDAO->setConn($db->getConn());
 
-$customerDAO = new CustomerDAO();
-$customerDAO->setConn($db->getConn());
+$customerDAO = new CustomerDAO($db);
+// $customerDAO->setConn($db->getConn());
 
-$walletDAO = new WalletDAO();
-$walletDAO->setConn($db->getConn());
+$walletDAO = new WalletDAO($db);
+// $walletDAO->setConn($db->getConn());
 
 if (isset($_POST["type"]) && $_POST["type"] == "find_product") {
     try {

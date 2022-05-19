@@ -13,17 +13,17 @@ include("PrinterReceiptExchange.php");
 
 $db = new DBConnect();
 
-$productDAO = new ProductDAO();
-$productDAO->setConn($db->getConn());
+$productDAO = new ProductDAO($db);
+// $productDAO->setConn($db->getConn());
 
-$checkoutDAO = new CheckoutDAO();
-$checkoutDAO->setConn($db->getConn());
+$checkoutDAO = new CheckoutDAO($db);
+// $checkoutDAO->setConn($db->getConn());
 
-$walletDAO = new WalletDAO();
-$walletDAO->setConn($db->getConn());
+$walletDAO = new WalletDAO($db);
+// $walletDAO->setConn($db->getConn());
 
-$customerDAO = new CustomerDAO();
-$customerDAO->setConn($db->getConn());
+$customerDAO = new CustomerDAO($db);
+// $customerDAO->setConn($db->getConn());
 
 if (isset($_POST["method"]) && $_POST["method"] == "find_order") {
     $order_id = $_POST["orderId"];

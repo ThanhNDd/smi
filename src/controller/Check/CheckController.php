@@ -10,11 +10,11 @@ include("../../dao/ProductDAO.php");
 
 $db = new DBConnect();
 
-$dao = new CheckDAO();
-$dao->setConn($db->getConn());
+$dao = new CheckDAO($db);
+// $dao->setConn($db->getConn());
 
-$product_dao = new ProductDAO();
-$product_dao->setConn($db->getConn());
+$product_dao = new ProductDAO($db);
+// $product_dao->setConn($db->getConn());
 
 if (isset($_POST["method"]) && $_POST["method"] == "reviews_check") {
   try {

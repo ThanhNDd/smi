@@ -12,13 +12,13 @@ Common::authen();
     <?php require_once('../../common/js.php'); ?>
     <style>
 
-        td.details-control {
+        .details-control {
             text-align: center;
             color: forestgreen;
             cursor: pointer;
         }
 
-        tr.shown td.details-control {
+        tr.shown .details-control {
             text-align: center;
             color: red;
         }
@@ -201,6 +201,25 @@ Common::authen();
             background-color:transparent
           }
         }
+        .customer-selected:checked + .existed-customer {
+            border: 1px solid #26a2b8 !important;
+        }
+        .existed-customer {
+            border: 1px solid red;
+            border-radius: 5px;
+            padding: 5px;
+            margin: 5px;
+        }
+        .form-check-input {
+            margin-top: 2.3rem !important;
+        }
+        .form-check-label {
+            width: 100%;
+        }
+        .btn {
+            font-size: 13px !important;
+        }
+        
     </style>
 </head>
 <?php require_once('../../common/header.php'); ?>
@@ -211,36 +230,47 @@ Common::authen();
         <div class="col-md-12 col-sm-12">
             <div class="card">
                 <div class="card-body row">
-                    <div class="col-md-1 mb-2">
+                    <div class="m-2">
                         <a href="javascript:void(0)" class="btn btn-sm btn-primary order-create btn-flat p-2">
                             <i class="fas fa-plus-circle"></i> Tạo mới
                         </a>
                     </div>
-                    <div class="col-md-1 mb-2">
-                        <button class="btn btn-sm btn-info delivery_order btn-flat p-2" disabled>
-                            <i class="fas fa-shipping-fast"></i> Giao hàng <span id="delivery_order_checked"></span>
-                        </button>
+                    <div class="m-2">
+                        <a href="<?php Common::getPath() ?>src/view/batch/import.php" class="btn btn-sm btn-danger btn-flat p-2">
+                            <i class="fas fa-shipping-fast"></i>Tạo đơn hàng loạt
+                        </a>
                     </div>
-                    <div class="col-md-3 mb-2">
-                        <select class="form-control col-md-7 d-inline-block" name="order_status" id="order_status_batch">
-<!--                            <option value="0" selected="selected">Chưa xử lý</option>-->
+                    <div class="m-2">
+                        <select class="form-control  float-left" name="order_status" id="order_status_batch"
+                        style="width: 60%;">
                             <option value="1" selected="selected">Đã gói hàng</option>
                             <option value="2">Đã giao</option>
                             <option value="3">Hoàn thành</option>
-<!--                            <option value="4">Đổi size</option>-->
                             <option value="5">Chuyển hoàn</option>
                             <option value="6">Huỷ</option>
-<!--                            <option value="7">Giao hàng sau</option>-->
                             <option value="8">Đợi hàng về</option>
                         </select>
-                        <button class="btn btn-sm btn-info btn-flat p-2 order_status_update" disabled>
+                        <button class="btn btn-sm btn-info btn-flat p-2 order_status_update" disabled
+                        style=" width: 40%;padding-left: 5px !important;">
                             <i class="fa fa-spinner fa-spin show_loading_update_status hidden"></i>&nbsp;<i class="far fa-save"></i> Cập nhật <span id="order_checked_for_update"></span>
                         </button>
                     </div>
-                    <div class="col-md-3 mb-2">
-                        <button class="btn btn-sm btn-success btn-flat p-2 order_status_print_update" disabled>
-                            <i class="fa fa-spinner fa-spin show_loading_update_print_status hidden"></i>&nbsp;<i class="fa fa-print fa-save-print-status"></i> In <span id="order_checked_for_print_for_update"></span> đơn hàng
-                        </button>
+                    <div class="m-2">
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-primary dropdown-toggle print_order p-2" data-toggle="dropdown" disabled>
+                              <i class="fa fa-spinner fa-spin show_loading_print_order_checked hidden"></i>&nbsp;<i class="fa fa-print fa-save-print-status"></i> In <span id="print_order_checked"></span> đơn hàng
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item print_order_JT" href="#">JNT</a>
+                              <a class="dropdown-item print_order_GHN" href="#">GHN</a>
+                              <a class="dropdown-item print_order_VTP" href="#">VTP</a>
+                            </div>
+                          </div>
+                    </div>
+                    <div class="m-2">
+                        <a href="<?php Common::getPath() ?>src/view/batch/update.php" class="btn btn-sm btn-info btn-flat p-2">
+                            <i class="fas fa-bolt"></i> Cập nhật đơn hàng J&T
+                        </a>
                     </div>
                 </div>
             </div>
@@ -253,6 +283,12 @@ Common::authen();
                 <h4 class="card-title">Danh sách cần xử lý</h4>
             </div>   -->
           <div class="card-body row status">
+           <!--  <div class="col total-waiting-approve-status text-center c-pointer">
+                <span class="info-box-number">
+                    <h4 class="total_waiting_approve text-secondary">0</h4>
+                </span>
+                <span class="info-box-text">Chờ xác nhận<br><small>Đơn hàng website</small></span>
+            </div> -->
             <div class="col total-pending-status text-center c-pointer">
                 <span class="info-box-number">
                     <h4 class="total_pending text-warning">0</h4>
@@ -295,6 +331,7 @@ Common::authen();
                 </span>
                 <span class="info-box-text">Giao hàng sau</span>
             </div>
+            
           </div>
         </div>
       </div>
@@ -439,7 +476,7 @@ Common::authen();
                                 <div class="col-md-6 col-sm-12 text-left">
                                     <span class="info-box-text">Website</span>
                                     <span class="info-box-number">
-                                        <h5 class="total_exchange">0<sup>đ</sup></h5>
+                                        <h5 class="total_on_website">0<sup>đ</sup></h5>
                                     </span>
                                     <span class="info-box-number total_profit_on_website"></span>
                                     <span class="info-box-text percent_on_website"></span>
@@ -502,19 +539,19 @@ Common::authen();
                             <tr>
                                 <th class="w20 center"><input type="checkbox" id="check_all_order"></th>
                                 <th class="w20 center"></th>
-                                <th class="w20 center">ID</th>
-                                <th class="w80 left">Khách hàng</th>
-                                <th class="w80 left">SĐT</th>
-                                <th class="w150 left">Địa chỉ</th>
-                                <th class="w80 left">Ghi chú</th>
-                                <th class="w80 left">SL</th>
-                                <th class="w80 left">Mã vận đơn</th>
-                                <th class="w80 right">Tổng tiền</th>
+                                <!--<th class="w20 center">ID</th>-->
+                                <th class="left">Khách hàng</th>
+                                <!--<th class="w80 left">SĐT</th>-->
+                                <!--<th class="w150 left">Địa chỉ</th>-->
+                                <!--<th class="w80 left">Ghi chú</th>-->
+                                <th class="w20 left">SL</th>
+                                <th class="w60 left">Mã vận đơn</th>
+                                <th class="w50 right">Tổng tiền</th>
                                 <th class="w80 center">Ngày mua hàng</th>
-                                <th class="w50 left">Nguồn</th>
+                                <!--<th class="w50 left">Nguồn</th>-->
                                 <th class="w50 left">Trạng thái</th>
-                                <th class="w50 left">Trạng thái In đơn</th>
-                                <th class="w80 left">Hành động</th>
+                                <!--<th class="w50 left">Trạng thái In đơn</th>-->
+                                <!-- <th class="w50 left">Hành động</th> -->
                             </tr>
                             </thead>
                         </table>
@@ -525,17 +562,6 @@ Common::authen();
             </div>
         </div>
 <!--      end table data-->
-<!--      chart-->
-        <!-- <div class="col-md-12 col-sm-12">
-        <div class="card">
-          <div class="card-body">
-            <div class="chart">
-              <canvas id="barChart" style="height:230px; min-height:230px"></canvas>
-            </div>
-          </div>
-        </div>
-      </div> -->
-<!--      end chart-->
     </div>
 </section>
 <div class="modal fade" tabindex="-1" id="bill_modal">
@@ -549,6 +575,22 @@ Common::authen();
             </div>
             <div class="modal-body">
                 <input type="hidden" id="order_id_modal">
+                <div class="form-group">
+                    <label>Đơn vị vận chuyển</label>
+                    <select class="shipping-unit form-control" id="shipping_unit_modal">
+                        <option value="-1">Chọn đơn vị vận chuyển</option>
+                        <option value="J&T">J&T Express</option>
+                        <option value="SPXEXPRESS">SHOPEE Express</option>
+                        <option value="VTP">Viettel Post</option>
+                        <option value="GHN">Giao Hàng Nhanh</option>
+                        <option value="GHTK">Giao Hàng Tiết Kiệm</option>
+                        <option value="VNP">Việt Nam Post</option>
+                        <option value="VNPN">Việt Nam Post Nhanh</option>
+                        <option value="NINJAVAN">Ninja Van</option>
+                        <option value="BESTEXPRESS">BEST Express</option>
+                        <option value="GRABEXPRESS">GRAB Express</option>
+                    </select>
+                </div>
                 <div class="form-group">
                   <label for="bill_of_lading_no_modal">Mã vận đơn</label>
                   <input type="text" class="form-control" id="bill_of_lading_no_modal" placeholder="Mã vận đơn"
@@ -591,6 +633,70 @@ Common::authen();
         </div>
     </div>
 </div>
+<div class="modal fade" id="modal_print_order">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+      
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Danh sách đơn hàng</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body">
+            <table class="table table-striped d-none" id="tbl_print_order_JNT">
+                <thead>
+                  <tr>
+                    <th>Mã đơn hàng</th>
+                    <th>Tên người nhận</th>
+                    <th>Số điện thoại</th>
+                    <th>Địa chỉ</th>
+                    <th>Tỉnh/Thành phố</th>
+                    <th>Quận/Huyện</th>
+                    <th>Xã/Phường</th>
+                    <th>Tên hàng hoá</th>
+                    <th>Loại hàng hoá</th>
+                    <th>Trọng lượng</th>
+                    <th>Số kiện</th>
+                    <th>Giá trị</th>
+                    <th>COD</th>
+                  </tr>
+                </thead>
+                <tbody id="tbl_body_print_order_JNT"></tbody>
+            </table>  
+            <table class="table table-striped d-none" id="tbl_print_order_GHN">
+                <thead>
+                  <tr>
+                    <th>Tên người nhận</th>
+                    <th>Số điện thoại</th>
+                    <th>Địa chỉ</th>
+                    <th>Gói cước</th>
+                    <th>COD</th>
+                    <th>Yêu cầu</th>
+                    <th>Trọng lượng</th>
+                    <th>Dài</th>
+                    <th>Rộng</th>
+                    <th>Cao</th>
+                    <th>Khai giá</th>
+                    <th>Giá trị hàng hoá</th>
+                    <th>Shop trả ship</th>
+                    <th>Gửi hàng tại bưu cục</th>
+                    <th>Mã đơn hàng riêng</th>
+                    <th>Sản phẩm</th>
+                    <th>Ghi chú thêm</th>
+                  </tr>
+                </thead>
+                <tbody id="tbl_body_print_order_GHN"></tbody>
+            </table>  
+        </div>
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 <div class="iframeArea" style="visibility: hidden"></div>
 <!-- /.content -->
 <?php include 'createOrders.php'; ?>
@@ -616,13 +722,18 @@ Common::authen();
     const WAITING_EXCHANGE = 11;
     const EXCHANGED = 12;
     const CREATED_BILL = 13;
+    const WAITING_APPORVE = 14;
+
+
+
 
     let delivery_order_checked = [];
     let order_checked = [];
     let order_checked_for_print = [];
+    let data_print = [];
     let status = [];
     let table;
-    $(document).ready(function () {
+    $(document).ready(function () { 
         // set title for page
         set_title("Danh sách đơn hàng online");
 
@@ -651,6 +762,7 @@ Common::authen();
         packed_status_click();
         deliverd_status_click();
         appointment_status_click();
+        wating_approve_status_click();
 
         tab_all_click();
         tab_pending_click();
@@ -669,60 +781,8 @@ Common::authen();
         update_bill();
 
         batch_update_order_status_print();
-        // chart();
+        print_order_JT();
     });
-
-    // function chart() {
-
-    //     let start_date = $("#startDate").val();
-    //     let end_date = $("#endDate").val();
-    //     let start_day = start_date.split('/')[0];
-
-    //     var areaChartData = {
-    //         labels  : ['01/01/2021', '02/01/2021', '03/01/2021', '04/01/2021', '05/01/2021', '06/01/2021', '07/01/2021'],
-    //         datasets: [
-    //             {
-    //                 label               : 'Sales',
-    //                 backgroundColor     : 'rgba(60,141,188,0.9)',
-    //                 borderColor         : 'rgba(60,141,188,0.8)',
-    //                 pointRadius          : false,
-    //                 pointColor          : '#3b8bba',
-    //                 pointStrokeColor    : 'rgba(60,141,188,1)',
-    //                 pointHighlightFill  : '#fff',
-    //                 pointHighlightStroke: 'rgba(60,141,188,1)',
-    //                 data                : [28, 48, 40, 19, 86, 27, 90]
-    //             },
-    //             {
-    //                 label               : 'Profit',
-    //                 backgroundColor     : 'rgba(210, 214, 222, 1)',
-    //                 borderColor         : 'rgba(210, 214, 222, 1)',
-    //                 pointRadius         : false,
-    //                 pointColor          : 'rgba(210, 214, 222, 1)',
-    //                 pointStrokeColor    : '#c1c7d1',
-    //                 pointHighlightFill  : '#fff',
-    //                 pointHighlightStroke: 'rgba(220,220,220,1)',
-    //                 data                : [65, 59, 80, 81, 56, 55, 40]
-    //             },
-    //         ]
-    //     };
-
-    //     var barChartCanvas = $('#barChart').get(0).getContext('2d');
-    //     var barChartData = $.extend(true, {}, areaChartData);
-    //     barChartData.datasets[0] = areaChartData.datasets[1];
-    //     barChartData.datasets[1] = areaChartData.datasets[0];
-
-    //     var barChartOptions = {
-    //         responsive              : true,
-    //         maintainAspectRatio     : false,
-    //         datasetFill             : false
-    //     };
-
-    //     var barChart = new Chart(barChartCanvas, {
-    //         type: 'bar',
-    //         data: barChartData,
-    //         options: barChartOptions
-    //     })
-    // }
 
     function current_date() {
         let currentDate = new Date();
@@ -867,6 +927,14 @@ Common::authen();
         });
     }
 
+    // function tab_wating_approve_click() {
+    //     $("#status_waiting_approve").click(function () {
+    //         $(this).parent().parent().find('a').removeClass('active');
+    //         $(this).addClass('active');
+    //         get_status(WAITING);
+    //     });
+    // }
+
     function deliverd_status_click() {
         $(".total-delivered-status").click(function () {
             if($(this).hasClass('active')) {
@@ -970,6 +1038,21 @@ Common::authen();
                 $(".nav-tabs").find('.nav-link').addClass('disabled');
                 let status = WAITING_RETURN+','+APPROVED_RETURN+','+WAITING_EXCHANGE;
                 generate_datatable('status_no_date', status);
+            }
+        });
+    }
+
+    function wating_approve_status_click() {
+        $(".total-waiting-approve-status").click(function () {
+            if($(this).hasClass('active')) {
+                $(this).removeClass('active');
+                $(".nav-tabs").find('.nav-link').removeClass('disabled');
+                generate_datatable('date');
+            } else {
+                $(this).parent().children().removeClass('active');
+                $(this).addClass('active');
+                $(".nav-tabs").find('.nav-link').addClass('disabled');
+                generate_datatable('status_no_date', WAITING_APPORVE);
             }
         });
     }
@@ -1153,6 +1236,7 @@ Common::authen();
                 $(".total_appointment").text(res.appointment);
                 $(".total_success").text(res.success);
                 $(".total_return").text(res.exchange);
+                $(".total_waiting_approve").text(res.wating_approve);
             },
             error: function (data, errorThrown) {
                 console.log(data.responseText);
@@ -1255,11 +1339,20 @@ Common::authen();
     function update_bill() {
         $("#btn_update_bill").click(function () {
             let order_id = $("#order_id_modal").val();
+            let shipping_unit = $("#shipping_unit_modal").val();
+            console.log(shipping_unit);
             let bill_no = $("#bill_of_lading_no_modal").val();
             let shipping_fee = replaceComma($("#shipping_fee_modal").val());
             let status = $("#order_status_modal").val();
             let estimated_delivery = $("#estimated_delivery").val();
             
+            if(shipping_unit == "-1") {
+                $("#shipping_unit_modal").addClass("is-invalid").focus();
+                toast_error_message('Bạn chưa chọn Đơn vị vận chuyển');
+                return false;
+            } else {
+                $("#shipping_unit_modal").removeClass("is-invalid");
+            }
             if(!bill_no) {
                 $("#bill_of_lading_no_modal").addClass("is-invalid").focus();
                 toast_error_message('Mã vận đơn không được để trống');
@@ -1304,6 +1397,7 @@ Common::authen();
                         data: {
                             method: 'update_bill',
                             order_id: order_id,
+                            shipping_unit: shipping_unit,
                             status: status,
                             bill_no: bill_no,
                             shipping_fee: shipping_fee,
@@ -1337,12 +1431,18 @@ Common::authen();
         $('#check_all_order').on('click', function () {
             order_checked = [];
             order_checked_for_print = [];
+            data_print = [];
             
             if($('#check_all_order').prop("checked")) {
                 $(this).closest('table').find('td input:checkbox').each(function(){
                     let tr = $(this).closest('tr');
+                    let row = table.row(tr);
+                    const FACEBOOK = 2;
+                    if(row.data().source == FACEBOOK) {
+                        data_print.push(row.data());
+                    }
                     let td = $(tr).children()[2];
-                    let order_id = $(td).text().trim();
+                    let order_id = row.data().order_id;
                     let td13 = $(tr).children()[13];
                     let status_print = $(td13).text().trim();
                     order_checked.push(order_id);
@@ -1358,11 +1458,20 @@ Common::authen();
                             $(".order_status_print_update").prop("disabled",true);
                         }
                     }
+                    if(data_print.length>0) {
+                        $("#print_order_checked").text("("+data_print.length+")");
+                        $(".print_order").prop("disabled","");
+                    } else {
+                        $("#print_order_checked").text("");
+                        $(".print_order").prop("disabled",true);
+                    }
                     $(this).prop("checked", true);
                 });
             } else {
                 $(this).closest('table').find('td input:checkbox').each(function(){
                     let tr = $(this).closest('tr');
+                    let row = table.row(tr);
+                    data_print.splice(row.data(), 1);
                     let td = $(tr).children()[2];
                     let order_id = $(td).text().trim();
                     order_checked.splice(order_id, 1);
@@ -1385,22 +1494,17 @@ Common::authen();
                             $(".order_status_print_update").prop("disabled",true);
                         }
                     }
+                    if(data_print.length>0) {
+                        $("#print_order_checked").text("("+data_print.length+")");
+                        $(".print_order").prop("disabled","");
+                    } else {
+                        $("#print_order_checked").text("");
+                        $(".print_order").prop("disabled",true);
+                    }
                     $(this).prop("checked", false);
                 });
             }
-            // if($(".dataTables_scrollBody").length > 0) {
-            //     $(".dataTables_scrollBody").find('td input:checkbox').trigger("click");
-            // } else {
-            //     $(this).closest('table').find('td input:checkbox').each(function(){
-            //         let isChecked = $(this).prop("checked");
-            //         if(isChecked) {
-            //             $(this).prop("checked", false);
-            //         } else {
-            //             $(this).prop("checked", true);
-            //         }
-            //     });
-            //     // $(this).closest('table').find('td input:checkbox').trigger("click");
-            // }
+            console.log(data_print);
         });
     }
 
@@ -1637,6 +1741,7 @@ Common::authen();
         }
         order_checked = [];
         order_checked_for_print = [];
+        data_print = [];
         if(order_checked.length > 0) {
             $("#order_checked_for_update").text("("+order_checked.length+")");
         } else {
@@ -1649,6 +1754,12 @@ Common::authen();
             $("#order_checked_for_print_for_update").text("");
         }
         
+        if(data_print.length>0) {
+            $("#print_order_checked").text("("+data_print.length+")");
+        } else {
+            $("#print_order_checked").text("");
+        }
+        
         table = $('#example').DataTable({
             'ajax': {
                 "type": "GET",
@@ -1656,6 +1767,10 @@ Common::authen();
                 "data": get_data_search(type, status)
             },
             "dom": '<"top"flp<"clear">>rt<"bottom"ip<"clear">>',
+            "initComplete": function( settings, json ) {
+                console.log("initComplete");
+
+            },
             searching: false,
             // ordering: false,
             // scrollY: '100vh',
@@ -1680,43 +1795,41 @@ Common::authen();
                     width: "5px",
                 },
                 {
-                    "className": 'details-control center',
+                    "className": ' center',
                     "orderable": false,
                     "data": null,
                     "defaultContent": '',
-                    "render": function () {
-                        return '<i class="fa fa-plus-square" aria-hidden="true"></i>';
-                    },
+                    "render": format_action,
                     width: "5px",
                 },
+                // {
+                //     "data": "order_id",
+                //     width: "30px",
+                //     class: 'center',
+                //     "orderable": false
+                // },
                 {
-                    "data": "order_id",
-                    width: "30px",
-                    class: 'center',
-                    "orderable": false
-                },
-                {
-                    "data": 'customer_name',
-                    width: "100px",
+                    "data": format_customer_info,
+                    width: "300px",
                     "orderable": false,
                     class: 'left'
                 },
-                {
-                    "data": 'customer_phone',
-                    width: "50px",
-                    "orderable": false,
-                    class: 'left'
-                },
-                {
-                    "data": 'customer_address',
-                    "orderable": false,
-                    class: 'left'
-                },
-                {
-                    "data": format_description,
-                    "orderable": false,
-                    class: 'left'
-                },
+                // {
+                //     "data": 'customer_phone',
+                //     width: "50px",
+                //     "orderable": false,
+                //     class: 'left'
+                // },
+                // {
+                //     "data": 'customer_address',
+                //     "orderable": false,
+                //     class: 'left'
+                // },
+                // {
+                //     "data": format_description,
+                //     "orderable": false,
+                //     class: 'left'
+                // },
                 {
                     "data": 'quantity',
                     class: 'center'
@@ -1747,34 +1860,36 @@ Common::authen();
                 //     "data": format_payment,
                 //     width: "30px"
                 // },
-                {
-                    "data": format_source,
-                    width: "30px",
-                    "orderable": true
-                },
+                // {
+                //     "data": format_source,
+                //     width: "30px",
+                //     "orderable": true
+                // },
                 {
                     "data": format_status,
                     width: "50px",
                     "orderable": true
                 },
-                {
-                    "data": format_print_status,
-                    width: "50px",
-                    "orderable": true
-                },
-                {
-                    "data": format_action,
-                    "orderable": false,
-                    width: "50px"
-                }
+                // {
+                //     "data": format_print_status,
+                //     width: "50px",
+                //     "orderable": true
+                // },
+                // {
+                //     "data": format_action,
+                //     "orderable": false,
+                //     width: "50px"
+                // }
             ],
             "lengthMenu": [[50, 100, -1], [50, 100, "All"]]
         });
 
+
+
         // Add event listener for opening and closing details
         $('#example tbody').off('click').on('click', '.details-control', function (event) {
             let tr = $(this).closest('tr');
-            let tdi = tr.find("i.fa");
+            let tdi = tr.find("i.details-control");
             let row = table.row(tr);
             let order_id = row.data().order_id;
             // let start_date = $("#startDate").val();
@@ -1872,6 +1987,59 @@ Common::authen();
         });
 
 
+        $('#example tbody').on('click', '.customer-selected', function () {
+            let customer_id_selected = $(this).val();
+            let tr = $(this).closest('tr');
+            let row = table.row(tr);
+            row.data().customer_id_selected = customer_id_selected;
+
+        });
+
+        $('#example tbody').on('click', '.approve_order', function () {
+            show_loading();
+            let tr = $(this).closest('tr');
+            let row = table.row(tr);
+            console.log(row.data());
+            let is_existed_customer = "false";
+            let customer_id_selected = null;
+            if(row.data().customer_existed_id) {
+                customer_id_selected = row.data().customer_id_selected;
+                console.log(customer_id_selected);
+                if(customer_id_selected == null) {
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Đã xảy ra lỗi',
+                        text: "Bạn chưa chọn thông tin khách hàng"
+                    });
+                    return false;
+                }
+                is_existed_customer = "true";
+            } else {
+                customer_id_selected = row.data().customer_id;
+            }
+            let data_update = {
+                order_id: row.data().order_id,
+                customer_id_selected: row.data().customer_id_selected,
+                is_existed_customer: is_existed_customer,
+                method: "approve_order"
+            }
+            console.log(data_update);
+            Swal.fire({
+                title: 'Xác nhận',
+                text: "Bạn có chắc chắn muốn xác nhận đơn hàng này?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ok'
+            }).then((result) => {
+                if (result.value) {
+                    approve_order(data_update);
+                }
+            });
+        });
+
+
 
         $('#example tbody').on('click', '.cancel-edit-status', function () {
             show_loading();
@@ -1924,10 +2092,17 @@ Common::authen();
             let row = table.row(tr);
             let order_id = row.data().order_id;
             let status = row.data().status;
+            let bill_of_lading_no = row.data().bill_of_lading_no ? row.data().bill_of_lading_no : '';
+            let shipping_unit = row.data().shipping_unit ? row.data().shipping_unit : '-1';
+            let shipping_fee = row.data().shipping_fee ? row.data().shipping_fee : '';
+            let estimated_delivery = row.data().estimated_delivery ? row.data().estimated_delivery : '';
+            console.log(row.data());
             $("#order_id_modal").val(order_id);
-            // $("#order_status_modal").val(status).trigger('change');
-            $("#bill_of_lading_no_modal").val("");
-            $("#shipping_fee_modal").val("");
+            $("#shipping_unit_modal").val(shipping_unit).trigger('change').removeClass("is-invalid");
+            $("#bill_of_lading_no_modal").val(bill_of_lading_no).removeClass("is-invalid");
+            $("#shipping_fee_modal").val(shipping_fee).trigger("change").removeClass("is-invalid");
+            $("#estimated_delivery").val(estimated_delivery).removeClass("is-invalid");
+            $("#order_status_modal").val(status).trigger('change').removeClass("is-invalid");
             $("#bill_modal").modal("show");
         });
 
@@ -1973,6 +2148,8 @@ Common::authen();
                             table.ajax.reload();
                             get_info_total_checkout('date');
                             toastr.success('Đơn hàng đã được xoá thành công.');
+                            count_all_status();
+                            count_status();
                         },
                         error: function (data, errorThrown) {
                             console.log(data.responseText);
@@ -2034,6 +2211,7 @@ Common::authen();
                 if(bill && is_print == 0) {
                     order_checked_for_print.push(order_id);
                 }
+                data_print.push(row.data());
             } else {
                 $(this).prop("checked", "");
                 let index = order_checked.indexOf(order_id);
@@ -2042,7 +2220,11 @@ Common::authen();
                 if(index_print > -1) {
                     order_checked_for_print.splice(index_print, 1);
                 }
+                let idx_checked_order = data_print.indexOf(row.data());
+                console.log(idx_checked_order);
+                data_print.splice(idx_checked_order, 1);
             }
+            console.log(data_print);
             if(order_checked.length > 0) {
                 $("#order_checked_for_update").text("("+order_checked.length+")");
                 $(".order_status_update").prop("disabled","");
@@ -2056,6 +2238,72 @@ Common::authen();
             } else {
                 $("#order_checked_for_print_for_update").text("");
                 $(".order_status_print_update").prop("disabled",true);
+            }
+            if(data_print.length > 0) {
+                $("#print_order_checked").text("("+data_print.length+")");
+                $(".print_order").prop("disabled","");
+            } else {
+                $("#print_order_checked").text("");
+                $(".print_order").prop("disabled",true);
+            }
+        });
+
+        $('#example tbody').on('click', '.save-description', function () {
+            console.log($(this).prev().val());
+            let description = $(this).prev().val();
+            // show_loading();
+            let tr = $(this).closest('tr');
+            let row = table.row(tr);
+            let order_id = row.data().order_id;
+            $.ajax({
+                url: '<?php Common::getPath() ?>src/controller/orders/OrderController.php',
+                type: "POST",
+                dataType: "json",
+                data: {
+                    method: "update_description",
+                    order_id: order_id,
+                    content_description: description
+                },
+                success: function (res) {
+                    toastr.success('Cập nhật thành công.');
+                },
+                error: function (data, errorThrown) {
+                    console.log(data.responseText);
+                    console.log(errorThrown);
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Đã xảy ra lỗi',
+                        text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                    });
+                    hide_loading();
+                }
+            });
+        });
+
+    }
+
+
+    function approve_order(data) {
+        $.ajax({
+            url: '<?php Common::getPath() ?>src/controller/orders/OrderController.php',
+            type: "POST",
+            dataType: "json",
+            data: data,
+            success: function (res) {
+                console.log(res);
+                // table.ajax.reload();
+                // toastr.success('Cập nhật trạng thái thành công.');
+                // count_status();
+                // count_all_status();
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                });
             }
         });
 
@@ -2071,6 +2319,162 @@ Common::authen();
             }
             order_ids = order_ids.substr(0, order_ids.length - 1);
             batch_print_receipt(order_ids);
+        });
+    }
+
+    function hidden_table_print_order() {
+        $("#tbl_print_order_JNT").addClass("d-none");
+        $("#tbl_print_order_GHN").addClass("d-none");
+        $("#tbl_print_order_VTP").addClass("d-none");
+    }
+    
+    function print_order_JT() {
+        
+        hidden_table_print_order();
+        $(".print_order_JT").click(function () {
+            return new Promise((resolve) => {
+                $(".show_loading_print_order_checked").removeClass("hidden");
+                $(".print_order").attr("disabled", true);
+                // $("#spinnerDownloadFileJnT").removeClass("d-none");
+                // $("#tbl_body_print_order_JNT").html("");
+                $.each(data_print, function(k, v) {
+                     // let name = v.customer_name;
+                     // let phone = v.customer_phone;
+                     // let customer_address = "";
+                     let address = "";
+                     let city = "";
+                     let district = "";
+                     let village = "";
+                     if(v.customer_address) {
+                         customer_address = v.customer_address.split(",");
+                         city = customer_address[customer_address.length - 1];
+                         district = customer_address[customer_address.length - 2];
+                         village = customer_address[customer_address.length - 3];
+                        let c = customer_address.length - 3;
+                        for(let i=0;i<c;i++) {
+                          address += customer_address[i]+','
+                        }
+                       address = address.substr(0, address.length-1);
+                     }
+                     data_print[k]["address"] = address;
+                     data_print[k]["city"] = city;
+                     data_print[k]["district"] = district;
+                     data_print[k]["village"] = village;
+
+                     // let description = v.description ? v.description : "";
+                     // let COD = v.total_checkout;
+                     // let tr = "<tr>";
+                     // tr += "<td>"+v.order_id+"</td>";
+                     // tr += "<td>"+name+"</td>";
+                     // tr += "<td>"+phone+"</td>";
+                     // tr += "<td>"+address+"</td>";
+                     // tr += "<td>"+city+"</td>";
+                     // tr += "<td>"+district+"</td>";
+                     // tr += "<td>"+village+"</td>";
+                     // tr += "<td>"+description+"</td>"; 
+                     // tr += "<td>Hàng hóa</td>"; 
+                     // tr += "<td>0.5</td>"; 
+                     // tr += "<td>1</td>"; 
+                     // tr += "<td></td>"; 
+                     // tr += "<td>"+COD.replaceAll(",",".")+"</td>"; 
+                     // tr += "</tr>";
+                     // $("#tbl_body_print_order_JNT").append(tr);
+                });
+                // $("#tbl_print_order_JNT").removeClass("d-none");
+                // open_modal('#modal_print_order');
+                
+                exportOrderJnT(data_print);
+
+                resolve();
+            });
+        });
+    }
+
+    function exportOrderJnT(data_print) {
+        $.ajax({
+            url: '<?php Common::getPath() ?>src/controller/batch/ExportController.php',
+            type: "POST",
+            dataType: "json",
+            data: {
+                method: "exportOrderJT",
+                data: data_print
+            },
+            success: function (res) {
+                console.log(res);
+                if(res) {
+                    download(res);
+                    $(".show_loading_print_order_checked").addClass("hidden");
+                    $(".print_order").removeAttr("disabled");
+                }
+            },
+            error: () => {
+                toastr.error("Đã xảy ra lỗi");
+                $(".show_loading_print_order_checked").addClass("hidden");
+                $(".print_order").removeAttr("disabled");   
+            }
+        });
+    }
+
+    function download(url) {
+      const a = document.createElement('a')
+      a.href = url
+      a.download = url.split('/').pop()
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+    }
+
+    function print_order_GHN() {
+        hidden_table_print_order();
+        $(".print_order_GHN").click(function () {
+            return new Promise((resolve) => {
+                $(".show_loading_update_print_status").removeClass("hidden");
+                $("#tbl_body_print_order_GHN").html("");
+                $.each(data_print, function(k, v) {
+                     let name = v.customer_name;
+                     let phone = v.customer_phone;
+                     let customer_address = "";
+                     // let address = "";
+                     // let city = "";
+                     // let district = "";
+                     // let village = "";
+                     // if(v.customer_address) {
+                     //     customer_address = v.customer_address.split(",");
+                     //     city = customer_address[customer_address.length - 1];
+                     //     district = customer_address[customer_address.length - 2];
+                     //     village = customer_address[customer_address.length - 3];
+                     //    let c = customer_address.length - 3;
+                     //    for(let i=0;i<c;i++) {
+                     //      address += customer_address[i]+','
+                     //    }
+                     //   address = address.substr(0, address.length-1);
+                     // }
+                     let description = v.description ? v.description : "";
+                     let COD = v.total_checkout;
+                     let tr = "<tr>";
+                     tr += "<td>"+name+"</td>";
+                     tr += "<td>"+phone+"</td>";
+                     tr += "<td>"+customer_address+"</td>";
+                     tr += "<td>2</td>";
+                     tr += "<td>"+COD.replaceAll(",",".")+"</td>";
+                     tr += "<td>1</td>";
+                     tr += "<td>500</td>"; 
+                     tr += "<td>10</td>"; 
+                     tr += "<td>10</td>"; 
+                     tr += "<td>10</td>"; 
+                     tr += "<td>x</td>"; 
+                     tr += "<td>"+COD.replaceAll(",",".")+"</td>"; 
+                     tr += "<td>x</td>"; 
+                     tr += "<td></td>"; 
+                     tr += "<td></td>"; 
+                     tr += "<td>x</td>"; 
+                     tr += "</tr>";
+                     $("#tbl_body_print_order_GHN").append(tr);
+                });
+                $("#tbl_print_order_GHN").removeClass("d-none");
+                open_modal('#modal_print_order');
+                resolve();
+            });
         });
     }
 
@@ -2295,6 +2699,7 @@ Common::authen();
                 $("#description").val(value[0].description);
                 $("#order_source").val(value[0].source).trigger('change');
                 $("#shipping_unit").val(value[0].shipping_unit).trigger('change');
+
                 // online
                 // if (order_type == 1) {
 
@@ -2305,6 +2710,7 @@ Common::authen();
                     $("#shipping_fee").prop("disabled", false);
                     $(".select-shipping-unit").prop("disabled", false);
                     $("#shipping").prop("disabled", false);
+                    $("#shopee_order_id").val(value[0].shopee_order_id);
                 // } else if (order_type == 0) {
                 //     generate_select2_city();
                 //     // on shop
@@ -2329,6 +2735,69 @@ Common::authen();
                 toastr.error('Đã xảy ra lỗi.');
             }
         });
+    }
+    
+    function format_customer_info(data) {
+        
+        let customer = `<p class="m-0"><i class="fas fa-exclamation-circle" title="Mã đơn hàng"></i> ${data.order_id}</p>`;
+            if(!data.customer_existed_id) {
+                customer += `<div>
+                                <p class="m-0"><i class="fas fa-phone-alt" title="Số điện thoại"></i> <a href="<?php  Common::getPath() ?>src/view/customer/?phone=${data.customer_phone}" target="_blank">${data.customer_phone}</a></p>
+                                <p class="m-0">
+                                    <i class="fas fa-user" title="Tên khách hàng"></i>  `;
+                                    if(data.link_fb) {
+                                        customer += `<a href="${data.link_fb}" target="_blank">
+                                                        ${data.customer_name}
+                                                    </a>`;
+                                    } else {
+                                        customer += `${data.customer_name}`;
+                                    }
+                                customer += `</p>
+                                <p class="m-0"><i class="fas fa-map-marker-alt"  title="Địa chỉ"></i>  ${data.customer_address}</p>`;
+                customer += `</div>`;
+            } else {
+                customer += `<div class="form-check">
+                                <label class="form-check-label">
+                                    <input type="radio" class="form-check-input customer-selected" name="customer_existed_checked" value="${data.customer_id}">
+                                    <div class="existed-customer">
+                                        <p class="m-0"><i class="fas fa-phone-alt" title="Số điện thoại"></i> ${data.customer_phone}</p>
+                                        <p class="m-0">
+                                            <i class="fas fa-user" title="Tên khách hàng"></i>  `;
+                                            if(data.link_fb) {
+                                                customer += `<a href="${data.link_fb}" target="_blank">
+                                                                ${data.customer_name}
+                                                            </a>`;
+                                            } else {
+                                                customer += `${data.customer_name}`;
+                                            }
+                                        customer += `</p>
+                                        <p class="m-0"><i class="fas fa-map-marker-alt"  title="Địa chỉ"></i>  ${data.customer_address}</p>
+                                    </div>
+                                </label>
+                            </div>`;
+                customer += `<div class="form-check">
+                                <label class="form-check-label">
+                                    <input type="radio" class="form-check-input customer-selected" name="customer_existed_checked" value="${data.customer_existed_id}">
+                                    <div class="existed-customer">
+                                        <p class="m-0"><i class="fas fa-phone-alt" title="Số điện thoại"></i> ${data.customer_existed_phone}</p>
+                                        <p class="m-0"><i class="fas fa-user" title="Tên khách hàng"></i>  ${data.customer_existed_name}</p>
+                                        <p class="m-0"><i class="fas fa-map-marker-alt"  title="Địa chỉ"></i>  ${data.customer_existed_address}</p>
+                                    </div>
+                                </label>    
+                            </div>`;
+            }
+            if(data.source == 3 && data.shopee_order_id && data.shopee_order_id != 0) {
+                // shopee
+                customer += `<p class="m-0"><i class="fas fa-shopping-bag"></i> ${data.shopee_order_id}</p>`;
+            }
+            customer += `<p class="m-0"><i class="fas fa-pen-nib" title="Ghi chú"></i> Ghi chú:</p>
+                            <textarea class="form-control description" style="width: 80%; display: inline-block" >${data.description ? data.description : ""}</textarea>
+                            <button class="btn btn-info save-description" style="vertical-align: top;font-size: 12px;">
+                                <i class="fas fa-save"></i> Lưu
+                            </button>
+                        `;
+
+        return customer;
     }
 
     function format_order_detail(data, order_logs, row_data) {
@@ -2586,20 +3055,21 @@ Common::authen();
         let content = '';
         // online
         // if (data.type == 1) {
-        let status = data.status;
-        if(status == DELIVERED) {
-            content += '<a href="<?php Common::getPath() ?>src/view/exchange/online.php?oid=' + order_id + '" target="_blank" class="exchange mr-1 text-success" title="Đổi hàng"><i class="fas fa-reply"></i></a>';
-        }
-        if(bill){
-          // content += '<a href="javascript:void(0);" class="return_order mr-1 text-info" title="In hoá đơn"><i class="fas fa-sync"></i></a>';
-        content += '<a href="javascript:void(0);" class="print_receipt mr-1 text-info" title="In hoá đơn"><i class="fa fa-print"></i></a>';
-        }
+        // let status = data.status;
+        // if(status == DELIVERED) {
+        //     content += '<a href="<?php Common::getPath() ?>src/view/exchange/online.php?oid=' + order_id + '" target="_blank" class="exchange text-success" title="Đổi hàng"><i class="fas fa-reply"></i></a><br>';
+        // }
+        // if(bill){
+        //   // content += '<a href="javascript:void(0);" class="return_order mr-1 text-info" title="In hoá đơn"><i class="fas fa-sync"></i></a>';
+        // content += '<a href="javascript:void(0);" class="print_receipt text-info" title="In hoá đơn"><i class="fa fa-print"></i></a>';
+        // }
         // }
         if (order_type !== 2) {
-            content += '<a href="javascript:void(0);" class="edit_order mr-1 text-primary" title="Sửa đơn hàng"><i class="fa fa-edit"></i></a>';
+            content += '<a href="javascript:void(0);" class="edit_order text-primary" title="Sửa đơn hàng"><i class="fa fa-edit"></i></a><br>';
         }
-        content += '<a href="javascript:void(0);" class="delete_order mr-1 text-danger" title="Xoá đơn hàng"><i class="fa fa-trash"></i></a>';
-        return content;
+        content += '<a href="javascript:void(0);" class="delete_order text-danger" title="Xoá đơn hàng"><i class="fa fa-trash"></i></a><br>';
+
+        return `${content}<i class="details-control fa fa-plus-square" aria-hidden="true"></i>`;
     }
 
     function format_description(data) {
@@ -2611,7 +3081,7 @@ Common::authen();
                 '<i class="fa fa-times-circle c-pointer text-danger cancel-description hidden m-2" style="font-size: 20px" onclick="cancel_description(this)"></i>' +
                 '<i class="fa fa-edit c-pointer text-info edit-description"></i>';
         }
-        return description;
+        return '<pre>'+description+'</pre>';
     }
 
     function save_description(e, order_id) {
@@ -2672,15 +3142,23 @@ Common::authen();
     }
 
     function format_bill_of_lading_no(data) {
+        let content = "";
         let bill_of_lading_no = data.bill_of_lading_no;
-        if(!bill_of_lading_no) {
-            return '<i class="fa fa-edit c-pointer text-info edit-bill"></i>';
+        // if(!bill_of_lading_no) {
+        //     return '<i class="fa fa-edit c-pointer text-info edit-bill"></i>';
+        // }
+        let shipping_unit = data.shipping_unit ? data.shipping_unit : "";
+        if(bill_of_lading_no) {
+            if(shipping_unit === 'VTP') {
+                content += '<a href="https://viettelpost.vn/thong-tin-don-hang?peopleTracking=sender&orderNumber='+bill_of_lading_no.trim()+'" target="_blank">'+bill_of_lading_no+'</a>'+'<br>';
+            } else if(shipping_unit === 'J&T') {
+                content += '<a href="https://vip.jtexpress.vn/#/service/expressTrack?id='+bill_of_lading_no.trim()+'" target="_blank">'+bill_of_lading_no+'</a>'+'<br>';
+            } else {
+                content += bill_of_lading_no+'<br>';
+            }
         }
-        let shipping_unit = data.shipping_unit;
-        if(shipping_unit === 'VTP') {
-            return '<a href="https://viettelpost.vn/thong-tin-don-hang?peopleTracking=sender&orderNumber='+bill_of_lading_no.trim()+'" target="_blank">'+bill_of_lading_no+'</a><br>'+shipping_unit;
-        }
-        return bill_of_lading_no+'<br>'+shipping_unit;
+        content += shipping_unit+'<br><i class="fa fa-edit c-pointer text-info edit-bill"></i>';
+        return content;
     }
 
     function format_total_amount(data) {
@@ -2719,7 +3197,37 @@ Common::authen();
                 });
 
         }
-        return order_date;
+        let source = Number(data.source);
+        let utm_source = data.utm_source;
+        let src = "";
+        switch (source) {
+            case 1 :
+                if(utm_source) {
+                    src = `<span class="badge badge-success">Website</span><br/>
+                            <span class="badge badge-secondary">${utm_source}</span>`;
+                } else {
+                    src = '<span class="badge badge-success">Website</span>';
+                }
+                break;
+            case 2:
+                if(utm_source) {
+                    src = `<span class="badge badge-success">Website</span>
+                            <span class="badge badge-secondary">${utm_source}</span>`;
+                } else {
+                    src = '<span class="badge badge-primary">Facebook</span>';
+                }
+                break;
+            case 3:
+                src = '<span class="badge badge-danger">Shopee</span>';
+                break;
+            case 4:
+                src = '<span class="badge badge-primary">FB TTTE</span>';
+                break;
+            default:
+                src = '<span class="badge badge-warning">Cửa hàng</span>';
+                break;
+        }
+        return order_date + '<br>' + src;
     }
 
     function edit_appointment_delivery_date(e) {
@@ -2878,6 +3386,8 @@ Common::authen();
                 }
             case 3:
                 return '<span class="badge badge-danger">Shopee</span>';
+            case 4:
+                return '<span class="badge badge-primary">FB TTTE</span>';
             default:
                 return '<span class="badge badge-warning">Cửa hàng</span>';
         }
@@ -2960,6 +3470,13 @@ Common::authen();
             case CREATED_BILL:
                 txt_status = '<div class="text-status"><span class="badge badge-info">Đã tạo đơn</span> <i class="fa fa-edit text-info c-pointer edit-status"></i></div>';
                 break;
+            // case WAITING_APPORVE:
+            //     txt_status = `<div class="text-status text-center"><span class="badge badge-secondary">Chờ xác nhận</span> 
+            //                     <button class="btn btn-sm bg-gradient-success mt-1 approve_order" style="font-size: 12px;">
+            //                         <i class="fas fa-check-circle"></i> Xác nhận
+            //                     </button>
+            //                 </div>`;
+            //     break;
             default:
                 break;
         }

@@ -204,10 +204,6 @@ Common::authen();
 <script>
     let table;
     $(document).ready(function () {
-
-        
-
-
         set_title("Danh sách sản phẩm");
         count_out_of_stock();
 
@@ -331,69 +327,8 @@ Common::authen();
             })
         });
     
-        getDataForChatBot();
+        // getDataForChatBot();
     });
-
-
-    //function load_all_distinct_size() {
-    //    $.ajax({
-    //        dataType: 'json',
-    //        url: '<?php //Common::getPath() ?>//src/controller/product/ProductController.php',
-    //        data: {
-    //            method: 'load_size'
-    //        },
-    //        type: 'POST',
-    //        success: function (response) {
-    //            // console.log(response);
-    //            let size = [];
-    //            if(response && response.length > 0) {
-    //                for(i=0; i<response.length; i++) {
-    //                    let data = {};
-    //                    data["id"] = i;
-    //                    data["text"] = response[i];
-    //                    size.push(data);
-    //                }
-    //            }
-    //            $(".search-size").select2({
-    //                data: size,
-    //                placeholder: "Chọn size",
-    //                allowClear: true
-    //            });
-    //        },
-    //        error: function (data, errorThrown) {
-    //            console.log(data.responseText);
-    //            console.log(errorThrown);
-    //            Swal.fire({
-    //                type: 'error',
-    //                title: 'Đã xảy ra lỗi',
-    //                text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-    //            });
-    //        }
-    //    });
-    //}
-    //
-    //function load_all_distinct_color() {
-    //    $.ajax({
-    //        dataType: 'json',
-    //        url: '<?php //Common::getPath() ?>//src/controller/product/ProductController.php',
-    //        data: {
-    //            method: 'load_color'
-    //        },
-    //        type: 'POST',
-    //        success: function (response) {
-    //            // console.log(response);
-    //        },
-    //        error: function (data, errorThrown) {
-    //            console.log(data.responseText);
-    //            console.log(errorThrown);
-    //            Swal.fire({
-    //                type: 'error',
-    //                title: 'Đã xảy ra lỗi',
-    //                text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-    //            });
-    //        }
-    //    });
-    //}
 
     function create_url() {
         let url = window.location.href;
@@ -648,6 +583,7 @@ Common::authen();
                     $("#product_id").val(arr[0].product_id);
 
                     $("#name").val(arr[0].name);
+                    $("#name_for_website").val(arr[0].name_for_website);
                     $("#link").val(arr[0].link);
                     // $("#fee").val(arr[0].fee_transport);
                     // $("#price").val(arr[0].price);
@@ -979,7 +915,7 @@ Common::authen();
             if ($(this).hasClass('selected')) {
                 $(this).removeClass('selected');
             } else {
-                table.$('tr.selected').removeClass('selected');
+                $('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
             }
             check_stock($(this), product_id);
@@ -1022,7 +958,7 @@ Common::authen();
         });
 
 
-        $('#product_datatable tbody').on('click', '.lazada-publish', function () {
+        $('#product_datatable tbody').on('click', '.feature-publish', function () {
             let tr = $(this).closest('tr');
             let td = tr.find("td");
             let product_id = $(td[1]).text();
@@ -1031,7 +967,7 @@ Common::authen();
             if(checked) {
                 status = 1;
             }
-            social_publish(product_id, 'lazada', status);
+            social_publish(product_id, 'feature', status);
         });
 
     }
@@ -1103,11 +1039,11 @@ Common::authen();
             '<input type="checkbox" class="custom-control-input shopee-publish" id="shopee_'+product_id+'" '+shopee+'>' +
             '<label class="custom-control-label" for="shopee_'+product_id+'">Shopee</label>' +
             '</div>';
-        // let lazada = social_publish.lazada === 0 ? '' : 'checked';
-        // btn += '<div class="custom-control custom-switch">' +
-        //     '<input type="checkbox" class="custom-control-input lazada-publish" id="lazada_'+product_id+'" '+lazada+'>' +
-        //     '<label class="custom-control-label" for="lazada_'+product_id+'">Lazada</label>' +
-        //     '</div>';
+        let feature = social_publish.feature ? (social_publish.feature === 0 ? '' : 'checked') : '';
+        btn += '<div class="custom-control custom-switch">' +
+            '<input type="checkbox" class="custom-control-input feature-publish" id="feature_'+product_id+'" '+feature+'>' +
+            '<label class="custom-control-label" for="feature_'+product_id+'">Nổi bật</label>' +
+            '</div>';
         return btn;
     }
 
@@ -1561,18 +1497,23 @@ Common::authen();
             // "        <div class=\"card-header\">\n" +
             // "          <h3 class=\"card-title\">Danh sách sản phẩm</h3>\n" +
             // "        </div>\n" +
-            "        <div class=\"card-body\">";
-        table += '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;" class="table table-hover table-bodered">';
+            "        <div class=\"card-body\" style='width: 100%;overflow: scroll;'>";
+        table += '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;min-width: 1180px;overflow: scroll hidden;" class="table table-hover table-bodered">';
         table += '<thead>' +
             '<tr>' +
-            '<th style="width: 3%;" class="center"><input type="checkbox" id="selectall" onclick="checkAll(this)"></th>' +
-            '<th style="width: 5%;">Hình ảnh</th>' +
-            '<th style="width: 7%;">Màu</th>' +
-            '<th style="width: 7%;">Mã sản phẩm</th>' +
-            '<th style="width: 8%;">Size</th>' +
-            '<th style="width: 5%;">Số lượng</th>' +
-            '<th style="width: 7%;">Giá bán</th>' +
-            '<th>Giá sale</th>' +
+            '<th style="width: 50px;" class="center"><input type="checkbox" id="selectall" onclick="checkAll(this)"></th>' +
+            '<th style="width: 100px;">Hình ảnh</th>' +
+            '<th style="width: 80px;">Màu</th>' +
+            '<th style="width: 100px;">Mã sản phẩm</th>' +
+            '<th style="width: 150px;">Size</th>' +
+            '<th style="width: 80px;">Số lượng</th>' +
+            '<th style="width: 60px;">Giá bán</th>' +
+            '<th style="width: 60px;">Giá sale</th>' +
+            '<th style="width: 130px;">Chiều dài</th>' +
+            '<th style="width: 130px;">Cân nặng</th>' +
+            '<th style="width: 130px;">Chiều cao</th>' +
+            '<th style="width: 130px;">Tuổi</th>' +
+            '<th style="width: 130px;">Kích thước</th>' +
             // '<th>Shopee</th>' +
             // '<th>Lazada</th>' +
             '</tr>' +
@@ -1597,8 +1538,18 @@ Common::authen();
                 table += '<td>' + variations[i][j].size + '</td>';
                 if(variations[i][j].quantity === "0") {
                     table += '<td id="qty"><span class=\"text-danger\">Hết hàng</span></td>';
-                } else {
-                    table += '<td id="qty" class="'+(variations[i][j].quantity <= 2 ? 'bg-warning' : '')+'">' +
+                } else if(variations[i][j].quantity > 0 && variations[i][j].quantity < 3) {
+                    table += '<td id="qty" class="bg-warning">' +
+                        '<span id="qty_'+variations[i][j].sku+'">'+variations[i][j].quantity+'</span>' +
+                        '<input type="number" value="'+variations[i][j].quantity+'" class="hidden form-control" width="50px" id="text_qty_'+variations[i][j].sku+'" min="1" max="'+variations[i][j].quantity+'">' +
+                        '</td>';
+                } else if(variations[i][j].quantity < 0) {
+                    table += '<td id="qty" class="bg-danger">' +
+                        '<span id="qty_'+variations[i][j].sku+'">'+variations[i][j].quantity+'</span>' +
+                        '<input type="number" value="'+variations[i][j].quantity+'" class="hidden form-control" width="50px" id="text_qty_'+variations[i][j].sku+'" min="1" max="'+variations[i][j].quantity+'">' +
+                        '</td>';
+                } else {    
+                    table += '<td id="qty">' +
                         '<span id="qty_'+variations[i][j].sku+'">'+variations[i][j].quantity+'</span>' +
                         '<input type="number" value="'+variations[i][j].quantity+'" class="hidden form-control" width="50px" id="text_qty_'+variations[i][j].sku+'" min="1" max="'+variations[i][j].quantity+'">' +
                         '</td>';
@@ -1613,6 +1564,12 @@ Common::authen();
                     }
                 }
                 table += '<td id="sale_price">' + formatNumber(sale_price) + '</td>';
+                table += `<td>${variations[i][j].length__ ? variations[i][j].length__ : ""}</td>`;
+                table += `<td>${variations[i][j].weight ? variations[i][j].weight : ""}</td>`;
+                table += `<td>${variations[i][j].height ? variations[i][j].height : ""}</td>`;
+                table += `<td>${variations[i][j].age ? variations[i][j].age : ""}</td>`;
+                table += `<td>${variations[i][j].dimension ? variations[i][j].dimension : ""}</td>`;
+
                 // '<td><div class="custom-control custom-switch">' +
                 // '<input type="checkbox" class="custom-control-input upd-qty-shopee" id="shopee_'+variations[i].sku+'" '+shopee+' onchange="updatedQty(this, \'shopee\', '+variations[i].sku+')">' +
                 // '<label class="custom-control-label" for="shopee_'+variations[i].sku+'"></label>' +
@@ -1717,28 +1674,28 @@ Common::authen();
 
 
 
-    function getDataForChatBot() {
-        $.ajax({
-            url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
-            type: "POST",
-            dataType: "json",
-            data: {
-                method: "get_data_for_chat_bot"
-            },
-            success: function (res) {
-                console.log(JSON.stringify(res));
-            },
-            error: function (data, errorThrown) {
-                console.log(data.responseText);
-                console.log(errorThrown);
-                Swal.fire({
-                    type: 'error',
-                    title: 'Đã xảy ra lỗi',
-                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
-                })
-            }
-        });
-    }
+    // function getDataForChatBot() {
+    //     $.ajax({
+    //         url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
+    //         type: "POST",
+    //         dataType: "json",
+    //         data: {
+    //             method: "get_data_for_chat_bot"
+    //         },
+    //         success: function (res) {
+    //             console.log(JSON.stringify(res));
+    //         },
+    //         error: function (data, errorThrown) {
+    //             console.log(data.responseText);
+    //             console.log(errorThrown);
+    //             Swal.fire({
+    //                 type: 'error',
+    //                 title: 'Đã xảy ra lỗi',
+    //                 text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+    //             })
+    //         }
+    //     });
+    // }
 
 </script>
 </body>

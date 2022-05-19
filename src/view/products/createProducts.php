@@ -313,23 +313,29 @@ Common::authen();
                             <div class="card-header">
                                 <h3 class="card-title">Danh sách biến thể sản phẩm</h3>
                             </div>
-                            <div class="card-body">
-                                <div class="table-responsive" style="padding: 15px;">
-                                    <table class="table table-list table-bordered table-striped">
+                            <div class="card-body" style="width: 100%;overflow: scroll;">
+                                <div style="padding: 15px;width: 1660px;overflow: scroll hidden;">
+                                    <table class="table table-list table-bordered table-striped" cellspacing="0"
+  width="100%">
                                         <thead>
-                                        <tr>
-                                            <th class="hidden">id</th>
-                                            <th width="150px">Hình ảnh</th>
-                                            <th width="150px">Màu sắc</th>
-                                            <th width="150px">Size</th>
-                                            <th width="100px">Số lượng</th>
-                                            <th width="150px">Giá nhập</th>
-                                            <th width="150px">Giá bán</th>
-                                            <th width="150px">%</th>
-                                            <th width="150px">Phí vận chuyển</th>
-                                            <th width="150px">Profit</th>
-                                            <th width="150px">SKU</th>
-                                        </tr>
+                                            <tr>
+                                                <th class="hidden">id</th>
+                                                <th width="100px">Hình ảnh</th>
+                                                <th width="100px">Màu sắc</th>
+                                                <th width="150px">Size</th>
+                                                <th width="100px">Số lượng</th>
+                                                <th width="100px">Giá nhập</th>
+                                                <th width="100px">Giá bán</th>
+                                                <th width="80px">%</th>
+                                                <th width="130px">Phí vận chuyển</th>
+                                                <th width="100px">Profit</th>
+                                                <th width="100px">SKU</th>
+                                                <th width="150px">Chiều dài</th>
+                                                <th width="150px">Cân nặng</th>
+                                                <th width="150px">Chiều cao</th>
+                                                <th width="150px">Tuổi</th>
+                                                <th width="150px">Kích thước</th>
+                                            </tr>
                                         </thead>
                                         <tbody>
                                         </tbody>
@@ -338,13 +344,17 @@ Common::authen();
                             </div>
                         </div>
                         <div class="card-body pad">
-                            <div class="mb-3">
-                                <textarea class="textarea" placeholder="Mô tả sản phẩm" id="description"
-                                      style="width: 100%; height: 400px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                            <div class="form-group">
+                                <label for="name">Tên sản phẩm hiển thị trên website:</label>
+                                <input type="text" class="form-control" id="name_for_website" placeholder="Tên sản phẩm hiển thị trên website" autocomplete="off">
                             </div>
                             <div class="form-group">
                                 <label for="short_description">Mô tả ngắn</label>
                                 <textarea class="form-control" placeholder="Mô tả ngắn (tối đa 500 ký tự)" id="short_description" maxlength="500"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <textarea class="textarea" placeholder="Mô tả sản phẩm" id="description"
+                                      style="width: 100%; height: 400px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
                             </div>
                         </div>
                     </div>
@@ -374,6 +384,7 @@ Common::authen();
         // });
 
         $(document).ready(function () {
+
             $('.textarea').summernote({
                 placeholder: 'Mô tả sản phẩm...'
             });
@@ -584,6 +595,7 @@ Common::authen();
         function get_data_inform() {
             let product_id = $("#product_id").val();
             let name = $("#name").val();
+            let name_for_website = $("#name_for_website").val();
             let link = $("#link").val();
             let fee = $("#fee").val();
             let price = $("#price").val();
@@ -621,6 +633,7 @@ Common::authen();
             let product = {};
             product['product_id'] = product_id;
             product['name'] = name;
+            product['name_for_website'] = name_for_website ? name_for_website : name;
             product['link'] = link;
             product['image'] = link_image;
             product['fee'] = replaceComma(fee);
@@ -652,6 +665,11 @@ Common::authen();
                     let _fee = $(".table-list tbody tr #fee_"+c+"_"+s).val();
                     let _profit = $(".table-list tbody tr #profit_"+c+"_"+s).val();
                     let _sku = $(".table-list tbody tr #sku_"+c+"_"+s).val();
+                    let _weight = $(".table-list tbody tr #weight_"+c+"_"+s).val();
+                    let _height = $(".table-list tbody tr #height_"+c+"_"+s).val();
+                    let _long = $(".table-list tbody tr #long_"+c+"_"+s).val();
+                    let _age = $(".table-list tbody tr #age_"+c+"_"+s).val();
+                    let _dimension = $(".table-list tbody tr #dimension_"+c+"_"+s).val();
 
                     let variations = {};
                     variations['id'] = _id;
@@ -665,6 +683,11 @@ Common::authen();
                     variations['fee'] = replaceComma(_fee);
                     variations['profit'] = replaceComma(_profit);
                     variations['sku'] = _sku;
+                    variations['weight'] = _weight;
+                    variations['height'] = _height;
+                    variations['length__'] = _long;
+                    variations['age'] = _age;
+                    variations['dimension'] = _dimension;
                     arr.push(variations);
                 }
             }
@@ -792,6 +815,10 @@ Common::authen();
             let fee = $("#fee").val();
             let profit = $("#profit").val();
             let product_id = $("#display_product_id").val();
+            let long = "";
+            let weight = "";
+            let height = "";
+            let age = "";
             // $(".table-list tbody").html("");
             let width_img = 35;
             let d = 1;
@@ -846,13 +873,32 @@ Common::authen();
                         if(typeof _profit === 'undefined' || _profit === '') {
                             _profit = $("#profit").val();
                         }
-
+                        let _weight = $(".table-list tbody tr #weight_"+c+"_"+s).val();
+                        if(typeof _weight === 'undefined' || _weight === '') {
+                            _weight = '';
+                        }
+                        let _long = $(".table-list tbody tr #long_"+c+"_"+s).val();
+                        if(typeof _long === 'undefined' || _long === '') {
+                            _long = '';
+                        }
+                        let _height = $(".table-list tbody tr #height_"+c+"_"+s).val();
+                        if(typeof _height === 'undefined' || _height === '') {
+                            _height = '';
+                        }
+                        let _age = $(".table-list tbody tr #age_"+c+"_"+s).val();
+                        if(typeof _age === 'undefined' || _age === '') {
+                            _age = '';
+                        }
+                        let _dimension = $(".table-list tbody tr #dimension_"+c+"_"+s).val();
+                        if(typeof _dimension === 'undefined' || _dimension === '') {
+                            _dimension = '';
+                        }
                         let _sku = product_id + (d < 10 ? "0" + d : d);
                         table += "<tr class=\"" + d + "\">\n";
                         table += "<td class=\"hidden\" id='id_"+c+"_"+s+"'>"+_id+"</td>";
                         if(s === 1) {
                             table += "<td class='image_"+c+"' rowspan='"+size+"'>"+
-                                "<img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width=\""+(width_img*size)+"\" src=\""+_img+"\" id=\"img_variation_"+c+"\" class=\"mr-1\" style=\"max-width: 120px;\">" +
+                                "<img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width='80px' src=\""+_img+"\" id=\"img_variation_"+c+"\" class=\"mr-1\" style=\"max-width: 80px;\">" +
                                 "</td>\n";
                             table += "<td class='color_"+c+"' rowspan='"+size+"'>"+_color+"</td>\n";
                         }
@@ -864,6 +910,11 @@ Common::authen();
                             "<td class='fee_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Phí vận chuyển' value='"+_fee+"' id='fee_"+c+"_"+s+"' onchange='onchange_fee_in_list("+c+", "+s+")' onkeyup='onchange_fee_in_list("+c+", "+s+")'></td>\n" +
                             "<td class='profit_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Profit' value='"+_profit+"' id='profit_"+c+"_"+s+"' readonly></td>\n" +
                             "<td class='sku_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_sku+"' id='sku_"+c+"_"+s+"' ></td>\n" +
+                            "<td class='long_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_long+"' id='long_"+c+"_"+s+"' ></td>\n" +
+                            "<td class='weight_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_weight+"' id='weight_"+c+"_"+s+"' ></td>\n" +
+                            "<td class='height_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_height+"' id='height_"+c+"_"+s+"' ></td>\n" +
+                            "<td class='age_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_age+"' id='age_"+c+"_"+s+"' ></td>\n" +
+                            "<td class='dimension_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_dimension+"' id='dimension_"+c+"_"+s+"' ></td>\n" +
                             "</tr>";
                         $(".table-list tbody").append(table);
                         // s++;
@@ -876,7 +927,7 @@ Common::authen();
                 let sku = product_id + (d < 10 ? "0" + d : d);
                 $(".table-list tbody").html("<tr class=\"" + d + "\">" +
                     "<td class='image_"+c+"' rowspan='"+size+"'>"+
-                    "<img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width=\""+width_img+"\" src=\"\" id=\"img_variation_"+c+"\" class=\"mr-1\" style=\"max-width: 120px;\">" +
+                    "<img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width=\"80px\" src=\"\" id=\"img_variation_"+c+"\" class=\"mr-1\" style=\"max-width: 80px;\">" +
                     "</td>\n" +
                     "<td class='color_"+d+"' colspan='"+size+"'>Màu "+d+"</td>\n" +
                     "<td class='size_1_"+d+"'>Size "+d+"</td>\n" +
@@ -887,12 +938,22 @@ Common::authen();
                     "<td class='fee_1_"+d+"'><input type='text' class='form-control' value='"+fee+"' id='fee_1_"+d+"'></td>\n" +
                     "<td class='profit_1_"+d+"'><input type='text' class='form-control' value='"+profit+"' id='profit_1_"+d+"'></td>\n" +
                     "<td class='sku_1_"+d+"'><input type='text' class='form-control' value='"+sku+"' id='sku_1_"+d+"'></td>\n" +
+                    "<td class='long_1_"+d+"'><input type='text' class='form-control' value='"+long+"' id='long_1_"+d+"'></td>\n" +
+                    "<td class='weight_1_"+d+"'><input type='text' class='form-control' value='"+weight+"' id='weight_1_"+d+"'></td>\n" +
+                    "<td class='height_1_"+d+"'><input type='text' class='form-control' value='"+height+"' id='height_1_"+d+"'></td>\n" +
+                    "<td class='age_1_"+d+"'><input type='text' class='form-control' value='"+age+"' id='age_1_"+d+"'></td>\n" +
+                    "<td class='dimension_1_"+d+"'><input type='text' class='form-control' value='"+dimension+"' id='dimension_1_"+d+"'></td>\n" +
                     "</tr>");
             }
+
+
         }
 
 
         function draw_table_variations_by_edit_product(color, size, variations) {
+            return new Promise((resolve) => {
+
+
             let qty = $("#qty").val();
             let price = $("#price").val();
             let retail = $("#retail").val();
@@ -919,12 +980,17 @@ Common::authen();
                         let _percent = variations[i].percent;
                         let _profit = variations[i].profit;
                         let _fee = variations[i].fee;
+                        let _long = variations[i].long ? variations[i].long : "";
+                        let _weight = variations[i].weight ? variations[i].weight : "";
+                        let _height = variations[i].height ? variations[i].height : "";
+                        let _age = variations[i].age ? variations[i].age : "";
+                        let _dimension = variations[i].dimension ? variations[i].dimension : "";
                         let sku = variations[i].sku;
                         table += "<tr class=\"" + d + "\">\n";
                         table += "<td class=\"hidden\" id='id_"+c+"_"+s+"'>"+_id+"</td>";
                         if(s === 1) {
                             table += "<td class='image_"+c+"' rowspan='"+size+"'>"+
-                                "<img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width=\""+(width_img*size)+"\" src=\""+_img+"\" id=\"img_variation_"+c+"\" class=\"mr-1\" style=\"max-width: 120px;\">" +
+                                "<img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width=\"80px\" src=\""+_img+"\" id=\"img_variation_"+c+"\" class=\"mr-1\" style=\"max-width: 80px;\">" +
                                 "</td>\n";
                             table += "<td class='color_"+c+"' rowspan='"+size+"'>"+_color+"</td>\n";
                         }
@@ -936,6 +1002,11 @@ Common::authen();
                             "<td class='fee_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Phí vận chuyển' value='"+_fee+"' id='fee_"+c+"_"+s+"' onchange='onchange_fee_in_list("+c+", "+s+")' onkeyup='onchange_fee_in_list("+c+", "+s+")'></td>\n" +
                             "<td class='profit_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Profit' value='"+_profit+"' id='profit_"+c+"_"+s+"' readonly></td>\n" +
                             "<td class='sku_"+c+"_"+s+"'><input type='text' class='form-control' value='"+sku+"' id='sku_"+c+"_"+s+"' ></td>\n" +
+                            "<td class='long_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_long+"' id='long_"+c+"_"+s+"' ></td>\n" +
+                            "<td class='weight_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_weight+"' id='weight_"+c+"_"+s+"' ></td>\n" +
+                            "<td class='height_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_height+"' id='height_"+c+"_"+s+"' ></td>\n" +
+                            "<td class='age_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_age+"' id='age_"+c+"_"+s+"' ></td>\n" +
+                            "<td class='dimension_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_dimension+"' id='dimension_"+c+"_"+s+"' ></td>\n" +
                             "</tr>";
                         $(".table-list tbody").append(table);
                         // s++;
@@ -949,7 +1020,7 @@ Common::authen();
                 let sku = product_id + (d < 10 ? "0" + d : d);
                 $(".table-list tbody").append("<tr class=\"" + d + "\">" +
                     "<td class='image_"+c+"' rowspan='"+size+"'>"+
-                    "<img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width=\""+width_img+"\" src=\"\" id=\"img_variation_"+c+"\" class=\"mr-1\" style=\"max-width: 120px;\">" +
+                    "<img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width=\"80px\" src=\"\" id=\"img_variation_"+c+"\" class=\"mr-1\" style=\"max-width: 80px;\">" +
                     "</td>\n" +
                     "<td class='color_"+d+"' colspan='"+size+"'>Màu "+d+"</td>\n" +
                     "<td class='size_1_"+d+"'>Size "+d+"</td>\n" +
@@ -960,9 +1031,15 @@ Common::authen();
                     "<td class='fee_1_"+d+"'><input type='text' class='form-control' value='"+fee+"' id='fee_1_"+d+"'></td>\n" +
                     "<td class='profit_1_"+d+"'><input type='text' class='form-control' value='"+profit+"' id='profit_1_"+d+"'></td>\n" +
                     "<td class='sku_1_"+d+"'><input type='text' class='form-control' value='"+sku+"' id='sku_1_"+d+"'></td>\n" +
+                    "<td class='long_1_"+d+"'><input type='text' class='form-control' id='long_1_"+d+"'></td>\n" +
+                    "<td class='weight_1_"+d+"'><input type='text' class='form-control' id='weight_1_"+d+"'></td>\n" +
+                    "<td class='height_1_"+d+"'><input type='text' class='form-control' id='height_1_"+d+"'></td>\n" +
+                    "<td class='age_1_"+d+"'><input type='text' class='form-control' id='age_1_"+d+"'></td>\n" +
+                    "<td class='dimension_1_"+d+"'><input type='text' class='form-control' id='dimension_1_"+d+"'></td>\n" +
                     "<td><i class='fa fa-trash'></i></td>\n" +
                     "</tr>");
             }
+        });
         }
 
         function btn_upload(no, type) {
@@ -1154,6 +1231,11 @@ Common::authen();
                 is_valid = false;
             } else {
                 $("#name").removeClass("is-invalid");
+            }
+
+            let name_for_website = $("#name_for_website").val();
+            if(name_for_website === "") {
+                name_for_website = name;
             }
 
             // let fee = $("#fee").val();

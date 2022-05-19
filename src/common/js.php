@@ -63,6 +63,9 @@ require_once("common.php");
 <script type="text/javascript">
 	let root_path = '<?php Common::getPath(); ?>';
 	function set_title(title) {
-		$(".title-page").text(title);
+		$(".title-page").text(document.getElementsByTagName("title")[0].innerHTML);
 	}
+	$(document).ready(() => {
+		$(".title-page").text(document.getElementsByTagName("title")[0].innerHTML);
+	})
 </script>

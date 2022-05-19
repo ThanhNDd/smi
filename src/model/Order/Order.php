@@ -2,6 +2,7 @@
 
 class Order {
     private $id;
+    private $shopee_order_id;
     private $total_reduce;
     private $total_reduce_percent;
     private $discount;
@@ -61,6 +62,26 @@ class Order {
     public function setId($id)
     {
         $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of shopee_order_id
+     */
+    public function getShopee_order_id()
+    {
+        return $this->shopee_order_id;
+    }
+
+    /**
+     * Set the value of shopee_order_id
+     *
+     * @return  self
+     */
+    public function setShopee_order_id($shopee_order_id)
+    {
+        $this->shopee_order_id = $shopee_order_id;
 
         return $this;
     }

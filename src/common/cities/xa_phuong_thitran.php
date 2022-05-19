@@ -11161,4 +11161,5 @@ $xa_phuong_thitran = array(
 	"11159" => array("xaid"=>"32244","name"=>"Thị trấn Rạch Gốc","maqh"=>"973"),
 	"11160" => array("xaid"=>"32245","name"=>"Xã Tân Ân","maqh"=>"973"),
 	"11161" => array("xaid"=>"32248","name"=>"Xã Đất Mũi","maqh"=>"973"),
+	"11162" => array("xaid"=>"32300","name"=>"Xã Côn Đảo","maqh"=>"755"),
 );

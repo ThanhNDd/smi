@@ -15,6 +15,11 @@ class Variations
     private $sku;
     private $image;
     private $image_type;
+    private $weight;
+    private $height;
+    private $length__;
+    private $age;
+    private $dimension;
     private $updated_qty;
     private $created_at;
     private $updated_at;
@@ -225,6 +230,85 @@ class Variations
     public function setImageType($image_type): void
     {
         $this->image_type = $image_type;
+    }
+    /**
+     * @return mixed
+     */
+    public function getLength__()
+    {
+        return $this->length__;
+    }
+
+    /**
+     * @param mixed $length__
+     */
+    public function setLength__($length__): void
+    {
+        $this->length__ = $length__;
+    }
+
+     /**
+     * @return mixed
+     */
+    public function getWeight()
+    {
+        return $this->weight;
+    }
+
+    /**
+     * @param mixed $weight
+     */
+    public function setWeight($weight): void
+    {
+        $this->weight = $weight;
+    }
+
+     /**
+     * @return mixed
+     */
+    public function getHeight()
+    {
+        return $this->height;
+    }
+
+    /**
+     * @param mixed $height
+     */
+    public function setHeight($height): void
+    {
+        $this->height = $height;
+    }
+
+     /**
+     * @return mixed
+     */
+    public function getAge()
+    {
+        return $this->age;
+    }
+
+    /**
+     * @param mixed $age
+     */
+    public function setAge($age): void
+    {
+        $this->age = $age;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDimension()
+    {
+        return $this->dimension;
+    }
+
+    /**
+     * @param mixed $age
+     */
+    public function setDimension($dimension): void
+    {
+        $this->dimension = $dimension;
     }
 
     /**

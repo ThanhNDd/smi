@@ -71,6 +71,7 @@ Common::authen();
                                 <option value="10">Đã duyệt hoàn</option>
                                 <option value="11">Chờ đổi size</option>
                                 <option value="12">Đã đổi size</option>
+                                <option value="14">Chờ duyệt</option>
                             </select>
                         </div>
                     </div>
@@ -84,6 +85,9 @@ Common::authen();
                             <label>Nguồn đặt hàng</label>
                             <select class="form-control order-source" id="order_source">
                                 <option value="2" selected="selected">Facebook</option>
+                                <option value="4">
+                                    FB TTTE
+                                </option>
                                 <option value="1">Website</option>
                                 <option value="3">Shopee</option>
                             </select>
@@ -96,8 +100,9 @@ Common::authen();
                         <div class="col-md-2">
                             <label>Đơn vị vận chuyển</label>
                             <select class="shipping-unit form-control" id="shipping_unit">
-                                <option value="VTP" selected="selected">Viettel Post</option>
-                                <option value="J&T">J&T Express</option>
+                                <option value="J&T" selected="selected">J&T Express</option>
+                                <option value="SPXEXPRESS">SHOPEE Express</option>
+                                <option value="VTP">Viettel Post</option>
                                 <option value="GHN">Giao Hàng Nhanh</option>
                                 <option value="GHTK">Giao Hàng Tiết Kiệm</option>
                                 <option value="VNP">Việt Nam Post</option>
@@ -107,16 +112,24 @@ Common::authen();
                                 <option value="GRABEXPRESS">GRAB Express</option>
                             </select>
                         </div>
-                        <div class="col-md-2 hidden">
+                        <!-- <div class="col-md-2 hidden">
                           <label>Phí đổi size</label>
                           <input type="text" class="form-control" id="exchange_cost"
                                  placeholder="Phí đổi size" autocomplete="off">
-                        </div>
+                        </div> -->
                         <div class="col-md-2">
-                          <label>Ghi chú</label>
-                          <input type="text" class="form-control" id="description"
-                                 placeholder="Ghi chú đơn hàng" autocomplete="off" maxlength="100">
+                            <label>Mã đơn hàng Shopee</label>
+                            <input type="text" class="form-control" id="shopee_order_id" placeholder="Mã đơn hàng Shopee"
+                                   autocomplete="off">
                         </div>
+                        <!--<div class="col-md-2">-->
+                        <!--  <label>Ghi chú</label>-->
+                        <!--  <input type="text" class="form-control" id="description"-->
+                        <!--         placeholder="Ghi chú đơn hàng" autocomplete="off">-->
+                        <!--</div>-->
+                    </div>
+                    <div class="form-group row col-md-12">
+                        <textarea class="col-md-9 m-2 form-control" rows="3" id="description" placeholder="Ghi chú đơn hàng"></textarea>
                     </div>
                 </div>
                 <div class="form-group col-md-12">
@@ -580,16 +593,19 @@ Common::authen();
             let bill_of_lading_no = '';
             let shipping_fee = 0;
             let shipping_unit = 0;
+            let shopee_order_id = 0;
             if (order_type == "1") {
                 // online
                 bill_of_lading_no = $("#bill_of_lading_no").val();
                 shipping_fee = replaceComma($("#shipping_fee").val());
                 shipping_unit = $("#shipping_unit").val();
                 source = $("#order_source").val();
+                shopee_order_id = $("#shopee_order_id").val();
             }
             data["bill_of_lading_no"] = bill_of_lading_no;
             data["shipping_fee"] = shipping_fee;
             data["shipping_unit"] = shipping_unit;
+            data["shopee_order_id"] = shopee_order_id;
 
             let order_status = $("#order_status").val();
             let order_date = $("#orderDate").val();
@@ -732,7 +748,7 @@ Common::authen();
             $("#customer_phone").val("");
             $("#order_status").val("0").trigger("change");
             $("#shipping_fee").val("");
-            $("#shipping").val("");
+            $("#shipping").val("0").trigger("change");
             $("#discount").val("");
             $("#total_amount").text("0");
             $("#total_checkout").text("0");
@@ -740,6 +756,8 @@ Common::authen();
             $('#order_id').val("");
             $("#table_list_product tbody").html("");
             $('#exchange_cost').val("");
+            $("#description").val("");
+            row_description = 1;
 
             // onchange_order_type(1);
         }
@@ -800,6 +818,7 @@ Common::authen();
 
 
         let row_num = 1;
+        let row_description = 1;
         function add_product() {
             $("#add_product").change(function (e) {
                 let _self = $(this);
@@ -821,6 +840,7 @@ Common::authen();
                                 console.log("draw_table");
                                 console.log(JSON.stringify(data));
                                 add_product_list(data);
+                                generate_description(data);
                                 // calculate_total();
                                 $(_self).val("");
                             } else {
@@ -841,9 +861,20 @@ Common::authen();
                 }
             });
         }
+        
+        function generate_description(data) {
+            let description = $("#description").val();
+            $.each(data, function (k, v) {
+                let product_name = row_description + '. ' +v.name + ',' + v.color + ',' +v.size+'\n';
+                description += product_name;
+                row_description++;
+            });
+            $("#description").val(description);
+        }
 
         function add_product_list(data) {
             // row_num = 1;
+            // let description = $("#description").val();
             $.each(data, function (k, v) {
                 let retail = 0;
                 if (v.retail) {
@@ -872,13 +903,15 @@ Common::authen();
                 total = total*quantity;
 
                 console.log(JSON.stringify(v));
+                // let product_name = row_description + '. ' +v.name + ',' + v.color + ',' +v.size+'|\n';
+                // description += product_name;
                 let content = "<tr id=\"row_" + row_num + "\">\n" +
                     "<td id=\"product_id_" + row_num + "\" class=\"hidden\">" + v.product_id + "</td>\n" +
                     "<td id=\"variant_id_" + row_num + "\" class=\"hidden\">" + v.variant_id + "</td>\n" +
                     "<td id=\"profit_" + row_num + "\" class=\"hidden\">" + v.profit + "</td>\n" +
                     "<td id=\"image_" + row_num + "\" class=\"w100\"><img src='" + v.image + "' style=\"border-radius: 50%;\" onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"' width='50px'></td>\n" +
                     "<td id=\"sku_" + row_num + "\" class=\"w100\">" + v.sku + "</td>\n" +
-                    "<td id=\"name_" + row_num + "\" class=\"w200\"><strong>" + v.name + "</strong><br><small>Size: " + v.size + "</small><br><small>Màu: " + v.color + "</small></td>\n" +
+                    "<td id=\"name_" + row_num + "\" class=\"w200\"><strong>" + v.name + "</strong><br><small>Màu: " + v.color + "</small><br><small>Size: " + v.size + "</small></td>\n" +
                     "<td id=\"price_" + row_num + "\" class=\"w150\">" + formatNumber(retail) + "</td>\n" +
                     "<td><input type=\"number\" class=\"form-control w100\" id=\"qty_" + row_num + "\" min=\"1\" value=\""+quantity+"\" onchange=\"onchange_in_list(this, " + row_num + ")\"></td>\n" +
                     "<td><input type=\"text\" class=\"form-control w150\" id=\"reduce_" + row_num + "\" value='" + reduce + "' onchange=\"onchange_in_list(this, " + row_num + ", 'reduce')\"></td>\n" +
@@ -891,10 +924,12 @@ Common::authen();
                     "</tr>";
                 $("#table_list_product tbody").append(content);
                 row_num++;
+                // row_description++;
                 if(k === data.length-1) {
                     calculate_total();
                 }
             });
+            // $("#description").val(description);
         }
 
         function exchange_product(e) {
@@ -943,7 +978,7 @@ Common::authen();
                         "<td id=\"profit_" + row_num + "\" class=\"hidden\">" + res[0].profit + "</td>\n" +
                         "<td id=\"image_" + row_num + "\" class=\"w100\"><img src='" + res[0].image + "' style=\"border-radius: 50%;\" onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"' width='50px'></td>\n" +
                         "<td id=\"sku_" + row_num + "\" class=\"w100\">" + res[0].sku + "</td>\n" +
-                        "<td id=\"name_" + row_num + "\" class=\"w200\"><strong>" + res[0].name + "</strong><br><small>Size: " + res[0].size + "</small><br><small>Màu: " + res[0].color + "</small></td>\n" +
+                        "<td id=\"name_" + row_num + "\" class=\"w200\"><strong>" + res[0].name + "</strong><br><small>Màu: " + res[0].color + "</small><br><small>Size: " + res[0].size + "</small></td>\n" +
                         "<td id=\"price_" + row_num + "\" class=\"w150\">" + formatNumber(res[0].retail) + "</td>\n" +
                         "<td><input type=\"number\" class=\"form-control w100\" id=\"qty_" + row_num + "\" min=\"1\" value=\"1\" onchange=\"onchange_in_list(this, " + row_num + ")\"></td>\n" +
                         "<td><input type=\"text\" class=\"form-control w150\" id=\"reduce_" + row_num + "\" value='" + (res[0].discount > 0 ? res[0].discount : '')+ "' onchange=\"onchange_in_list(this, " + row_num + ", 'reduce')\"></td>\n" +
@@ -989,12 +1024,13 @@ Common::authen();
         }
 
         function checking_exist_sku_in_table_list(sku) {
-            console.log("checking_exist_sku_in_table_list");
+            console.log("checking_exist_sku_in_table_list ",sku);
             let is_exist_sku = false;
             let row_index = 1;
+            let description = $("#description").val();
             $("#table_list_product tbody tr").each(function () {
-                console.log("checking_exist_sku_in_table_list in each");
                 let sku_in_list = $("#sku_" + row_index).text();
+                console.log("checking_exist_sku_in_table_list in each ", sku_in_list);
                 if (sku_in_list === sku) {
                     let qty = $("#qty_" + row_index).val();
                     qty = Number(qty);
@@ -1004,11 +1040,19 @@ Common::authen();
                     calculate_total();
                     $("#add_product").val("");
                     is_exist_sku = true;
+                    let name = $("#name_" + row_index).text();
+                    name = name.replace('Màu: ',',').replace('Size: ',',');
+                    console.log(name);
+                    let product_name = row_description + '. ' + name + '|\n';
+                    description += product_name;
+                    row_description++;
                 }
                 row_index++;
             });
+            $("#description").val(description);
             return is_exist_sku;
         }
+        
 
         function calculate_total_in_list(row_index) {
             let qty = $("#qty_" + row_index).val();

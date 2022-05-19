@@ -2,9 +2,10 @@
 class DBConnect {
     private $db = "cudwlevvhosting_online";
     private $host = "127.0.0.1";
-    private $user = "cudwlevvhosting_smi";
+    private $user = "root";
 //    private $user = "smi";
-    private $pass = "xqjxERUWQ6F2S7r";
+    // private $pass = "xqjxERUWQ6F2S7r";
+    private $pass = "";
     private $conn;
 
     // private $db = "smi_admin";

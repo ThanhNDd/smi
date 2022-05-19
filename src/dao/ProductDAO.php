@@ -4,6 +4,43 @@ class ProductDAO
 {
     private $conn;
 
+    function __construct($db) {
+        $this->conn = $db->getConn();   
+    } 
+
+    function findVariantBySku($sku)
+    {
+        try {
+            $sql = "SELECT id AS variant_id,
+                           product_id,
+                           retail,
+                           size,
+                           color,
+                           sku,
+                           profit
+                    FROM smi_variations
+                    WHERE sku = $sku";
+            $result = mysqli_query($this->conn, $sql);
+            $product = null;
+            if (!empty($result)) {
+                foreach ($result as $k => $row) {
+                    $product = array(
+                        'product_id' => $row["product_id"],
+                        'variant_id' => $row["variant_id"],
+                        'price' => $row["retail"],
+                        'size' => $row["size"],
+                        'color' => $row["color"],
+                        'sku' => $row["sku"],
+                        'profit' => $row["profit"]
+                    );
+                }
+            }
+            return $product;
+        } catch (Exception $e) {
+            echo "Open connection database is error exception >> " . $e->getMessage();
+        }
+    }
+
     function get_max_id()
     {
         try {
@@ -35,18 +72,6 @@ class ProductDAO
     function count_all_product($status)
     {
         try {
-//            $sql = "SELECT count(tmp.id) AS total_products,
-//                           sum(tmp.total_price) AS total_money
-//                    FROM
-//                      (SELECT a.id,
-//                              a.price,
-//                              sum(b.quantity) AS quantity,
-//                              a.price * sum(b.quantity) AS total_price
-//                       FROM smi_products a
-//                       LEFT JOIN smi_variations b ON a.id = b.product_id
-//                       WHERE a.status = $status
-//                       GROUP BY a.id,
-//                                a.price) AS tmp";
            $sql = "SELECT sum(t.quantity) AS total_products,
                        sum(t.total) AS total_money
                     FROM
@@ -147,6 +172,7 @@ class ProductDAO
         try {
             $sql = "select A.id AS product_id,
                            A.name,
+                           A.name_for_website,
                            A.image,
                            A.link,
                            A.fee_transport,
@@ -166,7 +192,11 @@ class ProductDAO
                            B.profit,
                            B.retail,
                            B.percent,
-                           B.fee
+                           B.fee,
+                           B.length__,
+                           B.weight,
+                           B.height,
+                           B.age
                     FROM smi_products A
                     LEFT JOIN smi_variations B ON A.id = B.product_id
                     WHERE A.id = " . $id;
@@ -182,6 +212,7 @@ class ProductDAO
                     $product = array(
                         'product_id' => $row["product_id"],
                         'name' => $row["name"],
+                        'name_for_website' => $row["name_for_website"],
                         'image' => $row["image"],
                         'link' => $row["link"],
                         'type' => $row["type"],
@@ -208,7 +239,11 @@ class ProductDAO
                         'price' => number_format($row["price"]),
                         'retail' => number_format($row["retail"]),
                         'profit' => number_format($row["profit"]),
-                        'fee' => number_format($row["fee"])
+                        'fee' => number_format($row["fee"]),
+                        'length__' => $row["length__"],
+                        'weight' => $row["weight"],
+                        'height' => $row["height"],
+                        'age' => $row["age"]
                     );
                     array_push($product['variations'], $variation);
                     array_push($data, $product);
@@ -227,7 +262,11 @@ class ProductDAO
                         'price' => number_format($row["price"]),
                         'retail' => number_format($row["retail"]),
                         'profit' => number_format($row["profit"]),
-                        'fee' => number_format($row["fee"])
+                        'fee' => number_format($row["fee"]),
+                        'length__' => $row["length__"],
+                        'weight' => $row["weight"],
+                        'height' => $row["height"],
+                        'age' => $row["age"]
                     );
                     array_push($data[$i - 1]['variations'], $variation);
                 }
@@ -252,6 +291,7 @@ class ProductDAO
         try {
             $sql = "SELECT A.id as product_id, 
                            A.name,
+                           A.name_for_website,
                            A.image,
                            B.image as variant_image, 
                            A.link, 
@@ -269,13 +309,13 @@ class ProductDAO
                             sum(B.quantity) as total_quantity
                     FROM `smi_products` A
                     LEFT JOIN smi_variations B ON A.id = B.product_id
-                    where
-                        A.status = $status";
+                    where A.status = $status";
             if(!empty($sku)) {
                 $sql .= "  and B.sku = $sku";
             }
             $sql .= " GROUP BY A.id,
                              A.name,
+                             A.name_for_website,
                              A.image , 
                              A.link , 
                              A.discount,
@@ -305,6 +345,7 @@ class ProductDAO
                 $product = array(
                     'product_id' => $row["product_id"],
                     'name' => $row["name"],
+                    'name_for_website' => $row["name_for_website"],
                     'image' => $row["image"],
                     'variant_image' => $row["variant_image"],
                     'link' => $row["link"],
@@ -343,7 +384,12 @@ class ProductDAO
                     B.color, 
                     B.quantity, 
                     B.sku, 
-                    B.updated_qty
+                    B.updated_qty,
+                    B.length__, 
+                    B.weight, 
+                    B.height, 
+                    B.age,
+                    B.dimension
                 from smi_variations B 
                 where B.product_id = $productId 
                 order by B.id";
@@ -368,7 +414,12 @@ class ProductDAO
                   'color' => $row["color"],
                   'quantity' => $row["quantity"],
                   'sku' => $row["sku"],
-                  'updated_qty' => $row["updated_qty"]
+                  'updated_qty' => $row["updated_qty"],
+                  'length__' => $row["length__"],
+                  'weight' => $row["weight"],
+                  'height' => $row["height"],
+                  'age' => $row["age"],
+                  'dimension' => $row["dimension"]
               );
               array_push($colors, $variation);
               array_push($data, $colors);
@@ -385,7 +436,12 @@ class ProductDAO
                   'color' => $row["color"],
                   'quantity' => $row["quantity"],
                   'sku' => $row["sku"],
-                  'updated_qty' => $row["updated_qty"]
+                  'updated_qty' => $row["updated_qty"],
+                  'length__' => $row["length__"],
+                  'weight' => $row["weight"],
+                  'height' => $row["height"],
+                  'age' => $row["age"],
+                  'dimension' => $row["dimension"]
               );
               array_push($data[$i-1], $variation);
           }
@@ -657,6 +713,7 @@ class ProductDAO
     {
         try {
             $name = $product->getName();
+            $name_for_website = $product->getNameForWebsite();
             $image = $product->getImage();
             $link = $product->getLink();
             $price = $product->getPrice();
@@ -666,13 +723,14 @@ class ProductDAO
             $percent = $product->getPercent();
             $type = $product->getType();
             $cat_id = $product->getCategory_id();
-            $social_publish = '{"shopee": 0, "website": 0, "facebook": 0, "lazada": 0}';
+            $social_publish = '{"shopee": 0, "website": 0, "facebook": 0, "lazada": 0, "feature": 0}';
             $description = $product->getDescription();
             $material = $product->getMaterial();
             $origin = $product->getOrigin();
             $short_description = $product->getShortDescription();
             $stmt = $this->getConn()->prepare("INSERT INTO smi_products (
                                 `name`,
+                                `name_for_website`,
                                 `image`,
                                 `link`,
                                 `price`,
@@ -688,9 +746,10 @@ class ProductDAO
                                 `origin`,
                                 `short_description`,
                                 `created_at`) 
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-            $stmt->bind_param("sssddddiiisssis",
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+            $stmt->bind_param("ssssddddiiisssis",
                                 $name,
+                                $name_for_website,
                                 $image,
                                 $link,
                                 $price,
@@ -721,6 +780,7 @@ class ProductDAO
         try {
             $product_id = $product->getId();
             $name = $product->getName();
+            $name_for_website = $product->getNameForWebsite();
             $image = $product->getImage();
             $link = $product->getLink();
             $price = $product->getPrice();
@@ -736,6 +796,7 @@ class ProductDAO
             $short_description = $product->getShortDescription();
             $stmt = $this->getConn()->prepare("update smi_products SET 
                 name = ?, 
+                name_for_website = ?, 
                 image = ?, 
                 LINK = ?,
                 price = ?, 
@@ -751,8 +812,9 @@ class ProductDAO
                 short_description = ?,
                 updated_at = NOW() 
                 WHERE id = ?");
-            $stmt->bind_param("sssddddiiissisi",
+            $stmt->bind_param("ssssddddiiissisi",
                 $name,
+                $name_for_website,
                 $image,
                 $link,
                 $price,
@@ -790,18 +852,29 @@ class ProductDAO
             $profit = $variation->getProfit();
             $percent = $variation->getPercent();
             $image = $variation->getImage();
+            $length__ = $variation->getLength__();
+            $height = $variation->getHeight();
+            $weight = $variation->getWeight();
+            $age = $variation->getAge();
+            $dimension = $variation->getDimension();
             $updated_qty = '{"lazada": 0, "shopee": 0}';
-
-            $stmt = $this->getConn()->prepare("INSERT INTO smi_variations (`product_id`, `size`, `color`, `quantity`, `sku`, `price`, `retail`, `fee`, `profit`, `percent`, `image`, `updated_qty`,`created_at`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-            $stmt->bind_param("issisdddddss", $product_id, $size, $color, $qty, $sku, $price, $retail, $fee, $profit, $percent, $image, $updated_qty);
-            if(!$stmt->execute()) {
-                throw new Exception($stmt->error);
+            $sql = "INSERT INTO smi_variations (`product_id`, `size`, `color`, `quantity`, `sku`, `price`, `retail`, `fee`, `profit`, `percent`, `image`, `length__`, `height`, `weight`, `age`, `updated_qty`, `dimension`, `created_at`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW())";
+            if($stmt = $this->getConn()->prepare($sql)) {
+                $stmt->bind_param("issisdddddsssssss", $product_id, $size, $color, $qty, $sku, $price, $retail, $fee, $profit, $percent, $image, $length__, $height, $weight, $age, $updated_qty, $dimension);
+                if(!$stmt->execute()) {
+                    throw new Exception($stmt->error);
+                }
+                $stmt->close();
+            } else {
+                var_dump($this->getConn()->error);
             }
-            $stmt->close();
+            
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
     }
+
+
 
     function find_by_sku($sku)
     {
@@ -820,7 +893,7 @@ class ProductDAO
                            B.profit
                     FROM smi_products A
                     LEFT JOIN smi_variations B ON A.id = B.product_id
-                    WHERE B.sku = " . $sku . "
+                    WHERE B.sku = $sku
                     ORDER BY A.id,
                              B.id,
                              B.color,

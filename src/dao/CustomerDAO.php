@@ -1,29 +1,37 @@
 <?php
+
 class CustomerDAO
 {
     private $conn;
 
+    function __construct($db) {
+        $this->conn = $db->getConn();
+    } 
+
     function save_customer(Customer $customer)
     {
         try {
-            $avatar = $customer->getAvatar();
+            $avatar = $customer->getAvatar() ?? null;
             $name = $customer->getName();
             $phone = $customer->getPhone();
-            $email = $customer->getEmail();
-            $facebook = $customer->getFacebook();
-            $linkFB = $customer->getLinkFb();
-            $birthday = $customer->getBirthday();
+            $email = $customer->getEmail() ?? null;
+            $facebook = $customer->getFacebook() ?? null;
+            $linkFB = $customer->getLinkFb() ?? null;
+            $birthday = $customer->getBirthday() ?? null;
             $address = $customer->getAddress();
             $village_id = $customer->getVillageId();
             $district_id = $customer->getDistrictId();
             $city_id = $customer->getCityId();
+            $full_address = $customer->getFullAddress();
+            if(empty($full_address)) {
+                $full_address = $this->generate_full_address($city_id, $district_id, $village_id, $address);
+            }
             if (!empty($birthday)) {
                 $date = str_replace('/', '-', $birthday);
                 $birthday = date('Y-m-d H:i:s', strtotime($date));
             } else {
                 $birthday = null;
             }
-            $full_address = $this->generate_full_address($city_id, $district_id, $village_id, $address);
             $stmt = $this->getConn()->prepare("insert into `smi_customers`
                     (`avatar`,`name`, `phone`, `email`,`facebook`,`link_fb`, `birthday`, `address`, `village_id`, `district_id`, `city_id`, `full_address`, `created_at`, `updated_at`)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
@@ -195,10 +203,12 @@ class CustomerDAO
         }
     }
 
-    function find_by_phone($phone)
+    
+
+    function find_by_phone($phones)
     {
         try {
-            $sql = "select * from smi_customers where phone = $phone";
+            $sql = "select * from smi_customers where phone in ($phones)";
             $result = mysqli_query($this->conn, $sql);
             $data = array();
             foreach ($result as $k => $row) {
@@ -210,6 +220,7 @@ class CustomerDAO
                     'email' => $row["email"],
                     'facebook' => $row["facebook"],
                     'link_fb' => $row["link_fb"],
+                    'full_address' => $row["full_address"],
                     'address' => $row["address"],
                     'village_id' => $row["village_id"],
                     'district_id' => $row["district_id"],
@@ -292,9 +303,10 @@ class CustomerDAO
             } else if ($type == 'email') {
                 $where .= " and email = '$value' ";
             }
+            
             $sql = "select * from smi_customers where $where limit 1";
             $result = mysqli_query($this->conn, $sql);
-            while ($obj = mysqli_fetch_object($result, "Customer")) {
+            while ($obj = $result -> fetch_object()) {
                 return $obj;
             }
         } catch (Exception $e) {

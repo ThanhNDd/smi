@@ -5,8 +5,8 @@ include("../../dao/VoucherDAO.php");
 
 $db = new DBConnect();
 
-$dao = new VoucherDAO();
-$dao->setConn($db->getConn());
+$dao = new VoucherDAO($db);
+// $dao->setConn($db->getConn());
 
 if (isset($_POST["method"]) && $_POST["method"] == "update_status") {
   try {
