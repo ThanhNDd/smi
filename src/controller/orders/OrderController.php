@@ -680,7 +680,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
                 throw new Exception("Insert order detail is failure", 1);
             }
             if (!empty($details[$i]->sku)) {
-                $productDAO->update_qty_variation_by_sku((int)$details[$i]->sku, (int)$qty, 1);
+                $productDAO->update_qty_variation_by_sku((int)$details[$i]->sku, (int)$qty);
             } else {
                 throw new Exception("SKU is empty");
             }

@@ -5,41 +5,43 @@ class ProductDAO
     private $conn;
 
     function __construct($db) {
-        $this->conn = $db->getConn();   
+        $this->conn = $db->getConn();
     } 
 
-    function findVariantBySku($sku)
-    {
-        try {
-            $sql = "SELECT id AS variant_id,
-                           product_id,
-                           retail,
-                           size,
-                           color,
-                           sku,
-                           profit
-                    FROM smi_variations
-                    WHERE sku = $sku";
-            $result = mysqli_query($this->conn, $sql);
-            $product = null;
-            if (!empty($result)) {
-                foreach ($result as $k => $row) {
-                    $product = array(
-                        'product_id' => $row["product_id"],
-                        'variant_id' => $row["variant_id"],
-                        'price' => $row["retail"],
-                        'size' => $row["size"],
-                        'color' => $row["color"],
-                        'sku' => $row["sku"],
-                        'profit' => $row["profit"]
-                    );
-                }
-            }
-            return $product;
-        } catch (Exception $e) {
-            echo "Open connection database is error exception >> " . $e->getMessage();
-        }
-    }
+    // function findVariantBySku($sku)
+    // {
+    //     try {
+    //         $sql = "SELECT id AS variant_id,
+    //                        product_id,
+    //                        retail,
+    //                        size,
+    //                        color,
+    //                        sku,
+    //                        profit
+    //                 FROM smi_variations
+    //                 WHERE sku = $sku";
+    //         $result = mysqli_query($this->conn, $sql);
+    //         $product = null;
+    //         if (!empty($result)) {
+    //             foreach ($result as $k => $row) {
+    //                 $product = array(
+    //                     'product_id' => $row["product_id"],
+    //                     'variant_id' => $row["variant_id"],
+    //                     'price' => $row["retail"],
+    //                     'size' => $row["size"],
+    //                     'color' => $row["color"],
+    //                     'sku' => $row["sku"],
+    //                     'profit' => $row["profit"]
+    //                 );
+    //             }
+    //         }
+    //         return $product;
+    //     } catch (Exception $e) {
+    //         echo "Open connection database is error exception >> " . $e->getMessage();
+    //     }
+    // }
+
+    
 
     function get_max_id()
     {
@@ -893,7 +895,7 @@ class ProductDAO
                            B.profit
                     FROM smi_products A
                     LEFT JOIN smi_variations B ON A.id = B.product_id
-                    WHERE B.sku = $sku
+                    WHERE B.sku in ($sku)
                     ORDER BY A.id,
                              B.id,
                              B.color,
@@ -924,20 +926,6 @@ class ProductDAO
             echo "Open connection database is error exception >> " . $e->getMessage();
         }
     }
-
-   /* function update_quantity_by_sku($sku, $qty)
-    {
-        try {
-            $stmt = $this->getConn()->prepare("update smi_variations set quantity = (select case when quantity > 0 then quantity - $qty else 0 end from smi_variations where sku = $sku) where sku = $sku");
-            $stmt->execute();
-            $nrows = $stmt->affected_rows;
-            if (!$nrows) {
-                throw new Exception("Update Qty for variations has failure");
-            }
-        } catch (Exception $e) {
-            throw new Exception("update_quantity_by_sku >> " . $e);
-        }
-    }*/
 
     function update_qty_variation_by_sku($sku, $qty = 1, $product_type = 0)
     {

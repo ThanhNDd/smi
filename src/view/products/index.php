@@ -159,6 +159,7 @@ Common::authen();
                 </div>
                 <div class="row col-md-12 mt-2 ml-3">
                     <button class="btn btn-info expandall" id="expandall">Expand all</button>
+                    <a href="<?php Common::getPath() ?>src/view/batch/updateQuantityShopee.php" type="button" class="btn btn-success btn-flat ml-2" id="updateShopee">Cập nhật Shopee</a>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body m-3">
@@ -179,7 +180,7 @@ Common::authen();
                             <th>Giới tính</th>
                             <th>Chất liệu</th>
                             <th>Xuất xứ</th>
-                            <td>Publish</td>
+                            <!-- <td>Publish</td> -->
                             <td>Hành động</td>
                         </tr>
                         </thead>
@@ -487,10 +488,10 @@ Common::authen();
                     "data": format_origin,
                     width: "50px"
                 },
-                {
-                    "data": format_publish,
-                    width: "50px"
-                },
+                // {
+                //     "data": format_publish,
+                //     width: "50px"
+                // },
                 {
                     "data": format_action,
                     width: "50px"
@@ -920,6 +921,31 @@ Common::authen();
             }
             check_stock($(this), product_id);
         });
+
+        // $('#product_datatable tbody').on('click', '.copy-to-online', function () {
+        //     let tr = $(this).closest('tr');
+        //     let td = tr.find("td");
+        //     let product_id = $(td[1]).text();
+        //     if ($(this).hasClass('selected')) {
+        //         $(this).removeClass('selected');
+        //     } else {
+        //         $('tr.selected').removeClass('selected');
+        //         $(this).addClass('selected');
+        //     }
+        //     Swal.fire({
+        //         title: 'Bạn chắc chắn muốn copy sản phẩm này sang hệ thống Online?',
+        //         text: "",
+        //         type: 'warning',
+        //         showCancelButton: true,
+        //         confirmButtonColor: '#3085d6',
+        //         cancelButtonColor: '#d33',
+        //         confirmButtonText: 'Ok'
+        //     }).then((result) => {
+        //         if (result.value) {
+        //             copyToOnline($(this), product_id);
+        //         }
+        //     });
+        // });
 
         $('#product_datatable tbody').on('click', '.website-publish', function () {
             let tr = $(this).closest('tr');
@@ -1412,6 +1438,26 @@ Common::authen();
         });
     }
 
+    // function copyToOnline(e, product_id) {
+    //     $.ajax({
+    //         url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
+    //         type: "POST",
+    //         dataType: "json",
+    //         data: {
+    //             method: "copyToOnline",
+    //             data: product_id
+    //         },
+    //         success: function (res) {
+    //             console.log(res);
+    //         },
+    //         error: function (data, errorThrown) {
+    //             console.log(data.responseText);
+    //             console.log(errorThrown);
+    //             toastr.error("Đã xảy ra lỗi");
+    //         }
+    //     });
+    // }
+
     function update_out_of_stock(e, product_id, that) {
         $.ajax({
             url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
@@ -1448,6 +1494,7 @@ Common::authen();
     function format_action(data) {
         let btn =  '<button type="button" class="btn bg-gradient-info btn-sm edit_product" title="Sửa sản phẩm"><i class="fas fa-edit"></i></button>&nbsp;'
             + '<button type="button" class="btn bg-gradient-danger btn-sm out_of_stock" title="Cập nhật hết hàng"><i class="fas fa-eye-slash"></i></button>';
+            
         return btn;
     }
 

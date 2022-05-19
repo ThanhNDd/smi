@@ -151,3 +151,7 @@ div.dataTables_paginate {
 	display: inline-block;
 	float: right;
 }
+
+.btn  {
+	font-size: 13px !important;
+}
