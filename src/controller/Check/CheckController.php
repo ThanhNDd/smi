@@ -26,6 +26,16 @@ if (isset($_POST["method"]) && $_POST["method"] == "reviews_check") {
   }
 }
 
+if (isset($_POST["method"]) && $_POST["method"] == "reviews_check") {
+  try {
+    Common::authen_get_data();
+    $result = $dao->reviews_check();
+    echo json_encode($result);
+  } catch (Exception $ex) {
+    echo $ex->getMessage();
+  }
+}
+
 /**
  * Count all product of instock
  */
