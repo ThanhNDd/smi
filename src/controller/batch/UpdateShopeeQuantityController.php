@@ -22,32 +22,51 @@ if (isset($_POST) && !empty($_FILES['file'])) {
     $file_type  = PHPExcel_IOFactory::identify($file_directory . $new_file_name);
     $objReader  = PHPExcel_IOFactory::createReader($file_type);
     $objPHPExcel = $objReader->load($file_directory . $new_file_name);
-
     $sheet = $objPHPExcel->getSheet(0);
     $highestRow = $sheet->getHighestRow();
- 
     // Lấy tổng số cột của file, trong trường hợp này là 4 dòng
     $highestColumn = $sheet->getHighestColumn();
 
+    $filename = "shopeeTemplate.xlsx";
+    $templateExportFile = __DIR__."/template/".$filename;
+	$exportFile = "/export/".$filename;
+	$exportPathFile = __DIR__.$exportFile;
+	$exportFileType = PHPExcel_IOFactory::identify($templateExportFile);
+	$exportFileReader = PHPExcel_IOFactory::createReader($exportFileType);
+	$exportFileObj = $exportFileReader->load($templateExportFile);
+	$exportsheet = $exportFileObj->setActiveSheetIndex(0);
+
+    $data = [];
     $start_row = 5;
     $skus = [];
+    $num_row = 5;
     for ($row =  $start_row; $row <= $highestRow; $row++){
         $sku = $sheet->getCell('F' . $row)->getValue();
         if(!empty($sku)) {
             array_push($skus, $sku);
+        } else {
+            if(count($skus) > 0) {
+                $s = implode(",", $skus);
+                $quantities = $productDAO->findProductForShopee($s);
+                foreach ($quantities as $key => $value) {
+                    array_push($data, $value["quantity"]);
+                    $exportsheet->getCell('I' . $num_row)->setValue($value["quantity"]);
+                    $num_row++;
+                }
+                $skus = [];
+            }
+            $exportsheet->getCell('I' . $num_row)->setValue("");
+            $num_row++;
+            array_push($data, "");
         }
-    }
-    $data = [];
-    $arrays = array_chunk($skus, 50);
-    for($i=0; $i<count($arrays); $i++) {
-        $s = implode(",", $arrays[$i]);
-        $quantities = $productDAO->find_by_sku($s);
-        array_push($data, $quantities);
-    }
-
-    // for($i=0; $i<count($data); $i++) {
         
-    // }
+    }
 
-    echo json_encode($data);
+  
+    // Write the file
+	$objWriter = PHPExcel_IOFactory::createWriter($exportFileObj, $exportFileType);
+	$objWriter->save($exportPathFile);
+
+	$filePath = Common::path()."src/controller/batch".$exportFile;
+	echo json_encode($filePath);
 }

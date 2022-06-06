@@ -167,8 +167,8 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
 
         $order = new Order();
         $order_type = $data->order_type;
-        // $cusId = $data->customer_id;
-        if(empty($customer_id)) {
+        $cusId = $data->customer_id;
+        if(empty($cusId)) {
             $customer = new Customer();
             $customer->setName($data->customerName);
             $customer->setPhone($data->customerPhone);

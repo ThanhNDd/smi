@@ -32,14 +32,23 @@ $(document).ready(function () {
 
 });
 
+function download(url) {
+    const a = document.createElement('a')
+    a.href = url
+    a.download = url.split('/').pop()
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a);
+}
+
 function format_phone(phone) {
     let index = phone.indexOf('84');
-    if(index == 0) {
+    if (index == 0) {
         phone = phone.replace('84', '0');
     } else {
         index = phone.indexOf('0');
-        if(index != 0) {
-            phone = '0'+phone;
+        if (index != 0) {
+            phone = '0' + phone;
         }
     }
     console.log(phone);
@@ -47,17 +56,17 @@ function format_phone(phone) {
 }
 
 function formatNumber(num) {
-    if(num) {
+    if (num) {
         return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
     }
     return num;
 }
 
 function replaceComma(value) {
-    if(value) {
+    if (value) {
         value = value.replace(/,/g, '');
-        if(value.indexOf("đ") > -1) {
-            value = value.replace(" đ","");
+        if (value.indexOf("đ") > -1) {
+            value = value.replace(" đ", "");
         }
         value = value.replace(/ /g, '');
     }
@@ -65,7 +74,7 @@ function replaceComma(value) {
 }
 
 function replacePercent(value) {
-    if(value) {
+    if (value) {
         value = value.replace(/%/g, '');
         if (value.indexOf("đ") > -1) {
             value = value.replace("đ", "");
@@ -86,15 +95,15 @@ function validate_date(val) {
     return regDate.test(val);
 }
 
-  let regEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/;
-  function validate_email(val) {
+let regEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/;
+function validate_email(val) {
     return regEmail.test(val);
-  }
+}
 
-  let regPhone = /^((84|0)[3|5|7|8|9])+([0-9]{8})\b$/;
-  function validate_phone(val) {
+let regPhone = /^((84|0)[3|5|7|8|9])+([0-9]{8})\b$/;
+function validate_phone(val) {
     return regPhone.test(val);
-  }
+}
 
 function get_current_date() {
     let today = new Date();
@@ -127,12 +136,12 @@ function custom_select2(el, data) {
 //   }
 // }
 function format_money(val) {
-    if(val.indexOf('k') > -1 || val.indexOf('K') > -1) {
-        val = val.replace('k','000');
-        val = val.replace('K','000');
-    } else if(val.indexOf('m') > -1 || val.indexOf('M') > -1) {
-        val = val.replace('m','000000');
-        val = val.replace('M','000000');
+    if (val.indexOf('k') > -1 || val.indexOf('K') > -1) {
+        val = val.replace('k', '000');
+        val = val.replace('K', '000');
+    } else if (val.indexOf('m') > -1 || val.indexOf('M') > -1) {
+        val = val.replace('m', '000000');
+        val = val.replace('M', '000000');
     } else {
         val = replaceComma(val);
     }
@@ -191,7 +200,7 @@ function generate_select2_district(cityId, districtId) {
         console.log("cityId: ", cityId);
         console.log("districtId: ", districtId);
         // show_loading();
-        if(!cityId) {
+        if (!cityId) {
             reset_select2('.select-district');
             $('.select-district').select2({
                 data: null,
@@ -219,7 +228,7 @@ function generate_select2_district(cityId, districtId) {
                         placeholder: 'Lựa chọn'
                     });
                     if (districtId) {
-                        if(districtId.length < 3) {
+                        if (districtId.length < 3) {
                             districtId = districtId.padStart(3, '0');
                         }
                         $(".select-district").val(districtId).trigger("change");
@@ -234,7 +243,7 @@ function generate_select2_district(cityId, districtId) {
                 }
             });
         }
-    resolve();
+        resolve();
 
     });
 }
@@ -242,7 +251,7 @@ function generate_select2_district(cityId, districtId) {
 function generate_select2_village(districtId, villageId) {
     return new Promise((resolve) => {
         // show_loading();
-        if(!districtId) {
+        if (!districtId) {
             reset_select2('.select-village');
             $('.select-village').select2({
                 data: null,
@@ -268,10 +277,10 @@ function generate_select2_village(districtId, villageId) {
                     });
                     // hide_loading();
                     if (villageId) {
-                        if(villageId.length < 5) {
-                                villageId = villageId.padStart(5, '0');
+                        if (villageId.length < 5) {
+                            villageId = villageId.padStart(5, '0');
                         }
-                        
+
                         $(".select-village").val(villageId).trigger("change");
                     }
                 },
@@ -297,7 +306,7 @@ function reset_select2(element) {
 }
 
 function open_modal(modal_element) {
-    if(modal_element) {
+    if (modal_element) {
         $(modal_element).modal({
             backdrop: 'static',
             keyboard: false,
@@ -310,7 +319,7 @@ function open_modal(modal_element) {
 }
 
 function close_modal(modal_element) {
-    if(modal_element) {
+    if (modal_element) {
         $(modal_element).modal('hide');
     } else {
         toastr.error('Đã xảy ra lỗi.');
@@ -326,12 +335,12 @@ function hide_loading() {
 }
 
 function format_date(date) {
-    if(date) {
+    if (date) {
         let arr = date.split("-");
         let y = arr[0];
         let m = arr[1];
         let d = arr[2];
-        return d+"/"+m+"/"+y;
+        return d + "/" + m + "/" + y;
     }
     return date;
 }
@@ -343,7 +352,7 @@ function generate_select2(element) {
 }
 
 function alert_error_message(msg) {
-    if(!msg) {
+    if (!msg) {
         msg = "Vui lòng liên hệ quản trị hệ thống để khắc phục";
     }
     Swal.fire({
@@ -354,13 +363,13 @@ function alert_error_message(msg) {
 }
 
 function toast_error_message(msg) {
-    if(!msg) {
+    if (!msg) {
         msg = "";
     }
     toastr.error(msg);
 }
 
-function substringMatcher (strs) {
+function substringMatcher(strs) {
     return function findMatches(q, cb) {
         let matches = [];
         let substrRegex = new RegExp(q, 'i');

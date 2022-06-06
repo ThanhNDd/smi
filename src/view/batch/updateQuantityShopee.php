@@ -161,15 +161,15 @@ Common::authen();
             data: formData,
             success: async (response) => {
               console.log(response);  
+              if(response) {
+                download(response);
+              }
             },
             cache: false,
             contentType: false,
             processData: false
           }).done(function() {
-            if(excelData && excelData.length > 0) {
-                $("#fileToUpload").val("");
-                $("#submit").attr("disabled", true);
-            }
+            
           });
     });
 
