@@ -17,7 +17,14 @@ include("PrintReceiptOnline.php");
 include("../sales/PrinterReceipt.php");
 include("../exchange/PrinterReceiptExchange.php");
 
+include("../../dao/UserDAO.php");
+
+
 $db = new DBConnect();
+
+$userDao = new UserDAO();
+$userDao->setConn($db->getConn());
+
 $productDAO = new ProductDAO($db);
 // $productDAO->setConn($db->getConn());
 
@@ -143,7 +150,6 @@ if (isset($_POST["method"]) && $_POST["method"] == "update_appointment_delivery_
     } else {
       $orderLogs->setAction("Cập nhật ngày hẹn giao hàng");
     }
-
     try {
       $checkoutDAO->saveOrderLogs($orderLogs);
     } catch (Exception $e) {
@@ -199,43 +205,46 @@ if (isset($_POST["method"]) && $_POST["method"] == "update_status") {
         // update Order Logs
         switch ($status) {
           case 0:
-            $text_status = 'CHƯA XỬ LÝ';
+            $text_status = 'Chưa xử lý';
             break;
           case 1:
-            $text_status = 'ĐÃ GÓI HÀNG';
+            $text_status = 'Đã gói hàng';
             break;
           case 2:
-            $text_status = 'ĐÃ GIAO';
+            $text_status = 'Đã giao';
             break;
           case 3:
-            $text_status = 'HOÀN THÀNH';
+            $text_status = 'Hoàn thành';
             break;
           case 4:
-            $text_status = 'ĐỔI SIZE';
+            $text_status = 'Đổi size';
             break;
           case 5:
-            $text_status = 'CHUYỂN HOÀN';
+            $text_status = 'Chuyển hoàn';
             break;
           case 6:
-            $text_status = 'HUỶ';
+            $text_status = 'Huỷ';
             break;
           case 7:
-            $text_status = 'GIAO HÀNG SAU';
+            $text_status = 'Giao hàng sau';
             break;
           case 8:
-            $text_status = 'ĐỢI HÀNG VỀ';
+            $text_status = 'Đợi hàng về';
             break;
           case 9:
-            $text_status = 'CHỜ DUYỆT HOÀN';
+            $text_status = 'Chờ duyệt hoàn';
             break;
           case 10:
-            $text_status = 'ĐÃ DUYỆT HOÀN';
+            $text_status = 'Đã duyệt hoàn';
             break;
           case 11:
-            $text_status = 'CHỜ ĐỔI SIZE';
+            $text_status = 'Chờ đổi size';
             break;
           case 12:
-            $text_status = 'ĐÃ ĐỔI SIZE';
+            $text_status = 'Đã đổi size';
+            break;
+          case 13:
+            $text_status = 'Đã tạo đơn';
             break;
           default:
             $text_status = '';
@@ -243,7 +252,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "update_status") {
       if(!strrpos($order_id, ',', 0)) {
         $orderLogs = new OrderLogs();
         $orderLogs->setOrderId($order_id);
-        $orderLogs->setAction("Cập nhật trạng thái thành ".$text_status);
+        $orderLogs->setAction($text_status);
         try {
           $checkoutDAO->saveOrderLogs($orderLogs);
         } catch (Exception $e) {
@@ -254,7 +263,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "update_status") {
         for($i=0; $i<count($orderIds); $i++) {
           $orderLogs = new OrderLogs();
           $orderLogs->setOrderId($orderIds[$i]);
-          $orderLogs->setAction("Cập nhật trạng thái thành " . $text_status);
+          $orderLogs->setAction($text_status);
           try {
             $checkoutDAO->saveOrderLogs($orderLogs);
           } catch (Exception $e) {
@@ -497,6 +506,8 @@ if (isset($_GET["method"]) && $_GET["method"] == "get_info_total_checkout") {
 if (isset($_GET["method"]) && $_GET["method"] == "find_all") {
     try {
         Common::authen_get_data();
+        // $pass = $userDao->generate_password('12345678');
+        // var_dump("pass: [".$pass."]");
         $start_date = '';
         $end_date = '';
         if(isset($_GET["start_date"]) && isset($_GET["end_date"])) {
@@ -635,6 +646,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $order->setAppointmentDeliveryDate($data->appointment_delivery_date ?? null);
         $order->setSource($data->source ?? null);
         $order->setDescription($data->description ?? null);
+        $order->setCreatedBy($_COOKIE["acc"] ?? "unknown");
         if (isset($data->order_id) && $data->order_id > 0) {
             $message_log = 'Cập nhật đơn hàng';
             $order->setId($data->order_id);

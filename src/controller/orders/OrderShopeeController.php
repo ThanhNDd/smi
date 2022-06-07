@@ -211,6 +211,8 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $order->setAppointmentDeliveryDate($data->appointment_delivery_date ?? null);
         $order->setSource($data->source ?? null);
         $order->setDescription($data->description ?? null);
+        
+        $order->setCreatedBy($data->createdBy ?? "unknown");
         if (isset($data->order_id) && $data->order_id > 0) {
             $message_log = 'Cập nhật đơn hàng';
             $order->setId($data->order_id);
@@ -265,6 +267,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $orderLogs = new OrderLogs();
         $orderLogs->setOrderId($orderId);
         $orderLogs->setAction($message_log);
+        $orderLogs->setCreatedBy($data->createdBy);
         try {
           $checkoutDAO->saveOrderLogs($orderLogs);
         } catch (Exception $e) {

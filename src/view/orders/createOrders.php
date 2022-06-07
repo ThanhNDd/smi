@@ -881,9 +881,9 @@ Common::authen();
                     retail = Number(replaceComma(v.retail));
                 }
                 let quantity = 1;
-                if(v.quantity) {
-                    quantity = v.quantity;
-                }
+                // if(v.quantity) {
+                //     quantity = v.quantity;
+                // }
                 let total = 0;
                 let reduce = '';
                 if (v.discount && v.discount !== '' && v.discount !== '0') {

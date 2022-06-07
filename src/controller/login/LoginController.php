@@ -11,7 +11,7 @@ $userDao->setConn($db->getConn());
 
 if (isset($_POST["submit"])) {
 
-//  $pass = $userDao->generate_password('In@682018');
+//  $pass = $userDao->generate_password('12345678');
 //  echo $pass;
 //  echo "<br>";
     $uid = $_POST["username"];

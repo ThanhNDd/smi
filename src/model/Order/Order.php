@@ -37,6 +37,7 @@ class Order {
     private $is_print;
     private $created_date;
     private $updated_date;
+    private $created_by;
 
     /**
      * Order constructor.
@@ -730,4 +731,19 @@ class Order {
   {
     $this->is_print = $is_print;
   }
+  /**
+   * @return mixed
+   */
+    public function getCreatedBy()
+    {
+        return $this->created_by;
+    }
+
+    /**
+     * @param mixed $created_by
+     */
+    public function setCreatedBy($created_by): void
+    {
+        $this->created_by = $created_by;
+    }
 }

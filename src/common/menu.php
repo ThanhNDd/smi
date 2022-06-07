@@ -20,8 +20,11 @@ require_once("common.php");
                 </a>
             </div>
             <div class="info">
-                <a href="<?php Common::getPath() ?>src/controller/login/LoginController.php?logout" class="d-block">
-                    <?php echo (isset($_COOKIE["display_name"]) ? $_COOKIE["display_name"] : "") ?>
+                <a href="<?php Common::getPath() ?>src/controller/login/LoginController.php?logout" class="d-block text-secondary">
+                    <h6 class="m-0 text-white text-uppercase">
+                        <?php echo (isset($_COOKIE["display_name"]) ? $_COOKIE["display_name"] : "") ?>
+                    </h6>
+                   <small>Logout</small>                
                 </a>
             </div>
         </div>

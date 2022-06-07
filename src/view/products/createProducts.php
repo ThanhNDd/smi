@@ -318,7 +318,7 @@ Common::authen();
                                     <table class="table table-list table-bordered table-striped" cellspacing="0"
   width="100%">
                                         <thead>
-                                            <tr>
+                                            <!-- <tr>
                                                 <th class="hidden">id</th>
                                                 <th width="100px">Hình ảnh</th>
                                                 <th width="100px">Màu sắc</th>
@@ -335,7 +335,7 @@ Common::authen();
                                                 <th width="150px">Chiều cao</th>
                                                 <th width="150px">Tuổi</th>
                                                 <th width="150px">Kích thước</th>
-                                            </tr>
+                                            </tr> -->
                                         </thead>
                                         <tbody>
                                         </tbody>
@@ -822,6 +822,25 @@ Common::authen();
             // $(".table-list tbody").html("");
             let width_img = 35;
             let d = 1;
+            let thead = `<tr>`;
+                thead += `<th class="hidden">id</th>`;
+                thead += `<th width="100px">Hình ảnh</th>`;
+                thead += `<th width="100px">Màu sắc</th>`;
+                thead += `<th width="150px">Size</th>`;
+                thead += `<th width="100px">Số lượng</th>`;
+                thead += `<th width="100px">Giá nhập</th>`;
+                thead += `<th width="100px">Giá bán</th>`;
+                thead += `<th width="80px">%</th>`;
+                thead += `<th width="130px">Phí vận chuyển</th>`;
+                thead += `<th width="100px">Profit</th>`;
+                thead += `<th width="100px">SKU</th>`;
+                thead += `<th width="150px">Chiều dài</th>`;
+                thead += `<th width="150px">Cân nặng</th>`;
+                thead += `<th width="150px">Chiều cao</th>`;
+                thead += `<th width="150px">Tuổi</th>`;
+                thead += `<th width="150px">Kích thước</th>`;
+                thead += `</tr>`;
+            $(".table-list thead").html(thead);
             if(color > 0) {
                 let table = "";
                 // let c = 1;
@@ -962,6 +981,29 @@ Common::authen();
             let profit = $("#profit").val();
             let product_id = $("#display_product_id").val();
 
+            let thead = `<tr>`;
+                thead += `<th class="hidden">id</th>`;
+                thead += `<th width="100px">Hình ảnh</th>`;
+                thead += `<th width="100px">Màu sắc</th>`;
+                thead += `<th width="150px">Size</th>`;
+                thead += `<th width="100px">Số lượng</th>`;
+                if(IS_ADMIN) {
+                    thead += `<th width="100px">Giá nhập</th>`;
+                }
+                thead += `<th width="100px">Giá bán</th>`;
+                if(IS_ADMIN) {
+                    thead += `<th width="80px">%</th>`;
+                    thead += `<th width="130px">Phí vận chuyển</th>`;
+                    thead += `<th width="100px">Profit</th>`;
+                }
+                thead += `<th width="100px">SKU</th>`;
+                thead += `<th width="150px">Chiều dài</th>`;
+                thead += `<th width="150px">Cân nặng</th>`;
+                thead += `<th width="150px">Chiều cao</th>`;
+                thead += `<th width="150px">Tuổi</th>`;
+                thead += `<th width="150px">Kích thước</th>`;
+                thead += `</tr>`;
+            $(".table-list thead").html(thead);
             let width_img = 35;
             let d = 1;
             if(color > 0) {
@@ -994,20 +1036,24 @@ Common::authen();
                                 "</td>\n";
                             table += "<td class='color_"+c+"' rowspan='"+size+"'>"+_color+"</td>\n";
                         }
-                        table += "<td class='size_"+c+"_"+s+"'>"+_size+"</td>\n" +
-                            "<td class='qty_"+c+"_"+s+"'><input type='number' class='form-control' placeholder='Số lượng' value='"+_qty+"' id='qty_"+c+"_"+s+"'></td>\n" +
-                            "<td class='price_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá nhâp' value='"+_price+"' id='price_"+c+"_"+s+"' onchange='onchange_price_in_list("+c+", "+s+")' onkeyup='onchange_price_in_list("+c+", "+s+")'></td>\n" +
-                            "<td class='retail_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá bán' value='"+_retail+"' id='retail_"+c+"_"+s+"' onchange='onchange_retail_in_list("+c+", "+s+")' onkeyup='onchange_retail_in_list("+c+", "+s+")'></td>\n" +
-                            "<td class='percent_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='%' value='"+_percent+"' id='percent_"+c+"_"+s+"' onchange='onchange_percent_in_list("+c+", "+s+")' onkeyup='onchange_percent_in_list("+c+", "+s+")'></td>\n" +
-                            "<td class='fee_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Phí vận chuyển' value='"+_fee+"' id='fee_"+c+"_"+s+"' onchange='onchange_fee_in_list("+c+", "+s+")' onkeyup='onchange_fee_in_list("+c+", "+s+")'></td>\n" +
-                            "<td class='profit_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Profit' value='"+_profit+"' id='profit_"+c+"_"+s+"' readonly></td>\n" +
-                            "<td class='sku_"+c+"_"+s+"'><input type='text' class='form-control' value='"+sku+"' id='sku_"+c+"_"+s+"' ></td>\n" +
-                            "<td class='long_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_long+"' id='long_"+c+"_"+s+"' ></td>\n" +
-                            "<td class='weight_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_weight+"' id='weight_"+c+"_"+s+"' ></td>\n" +
-                            "<td class='height_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_height+"' id='height_"+c+"_"+s+"' ></td>\n" +
-                            "<td class='age_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_age+"' id='age_"+c+"_"+s+"' ></td>\n" +
-                            "<td class='dimension_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_dimension+"' id='dimension_"+c+"_"+s+"' ></td>\n" +
-                            "</tr>";
+                        table += "<td class='size_"+c+"_"+s+"'>"+_size+"</td>";
+                        table += "<td class='qty_"+c+"_"+s+"'><input type='number' class='form-control' placeholder='Số lượng' value='"+_qty+"' id='qty_"+c+"_"+s+"'></td>";
+                        if(IS_ADMIN) {
+                            table += "<td class='price_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá nhâp' value='"+_price+"' id='price_"+c+"_"+s+"' onchange='onchange_price_in_list("+c+", "+s+")' onkeyup='onchange_price_in_list("+c+", "+s+")'></td>";
+                        }
+                        table += "<td class='retail_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá bán' value='"+_retail+"' id='retail_"+c+"_"+s+"' onchange='onchange_retail_in_list("+c+", "+s+")' onkeyup='onchange_retail_in_list("+c+", "+s+")'></td>";
+                        if(IS_ADMIN) {
+                            table += "<td class='percent_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='%' value='"+_percent+"' id='percent_"+c+"_"+s+"' onchange='onchange_percent_in_list("+c+", "+s+")' onkeyup='onchange_percent_in_list("+c+", "+s+")'></td>";
+                            table += "<td class='fee_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Phí vận chuyển' value='"+_fee+"' id='fee_"+c+"_"+s+"' onchange='onchange_fee_in_list("+c+", "+s+")' onkeyup='onchange_fee_in_list("+c+", "+s+")'></td>";
+                            table += "<td class='profit_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Profit' value='"+_profit+"' id='profit_"+c+"_"+s+"' readonly></td>";
+                        }
+                        table += "<td class='sku_"+c+"_"+s+"'><input type='text' class='form-control' value='"+sku+"' id='sku_"+c+"_"+s+"' ></td>";
+                        table += "<td class='long_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_long+"' id='long_"+c+"_"+s+"' ></td>";
+                        table += "<td class='weight_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_weight+"' id='weight_"+c+"_"+s+"' ></td>";
+                        table += "<td class='height_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_height+"' id='height_"+c+"_"+s+"' ></td>";
+                        table += "<td class='age_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_age+"' id='age_"+c+"_"+s+"' ></td>";
+                        table += "<td class='dimension_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_dimension+"' id='dimension_"+c+"_"+s+"' ></td>";
+                        table += "</tr>";
                         $(".table-list tbody").append(table);
                         // s++;
                         d++;

@@ -6,6 +6,7 @@ class OrderLogs
     private $id;
     private $order_id;
     private $action;
+    private $created_by;
     private $created_date;
     private $updated_date;
 
@@ -55,6 +56,22 @@ class OrderLogs
   public function setAction($action): void
   {
     $this->action = $action;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getCreatedBy()
+  {
+    return $this->created_by;
+  }
+
+  /**
+   * @param mixed $created_by
+   */
+  public function setCreatedBy($created_by): void
+  {
+    $this->created_by = $created_by;
   }
 
   /**

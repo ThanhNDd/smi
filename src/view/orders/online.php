@@ -725,8 +725,6 @@ Common::authen();
     const WAITING_APPORVE = 14;
 
 
-
-
     let delivery_order_checked = [];
     let order_checked = [];
     let order_checked_for_print = [];
@@ -1682,41 +1680,46 @@ Common::authen();
                 $(".total_on_facebook").html((res.total_on_facebook ? res.total_on_facebook : 0) + "<sup>đ</sup>");
                 $(".count_on_facebook").html(res.count_on_facebook ? res.count_on_facebook : 0);
                 $(".total_product_on_facebook").html(res.total_product_on_facebook ? res.total_product_on_facebook : 0);
-                $(".total_profit_on_facebook").html((res.total_profit_on_facebook ? res.total_profit_on_facebook : 0) + "<sup>đ</sup>");
-                let percent_on_facebook = ((Number(replaceComma(res.total_profit_on_facebook)) / Number(replaceComma(res.total_on_facebook))) * 100).toFixed(2);
-                if (!isNaN(percent_on_facebook)) {
-                    $(".percent_on_facebook").html(percent_on_facebook + "<sup>%</sup>");
-                } else {
-                    $(".percent_on_facebook").html("0<sup>%</sup>");
+                if(IS_ADMIN) {
+                    $(".total_profit_on_facebook").html((res.total_profit_on_facebook ? res.total_profit_on_facebook : 0) + "<sup>đ</sup>");
+                    let percent_on_facebook = ((Number(replaceComma(res.total_profit_on_facebook)) / Number(replaceComma(res.total_on_facebook))) * 100).toFixed(2);
+                    if (!isNaN(percent_on_facebook)) {
+                        $(".percent_on_facebook").html(percent_on_facebook + "<sup>%</sup>");
+                    } else {
+                        $(".percent_on_facebook").html("0<sup>%</sup>");
+                    }
                 }
-
                 $(".total_on_shopee").html((res.total_on_shopee ? res.total_on_shopee : 0) + "<sup>đ</sup>");
                 $(".count_on_shopee").html(res.count_on_shopee ? res.count_on_shopee : 0);
                 $(".total_product_on_shopee").html(res.total_product_on_shopee ? res.total_product_on_shopee : 0);
-                $(".total_profit_on_shopee").html((res.total_profit_on_shopee ? res.total_profit_on_shopee : 0) + "<sup>đ</sup>");
-                let percent_on_shopee = ((Number(replaceComma(res.total_profit_on_shopee)) / Number(replaceComma(res.total_on_shopee))) * 100).toFixed(2);
-                if (!isNaN(percent_on_shopee)) {
-                    $(".percent_on_shopee").html(percent_on_shopee + "<sup>%</sup>");
-                } else {
-                    $(".percent_on_shopee").html("0<sup>%</sup>");
+                if(IS_ADMIN) {
+                    $(".total_profit_on_shopee").html((res.total_profit_on_shopee ? res.total_profit_on_shopee : 0) + "<sup>đ</sup>");
+                    let percent_on_shopee = ((Number(replaceComma(res.total_profit_on_shopee)) / Number(replaceComma(res.total_on_shopee))) * 100).toFixed(2);
+                    if (!isNaN(percent_on_shopee)) {
+                        $(".percent_on_shopee").html(percent_on_shopee + "<sup>%</sup>");
+                    } else {
+                        $(".percent_on_shopee").html("0<sup>%</sup>");
+                    }
                 }
-
                 $(".total_on_website").html((res.total_on_website ? res.total_on_website : 0) + "<sup>đ</sup>");
                 $(".count_on_website").html(res.count_on_website ? res.count_on_website : 0);
                 $(".total_product_on_website").html(res.total_product_on_website ? res.total_product_on_website : 0);
-                $(".total_profit_on_website").html((res.total_profit_on_website ? res.total_profit_on_website : 0) + "<sup>đ</sup>");
-                let percent_on_website = ((Number(replaceComma(res.total_profit_on_website)) / Number(replaceComma(res.total_on_website))) * 100).toFixed(2);
-                if (!isNaN(percent_on_website)) {
-                    $(".percent_on_website").html(percent_on_website + "<sup>%</sup>");
-                } else {
-                    $(".percent_on_website").html("0<sup>%</sup>");
+                if(IS_ADMIN) {
+                    $(".total_profit_on_website").html((res.total_profit_on_website ? res.total_profit_on_website : 0) + "<sup>đ</sup>");
+                    let percent_on_website = ((Number(replaceComma(res.total_profit_on_website)) / Number(replaceComma(res.total_on_website))) * 100).toFixed(2);
+                    if (!isNaN(percent_on_website)) {
+                        $(".percent_on_website").html(percent_on_website + "<sup>%</sup>");
+                    } else {
+                        $(".percent_on_website").html("0<sup>%</sup>");
+                    }
                 }
-                $(".total_profit").html((res.total_profit ? res.total_profit : 0) + "<sup>đ</sup>");
-
-                $(".percent_profit").html("0<sup>%</sup>");
-                let percent = ((Number(replaceComma(res.total_profit)) / Number(replaceComma(res.total_checkout))) * 100).toFixed(2);
-                if (!isNaN(percent)) {
-                    $(".percent_profit").html(percent + "<sup>%</sup>");
+                if(IS_ADMIN) {
+                    $(".total_profit").html((res.total_profit ? res.total_profit : 0) + "<sup>đ</sup>");
+                    $(".percent_profit").html("0<sup>%</sup>");
+                    let percent = ((Number(replaceComma(res.total_profit)) / Number(replaceComma(res.total_checkout))) * 100).toFixed(2);
+                    if (!isNaN(percent)) {
+                        $(".percent_profit").html(percent + "<sup>%</sup>");
+                    }
                 }
             },
             error: function (data, errorThrown) {
@@ -2824,8 +2827,10 @@ Common::authen();
             '<th>Số lượng</th>' +
             '<th class="right">Giá</th>' +
             '<th class="right">Giảm trừ</th>' +
-            '<th class="right">Thành tiền</th>' +
-            '<th class="right"></th>';
+            '<th class="right">Thành tiền</th>';
+        if(IS_ADMIN) {
+            table += '<th class="right"></th>';
+        }
             // '<th class="center"></th>';
         // '<th class="center">Lazada</th>' +
         if (order_type === EXCHANGE) {
@@ -2866,8 +2871,12 @@ Common::authen();
                 '<td>' + details[i].quantity + '</td>' +
                 '<td class="right">' + details[i].price + '<sup>đ</sup></td>' +
                 '<td class="right">' + details[i].reduce + '<sup>đ</sup></td>' +
-                '<td class="right">' + details[i].intoMoney + '<sup>đ</sup></td>' +
-                '<td class="right">' + formatNumber(detail_profit) + '<sup>đ</sup></td>';
+                '<td class="right">' + details[i].intoMoney + '<sup>đ</sup></td>';
+            console.log("IS_ADMIN: ", IS_ADMIN);
+            if(IS_ADMIN) {
+                table += '<td class="right">' + formatNumber(detail_profit) + '<sup>đ</sup></td>';
+            }
+            
             if (order_type === EXCHANGE) {
                 if (type === '1') {
                     table += '<td class="right"><span class="badge badge-info">Đã mua</span></td>';
@@ -2963,9 +2972,11 @@ Common::authen();
             }
         }
 
-        d += '<div class="col-2 col-sm-2 col-md-2"><small>Tổng tiền Shop nhận</small> <h5>' + formatNumber(total_checkout) + '<sup>đ</sup></h5></div>' +
-            '<div class="col-2 col-sm-2 col-md-2" style="display: block;"><small>-</small> <h5>' + formatNumber(profit) + '<sup>đ</sup></h5></div>' +
-            '</div>' +
+        d += '<div class="col-2 col-sm-2 col-md-2"><small>Tổng tiền Shop nhận</small> <h5>' + formatNumber(total_checkout) + '<sup>đ</sup></h5></div>';
+        if(IS_ADMIN) {
+            d += '<div class="col-2 col-sm-2 col-md-2" style="display: block;"><small>-</small> <h5>' + formatNumber(profit) + '<sup>đ</sup></h5></div>';
+        }
+        d += '</div>' +
             '</div>' +
             '</div>';
 
@@ -2989,7 +3000,7 @@ Common::authen();
                               <!-- <i class="fas fa-circle"></i> -->
                               </div>
                               <div class="tracking-date">`+order_logs[i].created_date+`<span>`+order_logs[i].created_time+`</span></div>
-                              <div class="tracking-content">`+order_logs[i].action+`</div>
+                              <div class="tracking-content">`+order_logs[i].action+`<span>`+order_logs[i].created_by+`</span></div>
                             </div>`;
                 }
             } else {

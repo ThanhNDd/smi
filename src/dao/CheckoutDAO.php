@@ -181,6 +181,7 @@ class CheckoutDAO
           'id' => $row["order_id"],
           'order_id' => $row["order_id"],
           'action' => $row["action"],
+          'created_by' => $row["created_by"],
           'created_date' => date_format(date_create($row["created_date"]), "d/m/Y"),
           'created_time' => date_format(date_create($row["created_date"]), "h:i A")
         );
@@ -579,7 +580,7 @@ class CheckoutDAO
                         A.estimated_delivery,
                         A.bill_of_lading_no,
                         A.shopee_order_id
-                  order by A.ID desc";
+                  order by A.updated_date desc";
 
 //echo $sql;
 
@@ -1092,6 +1093,7 @@ class CheckoutDAO
             if(empty($description)) {
               $description = null;
             }
+            $createdBy = $order->getCreatedBy();
             $stmt = $this->getConn()->prepare("insert into smi_orders (
                     `shopee_order_id`,
                     `total_reduce`,
@@ -1119,12 +1121,13 @@ class CheckoutDAO
                     `order_date`,
                     `delivery_date`,
                     `description`,
+                    `created_by`,
                     `created_date`,
                     `updated_date`) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
-            $stmt->bind_param("sdddddddiddiisddsisdiiisss", $shopee_order_id, $total_reduce, $total_reduce_percent, $discount, $wallet, $total_amount,
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+            $stmt->bind_param("sdddddddiddiisddsisdiiissss", $shopee_order_id, $total_reduce, $total_reduce_percent, $discount, $wallet, $total_amount,
                 $total_checkout, $customer_payment, $payment_type, $repay, $transfer_to_wallet, $customer_id, $type, $bill, $shipping_fee,
-                $shipping, $shipping_unit, $status, $voucher_code, $voucher_value, $orderRefer, $paymentExchangeType, $source, $orderDate, $deliveryDate, $description);
+                $shipping, $shipping_unit, $status, $voucher_code, $voucher_value, $orderRefer, $paymentExchangeType, $source, $orderDate, $deliveryDate, $description, $createdBy);
             if (!$stmt->execute()) {
                 throw new Exception($stmt->error);
             }
@@ -1160,15 +1163,16 @@ class CheckoutDAO
               $delivery_date = null;
             }
             $description = $order->getDescription();
+            $createdBy = $order->getCreatedBy();
             $id = $order->getId();
             $stmt = $this->getConn()->prepare("update `smi_orders` SET `total_reduce` = ?, `total_reduce_percent` = ?, 
                             `discount` = ?, `total_amount` = ?, `total_checkout` = ?, `customer_payment` = ?, `repay` = ?, 
                             `customer_id` = ?, `type` = ?, `bill_of_lading_no` = ?, `shipping_fee` = ?, `shipping` = ?, 
                             `shipping_unit` = ?, `status` = ?, `updated_date` = NOW(), `deleted` = b'0', `payment_type` = ?, 
-                            `order_date` = ?, `source` = ?, `delivery_date` = ?, `description` = ? WHERE `id` = ?");
-            $stmt->bind_param("dddddddiisddsiisissi", $total_reduce, $total_reduce_percent, $discount, $total_amount,
+                            `order_date` = ?, `source` = ?, `delivery_date` = ?, `description` = ?, `created_by` = ? WHERE `id` = ?");
+            $stmt->bind_param("dddddddiisddsiisisssi", $total_reduce, $total_reduce_percent, $discount, $total_amount,
               $total_checkout, $customer_payment, $repay, $customer_id, $type, $bill, $shipping_fee, $shipping,
-              $shipping_unit, $status, $payment_type, $order_date, $source, $delivery_date, $description, $id);
+              $shipping_unit, $status, $payment_type, $order_date, $source, $delivery_date, $description, $createdBy, $id);
             if (!$stmt->execute()) {
                 throw new Exception($stmt->error);
             }
@@ -1288,9 +1292,10 @@ class CheckoutDAO
     try {
       $order_id = $orderLogs->getOrderId();
       $action = $orderLogs->getAction();
-      $stmt = $this->getConn()->prepare("INSERT INTO `smi_order_logs`(`order_id`, `action`, `created_date`, `updated_date`) 
-                                            VALUES (?,?,NOW(),NOW())");
-      $stmt->bind_param("is", $order_id, $action);
+      $createdBy = $orderLogs->getCreatedBy();
+      $stmt = $this->getConn()->prepare("INSERT INTO `smi_order_logs`(`order_id`, `action`,`created_by`, `created_date`, `updated_date`) 
+                                            VALUES (?, ?, ?, NOW(),NOW())");
+      $stmt->bind_param("iss", $order_id, $action, $createdBy);
       if (!$stmt->execute()) {
         throw new Exception($stmt->error);
       }

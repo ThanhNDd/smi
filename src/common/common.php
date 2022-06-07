@@ -4,6 +4,13 @@ include 'Constant.php';
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 class Common
 {
+    public static function isAdmin() {
+        if(isset($_COOKIE["is_admin"]) && $_COOKIE["is_admin"] == 1) {
+            return "true";
+        };
+        return "false";
+    }
+
     public static function path()
     {
         if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
@@ -45,6 +52,8 @@ class Common
         // set cookie user id
         setcookie("UID", $user['id'], $expire ,$path);
         setcookie("display_name", $user['display_name'], $expire ,$path);
+        setcookie("is_admin", $user['is_admin'], $expire ,$path);
+        setcookie("acc", $user['username'], $expire ,$path);
     }
 
     public static function redirect_login_page()

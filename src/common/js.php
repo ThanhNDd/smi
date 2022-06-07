@@ -62,10 +62,12 @@ require_once("common.php");
 <script src="<?php Common::getPath()?>dist/js/common.js"></script>
 <script type="text/javascript">
 	let root_path = '<?php Common::getPath(); ?>';
+	const IS_ADMIN = <?php echo Common::isAdmin() ?>;
 	function set_title(title) {
 		$(".title-page").text(document.getElementsByTagName("title")[0].innerHTML);
 	}
 	$(document).ready(() => {
 		$(".title-page").text(document.getElementsByTagName("title")[0].innerHTML);
 	})
+
 </script>
