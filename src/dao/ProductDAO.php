@@ -8,6 +8,91 @@ class ProductDAO
         $this->conn = $db->getConn();
     } 
 
+    /**
+     * loadVariations method using for fb chrome extension
+     */
+    function loadVariations($prodId) {
+        
+        try {
+            $sql = "SELECT id AS variant_id,
+                            product_id,
+                            sku,
+                            image,
+                            color,
+                            size,
+                            quantity,
+                            retail,
+                            weight,
+                            height,
+                            age
+                    FROM `smi_variations`
+                    WHERE product_id = $prodId";
+            $result = mysqli_query($this->conn, $sql);
+            $data = array();
+            if (!empty($result)) {
+                foreach ($result as $k => $row) {
+                    $name = $row["color"].",".$row["size"];
+                    $dimension = "";
+                    if(!empty($row["weight"])) {
+                        $dimension .= $row["weight"];
+                    }
+                    if(!empty($row["height"])) {
+                        $dimension .= ", ".$row["height"];
+                    }
+                    if(!empty($row["age"])) {
+                        $dimension .= ", ".$row["age"];
+                    }
+                    if(!empty($dimension)) {
+                        $name .= "($dimension)";
+                    }
+                    $variations = array(
+                        'variant_id' => $row["variant_id"],
+                        'product_id' => $row["product_id"],
+                        'sku' => $row["sku"],
+                        'image' => $row["image"],
+                        'color' => $row["color"],
+                        'size' => $row["size"],
+                        'quantity' => $row["quantity"],
+                        'retail' => $row["retail"],
+                        'name' => $name,
+                        // 'weight' => $row["weight"],
+                        // 'height' => $row["height"],
+                        // 'age' => $row["age"]
+                    );
+                    array_push($data, $variations);
+                }
+            }
+            return $data;
+        } catch (Exception $e) {
+            echo "Open connection database is error exception >> " . $e->getMessage();
+        }
+    }
+
+     /**
+     * loadAllProducts method using for fb chrome extension
+     */
+    function loadAllProducts() {
+        
+        try {
+            $sql = "SELECT id, name, image FROM `smi_products` WHERE status = 0";
+            $result = mysqli_query($this->conn, $sql);
+            $data = array();
+            if (!empty($result)) {
+                foreach ($result as $k => $row) {
+                    $product = array(
+                        'id' => $row["id"],
+                        'name' => $row["name"],
+                        'image' => $row["image"]
+                    );
+                    array_push($data, $product);
+                }
+            }
+            return $data;
+        } catch (Exception $e) {
+            echo "Open connection database is error exception >> " . $e->getMessage();
+        }
+    }
+
     function findProductForShopee($skus) {
         try {
             $sql = "SELECT sku, quantity FROM `smi_variations` WHERE sku in ($skus) order by FIELD(sku, $skus)";

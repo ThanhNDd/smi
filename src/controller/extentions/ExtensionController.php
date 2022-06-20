@@ -6,6 +6,7 @@ include("../../common/DBConnection.php");
 include("../../dao/CheckoutDAO.php");
 include("../../dao/CustomerDAO.php");
 include("../../dao/ProductDAO.php");
+include("../../dao/UserDAO.php");
 include("../../common/cities/Zone.php");
 include("../../model/Order/Order.php");
 include("../../model/Order/OrderDetail.php");
@@ -16,8 +17,47 @@ $db = new DBConnect();
 $customerDAO = new CustomerDAO($db);
 $checkoutDAO = new CheckoutDAO($db);
 $productDAO = new ProductDAO($db);
+$userDAO = new ProductDAO($db);
+$userDAO->setConn($db->getConn());
 
 $zone = new Zone();
+
+if (isset($_POST["method"]) && $_POST["method"] == "checkPhone") {
+    try {
+        $phone = $_POST["data"];
+        $customer = $customerDAO->findCustomerByPhone($phone);
+        echo json_encode($customer);
+    } catch (Exception $e) {
+        throw new Exception($e);
+    }
+}
+
+if (isset($_POST["method"]) && $_POST["method"] == "getAllStaff") {
+    try {
+        $users = $userDAO->getAllStaff();
+        echo json_encode($users);
+    } catch (Exception $ex) {
+        throw new Exception($ex);
+    }
+}
+
+if (isset($_POST["method"]) && $_POST["method"] == "loadVariations") {
+    try {
+        $productId = $_POST["data"];
+        $products = $productDAO->loadVariations($productId);
+        echo json_encode($products);
+    } catch (Exception $ex) {
+        throw new Exception($ex);
+    }
+}
+if (isset($_POST["method"]) && $_POST["method"] == "loadProducts") {
+    try {
+        $products = $productDAO->loadAllProducts();
+        echo json_encode($products);
+    } catch (Exception $ex) {
+        throw new Exception($ex);
+    }
+}
 
 if (isset($_POST["method"]) && $_POST["method"] == "checkExistOrderShopee") {
     try {

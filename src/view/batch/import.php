@@ -396,31 +396,31 @@ Common::authen();
 
 
 
-  function testCreateOrder() {
-    let conf = confirm("Bạn có chắc chắn muốn tạo đơn hàng này?");
-    if(conf) {
-      let order = {"order_id":null,"order_type":1,"source":3,"order_status":13,"wallet":0,"shipping_fee":0,"shipping":0,"payment_type":1,"shopee_order_id":"220518G1D3CRK4","order_date":"2022-05-18 12:34","bill_of_lading_no":"SPXVN027264389455","shipping_unit":"SPXEXPRESS","totalFee":"5613","customer_id":null,"customerName":"Hoàng ngọc anh","customerPhone":"0989877447","cityId":1,"cityName":"Hà Nội","districtId":"007","districtName":"Quận Hai Bà Trưng","villageId":"00244","villageName":"Phường Bạch Đằng","address":"Số 6 Lê Quý Đôn","fullAddress":"Số 6 Lê Quý Đôn, Phường Bạch Đằng, Quận Hai Bà Trưng, Hà Nội","fullAddressShopee":"Số 6 Lê Quý Đôn, Phường Bạch Đằng, Quận Hai Bà Trưng, Hà Nội","isNotExistProduct":0,"quantity":2,"description":"1. Quần bơi,Vàng Đậm,L (17-21kg, 5-7T)\n","discount":"5613","total_reduce":5613,"total_amount":65000,"total_checkout":59387,"products":[{"product_id":"862","product_name":"Quần bơi","reduce":0,"reduce_percent":null,"reduce_type":null,"product_exchange":null,"profit":22560,"sku":"86222","name":"Vàng Đậm,L (17-21kg, 5-7T)","price":65000,"quantity":2}]};
-      $.ajax({
-          dataType: 'json',
-          url: '<?php Common::getPath() ?>src/controller/orders/OrderShopeeController.php',
-          data: {
-              method: 'add_new',
-              data: JSON.stringify(order)
-          },
-          type: 'POST',
-          success: async function (data) {
-              console.log(data);
-              resolve();
-          },
-          error: function (data, errorThrown) {
-              console.log(data.responseText);
-              console.log(errorThrown);
-              // toastr.error('Đã xảy ra lỗi');
-              reject();
-          }
-      });
-    }
-  }
+  // function testCreateOrder() {
+  //   let conf = confirm("Bạn có chắc chắn muốn tạo đơn hàng này?");
+  //   if(conf) {
+  //     let order = {"order_id":null,"order_type":1,"source":3,"order_status":13,"wallet":0,"shipping_fee":0,"shipping":0,"payment_type":1,"shopee_order_id":"220518G1D3CRK4","order_date":"2022-05-18 12:34","bill_of_lading_no":"SPXVN027264389455","shipping_unit":"SPXEXPRESS","totalFee":"5613","customer_id":null,"customerName":"Hoàng ngọc anh","customerPhone":"0989877447","cityId":1,"cityName":"Hà Nội","districtId":"007","districtName":"Quận Hai Bà Trưng","villageId":"00244","villageName":"Phường Bạch Đằng","address":"Số 6 Lê Quý Đôn","fullAddress":"Số 6 Lê Quý Đôn, Phường Bạch Đằng, Quận Hai Bà Trưng, Hà Nội","fullAddressShopee":"Số 6 Lê Quý Đôn, Phường Bạch Đằng, Quận Hai Bà Trưng, Hà Nội","isNotExistProduct":0,"quantity":2,"description":"1. Quần bơi,Vàng Đậm,L (17-21kg, 5-7T)\n","discount":"5613","total_reduce":5613,"total_amount":65000,"total_checkout":59387,"products":[{"product_id":"862","product_name":"Quần bơi","reduce":0,"reduce_percent":null,"reduce_type":null,"product_exchange":null,"profit":22560,"sku":"86222","name":"Vàng Đậm,L (17-21kg, 5-7T)","price":65000,"quantity":2}]};
+  //     $.ajax({
+  //         dataType: 'json',
+  //         url: '<?php Common::getPath() ?>src/controller/orders/OrderShopeeController.php',
+  //         data: {
+  //             method: 'add_new',
+  //             data: JSON.stringify(order)
+  //         },
+  //         type: 'POST',
+  //         success: async function (data) {
+  //             console.log(data);
+  //             resolve();
+  //         },
+  //         error: function (data, errorThrown) {
+  //             console.log(data.responseText);
+  //             console.log(errorThrown);
+  //             // toastr.error('Đã xảy ra lỗi');
+  //             reject();
+  //         }
+  //     });
+  //   }
+  // }
 
   async function showAlert() {
     await getAvailableData().then((result) => {

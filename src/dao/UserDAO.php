@@ -4,6 +4,25 @@ class UserDAO
 {
     private $conn;
 
+    function getAllStaff()
+    {
+        try {
+            $sql = "SELECT username, display_name FROM smi_user";
+            $result = mysqli_query($this->conn, $sql);
+            $data = array();
+            foreach ($result as $k => $row) {
+                $user = array(
+                    'username' => $row["username"],
+                    'display_name' => $row["display_name"]
+                );
+                array_push($data, $user);
+            }
+            return $data;
+        } catch (Exception $e) {
+            throw new Exception("getAllStaff >> " . $e);
+        }
+    }
+
     function find_user($username, $password)
     {
         try {

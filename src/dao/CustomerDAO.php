@@ -8,6 +8,29 @@ class CustomerDAO
         $this->conn = $db->getConn();
     } 
 
+    findCustomerByPhone($phone) {
+        try {
+            $sql = "SELECT id,
+                            name,
+                            city_id,
+                            district_id,
+                            village_id,
+                            address,
+                            full_address,
+                            facebook,
+                            link_fb
+                    FROM smi_customers
+                    WHERE phone = '$phone'
+                    LIMIT 1";
+            $result = mysqli_query($this->conn, $sql);
+            while ($obj = $result -> fetch_object()) {
+                return $obj;
+            }
+        } catch (Exception $e) {
+            echo "Open connection database is error exception >> " . $e->getMessage();
+        }
+    }
+
     function save_customer(Customer $customer)
     {
         try {
