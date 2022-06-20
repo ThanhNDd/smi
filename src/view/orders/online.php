@@ -219,6 +219,11 @@ Common::authen();
         .btn {
             font-size: 13px !important;
         }
+        .btn-fast-update {
+            margin-top: 5px !important;
+            border-radius: 3px !important;
+            font-size: 11px !important;
+        }
         
     </style>
 </head>
@@ -1989,6 +1994,30 @@ Common::authen();
             });
         });
 
+        $('#example tbody').on('click', '.btn-fast-update', function () {
+            show_loading();
+            let tr = $(this).closest('tr');
+            let row = table.row(tr);
+            let order_id = row.data().order_id;
+            let status = $(this).attr("data");
+            console.log("order_id: ", order_id);
+            console.log("status: ", status);
+            Swal.fire({
+                title: 'Bạn có chắc chắn muốn cập nhật trạng thái đơn này?',
+                text: "",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ok'
+            }).then((result) => {
+                if (result.value) {
+                    update_status(order_id, status, "");
+                }
+            });
+
+        });
+
 
         $('#example tbody').on('click', '.customer-selected', function () {
             let customer_id_selected = $(this).val();
@@ -3440,10 +3469,25 @@ Common::authen();
         let status = Number(data.status);
         switch (status) {
             case PENDING :
-                txt_status = '<div class="text-status"><span class="badge badge-warning">Chưa xử lý</span> <i class="fa fa-edit text-warning c-pointer edit-status"></i></div>';
+                txt_status = `<div class="text-status">
+                                <span class="badge badge-warning">Chưa xử lý</span> 
+                                <i class="fa fa-edit text-warning c-pointer edit-status"></i>
+                                <button class="btn btn-warning btn-fast-update" data="13">Đã tạo đơn</button>
+                            </div>`;
+                break;
+            case CREATED_BILL:
+                txt_status = `<div class="text-status">
+                                <span class="badge badge-info">Đã tạo đơn</span> 
+                                <i class="fa fa-edit text-info c-pointer edit-status"></i>
+                                <button class="btn btn-info btn-fast-update" data="1">Đã gói hàng</button>
+                            </div>`;
                 break;
             case PACKED:
-                txt_status = '<div class="text-status"><span class="badge badge-info">Đã gói hàng</span> <i class="fa fa-edit text-info c-pointer edit-status"></i></div>';
+                txt_status = `<div class="text-status">
+                                <span class="badge badge-info">Đã gói hàng</span> 
+                                <i class="fa fa-edit text-info c-pointer edit-status"></i>
+                                <button class="btn btn-primary btn-fast-update" data="2">Đã giao</button>
+                            </div>`;
                 break;
             case DELIVERED:
                 txt_status = '<div class="text-status"><span class="badge badge-primary">Đã giao</span> <i class="fa fa-edit text-primary c-pointer edit-status"></i></div>';
@@ -3478,16 +3522,7 @@ Common::authen();
             case EXCHANGED:
                 txt_status = '<div class="text-status"><span class="badge badge-secondary">Đang đổi size</span> <i class="fa fa-edit text-secondary c-pointer edit-status"></i></div>';
                 break;
-            case CREATED_BILL:
-                txt_status = '<div class="text-status"><span class="badge badge-info">Đã tạo đơn</span> <i class="fa fa-edit text-info c-pointer edit-status"></i></div>';
-                break;
-            // case WAITING_APPORVE:
-            //     txt_status = `<div class="text-status text-center"><span class="badge badge-secondary">Chờ xác nhận</span> 
-            //                     <button class="btn btn-sm bg-gradient-success mt-1 approve_order" style="font-size: 12px;">
-            //                         <i class="fas fa-check-circle"></i> Xác nhận
-            //                     </button>
-            //                 </div>`;
-            //     break;
+            
             default:
                 break;
         }

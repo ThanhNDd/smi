@@ -40,6 +40,7 @@ $walletDAO = new WalletDAO($db);
 $zone = new Zone();
 
 
+
 if (isset($_POST["method"]) && $_POST["method"] == "batch_print_receipt") {
   try {
     Common::authen_get_data();

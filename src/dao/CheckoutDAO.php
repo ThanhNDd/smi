@@ -1292,7 +1292,7 @@ class CheckoutDAO
     try {
       $order_id = $orderLogs->getOrderId();
       $action = $orderLogs->getAction();
-      $createdBy = $orderLogs->getCreatedBy();
+      $createdBy = $orderLogs->getCreatedBy() ? $orderLogs->getCreatedBy() : ($_COOKIE["acc"] ?? "unknown");
       $stmt = $this->getConn()->prepare("INSERT INTO `smi_order_logs`(`order_id`, `action`,`created_by`, `created_date`, `updated_date`) 
                                             VALUES (?, ?, ?, NOW(),NOW())");
       $stmt->bind_param("iss", $order_id, $action, $createdBy);

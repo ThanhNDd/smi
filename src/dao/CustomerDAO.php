@@ -8,7 +8,7 @@ class CustomerDAO
         $this->conn = $db->getConn();
     } 
 
-    findCustomerByPhone($phone) {
+    function findCustomerByPhone($phone) {
         try {
             $sql = "SELECT id,
                             name,
