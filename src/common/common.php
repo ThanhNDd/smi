@@ -11,6 +11,11 @@ class Common
         return "false";
     }
 
+    public static function isAdminRole()
+    {
+        return filter_var(Common::isAdmin(), FILTER_VALIDATE_BOOLEAN);
+    }
+
     public static function path()
     {
         if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
@@ -64,6 +69,13 @@ class Common
     }
 
     public static function authen()
+    {
+        if (!Common::check_logged()) {
+            Common::redirect_login_page();
+        }
+    }
+
+    public static function authenIsNotAdminRole()
     {
         if (!Common::check_logged()) {
             Common::redirect_login_page();

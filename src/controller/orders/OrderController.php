@@ -280,6 +280,50 @@ if (isset($_POST["method"]) && $_POST["method"] == "update_status") {
     $db->commit();
 }
 
+if (isset($_POST["method"]) && $_POST["method"] == "update_payment_type") {
+  try {
+      Common::authen_get_data();
+      $order_id = $_POST["order_id"];
+      $payment_type = $_POST["payment_type"];
+      $result = $checkoutDAO->update_payment_type($order_id, $payment_type);
+      
+      // update Order Logs
+      $text_status = "Cập nhật thanh toán: ";
+      if($payment_type == "0") {
+        $text_status .= "COD";
+      } else {
+        $text_status .= "Chuyển Khoản";
+      }
+      if(!strrpos($order_id, ',', 0)) {
+        $orderLogs = new OrderLogs();
+        $orderLogs->setOrderId($order_id);
+        $orderLogs->setAction($text_status);
+        try {
+          $checkoutDAO->saveOrderLogs($orderLogs);
+        } catch (Exception $e) {
+          echo $e->getMessage();
+        }
+      } else {
+        $orderIds = explode(",", $order_id);
+        for($i=0; $i<count($orderIds); $i++) {
+          $orderLogs = new OrderLogs();
+          $orderLogs->setOrderId($orderIds[$i]);
+          $orderLogs->setAction($text_status);
+          try {
+            $checkoutDAO->saveOrderLogs($orderLogs);
+          } catch (Exception $e) {
+            echo $e->getMessage();
+          }
+        }
+      }
+      echo json_encode("success");
+  } catch (Exception $ex) {
+      $db->rollback();
+      echo $ex->getMessage();
+  }
+  $db->commit();
+}
+
 
 if (isset($_POST["method"]) && $_POST["method"] == "print_receipt") {
     try {
@@ -613,6 +657,8 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
             $customer->setCityId($data->cityId);
             $customer->setDistrictId($data->districtId);
             $customer->setVillageId($data->villageId);
+            $customer->setLinkFb($data->linkFb ?? null);
+            $customer->setFacebook($data->facebook ?? null);
             $cusId = $customerDAO->save_customer($customer);
         }
         $total_checkout = $data->total_checkout;

@@ -1492,10 +1492,13 @@ Common::authen();
     }
 
     function format_action(data) {
-        let btn =  '<button type="button" class="btn bg-gradient-info btn-sm edit_product" title="Sửa sản phẩm"><i class="fas fa-edit"></i></button>&nbsp;'
-            + '<button type="button" class="btn bg-gradient-danger btn-sm out_of_stock" title="Cập nhật hết hàng"><i class="fas fa-eye-slash"></i></button>';
-            
-        return btn;
+        if(IS_ADMIN) {
+            let btn =  '<button type="button" class="btn bg-gradient-info btn-sm edit_product" title="Sửa sản phẩm"><i class="fas fa-edit"></i></button>&nbsp;'
+                + '<button type="button" class="btn bg-gradient-danger btn-sm out_of_stock" title="Cập nhật hết hàng"><i class="fas fa-eye-slash"></i></button>';
+                
+            return btn;
+        }
+        return null;
     }
 
     function format_intomoney(data) {
@@ -1551,11 +1554,11 @@ Common::authen();
             '<th style="width: 50px;" class="center"><input type="checkbox" id="selectall" onclick="checkAll(this)"></th>' +
             '<th style="width: 100px;">Hình ảnh</th>' +
             '<th style="width: 80px;">Màu</th>' +
-            '<th style="width: 100px;">Mã sản phẩm</th>' +
-            '<th style="width: 150px;">Size</th>' +
+            '<th style="width: 150px;">Mã sản phẩm</th>' +
+            '<th style="width: 350px;">Size</th>' +
             '<th style="width: 80px;">Số lượng</th>' +
             '<th style="width: 60px;">Giá bán</th>' +
-            '<th style="width: 60px;">Giá sale</th>' +
+            '<th style="width: 100px;">Giá sale</th>' +
             '<th style="width: 130px;">Chiều dài</th>' +
             '<th style="width: 130px;">Cân nặng</th>' +
             '<th style="width: 130px;">Chiều cao</th>' +
@@ -1582,7 +1585,11 @@ Common::authen();
                     table += '<td rowspan="'+variations[i].length+'">' + variations[i][j].color + '</td>';
                 }
                 table += '<td>' + variations[i][j].sku + '</td>';
-                table += '<td>' + variations[i][j].size + '</td>';
+                let size = variations[i][j].size;
+                if(variations[i][j].weight && variations[i][j].height && variations[i][j].age) {
+                    size += ` (${variations[i][j].weight}, ${variations[i][j].height}, ${variations[i][j].age})`;
+                }
+                table += '<td>' + size + '</td>';
                 if(variations[i][j].quantity === "0") {
                     table += '<td id="qty"><span class=\"text-danger\">Hết hàng</span></td>';
                 } else if(variations[i][j].quantity > 0 && variations[i][j].quantity < 3) {

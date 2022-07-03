@@ -85,11 +85,11 @@ Common::authen();
                             <label>Nguồn đặt hàng</label>
                             <select class="form-control order-source" id="order_source">
                                 <option value="2" selected="selected">Facebook</option>
-                                <option value="4">
-                                    FB TTTE
-                                </option>
+                                <option value="4">FB TTTE</option>
                                 <option value="1">Website</option>
                                 <option value="3">Shopee</option>
+                                <option value="5">Lazada</option>
+                                <option value="6">Zalo</option>
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -202,9 +202,8 @@ Common::authen();
                         </div>
                         <div class="col-md-2 col-sm-6 pd-t-5">
                             <select class="form-control payment-type col-md-4" name="payment_type" id="payment_type">
-                                <option value="0">Tiền mặt</option>
-                                <option value="1" selected="selected">Chuyển khoản</option>
-                                <option value="2">Nợ</option>
+                                <option value="0" selected="selected">COD</option>
+                                <option value="1">Chuyển khoản</option>
                             </select>
                             <input type="text" class="form-control mt-2 hidden" name="payment" id="payment"
                                    width="100px" style="text-align: right;">
@@ -260,31 +259,31 @@ Common::authen();
                 let order_type = $(this).val();
                 onchange_order_type(order_type);
             });
-            $("#payment_type").change(function(){
-                if ($(this).val() === "0") {
-                    $("#payment").removeClass("hidden").focus();
-                } else {
-                    $("#payment").val("").addClass("hidden");
-                }
-            });
-            $("#payment").change(function() {
-                $("#payment").removeClass("is-invalid");
-                let customer_payment = format_money(replaceComma($("#payment").val()));
-                if (customer_payment && isNaN(customer_payment)) {
-                    $("#payment").addClass("is-invalid");
-                    return false;
-                }
-                let total_checkout = replaceComma($("#total_checkout").text());
-                let repay = 0;
-                if(customer_payment > total_checkout) {
-                    repay = Number(customer_payment) - Number(total_checkout);
-                } else if(customer_payment < total_checkout) {
-                    $("#payment").addClass("is-invalid");
-                    return false;
-                }
-                $(this).val(formatNumber(customer_payment));
-                $("#repay").text(formatNumber(repay));
-            });
+            // $("#payment_type").change(function(){
+            //     if ($(this).val() === "0") {
+            //         $("#payment").removeClass("hidden").focus();
+            //     } else {
+            //         $("#payment").val("").addClass("hidden");
+            //     }
+            // });
+            // $("#payment").change(function() {
+            //     $("#payment").removeClass("is-invalid");
+            //     let customer_payment = format_money(replaceComma($("#payment").val()));
+            //     if (customer_payment && isNaN(customer_payment)) {
+            //         $("#payment").addClass("is-invalid");
+            //         return false;
+            //     }
+            //     let total_checkout = replaceComma($("#total_checkout").text());
+            //     let repay = 0;
+            //     if(customer_payment > total_checkout) {
+            //         repay = Number(customer_payment) - Number(total_checkout);
+            //     } else if(customer_payment < total_checkout) {
+            //         $("#payment").addClass("is-invalid");
+            //         return false;
+            //     }
+            //     $(this).val(formatNumber(customer_payment));
+            //     $("#repay").text(formatNumber(repay));
+            // });
 
             $('.order-create').click(function () {
                 reset_data();
@@ -511,17 +510,17 @@ Common::authen();
                     }
                 });
             }
-            let payment_type = $("#payment_type").val();
-            if(payment_type && payment_type === "0") {
-                let customer_payment = format_money(replaceComma($("#payment").val()));
-                if (!customer_payment || isNaN(customer_payment)) {
-                    $("#payment").addClass("is-invalid");
-                    is_valid = false;
-                    // toastr.error("Chưa nhập số tiền thanh toán");
-                } else {
-                    $("#payment").removeClass("is-invalid");
-                }
-            }
+            // let payment_type = $("#payment_type").val();
+            // if(payment_type && payment_type === "0") {
+            //     let customer_payment = format_money(replaceComma($("#payment").val()));
+            //     if (!customer_payment || isNaN(customer_payment)) {
+            //         $("#payment").addClass("is-invalid");
+            //         is_valid = false;
+            //         // toastr.error("Chưa nhập số tiền thanh toán");
+            //     } else {
+            //         $("#payment").removeClass("is-invalid");
+            //     }
+            // }
             if(!is_valid) {
                 toastr.error("Đã xảy ra lỗi");
             }
@@ -557,7 +556,7 @@ Common::authen();
                 $("#shipping_unit").prop("disabled", "");
                 $("#order_source").prop("disabled", "");
                 $("#shipping").prop("disabled", "");
-                $("#payment_type").val("1").trigger("change");
+                $("#payment_type").val("0").trigger("change");
             }
         }
 
@@ -573,7 +572,7 @@ Common::authen();
                 discount = discount.replace("%", "");
                 discount = (discount * total_checkout) / 100;
             }
-            let customer_payment = replaceComma($("#payment").val());
+            // let customer_payment = replaceComma($("#payment").val());
             let payment_type = $("#payment_type").val();
             let repay = Number(replaceComma($("#repay").val()));
             let transferToWallet = 0;
@@ -629,7 +628,7 @@ Common::authen();
             data["order_date"] = order_date;
             data["appointment_delivery_date"] = appointment_delivery_date;
             data["order_status"] = Number(order_status);
-            data["customer_payment"] = customer_payment;
+            data["customer_payment"] = total_checkout;
             data["voucher_code"] = '';
             data["voucher_value"] = '';
             data["current_order_id"] = 0;
@@ -741,7 +740,7 @@ Common::authen();
             $(".modal-order").text("Tạo mới đơn hàng");
             $("#create_new_order").text("Tạo mới");
             $("#order_type").val("1").trigger("change");
-            $("#payment_type").val("1").trigger("change");
+            $("#payment_type").val("0").trigger("change");
             $("#customer_id").val("");
             $("#bill_of_lading_no").val("");
             $("#customer_name").val("");

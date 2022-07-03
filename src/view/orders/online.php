@@ -224,7 +224,10 @@ Common::authen();
             border-radius: 3px !important;
             font-size: 11px !important;
         }
-        
+        .card-title {
+            font-size: 1rem !important;
+            text-transform: uppercase !important;
+        }
     </style>
 </head>
 <?php require_once('../../common/header.php'); ?>
@@ -283,63 +286,84 @@ Common::authen();
 <!--      end create new-->
 <!--      info important-->
         <div class="col-md-12 col-sm-12">
-        <div class="card">
-            <!-- <div class="card-header">
-                <h4 class="card-title">Danh sách cần xử lý</h4>
-            </div>   -->
-          <div class="card-body row status">
-           <!--  <div class="col total-waiting-approve-status text-center c-pointer">
-                <span class="info-box-number">
-                    <h4 class="total_waiting_approve text-secondary">0</h4>
-                </span>
-                <span class="info-box-text">Chờ xác nhận<br><small>Đơn hàng website</small></span>
-            </div> -->
-            <div class="col total-pending-status text-center c-pointer">
-                <span class="info-box-number">
-                    <h4 class="total_pending text-warning">0</h4>
-                </span>
-                <span class="info-box-text">Chờ xử lý</span>
+            <div class="card">
+            <div class="card-body row status">
+                <div class="col total-pending-status text-center c-pointer">
+                    <span class="info-box-number">
+                        <h4 class="total_pending text-warning">0</h4>
+                    </span>
+                    <span class="info-box-text">Chờ xử lý</span>
+                </div>
+                <div class="col total-created-bill-status text-center c-pointer">
+                    <span class="info-box-number">
+                        <h4 class="total_created_bill text-info">0</h4>
+                    </span>
+                    <span class="info-box-text">Đã tạo đơn</span>
+                </div>
+                <div class="col total-packed-status text-center c-pointer">
+                    <span class="info-box-number">
+                        <h4 class="total_packed text-info">0</h4>
+                    </span>
+                    <span class="info-box-text">Đã gói hàng</span>
+                </div>
+                <div class="col total-delivered-status text-center c-pointer">
+                    <span class="info-box-number">
+                        <h4 class="total_delivered text-primary">0</h4>
+                    </span>
+                    <span class="info-box-text">Đã giao</span>
+                </div>
+                <div class="col total-return-status text-center c-pointer">
+                    <span class="info-box-number">
+                        <h4 class="total_return text-danger">0</h4>
+                    </span>
+                    <span class="info-box-text">Đổi size / Chuyển hoàn</span>
+                </div>
+                <div class="col total-wating-status text-center c-pointer">
+                    <span class="info-box-number">
+                        <h4 class="total_wating text-secondary">0</h4>
+                    </span>
+                    <span class="info-box-text">Đợi hàng về</span>
+                </div>
+                <div class="col total-appointment-status text-center c-pointer">
+                    <span class="info-box-number">
+                        <h4 class="total_appointment text-warning">0</h4>
+                    </span>
+                    <span class="info-box-text">Giao hàng sau</span>
+                </div>
+                
             </div>
-            <div class="col total-created-bill-status text-center c-pointer">
-                <span class="info-box-number">
-                    <h4 class="total_created_bill text-info">0</h4>
-                </span>
-                <span class="info-box-text">Đã tạo đơn</span>
             </div>
-            <div class="col total-packed-status text-center c-pointer">
-                <span class="info-box-number">
-                    <h4 class="total_packed text-info">0</h4>
-                </span>
-                <span class="info-box-text">Đã gói hàng</span>
-            </div>
-            <div class="col total-delivered-status text-center c-pointer">
-                <span class="info-box-number">
-                    <h4 class="total_delivered text-primary">0</h4>
-                </span>
-                <span class="info-box-text">Đã giao</span>
-            </div>
-            <div class="col total-return-status text-center c-pointer">
-                <span class="info-box-number">
-                    <h4 class="total_return text-danger">0</h4>
-                </span>
-                <span class="info-box-text">Đổi size / Chuyển hoàn</span>
-            </div>
-            <div class="col total-wating-status text-center c-pointer">
-                <span class="info-box-number">
-                    <h4 class="total_wating text-secondary">0</h4>
-                </span>
-                <span class="info-box-text">Đợi hàng về</span>
-            </div>
-            <div class="col total-appointment-status text-center c-pointer">
-                <span class="info-box-number">
-                    <h4 class="total_appointment text-warning">0</h4>
-                </span>
-                <span class="info-box-text">Giao hàng sau</span>
-            </div>
-            
-          </div>
         </div>
-      </div>
+        <div class="col-md-12 col-sm-12">
+            <div class="card">
+            <div class="card-body row status">
+                <div class="col total-jt-status text-center c-pointer">
+                    <span class="info-box-number">
+                        <h4 class="total_jt text-warning">0</h4>
+                    </span>
+                    <span class="info-box-text" style="text-transform: uppercase;">J&T Express</span>
+                </div>
+                <div class="col total-shopee-status text-center c-pointer">
+                    <span class="info-box-number">
+                        <h4 class="total_shopee text-info">0</h4>
+                    </span>
+                    <span class="info-box-text" style="text-transform: uppercase;">Shopee Xpress</span>
+                </div>
+                <div class="col total-ninja-status text-center c-pointer">
+                    <span class="info-box-number">
+                        <h4 class="total_ninja text-info">0</h4>
+                    </span>
+                    <span class="info-box-text" style="text-transform: uppercase;">Ninja</span>
+                </div>
+                <div class="col total-ghn-status text-center c-pointer">
+                    <span class="info-box-number">
+                        <h4 class="total_ghn text-primary">0</h4>
+                    </span>
+                    <span class="info-box-text" style="text-transform: uppercase;">Giao Hàng Nhanh</span>
+                </div>
+            </div>
+            </div>
+        </div>
 <!--      end info important-->
 <!--      search form-->
         <div class="col-md-12 col-sm-12">
@@ -387,114 +411,97 @@ Common::authen();
 <!--      total info-->
         <div class="col-md-12 col-sm-12">
             <div class="card">
-                <!-- <div class="card-header">
-                    <h4 class="card-title">Doanh thu hôm nay</h4>
-                </div>   -->
                 <div class="card-body">
                     <div class="row">
                         <div class="col">
-                            <div class="info-box">
-                                <!-- <span class="info-box-icon bg-info elevation-1"><i class="fas fa-dollar-sign"></i></span> -->
-                                <div class="info-box-content col-12 row">
-                                    <div class="col-md-6 col-sm-12 text-left">
-                                        <span class="info-box-text">Tổng tiền</span>
-                                        <span class="info-box-number">
-                                            <h5 class="total_money">0<sup>đ</sup></h5>
-                                        </span>
-                                        <span class="info-box-number total_profit"></span>
-                                        <span class="info-box-text percent_profit"></span>
-                                    </div>
-                                    <div class="col-md-6 col-sm-12 text-left pl-0">
-                                        <h1 class="text-danger no-margin d-inline-block col-md-12 pl-0"><span class="total_orders col-md-6 pl-0 pr-0">0</span> <small style="font-size: 30%;color: #676a6c;">Đơn</small></h1>
-                                        <h5 class="text-danger text-left col-md-12 pl-0"><span class="total_products text-left col-md-6" style="color: #676a6c;">0</span> <small style="font-size: 60%;color: #676a6c;">Sản phẩm</small></h5>
-                                    </div>
+                            <div class="card card-warning">
+                                <div class="card-header p-2">
+                                    <h3 class="card-title">Tổng</h3>
                                 </div>
-                                <!-- <div class="info-box-content col-12 row">
-                                    <div class="col-md-6 col-sm-12 text-left">
-                                        <span class="info-box-text">Tổng tiền</span>
-                                        <span class="info-box-number">
-                                            <h5 class="total_money">0<sup>đ</sup></h5>
-                                        </span>
-                                    </div>
-                                    <div class="col-md-6 col-sm-12 text-left pl-0">
-                                        <h1 class="text-danger no-margin d-inline-block col-md-12 pl-0"><span class="total_orders col-md-6 pl-0 pr-0">0</span> <small style="font-size: 30%;color: #676a6c;">Đơn</small></h1>
-                                        <h5 class="text-danger text-left col-md-12 pl-0"><span class="total_products text-left col-md-6" style="color: #676a6c;">0</span> <small style="font-size: 60%;color: #676a6c;">Sản phẩm</small></h5>
-                                    </div>
-                                </div> -->
-                            </div>
-                        </div>
-                        <!-- <div class="col">
-                            <div class="info-box mb-3"> -->
-                                <!-- <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-wallet"></i></span> -->
-                                <!-- <div class="info-box-content">
-                                    <span class="info-box-text" id="percent_profit">-</span>
-                                    <span class="info-box-number">
-                                        <h5 class="total_profit">
-                                            <sup>đ</sup>
-                                        </h5>
-                                    </span>
-                                </div>
-                            </div>
-                        </div> -->
-                        <div class="col">
-                            <div class="info-box mb-3">
-                                <!-- <span class="info-box-icon bg-primary elevation-1"><i class="fab fa-facebook-square"></i></span> -->
-                                <div class="info-box-content col-12 row">
-                                    <div class="col-md-6 col-sm-12 text-left">
-                                        <span class="info-box-text">Facebook</span>
-                                        <span class="info-box-number">
-                                            <h5 class="total_on_facebook">0<sup>đ</sup></h5>
-                                        </span>
-                                        <span class="info-box-number total_profit_on_facebook"></span>
-                                        <span class="info-box-text percent_on_facebook"></span>
-                                    </div>
-                                    <div class="col-md-6 col-sm-12 text-left pl-0">
-                                        <h1 class="text-danger no-margin d-inline-block col-md-12 pl-0"><span class="count_on_facebook col-md-6 pl-0 pr-0">0</span> <small style="font-size: 30%;color: #676a6c;">Đơn</small></h1>
-                                        <h5 class="text-danger text-left col-md-12 pl-0"><span class="total_product_on_facebook text-left col-md-6" style="color: #676a6c;">0</span> <small style="font-size: 60%;color: #676a6c;">Sản phẩm</small></h5>
+                                <div class="card-body p-2">
+                                    <div class="row col-md-12 p-0 m-0">
+                                        <div class="col-md-6 col-sm-12 p-0 pt-1">
+                                            <span class="row col-md-12 col-sm-12">
+                                                <h5 class="total_money">0&#8363;</h5>
+                                            </span>
+                                            <span class="row col-md-12 col-sm-12 total_profit"></span>
+                                            <span class="row col-md-12 col-sm-12 percent_profit"></span>
+                                        </div>
+                                        <div class="col-md-6 col-sm-12 p-0 float-right">
+                                            <h1 class="text-danger text-right m-0 total_orders"></h1>
+                                            <h5 class="text-right col-md-12 p-0 text-secondary total_products" style="padding-right: 6px !important;"></h5>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col">
-                            <div class="info-box mb-3">
-                                <!-- <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-store"></i></span> -->
-                                <div class="info-box-content col-12 row">
-                                <div class="col-md-6 col-sm-12 text-left">
-                                    <span class="info-box-text">Shopee</span>
-                                    <span class="info-box-number">
-                                        <h5 class="total_on_shopee">0<sup>đ</sup></h5>
-                                    </span>
-                                    <span class="info-box-number total_profit_on_shopee"></span>
-                                    <span class="info-box-text percent_on_shopee"></span>
+                            <div class="card card-primary">
+                                <div class="card-header p-2">
+                                    <h3 class="card-title">Facebook</h3>
                                 </div>
-                                <div class="col-md-6 col-sm-12 text-left pl-0">
-                                    <h1 class="text-danger no-margin d-inline-block col-md-12 pl-0"><span class="count_on_shopee col-md-6 pl-0 pr-0">0</span> <small style="font-size: 30%;color: #676a6c;">Đơn</small></h1>
-                                    <h5 class="text-danger text-left col-md-12 pl-0"><span class="total_product_on_shopee text-left col-md-6" style="color: #676a6c;">0</span> <small style="font-size: 60%;color: #676a6c;">Sản phẩm</small></h5>
-                                </div>
+                                <div class="card-body p-2">
+                                    <div class="row col-md-12 p-0 m-0">
+                                        <div class="col-md-6 col-sm-12 p-0 pt-1">
+                                            <span class="row col-md-12 col-sm-12">
+                                                <h5 class="total_on_facebook"></h5>
+                                            </span>
+                                            <span class="row col-md-12 col-sm-12 total_profit_on_facebook"></span>
+                                            <span class="row col-md-12 col-sm-12 percent_on_facebook"></span>
+                                        </div>
+                                        <div class="col-md-6 col-sm-12 p-0 float-right">
+                                            <h1 class="text-danger text-right m-0 count_on_facebook"></h1>
+                                            <h5 class="text-right col-md-12 p-0 text-secondary total_product_on_facebook" style="padding-right: 6px !important;"></h5>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col">
-                            <div class="info-box mb-3">
-                                <!-- <span class="info-box-icon bg-success elevation-1"><i class="fas fa-globe"></i></span> -->
-                                <div class="info-box-content col-12 row">
-                                <div class="col-md-6 col-sm-12 text-left">
-                                    <span class="info-box-text">Website</span>
-                                    <span class="info-box-number">
-                                        <h5 class="total_on_website">0<sup>đ</sup></h5>
-                                    </span>
-                                    <span class="info-box-number total_profit_on_website"></span>
-                                    <span class="info-box-text percent_on_website"></span>
+                            <div class="card card-danger">
+                                <div class="card-header p-2">
+                                    <h3 class="card-title">Shopee</h3>
                                 </div>
-                                    <div class="col-md-6 col-sm-12 text-left pl-0">
-                                        <h1 class="text-danger no-margin d-inline-block col-md-12 pl-0"><span class="count_on_website col-md-6 pl-0 pr-0">0</span> <small style="font-size: 30%;color: #676a6c;">Đơn</small></h1>
-                                        <h5 class="text-danger text-left col-md-12 pl-0"><span class="total_product_on_website text-left col-md-6" style="color: #676a6c;">0</span> <small style="font-size: 60%;color: #676a6c;">Sản phẩm</small></h5>
+                                <div class="card-body p-2">
+                                    <div class="row col-md-12 p-0 m-0">
+                                        <div class="col-md-6 col-sm-12 p-0 pt-1">
+                                            <span class="row col-md-12 col-sm-12">
+                                                <h5 class="total_on_shopee"></h5>
+                                            </span>
+                                            <span class="row col-md-12 col-sm-12 total_profit_on_shopee"></span>
+                                            <span class="row col-md-12 col-sm-12 percent_on_shopee"></span>
+                                        </div>
+                                        <div class="col-md-6 col-sm-12 p-0 float-right">
+                                            <h1 class="text-danger text-right m-0 count_on_shopee"></h1>
+                                            <h5 class="text-right col-md-12 p-0 text-secondary total_product_on_shopee" style="padding-right: 6px !important;"></h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header p-2" style="background-color: #201adb;color: white;">
+                                    <h3 class="card-title">Lazada</h3>
+                                </div>
+                                <div class="card-body p-2">
+                                    <div class="row col-md-12 p-0 m-0">
+                                        <div class="col-md-6 col-sm-12 p-0 pt-1">
+                                            <span class="row col-md-12 col-sm-12">
+                                                <h5 class="total_on_lazada"></h5>
+                                            </span>
+                                            <span class="row col-md-12 col-sm-12 total_profit_on_lazada"></span>
+                                            <span class="row col-md-12 col-sm-12 percent_on_lazada"></span>
+                                        </div>
+                                        <div class="col-md-6 col-sm-12 p-0 float-right">
+                                            <h1 class="text-danger text-right m-0 count_on_lazada"></h1>
+                                            <h5 class="text-right col-md-12 p-0 text-secondary total_product_on_lazada" style="padding-right: 6px !important;"></h5>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
                 </div>
             </div>
       </div>
@@ -552,6 +559,7 @@ Common::authen();
                                 <th class="w20 left">SL</th>
                                 <th class="w60 left">Mã vận đơn</th>
                                 <th class="w50 right">Tổng tiền</th>
+                                <th class="w80 center">Thanh toán</th>
                                 <th class="w80 center">Ngày mua hàng</th>
                                 <!--<th class="w50 left">Nguồn</th>-->
                                 <th class="w50 left">Trạng thái</th>
@@ -1678,54 +1686,72 @@ Common::authen();
             dataType: "json",
             data: get_data_search_info_total(type, status),
             success: function (res) {
-                $(".total_money").html((res.total_checkout ? res.total_checkout : 0) + "<sup>đ</sup>");
-                $(".total_orders").html(res.count_total ? res.count_total : 0);
-                $(".total_products").html(res.total_product ? res.total_product : 0);
+                $(".total_money").html((res.total_checkout ? res.total_checkout : 0) + "&#8363;");
+                $(".total_orders").html(res.count_total > 0 ? res.count_total+" <small style='font-size: 35%;' class='text-secondary'>Đơn</small>" : 0);
+                $(".total_products").html(Number(replaceComma(res.total_product)) > 0 ? res.total_product+" <small style='font-size: 64%;margin-right: 10px;' class='text-secondary'>SP</small>" : 0);
 
-                $(".total_on_facebook").html((res.total_on_facebook ? res.total_on_facebook : 0) + "<sup>đ</sup>");
-                $(".count_on_facebook").html(res.count_on_facebook ? res.count_on_facebook : 0);
-                $(".total_product_on_facebook").html(res.total_product_on_facebook ? res.total_product_on_facebook : 0);
+                $(".total_on_facebook").html((res.total_on_facebook ? res.total_on_facebook : 0) + "&#8363;");
+                $(".count_on_facebook").html(res.count_on_facebook > 0 ? res.count_on_facebook+" <small style='font-size: 35%;' class='text-secondary'>Đơn</small>" : 0);
+                $(".total_product_on_facebook").html(Number(replaceComma(res.total_product_on_facebook)) > 0 ? res.total_product_on_facebook+" <small style='font-size: 64%;margin-right: 10px;' class='text-secondary'>SP</small>" : 0);
                 if(IS_ADMIN) {
-                    $(".total_profit_on_facebook").html((res.total_profit_on_facebook ? res.total_profit_on_facebook : 0) + "<sup>đ</sup>");
+                    $(".total_profit_on_facebook").html((res.total_profit_on_facebook ? res.total_profit_on_facebook : 0) + "&#8363;");
                     let percent_on_facebook = ((Number(replaceComma(res.total_profit_on_facebook)) / Number(replaceComma(res.total_on_facebook))) * 100).toFixed(2);
                     if (!isNaN(percent_on_facebook)) {
-                        $(".percent_on_facebook").html(percent_on_facebook + "<sup>%</sup>");
+                        $(".percent_on_facebook").html(percent_on_facebook + "%");
                     } else {
-                        $(".percent_on_facebook").html("0<sup>%</sup>");
+                        $(".percent_on_facebook").html("0%");
                     }
                 }
-                $(".total_on_shopee").html((res.total_on_shopee ? res.total_on_shopee : 0) + "<sup>đ</sup>");
-                $(".count_on_shopee").html(res.count_on_shopee ? res.count_on_shopee : 0);
-                $(".total_product_on_shopee").html(res.total_product_on_shopee ? res.total_product_on_shopee : 0);
+                $(".total_on_shopee").html((res.total_on_shopee ? res.total_on_shopee : 0) + "&#8363;");
+                $(".count_on_shopee").html(res.count_on_shopee ? res.count_on_shopee+" <small style='font-size: 35%;' class='text-secondary'>Đơn</small>" : 0);
+                $(".total_product_on_shopee").html(Number(replaceComma(res.total_product_on_shopee)) > 0 ? res.total_product_on_shopee+" <small style='font-size: 64%;margin-right: 10px;' class='text-secondary'>SP</small>" : 0);
                 if(IS_ADMIN) {
-                    $(".total_profit_on_shopee").html((res.total_profit_on_shopee ? res.total_profit_on_shopee : 0) + "<sup>đ</sup>");
+                    $(".total_profit_on_shopee").html((res.total_profit_on_shopee ? res.total_profit_on_shopee : 0) + "&#8363;");
                     let percent_on_shopee = ((Number(replaceComma(res.total_profit_on_shopee)) / Number(replaceComma(res.total_on_shopee))) * 100).toFixed(2);
                     if (!isNaN(percent_on_shopee)) {
-                        $(".percent_on_shopee").html(percent_on_shopee + "<sup>%</sup>");
+                        $(".percent_on_shopee").html(percent_on_shopee + "%");
                     } else {
-                        $(".percent_on_shopee").html("0<sup>%</sup>");
+                        $(".percent_on_shopee").html("0%");
                     }
                 }
-                $(".total_on_website").html((res.total_on_website ? res.total_on_website : 0) + "<sup>đ</sup>");
-                $(".count_on_website").html(res.count_on_website ? res.count_on_website : 0);
-                $(".total_product_on_website").html(res.total_product_on_website ? res.total_product_on_website : 0);
+                $(".total_on_lazada").html((res.total_on_lazada ? res.total_on_lazada : 0) + "&#8363;");
+                $(".count_on_lazada").html(res.count_on_lazada ? res.count_on_lazada+" <small style='font-size: 35%;' class='text-secondary'>Đơn</small>" : 0);
+                $(".total_product_on_lazada").html(Number(replaceComma(res.total_product_on_lazada)) > 0 ? res.total_product_on_lazada+" <small style='font-size: 64%;margin-right: 10px;' class='text-secondary'>SP</small>" : 0);
                 if(IS_ADMIN) {
-                    $(".total_profit_on_website").html((res.total_profit_on_website ? res.total_profit_on_website : 0) + "<sup>đ</sup>");
-                    let percent_on_website = ((Number(replaceComma(res.total_profit_on_website)) / Number(replaceComma(res.total_on_website))) * 100).toFixed(2);
-                    if (!isNaN(percent_on_website)) {
-                        $(".percent_on_website").html(percent_on_website + "<sup>%</sup>");
+                    $(".total_profit_on_lazada").html((res.total_profit_on_lazada ? res.total_profit_on_lazada : 0) + "&#8363;");
+                    let percent_on_lazada = ((Number(replaceComma(res.total_profit_on_lazada)) / Number(replaceComma(res.total_on_lazada))) * 100).toFixed(2);
+                    if (!isNaN(percent_on_lazada)) {
+                        $(".percent_on_lazada").html(percent_on_lazada + "%");
                     } else {
-                        $(".percent_on_website").html("0<sup>%</sup>");
+                        $(".percent_on_lazada").html("0%");
                     }
-                }
-                if(IS_ADMIN) {
-                    $(".total_profit").html((res.total_profit ? res.total_profit : 0) + "<sup>đ</sup>");
-                    $(".percent_profit").html("0<sup>%</sup>");
+                    $(".total_profit").html((res.total_profit ? res.total_profit : 0) + "&#8363;");
+                    $(".percent_profit").html("0%");
                     let percent = ((Number(replaceComma(res.total_profit)) / Number(replaceComma(res.total_checkout))) * 100).toFixed(2);
                     if (!isNaN(percent)) {
-                        $(".percent_profit").html(percent + "<sup>%</sup>");
+                        $(".percent_profit").html(percent + "%");
                     }
                 }
+                // $(".total_on_website").html((res.total_on_website ? res.total_on_website : 0) + "&#8363;");
+                // $(".count_on_website").html(res.count_on_website ? res.count_on_website : 0);
+                // $(".total_product_on_website").html(res.total_product_on_website ? res.total_product_on_website : 0);
+                // if(IS_ADMIN) {
+                //     $(".total_profit_on_website").html((res.total_profit_on_website ? res.total_profit_on_website : 0) + "&#8363;");
+                //     let percent_on_website = ((Number(replaceComma(res.total_profit_on_website)) / Number(replaceComma(res.total_on_website))) * 100).toFixed(2);
+                //     if (!isNaN(percent_on_website)) {
+                //         $(".percent_on_website").html(percent_on_website + "%");
+                //     } else {
+                //         $(".percent_on_website").html("0%");
+                //     }
+                // }
+                // if(IS_ADMIN) {
+                //     $(".total_profit").html((res.total_profit ? res.total_profit : 0) + "&#8363;");
+                //     $(".percent_profit").html("0%");
+                //     let percent = ((Number(replaceComma(res.total_profit)) / Number(replaceComma(res.total_checkout))) * 100).toFixed(2);
+                //     if (!isNaN(percent)) {
+                //         $(".percent_profit").html(percent + "%");
+                //     }
+                // }
             },
             error: function (data, errorThrown) {
                 console.log(data.responseText);
@@ -1855,6 +1881,12 @@ Common::authen();
                     class: 'right'
                 },
                 {
+                    "data": format_payment,
+                    width: "50px",
+                    "orderable": false,
+                    class: 'center'
+                },
+                {
                     "data": format_order_date,
                     width: "70px",
                     "orderable": true,
@@ -1948,14 +1980,45 @@ Common::authen();
             event.preventDefault();
         });
 
+        $('#example tbody').on('click', '.edit-payment-type', function () {
+            show_loading();
+            let tr = $(this).closest('tr');
+            let row = table.row(tr);
+            let status = row.data().status;
+            let selectbox = `<div class="select-payment-type-update">
+                                <select class="form-control p-2 payment-type-update">
+                                    <option value="0">COD</option>
+                                    <option value="1">Chuyển khoản</option>
+                                </select>
+                                <i class="fa fa-save text-secondary c-pointer save-payment-type-update mt-2" style="font-size: 20px;"></i>
+                                <i class="fa fa-times-circle text-danger c-pointer cancel-payment-type-update mt-2" style="font-size: 20px;"></i>
+                            </div>`;
+            $(this).closest('.text-payment-type').addClass("hidden").parent().append(selectbox);
+        });
+
+        $('#example tbody').on('click', '.cancel-payment-type-update', function () {
+            show_loading();
+            let tr = $(this).closest('tr');
+            let row = table.row(tr);
+            $(this).closest('.select-payment-type-update').prev(".text-payment-type").removeClass("hidden");
+            $(this).closest('.select-payment-type-update').remove();
+        });
+
+        $('#example tbody').on('click', '.save-payment-type-update', function () {
+            show_loading();
+            let tr = $(this).closest('tr');
+            let row = table.row(tr);
+            let order_id = row.data().order_id;
+            let payment_type = $(this).prev('select').val();
+            console.log("payment_type: ", payment_type);
+            update_payment_type(order_id, payment_type);
+        });
+
         $('#example tbody').on('click', '.edit-status', function () {
             show_loading();
             let tr = $(this).closest('tr');
             let row = table.row(tr);
             let status = row.data().status;
-            // let order_date = row.data().order_date;
-            // let min_date = order_date.split("/")[2].split(' ')[0]+'-'+order_date.split("/")[1]+'-'+order_date.split("/")[0];
-            // console.log(min_date);
             let selectbox = '<div class="select-status">' +
                                 '<select class="form-control p-2 fast-order-status">' +
                                     '<option value="0" '+(status == PENDING ? selected="selected" : '')+'>Chưa xử lý</option>' +
@@ -1963,7 +2026,6 @@ Common::authen();
                                     '<option value="1" '+(status == PACKED ? selected="selected" : '')+'>Đã gói hàng</option>' +
                                     '<option value="2" '+(status == DELIVERED ? selected="selected" : '')+'>Đã giao</option>' +
                                     '<option value="3" '+(status == SUCCESS ? selected="selected" : '')+'>Hoàn thành</option>' +
-                                    // '<option value="4" '+(status == EXCHANGE ? selected="selected" : '')+'>Đổi size</option>' +
                                     '<option value="5" '+(status == RETURN ? selected="selected" : '')+'>Chuyển hoàn</option>' +
                                     '<option value="6" '+(status == CANCEL ? selected="selected" : '')+'>Huỷ</option>' +
                                     '<option value="7" '+(status == APPOINTMENT ? selected="selected" : '')+'>Giao hàng sau</option>' +
@@ -2415,6 +2477,7 @@ Common::authen();
                 // $("#tbl_print_order_JNT").removeClass("d-none");
                 // open_modal('#modal_print_order');
                 
+                // console.log("data_print: ", JSON.stringify(data_print));
                 exportOrderJnT(data_print);
 
                 resolve();
@@ -2613,7 +2676,53 @@ Common::authen();
                 $(".order_status_update").prop("disabled", true);
                 $("#order_checked_for_update").text('');
                 $("#check_all_order").prop("checked", '');
+                $(".print_order").prop("disabled", true);
+                $("#print_order_checked").text('');
+                order_checked_for_print = [];
                 order_checked = [];
+                data_print = [];
+                toastr.success('Cập nhật trạng thái thành công.');
+                count_status();
+                count_all_status();
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                });
+                $(".show_loading_update_status").addClass("hidden");
+                $(".fa-save").removeClass("hidden");
+            }
+        });
+
+    }
+
+    function update_payment_type(order_id, payment_type) {
+        $.ajax({
+            url: '<?php Common::getPath() ?>src/controller/orders/OrderController.php',
+            type: "POST",
+            dataType: "json",
+            data: {
+                method: "update_payment_type",
+                order_id: order_id,
+                payment_type: Number(payment_type)
+            },
+            success: function (res) {
+                console.log("res: ", res);
+                table.ajax.reload();
+                $(".show_loading_update_status").addClass("hidden");
+                $(".fa-save").removeClass("hidden");
+                $(".order_status_update").prop("disabled", true);
+                $("#order_checked_for_update").text('');
+                $("#check_all_order").prop("checked", '');
+                $(".print_order").prop("disabled", true);
+                $("#print_order_checked").text('');
+                order_checked = [];
+                order_checked_for_print = [];
+                data_print = [];
                 toastr.success('Cập nhật trạng thái thành công.');
                 count_status();
                 count_all_status();
@@ -2754,10 +2863,10 @@ Common::authen();
                 // }
                 $("#payment_type").val(value[0].payment_type);
                 $("#payment").val(value[0].customer_payment);
-                $("#total_amount").html(value[0].total_amount+'<sup>đ</sup>');
+                $("#total_amount").html(value[0].total_amount+'&#8363;');
                 $("#discount").val(Number(replaceComma(value[0].discount)) > 0 ? value[0].discount : '');
-                $("#total_checkout").html(value[0].total_checkout+'<sup>đ</sup>');
-                $("#repay").html(value[0].repay+'<sup>đ</sup>');
+                $("#total_checkout").html(value[0].total_checkout+'&#8363;');
+                $("#repay").html(value[0].repay+'&#8363;');
                 $(".product-area").html("");
                 $("#table_list_product tbody").html("");
                 let details = value[0].details;
@@ -2898,12 +3007,12 @@ Common::authen();
                 '<td>' + details[i].size + '</td>' +
                 '<td>' + details[i].color + '</td>' +
                 '<td>' + details[i].quantity + '</td>' +
-                '<td class="right">' + details[i].price + '<sup>đ</sup></td>' +
-                '<td class="right">' + details[i].reduce + '<sup>đ</sup></td>' +
-                '<td class="right">' + details[i].intoMoney + '<sup>đ</sup></td>';
+                '<td class="right">' + details[i].price + '&#8363;</td>' +
+                '<td class="right">' + details[i].reduce + '&#8363;</td>' +
+                '<td class="right">' + details[i].intoMoney + '&#8363;</td>';
             console.log("IS_ADMIN: ", IS_ADMIN);
             if(IS_ADMIN) {
-                table += '<td class="right">' + formatNumber(detail_profit) + '<sup>đ</sup></td>';
+                table += '<td class="right">' + formatNumber(detail_profit) + '&#8363;</td>';
             }
             
             if (order_type === EXCHANGE) {
@@ -2965,34 +3074,34 @@ Common::authen();
         profit = profit - discount - voucher_value;
 
         d += '<div class="row">' +
-            '<div class="col-2 col-sm-2 col-md-2"><small>Tổng đơn hàng</small> <h5>' + data.total_amount + '<sup>đ</sup></h5></div>' +
-            '<div class="col-2 col-sm-2 col-md-2"><small>CK trên tổng đơn</small> <h5>' + data.discount + '<sup>đ</sup></h5></div>';
+            '<div class="col-2 col-sm-2 col-md-2"><small>Tổng đơn hàng</small> <h5>' + data.total_amount + '&#8363;</h5></div>' +
+            '<div class="col-2 col-sm-2 col-md-2"><small>CK trên tổng đơn</small> <h5>' + data.discount + '&#8363;</h5></div>';
 
         let total_checkout = Number(replaceComma(data.total_checkout));
 
         if (data.customer_id && Number(data.customer_id) > 0) {
             profit -= Number(replaceComma(data.wallet));
-            d += '<div class="col-2 col-sm-2 col-md-2"><small>Tiền trong Ví</small> <h5>' + data.wallet + '<sup>đ</sup></h5></div>';
+            d += '<div class="col-2 col-sm-2 col-md-2"><small>Tiền trong Ví</small> <h5>' + data.wallet + '&#8363;</h5></div>';
         }
-        d += '<div class="col-2 col-sm-2 col-md-2"><small>Tổng giảm trừ</small> <h5>' + data.total_reduce + '<sup>đ</sup></h5></div>';
+        d += '<div class="col-2 col-sm-2 col-md-2"><small>Tổng giảm trừ</small> <h5>' + data.total_reduce + '&#8363;</h5></div>';
 
         if (order_type === ONLINE) {
             let shipping_fee = replaceComma(data.shipping_fee);
             if (shipping_fee && shipping_fee > 0) {
-                d += '<div class="col-2 col-sm-2 col-md-2"><small>Phí ship Shop trả</small> <h5>' + formatNumber(shipping_fee) + '<sup>đ</sup></h5></div>';
+                d += '<div class="col-2 col-sm-2 col-md-2"><small>Phí ship Shop trả</small> <h5>' + formatNumber(shipping_fee) + '&#8363;</h5></div>';
                 profit -= Number(shipping_fee);
             }
             let total_amount = Number(replaceComma(data.total_amount));
             let shipping = Number(replaceComma(data.shipping));
             if (shipping && shipping > 0) {
-                d += '<div class="col-2 col-sm-2 col-md-2"><small>Phí ship KH trả</small> <h5>' + formatNumber(shipping) + '<sup>đ</sup></h5></div>';
+                d += '<div class="col-2 col-sm-2 col-md-2"><small>Phí ship KH trả</small> <h5>' + formatNumber(shipping) + '&#8363;</h5></div>';
                 profit += shipping;
                 total_amount += shipping;
             } else {
                 d += '<div class="col-2 col-sm-2 col-md-2"><small>Phí ship KH trả</small> <h5>Miễn Ship</h5></div>';
             }
             total_amount -= Number(replaceComma(data.total_reduce));
-            d += '<div class="col-2 col-sm-2 col-md-2"><small>Tổng tiền KH thanh toán</small> <h5>' + formatNumber(total_amount) + '<sup>đ</sup></h5></div>';
+            d += '<div class="col-2 col-sm-2 col-md-2"><small>Tổng tiền KH thanh toán</small> <h5>' + formatNumber(total_amount) + '&#8363;</h5></div>';
         }
 
         if (payment_exchange_type === '2') {
@@ -3001,9 +3110,9 @@ Common::authen();
             }
         }
 
-        d += '<div class="col-2 col-sm-2 col-md-2"><small>Tổng tiền Shop nhận</small> <h5>' + formatNumber(total_checkout) + '<sup>đ</sup></h5></div>';
+        d += '<div class="col-2 col-sm-2 col-md-2"><small>Tổng tiền Shop nhận</small> <h5>' + formatNumber(total_checkout) + '&#8363;</h5></div>';
         if(IS_ADMIN) {
-            d += '<div class="col-2 col-sm-2 col-md-2" style="display: block;"><small>-</small> <h5>' + formatNumber(profit) + '<sup>đ</sup></h5></div>';
+            d += '<div class="col-2 col-sm-2 col-md-2" style="display: block;"><small>-</small> <h5>' + formatNumber(profit) + '&#8363;</h5></div>';
         }
         d += '</div>' +
             '</div>' +
@@ -3203,7 +3312,7 @@ Common::authen();
 
     function format_total_amount(data) {
         let total_amount = data.total_amount;
-        return total_amount + "<sup>đ</sup>";
+        return total_amount + "&#8363;";
     }
 
     function format_order_date(data) {
@@ -3263,8 +3372,11 @@ Common::authen();
             case 4:
                 src = '<span class="badge badge-primary">FB TTTE</span>';
                 break;
+            case 5:
+                src = '<span class="badge badge-primary" style="background-color: #201adb;color: white;">Lazada</span>';
+                break;
             default:
-                src = '<span class="badge badge-warning">Cửa hàng</span>';
+                src = '<span class="badge badge-warning" >Cửa hàng</span>';
                 break;
         }
         return order_date + '<br>' + src;
@@ -3380,15 +3492,15 @@ Common::authen();
         let payment_exchange_type = data.payment_exchange_type;
         switch (payment_exchange_type) {
             case '1':
-                return total_checkout + "<sup>đ</sup>";
+                return total_checkout + "&#8363;";
             case '2':
                 if (total_checkout.indexOf("-") > -1) {
-                    return total_checkout + "<sup>đ</sup>";
+                    return total_checkout + "&#8363;";
                 } else {
-                    return '-' + total_checkout + "<sup>đ</sup>";
+                    return '-' + total_checkout + "&#8363;";
                 }
             default:
-                return total_checkout + "<sup>đ</sup>";
+                return total_checkout + "&#8363;";
         }
     }
 
@@ -3437,13 +3549,17 @@ Common::authen();
         let type = data.payment_type;
         switch (type) {
             case '0' :
-                return '<span class="badge badge-info">Tiền mặt</span>';
+                return `<div class="text-payment-type">
+                            <span class="badge badge-info">COD</span>
+                            <br />
+                            <i class="fa fa-edit text-info c-pointer edit-payment-type"></i>
+                        </div>`;
             case '1':
-                return '<span class="badge badge-success">Chuyển khoản</span>';
-            case '2':
-                return '<span class="badge badge-warning">Nợ</span>';
-            case '3':
-                return '<span class="badge badge-primary">COD</span>';
+                return `<div class="text-payment-type">
+                            <span class="badge badge-success">Chuyển khoản</span>
+                            <br />
+                            <i class="fa fa-edit text-info c-pointer edit-payment-type"></i>
+                        </div>`;
             default:
                 return '';
         }

@@ -75,25 +75,29 @@ class CustomerDAO
     function update_customer(Customer $customer)
     {
         try {
-            $avatar = $customer->getAvatar();
+            $id = $customer->getId();
+            $avatar = $customer->getAvatar() ?? null;
             $name = $customer->getName();
             $phone = $customer->getPhone();
-            $email = $customer->getEmail();
-            $facebook = $customer->getFacebook();
-            $linkFB = $customer->getLinkFb();
-            $birthday = $customer->getBirthday();
+            $email = $customer->getEmail() ?? null;
+            $facebook = $customer->getFacebook() ?? null;
+            $linkFB = $customer->getLinkFb() ?? null;
+            $birthday = $customer->getBirthday() ?? null;
             $address = $customer->getAddress();
             $village_id = $customer->getVillageId();
             $district_id = $customer->getDistrictId();
             $city_id = $customer->getCityId();
-            $id = $customer->getId();
+            $full_address = $customer->getFullAddress();
+            if(empty($full_address)) {
+                $full_address = $this->generate_full_address($city_id, $district_id, $village_id, $address);
+            }
             if (!empty($birthday)) {
                 $birthday = str_replace('/', '-', $birthday);
                 $birthday = date('Y-m-d H:i:s', strtotime($birthday));
             } else {
                 $birthday = null;
             }
-            $full_address = $this->generate_full_address($city_id, $district_id, $village_id, $address);
+            // $full_address = $this->generate_full_address($city_id, $district_id, $village_id, $address);
             $stmt = $this->getConn()->prepare("update `smi_customers` SET `name` = ?, `phone` = ?, `email` = ?, `address` = ?, `village_id` = ?, `district_id` = ?, `city_id` = ?, `full_address` = ?, `facebook` = ?, `avatar` = ?, `link_fb` = ?, `birthday` = ?, `updated_at` = NOW() WHERE `id` =  ?");
             $stmt->bind_param("ssssiiisssssi", $name, $phone, $email, $address, $village_id, $district_id, $city_id, $full_address, $facebook, $avatar, $linkFB, $birthday, $id);
             if (!$stmt->execute()) {
@@ -211,6 +215,7 @@ class CustomerDAO
                     'facebook' => $row["facebook"],
                     'link_fb' => $row["link_fb"],
                     'address' => $row["address"],
+                    'full_address' => $row["address"],
                     'village_id' => $row["village_id"],
                     'district_id' => $row["district_id"],
                     'city_id' => $row["city_id"],

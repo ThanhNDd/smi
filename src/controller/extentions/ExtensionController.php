@@ -17,10 +17,74 @@ $db = new DBConnect();
 $customerDAO = new CustomerDAO($db);
 $checkoutDAO = new CheckoutDAO($db);
 $productDAO = new ProductDAO($db);
-$userDAO = new ProductDAO($db);
+$userDAO = new UserDAO($db);
 $userDAO->setConn($db->getConn());
 
 $zone = new Zone();
+
+if (isset($_POST["method"]) && $_POST["method"] == "searchOrder") {
+    try {
+        $data = $_POST["data"];
+        $data = json_decode($data);
+        $start_date = isset($data->startDate) ? $data->startDate : "";
+        $end_date = isset($data->endDate) ? $data->endDate : "";
+        $phone = isset($data->phone) ? $data->phone : "";
+        $customer_id = null;
+        
+        if(!empty($phone)) {
+            $customer = $customerDAO->find_by_phone($phone);
+            if(!empty($customer)) {
+                $customer_id = $customer[0]["id"];
+            } else {
+                $arr = array();
+                echo json_encode($arr);
+                return;
+            }
+        }
+        
+        $data_response = [];
+        $orders = $checkoutDAO->find_all($start_date, $end_date, null, $customer_id, null, 1,null, null);
+        $orders = $orders["data"];
+        if(count($orders) > 0) {
+            foreach ($orders as $key => $value) {
+                $response = $checkoutDAO->find_detail($value["order_id"]);
+                $ord = $response[0];
+                $order = [];
+                $details = [];
+                    $order["order_id"] = $ord["order_id"];
+                    $order["product_name"] = $ord["product_name"];
+                    $order["customer_id"] = $ord["customer_id"];
+                    $order["customer_name"] = $ord["customer_name"];
+                    $order["customer_phone"] = $ord["phone"];
+                    $order["full_address"] = $ord["address"];
+                    $order["facebook"] = $ord["facebook"];
+                    $order["link_fb"] = $ord["link_fb"];
+                    $order["total_checkout"] = $ord["total_checkout"];
+                    $order["order_date"] = $ord["order_date"];
+                    $order["bill_of_lading_no"] = $ord["bill_of_lading_no"];
+                    $order["shopee_order_id"] = $ord["shopee_order_id"];
+                    
+                    $orderDetails = $ord["details"];
+                    foreach ($orderDetails as $key1 => $order_detail) {
+                        $d = [];
+                        $d["sku"] = $order_detail["sku"];
+                        $d["quantity"] = $order_detail["quantity"];
+                        $d["price"] = $order_detail["price"];
+                        $d["reduce"] = $order_detail["reduce"];
+                        $d["image"] = $order_detail["image"];
+                        $d["size"] = $order_detail["size"];
+                        $d["color"] = $order_detail["color"];
+                        array_push($details, $d);
+                    }
+                $order["details"] = $details;
+                array_push($data_response, $order);
+            }
+        }
+        echo json_encode($data_response);
+    } catch (Exception $e) {
+        echo $e->getMessage();
+    }
+}
 
 if (isset($_POST["method"]) && $_POST["method"] == "checkPhone") {
     try {
@@ -194,6 +258,8 @@ function getShippingUnit($billCode) {
       $shippingUnit = "NINJAVAN";
     } else if(substr($billCode,0, 2) == "GA") {
       $shippingUnit = "GHN";
+    } else if(substr($billCode,0, 1) == "8") {
+        $shippingUnit = "J&T";
     }
     return $shippingUnit;
 }
@@ -208,17 +274,23 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $order = new Order();
         $order_type = $data->order_type;
         $cusId = $data->customer_id;
+        $customer = new Customer();
+        $customer->setName($data->customerName);
+        $customer->setPhone($data->customerPhone);
+        $customer->setFullAddress($data->fullAddress);
+        $customer->setAddress($data->address);
+        $customer->setCityId($data->cityId);
+        $customer->setDistrictId($data->districtId);
+        $customer->setVillageId($data->villageId);
+        $customer->setLinkFb($data->linkFb ?? null);
+        $customer->setFacebook($data->facebook ?? null);
         if(empty($cusId)) {
-            $customer = new Customer();
-            $customer->setName($data->customerName);
-            $customer->setPhone($data->customerPhone);
-            $customer->setFullAddress($data->fullAddress);
-            $customer->setAddress($data->address);
-            $customer->setCityId($data->cityId);
-            $customer->setDistrictId($data->districtId);
-            $customer->setVillageId($data->villageId);
             $cusId = $customerDAO->save_customer($customer);
+        } else {
+            $customer->setId($cusId);
+            $customerDAO->update_customer($customer);
         }
+
         $total_checkout = $data->total_checkout;
         $total_reduce = 0;
         $total_reduce_percent = 0;
@@ -226,32 +298,30 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
             $total_reduce = $data->total_reduce;
             $total_reduce_percent = round($total_reduce * 100 / $total_checkout);
         }
-        $bill_of_lading_no = $data->bill_of_lading_no;
-        $order->setShopee_order_id($data->shopee_order_id ?? null);
+        // $bill_of_lading_no = $data->bill_of_lading_no;
+        $order->setShopee_order_id($data->shopee_order_id ?? 0);
         $order->setBill_of_lading_no($data->bill_of_lading_no ?? null);
-        $order->setShipping_fee($data->shipping_fee ?? null);
-        $order->setShipping($data->shipping ?? null);
-        $order->setShipping_unit($data->shipping_unit ?? null);
-        $order->setTotal_amount($data->total_amount ?? null);
-        $order->setTotal_reduce($total_reduce ?? null);
-        $order->setTotal_reduce_percent($total_reduce_percent ?? null);
-        $order->setDiscount($data->discount ?? null);
-        $order->setWallet($data->wallet ?? null);
-        $order->setTotal_checkout($data->total_checkout ?? null);
-        $order->setCustomer_payment($data->customer_payment ?? null);
-        $order->setPayment_type($data->payment_type ?? null);
-        $order->setRepay($data->repay ?? null);
-        $order->setTransferToWallet($data->transfer_to_wallet ?? null);
+        $order->setShipping_fee($data->shipping_fee ?? 0);
+        $order->setShipping($data->shipping ?? 0);
+        $order->setShipping_unit($data->shipping_unit ?? "J&T");
+        $order->setTotal_amount($data->total_amount);
+        $order->setTotal_reduce($total_reduce ?? 0);
+        $order->setTotal_reduce_percent($total_reduce_percent ?? 0);
+        $order->setDiscount($data->discount ?? 0);
+        $order->setWallet($data->wallet ?? 0);
+        $order->setTotal_checkout($data->total_checkout);
+        $order->setCustomer_payment($data->customer_payment ?? 0);
+        $order->setPayment_type($data->payment_type ?? 1);
+        $order->setRepay($data->repay ?? 0);
+        $order->setTransferToWallet($data->transfer_to_wallet ?? 0);
         $order->setCustomer_id($cusId ?? null);
-        $order->setType($order_type ?? null);
-        $order->setStatus($data->order_status ?? null);
-        $order->setPayment_type($data->payment_type ?? null);
+        $order->setType($order_type ?? 0);
+        $order->setStatus($data->order_status ?? 0);
         $order->setVoucherValue(0);
-        $order->setOrder_date($data->order_date ?? null);
+        $order->setOrder_date($data->order_date ?? date('y-m-d h:i:s'));
         $order->setAppointmentDeliveryDate($data->appointment_delivery_date ?? null);
-        $order->setSource($data->source ?? null);
+        $order->setSource($data->source ?? 2);
         $order->setDescription($data->description ?? null);
-        
         $order->setCreatedBy($data->createdBy ?? "unknown");
         if (isset($data->order_id) && $data->order_id > 0) {
             $message_log = 'Cập nhật đơn hàng';
@@ -284,15 +354,15 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
             }
             $detail = new OrderDetail();
             $detail->setOrder_id($orderId);
-            $detail->setProduct_id($details[$i]->product_id ?? null);
-            $detail->setVariant_id($details[$i]->variant_id ?? null);
-            $detail->setSku($details[$i]->sku ?? null);
-            $detail->setPrice($details[$i]->price ?? null);
-            $detail->setQuantity($details[$i]->quantity ?? null);
-            $detail->setReduce($details[$i]->reduce ?? null);
-            $detail->setReduce_percent($details[$i]->reduce_percent ?? null);
-            $detail->setReduceType($reduce_type ?? null);
-            $detail->setProfit($details[$i]->profit ?? null);
+            $detail->setProduct_id($details[$i]->product_id);
+            $detail->setVariant_id($details[$i]->variant_id);
+            $detail->setSku($details[$i]->sku);
+            $detail->setPrice($details[$i]->price);
+            $detail->setQuantity($details[$i]->quantity);
+            $detail->setReduce($details[$i]->reduce ?? 0);
+            $detail->setReduce_percent($details[$i]->reduce_percent ?? 0);
+            $detail->setReduceType($reduce_type ?? 0);
+            $detail->setProfit($details[$i]->profit);
             $lastId = $checkoutDAO->saveOrderDetail($detail);
             if (empty($lastId)) {
                 throw new Exception("Insert order detail is failure", 1);

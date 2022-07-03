@@ -1,5 +1,5 @@
 <?php require_once("../../common/common.php");
-Common::authen();
+Common::authenIsNotAdminRole();
 ?>
 <!DOCTYPE html>
 <html>

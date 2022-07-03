@@ -52,12 +52,13 @@ class ProductDAO
                         'image' => $row["image"],
                         'color' => $row["color"],
                         'size' => $row["size"],
-                        'quantity' => $row["quantity"],
-                        'retail' => $row["retail"],
+                        'qty' => $row["quantity"],
+                        'price' => $row["retail"],
+                        'profit' => $row["profit"],
                         'name' => $name,
-                        // 'weight' => $row["weight"],
-                        // 'height' => $row["height"],
-                        // 'age' => $row["age"]
+                        'weight' => $row["weight"],
+                        'height' => $row["height"],
+                        'age' => $row["age"]
                     );
                     array_push($data, $variations);
                 }

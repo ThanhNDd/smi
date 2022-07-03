@@ -41,30 +41,34 @@ require_once("common.php");
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
+                        <?php if(Common::isAdminRole()) { ?>
+                            <li class="nav-item">
+                                <a href="<?php Common::getPath() ?>src/view/sales/" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Bán hàng</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?php Common::getPath() ?>src/view/orders/" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Đơn hàng</p>
+                                </a>
+                            </li>
+                        <?php } ?>
                         <li class="nav-item">
-                            <a href="<?php Common::getPath() ?>src/view/sales/" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Bán hàng</p>
+                            <a href="<?php Common::getPath() ?>src/view/orders/online.php" class="nav-link">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>Đơn hàng online</p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="<?php Common::getPath() ?>src/view/orders/" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Đơn hàng</p>
-                            </a>
-                        </li>
-                      <li class="nav-item">
-                        <a href="<?php Common::getPath() ?>src/view/orders/online.php" class="nav-link">
-                          <i class="far fa-circle nav-icon"></i>
-                          <p>Đơn hàng online</p>
-                        </a>
-                      </li>
-                        <li class="nav-item">
-                            <a href="<?php Common::getPath() ?>src/view/exchange/" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Đổi hàng</p>
-                            </a>
-                        </li>
+                        <?php if(Common::isAdminRole()) { ?>
+                            <li class="nav-item">
+                                <a href="<?php Common::getPath() ?>src/view/exchange/" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Đổi hàng</p>
+                                </a>
+                            </li>
+                        <?php } ?>
                     </ul>
                 </li>
                 <li class="nav-item has-treeview menu-open">
@@ -82,60 +86,64 @@ require_once("common.php");
                                 <p>Sản phẩm</p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="<?php Common::getPath()?>src/view/check/" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Kiểm hàng</p>
-                            </a>
-                        </li>
+                        <?php if(Common::isAdminRole()) { ?>
+                            <li class="nav-item">
+                                <a href="<?php Common::getPath()?>src/view/check/" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Kiểm hàng</p>
+                                </a>
+                            </li>
+                        <?php } ?>
                     </ul>
                 </li>
-                <li class="nav-item has-treeview menu-open">
-                    <a href="#" class="nav-link active">
-                        <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>
-                            Kế toán
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="<?php Common::getPath() ?>src/view/fee/" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Chi phí</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?php Common::getPath() ?>src/view/voucher/" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Khoản thu</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item has-treeview menu-open">
-                    <a href="#" class="nav-link active">
-                        <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>
-                            Marketing
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="<?php Common::getPath() ?>src/view/voucher/" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Vouchers</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?php Common::getPath() ?>src/view/promotion/" class="nav-link">
-                                <i class="fas fa-money-check-alt nav-icon"></i>
-                                <p>Khuyến mãi</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+                <?php if(Common::isAdminRole()) { ?>
+                    <li class="nav-item has-treeview menu-open">
+                        <a href="#" class="nav-link active">
+                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <p>
+                                Kế toán
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="<?php Common::getPath() ?>src/view/fee/" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Chi phí</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?php Common::getPath() ?>src/view/voucher/" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Khoản thu</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item has-treeview menu-open">
+                        <a href="#" class="nav-link active">
+                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <p>
+                                Marketing
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="<?php Common::getPath() ?>src/view/voucher/" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Vouchers</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?php Common::getPath() ?>src/view/promotion/" class="nav-link">
+                                    <i class="fas fa-money-check-alt nav-icon"></i>
+                                    <p>Khuyến mãi</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                <?php } ?>
                 <li class="nav-item has-treeview menu-open">
                   <a href="#" class="nav-link active">
                     <i class="nav-icon fas fa-tachometer-alt"></i>
