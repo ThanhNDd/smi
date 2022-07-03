@@ -8,6 +8,19 @@ class ProductDAO
         $this->conn = $db->getConn();
     } 
 
+    function update_quantity($qty, $variant_id) {
+        try {
+            $stmt = $this->getConn()->prepare("UPDATE `smi_variations` SET `quantity`= ?, updated_at = NOW() WHERE id = ?");
+            $stmt->bind_param("ii", $qty, $variant_id);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
     /**
      * loadVariations method using for fb chrome extension
      */

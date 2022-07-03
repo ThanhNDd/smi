@@ -204,6 +204,7 @@ Common::authen();
 <?php require_once('../../common/footer.php'); ?>
 <script>
     let table;
+    let dataUpdateQuantity = [];
     $(document).ready(function () {
         set_title("Danh sách sản phẩm");
         count_out_of_stock();
@@ -460,7 +461,7 @@ Common::authen();
                     width: "50px"
                 },
                 {
-                    "data": "total_quantity",
+                    "data": format_quantity,
                     "class": "center",
                     width: "50px"
                 },
@@ -996,6 +997,167 @@ Common::authen();
             social_publish(product_id, 'feature', status);
         });
 
+        $('#product_datatable tbody').on('click', '.edit-quantity', function () {
+            let tr = $(this).closest('tr');
+            let td = tr.find("td");
+            let product_id = $(td[1]).text();
+            let product_name = $(td[3]).text();
+            edit_quantity(product_id, product_name);
+        });
+
+    }
+
+    function edit_quantity(productId, productName) {
+        $.ajax({
+            url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
+            type: "POST",
+            dataType: "json",
+            data: {
+                method: "find_detail",
+                product_id: productId
+            },
+            success: function (res) {
+                $("#modalEditQuantity").remove();
+                dataUpdateQuantity = [];
+                let data = res.data;
+                dataUpdateQuantity = res.data;
+                console.log("data: ", data);
+                let contentModal = `<div id="modalEditQuantity" class="modal fade" role="dialog">
+                                        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+                                            <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">${productName}</h4>
+                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <table class="table table-bordered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="width: 80px">Hình ảnh</th>
+                                                            <th>Màu</th>
+                                                            <th>Size</th>
+                                                            <th>Tồn kho</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>`;
+                                            $.each(data, function(k, value){
+                                                $.each(value, function(k, v){
+                                                    contentModal += `<tr>
+                                                                        <td class="d-none">
+                                                                            <input type="hidden" class="form-control" value="${v.product_id}" />
+                                                                        </td>
+                                                                        <td class="d-none">
+                                                                            <input type="hidden" class="form-control" value="${v.sku}" />
+                                                                        </td>`;
+                                                                        if(k == 0 ) {
+                                                        contentModal += `<td rowspan="${value.length}">
+                                                                            <a href="${v.image}" target="_blank">
+                                                                                <img src="${v.image}" width="100px" id="thumbnail" onerror="this.onerror=null;this.src='http://localhost/online/dist/img/img_err.jpg'">
+                                                                            </a>
+                                                                        </td>
+                                                                        <td rowspan="${value.length}" style="white-space: nowrap;">${v.color}</td>`;
+                                                                        }
+                                                        contentModal += `<td style="white-space: nowrap;vertical-align: middle;">${v.size}</td>
+                                                                        <td>
+                                                                            <input type="number" class="form-control" min="0" id="quantity_update_${v.sku}" data="${v.sku}" value="${v.quantity}" style="width: 80px" />
+                                                                        </td>
+                                                                    </tr>`;
+                                                });
+                                            });
+                                    contentModal += `</tbody>
+                                                </table>
+                                            </div>
+                                            <div class="modal-footer d-inline-block">
+                                                <button type="button" class="btn btn-danger float-left" data-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-primary float-right" id="updateQuantity">Cập nhật</button>
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </div>`;
+                $("body").append(contentModal);
+                
+                $("#modalEditQuantity").modal({
+                    backdrop: "static",
+                    keyboard: false
+                });                
+
+                btnUpdateQuantityClick();
+                quantityChange();
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                });
+                hide_loading();
+            }
+        });
+    }
+
+    function quantityChange() {
+        $("input[id^='quantity_update_']").change(function () {
+            let sku = $(this).attr("data");
+            let quantity = $(this).val();
+            $.each(dataUpdateQuantity, function(key, value) {
+                $.each(value, function(k, v) {
+                    if(v.sku == sku) {
+                        value[k].quantity = quantity;
+                        dataUpdateQuantity[key] = value;
+                    }
+                });
+            });
+            console.log("dataUpdateQuantity: ", dataUpdateQuantity);
+        });
+    }
+
+    function btnUpdateQuantityClick() {
+        $("#updateQuantity").click(function(){
+            console.log("dataUpdateQuantity: ", dataUpdateQuantity);
+            Swal.fire({
+                title: 'Bạn có chắc chắn muốn cập nhật tồn kho sản phẩm này?',
+                text: "",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ok'
+            }).then((result) => {
+                if (result.value) {
+                    updateQuantity();
+                }
+            });
+        });
+    }
+
+    function updateQuantity() {
+        $.ajax({
+            url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
+            type: "POST",
+            dataType: "json",
+            data: {
+                method: "update_quantity",
+                data: JSON.stringify(dataUpdateQuantity)
+            },
+            success: function () {
+                let table = $('#product_datatable').DataTable();
+                table.ajax.reload();
+                toastr.success('Cập nhật thành công!');
+                $("#modalEditQuantity").modal("hide");
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                });
+                hide_loading();
+            }
+        });
     }
 
     function social_publish(product_id, type, status) {
@@ -1136,6 +1298,11 @@ Common::authen();
             }
         }
         return salePrice;
+    }
+
+    function format_quantity(data) {
+        let totalQty = data.total_quantity;
+        return `${totalQty} <br /><i class="fa fa-edit text-info c-pointer edit-quantity"></i>`;
     }
 
     function format_discount(data) {

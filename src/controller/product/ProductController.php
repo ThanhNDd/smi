@@ -11,6 +11,27 @@ $db = new DBConnect();
 $dao = new ProductDAO($db);
 // $dao->setConn($db->getConn());
 
+if (isset($_POST["method"]) && $_POST["method"] == "update_quantity") {
+    try {
+        Common::authen_get_data();
+        $data = $_POST["data"];
+        $data = json_decode($data);
+        foreach ($data as $key => $value) {
+            foreach ($value as $k => $v) {
+                $variant_id = $v->id;
+                $qty = $v->quantity;
+                $dao->update_quantity($qty, $variant_id);
+            }
+        }
+        $response_array['response'] = "success";
+        echo json_encode($response_array);
+    } catch (Exception $ex) {
+        $db->rollback();
+        throw new Exception($ex);
+    }
+    $db->commit();
+}
+
 if (isset($_POST["method"]) && $_POST["method"] == "get_max_id") {
     try {
         Common::authen_get_data();
