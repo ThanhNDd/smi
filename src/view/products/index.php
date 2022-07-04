@@ -498,7 +498,7 @@ Common::authen();
                     width: "50px"
                 }
             ],
-            "lengthMenu": [[25, 50, 100, 200, 500], [25, 50, 100, 200, 500]]
+            "lengthMenu": [[200, 500], [200, 500]]
         });
         
         $("#expandall").click(function () {

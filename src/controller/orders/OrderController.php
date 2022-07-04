@@ -40,6 +40,19 @@ $walletDAO = new WalletDAO($db);
 $zone = new Zone();
 
 
+if (isset($_POST["method"]) && $_POST["method"] == "getTotalShippingUnit") {
+  try {
+    Common::authen_get_data();
+    $status = $_POST["data"];
+    $data = $checkoutDAO->getTotalShippingUnit($status);
+    echo json_encode($data);
+  } catch (Exception $ex) {
+    $db->rollback();
+    echo $ex->getMessage();
+  }
+  $db->commit();
+}
+
 
 if (isset($_POST["method"]) && $_POST["method"] == "batch_print_receipt") {
   try {

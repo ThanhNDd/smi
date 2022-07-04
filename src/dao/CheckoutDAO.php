@@ -25,6 +25,31 @@ class CheckoutDAO
         $this->conn = $db->getConn();
     } 
 
+    function getTotalShippingUnit($status)
+    {
+        try {
+            $sql = "SELECT `shipping_unit`,
+                            count(*) AS total
+                    FROM `smi_orders`
+                    WHERE `type` = 1
+                      AND `status` in ($status)
+                      AND `deleted` = 0
+                    GROUP BY `shipping_unit`";
+            $result = mysqli_query($this->conn, $sql);
+            $data = array();
+            foreach ($result as $k => $row) {
+                $total = array(
+                    'shipping_unit' => $row["shipping_unit"],
+                    'total' => $row["total"]
+                );
+                array_push($data, $total);
+            }
+            return $data;
+        } catch (Exception $e) {
+            echo "Open connection database is error exception >> " . $e->getMessage();
+        }
+    }
+
     function checkExistOrderShopee($shopeeOrderId)
     {
         try {

@@ -558,8 +558,8 @@ Common::authen();
                                 <!--<th class="w80 left">Ghi chú</th>-->
                                 <th class="w20 left">SL</th>
                                 <th class="w60 left">Mã vận đơn</th>
-                                <th class="w50 right">Tổng tiền</th>
-                                <th class="w80 center">Thanh toán</th>
+                                <th class="w50 center">Tổng tiền</th>
+                                <!-- <th class="w80 center">Thanh toán</th> -->
                                 <th class="w80 center">Ngày mua hàng</th>
                                 <!--<th class="w50 left">Nguồn</th>-->
                                 <th class="w50 left">Trạng thái</th>
@@ -754,6 +754,7 @@ Common::authen();
         count_all_status();
 
         get_info_total_checkout('date');
+        getTotalShippingUnit(`${CREATED_BILL},${PACKED}`);
 
         //Date range picker
         generate_datetime_range_picker();
@@ -952,11 +953,13 @@ Common::authen();
                 $(this).removeClass('active');
                 $(".nav-tabs").find('.nav-link').removeClass('disabled');
                 generate_datatable('date');
+                getTotalShippingUnit(`${CREATED_BILL},${PACKED}`);
             } else {
                 $(this).parent().children().removeClass('active');
                 $(this).addClass('active');
                 $(".nav-tabs").find('.nav-link').addClass('disabled');
                 generate_datatable('status_no_date', DELIVERED);
+                getTotalShippingUnit(DELIVERED);
             }
         });
     }
@@ -967,11 +970,13 @@ Common::authen();
                 $(this).removeClass('active');
                 $(".nav-tabs").find('.nav-link').removeClass('disabled');
                 generate_datatable('date');
+                getTotalShippingUnit(`${CREATED_BILL},${PACKED}`);
             } else {
                 $(this).parent().children().removeClass('active');
                 $(this).addClass('active');
                 $(".nav-tabs").find('.nav-link').addClass('disabled');
                 generate_datatable('status_no_date', PACKED);
+                getTotalShippingUnit(PACKED);
             }
         });
     }
@@ -982,11 +987,13 @@ Common::authen();
                 $(this).removeClass('active');
                 $(".nav-tabs").find('.nav-link').removeClass('disabled');
                 generate_datatable('date');
+                getTotalShippingUnit(`${CREATED_BILL},${PACKED}`);
             } else {
                 $(this).parent().children().removeClass('active');
                 $(this).addClass('active');
                 $(".nav-tabs").find('.nav-link').addClass('disabled');
                 generate_datatable('status_no_date', CREATED_BILL);
+                getTotalShippingUnit(CREATED_BILL);
             }
         });
     }
@@ -1027,12 +1034,13 @@ Common::authen();
                 $(this).removeClass('active');
                 $(".nav-tabs").find('.nav-link').removeClass('disabled');
                 generate_datatable('date');
+                getTotalShippingUnit(`${CREATED_BILL},${PACKED}`);
             } else {
                 $(this).parent().children().removeClass('active');
                 $(this).addClass('active');
                 $(".nav-tabs").find('.nav-link').addClass('disabled');
-                let status = PENDING;
-                generate_datatable('status_no_date', status);
+                generate_datatable('status_no_date', PENDING);
+                getTotalShippingUnit(PENDING);
             }
         });
     }
@@ -1043,12 +1051,14 @@ Common::authen();
                 $(this).removeClass('active');
                 $(".nav-tabs").find('.nav-link').removeClass('disabled');
                 generate_datatable('date');
+                getTotalShippingUnit(`${CREATED_BILL},${PACKED}`);
             } else {
                 $(this).parent().children().removeClass('active');
                 $(this).addClass('active');
                 $(".nav-tabs").find('.nav-link').addClass('disabled');
                 let status = WAITING_RETURN+','+APPROVED_RETURN+','+WAITING_EXCHANGE;
                 generate_datatable('status_no_date', status);
+                getTotalShippingUnit(`${WAITING_RETURN},${APPROVED_RETURN},${WAITING_EXCHANGE}`);
             }
         });
     }
@@ -1878,14 +1888,14 @@ Common::authen();
                     "data": format_total_amount,
                     width: "50px",
                     "orderable": false,
-                    class: 'right'
-                },
-                {
-                    "data": format_payment,
-                    width: "50px",
-                    "orderable": false,
                     class: 'center'
                 },
+                // {
+                //     "data": format_payment,
+                //     width: "50px",
+                //     "orderable": false,
+                //     class: 'center'
+                // },
                 {
                     "data": format_order_date,
                     width: "70px",
@@ -2372,6 +2382,57 @@ Common::authen();
                     hide_loading();
                 }
             });
+        });
+
+    }
+
+    function getTotalShippingUnit(status) {
+        $.ajax({
+            url: '<?php Common::getPath() ?>src/controller/orders/OrderController.php',
+            type: "POST",
+            dataType: "json",
+            data: {
+                method: "getTotalShippingUnit",
+                data: status
+            },
+            success: function (res) {
+                console.log(res);
+                let jt = 0;
+                let spx = 0;
+                let ninja = 0;
+                let ghn = 0;
+                if(res.length > 0) {
+                    $.each(res, function(k, v){
+                        switch(v.shipping_unit) {
+                            case "J&T":
+                                jt = v.total;
+                                break;
+                            case "SPXEXPRESS":
+                                spx = v.total;
+                                break;
+                            case "NINJAVAN":
+                                ninja = v.total;
+                                break;
+                            case "GHN":
+                                ghn = v.total;
+                                break;
+                        }
+                    });
+                }
+                $(".total_jt").text(jt);
+                $(".total_shopee").text(spx);
+                $(".total_ninja").text(ninja);
+                $(".total_ghn").text(ghn);
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                });
+            }
         });
 
     }
@@ -3312,7 +3373,7 @@ Common::authen();
 
     function format_total_amount(data) {
         let total_amount = data.total_amount;
-        return total_amount + "&#8363;";
+        return total_amount + "&#8363;" + `<br /> ${format_payment(data)}`;
     }
 
     function format_order_date(data) {
@@ -3549,13 +3610,13 @@ Common::authen();
         let type = data.payment_type;
         switch (type) {
             case '0' :
-                return `<div class="text-payment-type">
+                return `<div class="text-payment-type text-center">
                             <span class="badge badge-info">COD</span>
                             <br />
                             <i class="fa fa-edit text-info c-pointer edit-payment-type"></i>
                         </div>`;
             case '1':
-                return `<div class="text-payment-type">
+                return `<div class="text-payment-type text-center">
                             <span class="badge badge-success">Chuyển khoản</span>
                             <br />
                             <i class="fa fa-edit text-info c-pointer edit-payment-type"></i>
