@@ -548,7 +548,7 @@ class CheckoutDAO
         }
     }
 
-    function find_all($start_date, $end_date, $order_id, $customer_id, $sku, $type, $status, $bill)
+    function find_all($start_date, $end_date, $order_id, $customer_id, $sku, $type, $status, $bill, $shipping_unit)
     {
         $sql = "select 
                         A.id as order_id,
@@ -598,6 +598,10 @@ class CheckoutDAO
         }
         if(isset($type) && !empty($type)) {
           $sql .= " and A.type = $type";
+        }
+
+        if (isset($shipping_unit) && !empty($shipping_unit)) {
+          $sql .= " and A.shipping_unit = '$shipping_unit'";
         }
 
         if(isset($status) && $status != '' && $status != -1) {

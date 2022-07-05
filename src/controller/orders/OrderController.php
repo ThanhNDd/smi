@@ -609,7 +609,11 @@ if (isset($_GET["method"]) && $_GET["method"] == "find_all") {
         if(isset($_GET["bill"])) {
           $bill = $_GET['bill'];
         }
-        $orders = $checkoutDAO->find_all($start_date, $end_date, $order_id, $customer_id, $sku, $type, $status, $bill);
+        $shipping_unit = '';
+        if(isset($_GET["shipping_unit"])) {
+          $shipping_unit = $_GET['shipping_unit'];
+        }
+        $orders = $checkoutDAO->find_all($start_date, $end_date, $order_id, $customer_id, $sku, $type, $status, $bill, $shipping_unit);
         echo json_encode($orders);
     } catch (Exception $e) {
         echo $e->getMessage();

@@ -50,11 +50,11 @@ Common::authen();
             background-color: #b1b1b147;
         }
 
-        .c-pointer:hover {
+        /* .c-pointer:hover { */
             /* border: 1px solid #cacaca !important; */
-            border-radius: 4px;
+            /* border-radius: 4px;
             background-color: #b1b1b147;
-        }
+        } */
         .nav-link.active {
           background-color: #17a2b8!important;
           color: white !important;
@@ -228,6 +228,12 @@ Common::authen();
             font-size: 1rem !important;
             text-transform: uppercase !important;
         }
+        span.badge {
+            font-size: 90%;
+            font-weight: normal;
+            padding: 3px 7px;
+            border-radius: 15px;
+        }
     </style>
 </head>
 <?php require_once('../../common/header.php'); ?>
@@ -336,32 +342,44 @@ Common::authen();
         </div>
         <div class="col-md-12 col-sm-12">
             <div class="card">
-            <div class="card-body row status">
-                <div class="col total-jt-status text-center c-pointer">
-                    <span class="info-box-number">
-                        <h4 class="total_jt text-warning">0</h4>
-                    </span>
-                    <span class="info-box-text" style="text-transform: uppercase;">J&T Express</span>
+                <div class="card-body row status">
+                    <div class="col total-jt-status text-center">
+                        <!-- <span class="info-box-number">
+                            <h4 class="total_jt text-warning">0</h4>
+                        </span>
+                        <span class="info-box-text" style="text-transform: uppercase;">J&T Express</span> -->
+                        <button type="button" class="btn btn-primary" id="totalJT" style="text-transform: uppercase;border-radius: 26px !important;width: 100%;">
+                            J&T Express <span class="badge badge-light total_jt" style="font-size: 15px;border-radius: 50%;">0</span>
+                        </button>
+                    </div>
+                    <div class="col total-shopee-status text-center">
+                        <!-- <span class="info-box-number">
+                            <h4 class="total_shopee text-info">0</h4>
+                        </span>
+                        <span class="info-box-text" style="text-transform: uppercase;">Shopee Xpress</span> -->
+                        <button type="button" class="btn btn-danger" id="totalShopeeXpress" style="text-transform: uppercase;border-radius: 26px !important;width: 100%;">
+                            Shopee Xpress <span class="badge badge-light total_shopee" style="font-size: 15px;border-radius: 50%;">0</span>
+                        </button>
+                    </div>
+                    <div class="col total-ninja-status text-center">
+                        <!-- <span class="info-box-number">
+                            <h4 class="total_ninja text-info">0</h4>
+                        </span>
+                        <span class="info-box-text" style="text-transform: uppercase;">Ninja</span> -->
+                        <button type="button" class="btn btn-info" id="totalNinja" style="text-transform: uppercase;border-radius: 26px !important;width: 100%;">
+                            Ninja <span class="badge badge-light total_ninja" style="font-size: 15px;border-radius: 50%;">0</span>
+                        </button>
+                    </div>
+                    <div class="col total-ghn-status text-center">
+                        <!-- <span class="info-box-number">
+                            <h4 class="total_ghn text-primary">0</h4>
+                        </span>
+                        <span class="info-box-text" style="text-transform: uppercase;">Giao Hàng Nhanh</span> -->
+                        <button type="button" class="btn btn-warning" id="totalGHN" style="text-transform: uppercase;border-radius: 26px !important;width: 100%;">
+                        Giao Hàng Nhanh <span class="badge badge-light total_ghn" style="font-size: 15px;border-radius: 50%;">0</span>
+                        </button>
+                    </div>
                 </div>
-                <div class="col total-shopee-status text-center c-pointer">
-                    <span class="info-box-number">
-                        <h4 class="total_shopee text-info">0</h4>
-                    </span>
-                    <span class="info-box-text" style="text-transform: uppercase;">Shopee Xpress</span>
-                </div>
-                <div class="col total-ninja-status text-center c-pointer">
-                    <span class="info-box-number">
-                        <h4 class="total_ninja text-info">0</h4>
-                    </span>
-                    <span class="info-box-text" style="text-transform: uppercase;">Ninja</span>
-                </div>
-                <div class="col total-ghn-status text-center c-pointer">
-                    <span class="info-box-number">
-                        <h4 class="total_ghn text-primary">0</h4>
-                    </span>
-                    <span class="info-box-text" style="text-transform: uppercase;">Giao Hàng Nhanh</span>
-                </div>
-            </div>
             </div>
         </div>
 <!--      end info important-->
@@ -737,6 +755,12 @@ Common::authen();
     const CREATED_BILL = 13;
     const WAITING_APPORVE = 14;
 
+    const JT_EXPRESS = "J&T";
+    const SHOPEE_XPRESS = "SPXEXPRESS";
+    const NINJA = "NINJAVAN";
+    const GHN = "GHN";
+    
+    let statusSelected = null;
 
     let delivery_order_checked = [];
     let order_checked = [];
@@ -775,6 +799,11 @@ Common::authen();
         deliverd_status_click();
         appointment_status_click();
         wating_approve_status_click();
+
+        totalJTClick();
+        totalShopeeXpressClick();
+        totalNinjaClick();
+        totalGHNClick();
 
         tab_all_click();
         tab_pending_click();
@@ -967,11 +996,13 @@ Common::authen();
     function packed_status_click() {
         $(".total-packed-status").click(function () {
             if($(this).hasClass('active')) {
+                statusSelected = null;
                 $(this).removeClass('active');
                 $(".nav-tabs").find('.nav-link').removeClass('disabled');
                 generate_datatable('date');
                 getTotalShippingUnit(`${CREATED_BILL},${PACKED}`);
             } else {
+                statusSelected = PACKED;
                 $(this).parent().children().removeClass('active');
                 $(this).addClass('active');
                 $(".nav-tabs").find('.nav-link').addClass('disabled');
@@ -984,11 +1015,13 @@ Common::authen();
     function created_bill_status_click() {
         $(".total-created-bill-status").click(function () {
             if($(this).hasClass('active')) {
+                statusSelected = null;
                 $(this).removeClass('active');
                 $(".nav-tabs").find('.nav-link').removeClass('disabled');
                 generate_datatable('date');
                 getTotalShippingUnit(`${CREATED_BILL},${PACKED}`);
             } else {
+                statusSelected = CREATED_BILL;
                 $(this).parent().children().removeClass('active');
                 $(this).addClass('active');
                 $(".nav-tabs").find('.nav-link').addClass('disabled');
@@ -1001,10 +1034,12 @@ Common::authen();
     function appointment_status_click() {
         $(".total-appointment-status").click(function () {
             if($(this).hasClass('active')) {
+                statusSelected = null;
                 $(this).removeClass('active');
                 $(".nav-tabs").find('.nav-link').removeClass('disabled');
                 generate_datatable('date');
             } else {
+                statusSelected = APPOINTMENT;
                 $(this).parent().children().removeClass('active');
                 $(this).addClass('active');
                 $(".nav-tabs").find('.nav-link').addClass('disabled');
@@ -1016,10 +1051,12 @@ Common::authen();
     function waiting_status_click() {
         $(".total-wating-status").click(function () {
             if($(this).hasClass('active')) {
+                statusSelected = null;
                 $(this).removeClass('active');
                 $(".nav-tabs").find('.nav-link').removeClass('disabled');
                 generate_datatable('date');
             } else {
+                statusSelected = WAITING;
                 $(this).parent().children().removeClass('active');
                 $(this).addClass('active');
                 $(".nav-tabs").find('.nav-link').addClass('disabled');
@@ -1031,11 +1068,13 @@ Common::authen();
     function pending_status_click() {
         $(".total-pending-status").click(function () {
             if($(this).hasClass('active')) {
+                statusSelected = null;
                 $(this).removeClass('active');
                 $(".nav-tabs").find('.nav-link').removeClass('disabled');
                 generate_datatable('date');
                 getTotalShippingUnit(`${CREATED_BILL},${PACKED}`);
             } else {
+                statusSelected = PENDING;
                 $(this).parent().children().removeClass('active');
                 $(this).addClass('active');
                 $(".nav-tabs").find('.nav-link').addClass('disabled');
@@ -1048,11 +1087,13 @@ Common::authen();
     function return_status_click() {
         $(".total-return-status").click(function () {
             if($(this).hasClass('active')) {
+                statusSelected = null;
                 $(this).removeClass('active');
                 $(".nav-tabs").find('.nav-link').removeClass('disabled');
                 generate_datatable('date');
                 getTotalShippingUnit(`${CREATED_BILL},${PACKED}`);
             } else {
+                statusSelected = WAITING_RETURN+','+APPROVED_RETURN+','+WAITING_EXCHANGE;
                 $(this).parent().children().removeClass('active');
                 $(this).addClass('active');
                 $(".nav-tabs").find('.nav-link').addClass('disabled');
@@ -1066,15 +1107,45 @@ Common::authen();
     function wating_approve_status_click() {
         $(".total-waiting-approve-status").click(function () {
             if($(this).hasClass('active')) {
+                statusSelected = null;
                 $(this).removeClass('active');
                 $(".nav-tabs").find('.nav-link').removeClass('disabled');
                 generate_datatable('date');
             } else {
+                statusSelected = WAITING_APPORVE;
                 $(this).parent().children().removeClass('active');
                 $(this).addClass('active');
                 $(".nav-tabs").find('.nav-link').addClass('disabled');
                 generate_datatable('status_no_date', WAITING_APPORVE);
             }
+        });
+    }
+
+    function totalJTClick() {
+        $("#totalJT").click(function () {
+            let status = statusSelected ?? `${CREATED_BILL},${PACKED}`;
+            generate_datatable('', status, JT_EXPRESS);
+        });
+    }
+
+    function totalShopeeXpressClick() {
+        $("#totalShopeeXpress").click(function () {
+            let status = statusSelected ?? `${CREATED_BILL},${PACKED}`;
+            generate_datatable('', status, SHOPEE_XPRESS);
+        });
+    }
+
+    function totalNinjaClick() {
+        $("#totalNinja").click(function () {
+            let status = statusSelected ?? `${CREATED_BILL},${PACKED}`;
+            generate_datatable('', status, NINJA);
+        });
+    }
+
+    function totalGHNClick() {
+        $("#totalGHN").click(function () {
+            let status = statusSelected ?? `${CREATED_BILL},${PACKED}`;
+            generate_datatable('', status, GHN);
         });
     }
 
@@ -1534,127 +1605,42 @@ Common::authen();
         get_info_total_checkout('status', stt);
     }
 
-    function get_data_search(type, status) {
+    function get_data_search(type, status, shipping_unit) {
         if(typeof status === 'undefined' || status === '') {
             status = -1;
         }
-        if (type === 'date') {
-            return {
-                method: 'find_all',
-                start_date: $("#startDate").val(),
-                end_date: $("#endDate").val(),
-                type: 1,
-                status: status
-            }
-        } else if (type === 'bill') {
-            return {
-                method: 'find_all',
-                bill: $("#search_bill_id").val(),
-                type: 1,
-                status: status
-            }
-        }  else if (type === 'order_id') {
-            return {
-                method: 'find_all',
-                order_id: $("#search_order_id").val(),
-                type: 1,
-                status: status
-            }
-        } else if (type === 'phone') {
-            return {
-                method: 'find_all',
-                phone: format_phone($("#search_phone").val()),
-                type: 1,
-                status: status
-            }
-        } else if (type === 'customer_id') {
-            return {
-                method: 'find_all',
-                customer_id: $("#search_customer_id").val(),
-                type: 1,
-                status: status
-            }
-        } else if (type === 'sku') {
-            return {
-                method: 'find_all',
-                sku: $("#search_sku").val(),
-                type: 1,
-                status: status
-            }
-        } else if (type === 'status') {
-            return {
-                method: 'find_all',
-                type: 1,
-                start_date: $("#startDate").val(),
-                end_date: $("#endDate").val(),
-                status: status
-            }
-        } else if (type === 'status_no_date') {
-            return {
-                method: 'find_all',
-                type: 1,
-                status: status
-            }
-        }
-        return '';
+        return generateParam('find_all', type, status, shipping_unit);
     }
 
-    function get_data_search_info_total(type, status) {
+    function get_data_search_info_total(type, status, shipping_unit) {
         if(typeof status === 'undefined' || status === '') {
             status = -1;
         }
-        if (type === 'date') {
-            return {
-                method: 'get_info_total_checkout',
-                start_date: $("#startDate").val(),
-                end_date: $("#endDate").val(),
+        return generateParam('get_info_total_checkout', type, status, shipping_unit);
+    }
+
+    function generateParam(method, type, status, shipping_unit) {
+        let param = {
+                method: method,
                 type: 1,
-                status: status
-            }
-        } else if (type === 'order_id') {
-            return {
-                method: 'get_info_total_checkout',
-                order_id: $("#search_order_id").val(),
-                type: 1,
-                status: status
-            }
+                status: status,
+                shipping_unit: shipping_unit ?? ''
+            };
+        if (type === 'date' || type === 'status') {
+            param.start_date = $("#startDate").val();
+            param.end_date = $("#endDate").val();
+        } else if (type === 'bill') {
+            param.bill = $("#search_bill_id").val();
+        }  else if (type === 'order_id') {
+            param.order_id = $("#search_order_id").val();
         } else if (type === 'phone') {
-            return {
-                method: 'get_info_total_checkout',
-                phone: format_phone($("#search_phone").val()),
-                type: 1,
-                status: status
-            }
+            param.phone = format_phone($("#search_phone").val());
         } else if (type === 'customer_id') {
-            return {
-                method: 'get_info_total_checkout',
-                customer_id: $("#search_customer_id").val(),
-                type: 1,
-                status: status
-            }
+            param.customer_id = $("#search_customer_id").val();
         } else if (type === 'sku') {
-            return {
-                method: 'get_info_total_checkout',
-                sku: $("#search_sku").val(),
-                type: 1,
-                status: status
-            }
-        } else if (type === 'status') {
-            return {
-                method: 'get_info_total_checkout',
-                type: 1,
-                start_date: $("#startDate").val(),
-                end_date: $("#endDate").val(),
-                status: status
-            }
-        } else if (type === 'status_no_date') {
-            return {
-                method: 'get_info_total_checkout',
-                type: 1,
-                status: status
-            }
+            param.sku = $("#search_sku").val();
         }
-        return '';
+        return param;
     }
 
     function get_data_param_detail(type, order_id) {
@@ -1776,7 +1762,7 @@ Common::authen();
         });
     }
 
-    function generate_datatable(type, status) {
+    function generate_datatable(type, status, shipping_unit) {
         if ($.fn.dataTable.isDataTable('#example')) {
             table.destroy();
             table.clear();
@@ -1808,7 +1794,7 @@ Common::authen();
             'ajax': {
                 "type": "GET",
                 "url": "<?php Common::getPath() ?>src/controller/orders/OrderController.php",
-                "data": get_data_search(type, status)
+                "data": get_data_search(type, status, shipping_unit)
             },
             "dom": '<"top"flp<"clear">>rt<"bottom"ip<"clear">>',
             "initComplete": function( settings, json ) {
@@ -2000,8 +1986,14 @@ Common::authen();
                                     <option value="0">COD</option>
                                     <option value="1">Chuyển khoản</option>
                                 </select>
-                                <i class="fa fa-save text-secondary c-pointer save-payment-type-update mt-2" style="font-size: 20px;"></i>
-                                <i class="fa fa-times-circle text-danger c-pointer cancel-payment-type-update mt-2" style="font-size: 20px;"></i>
+                                <div class="btn-group w-100">
+                                    <button type="button" class="btn btn-info save-payment-type-update">
+                                        <i class="fa fa-save"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-danger cancel-payment-type-update">
+                                        <i class="fa fa-times-circle"></i>
+                                    </button>
+                                </div>
                             </div>`;
             $(this).closest('.text-payment-type').addClass("hidden").parent().append(selectbox);
         });
@@ -2046,8 +2038,14 @@ Common::authen();
                                     '<option value="12" '+(status == EXCHANGED ? selected="selected" : '')+'>Đang đổi size</option>' +
                                 '</select>' +
                                 '<input type="text" class="form-control delivery-date1 p-2 mt-2 hidden">' +
-                                '<i class="fa fa-save text-secondary c-pointer save-status mt-2" style="font-size: 20px;"></i> ' +
-                                '<i class="fa fa-times-circle text-danger c-pointer cancel-edit-status mt-2" style="font-size: 20px;"></i>' +
+                                `<div class="btn-group w-100">
+                                    <button type="button" class="btn btn-info save-status">
+                                        <i class="fa fa-save"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-danger cancel-edit-status">
+                                        <i class="fa fa-times-circle"></i>
+                                    </button>
+                                </div>`
                             '</div>';
             $(this).closest('.text-status').addClass("hidden").parent().append(selectbox);
             $(".fast-order-status").change(function(){
@@ -2387,6 +2385,10 @@ Common::authen();
     }
 
     function getTotalShippingUnit(status) {
+        console.log("getTotalShippingUnit: ", status);
+        if(!status) {
+            status = `${CREATED_BILL},${PACKED}`;
+        }
         $.ajax({
             url: '<?php Common::getPath() ?>src/controller/orders/OrderController.php',
             type: "POST",
@@ -2745,6 +2747,7 @@ Common::authen();
                 toastr.success('Cập nhật trạng thái thành công.');
                 count_status();
                 count_all_status();
+                getTotalShippingUnit(statusSelected);
             },
             error: function (data, errorThrown) {
                 console.log(data.responseText);
@@ -3367,13 +3370,21 @@ Common::authen();
                 content += bill_of_lading_no+'<br>';
             }
         }
-        content += shipping_unit+'<br><i class="fa fa-edit c-pointer text-info edit-bill"></i>';
+        if(shipping_unit == JT_EXPRESS) {
+            content += `<span class="badge badge-primary c-pointer edit-bill">J&T Express <i class="fa fa-edit"></i></span>`;
+        } else if(shipping_unit == SHOPEE_XPRESS) {
+            content += `<span class="badge badge-danger c-pointer edit-bill">Shopee Xpress <i class="fa fa-edit"></i></span>`;
+        } else if(shipping_unit == NINJA) {
+            content += `<span class="badge badge-info c-pointer edit-bill">Ninja <i class="fa fa-edit"></i></span>`;
+        } else if(shipping_unit == GHN) {
+            content += `<span class="badge badge-warning c-pointer edit-bill">GHN <i class="fa fa-edit"></i></span>`;
+        }
+        // content += '<br><i class="fa fa-edit c-pointer text-info edit-bill"></i>';
         return content;
     }
 
     function format_total_amount(data) {
-        let total_amount = data.total_amount;
-        return total_amount + "&#8363;" + `<br /> ${format_payment(data)}`;
+        return `<p class="m-0" style="font-size: 17px;">${data.total_amount}&#8363;</p>${format_payment(data)}`;
     }
 
     function format_order_date(data) {
@@ -3392,7 +3403,9 @@ Common::authen();
                               "<span>"+appointment_delivery_date+"</span>" +
                               '<input type="text" class="form-control delivery-date2 p-2 mt-2 hidden" placeholder="Chọn ngày giao">' +
                               "<i class=\"fa fa-edit ml-1 text-info c-pointer edit-delivery-date\" onclick='edit_appointment_delivery_date(this)'></i>"+
+
                               "<i class=\"fa fa-save mt-1 mr-2 text-primary c-pointer save-delivery-date hidden\" onclick='save_appointment_delivery_date("+order_id+", this)' style='font-size: 20px' title='Lưu'></i>"+
+
                               "<i class=\"fa fa-times-circle mt-1 text-danger c-pointer cancel-delivery-date hidden\" onclick='cancel_appointment_delivery_date(this)' style='font-size: 20px' title='Huỷ'></i>" +
                             "</div>" +
                           "</div>";
@@ -3611,15 +3624,11 @@ Common::authen();
         switch (type) {
             case '0' :
                 return `<div class="text-payment-type text-center">
-                            <span class="badge badge-info">COD</span>
-                            <br />
-                            <i class="fa fa-edit text-info c-pointer edit-payment-type"></i>
+                            <span class="badge badge-info c-pointer edit-payment-type">COD <i class="fa fa-edit"></i></span>
                         </div>`;
             case '1':
                 return `<div class="text-payment-type text-center">
-                            <span class="badge badge-success">Chuyển khoản</span>
-                            <br />
-                            <i class="fa fa-edit text-info c-pointer edit-payment-type"></i>
+                            <span class="badge badge-success c-pointer edit-payment-type">Chuyển khoản <i class="fa fa-edit"></i></span>
                         </div>`;
             default:
                 return '';
@@ -3646,64 +3655,67 @@ Common::authen();
         let status = Number(data.status);
         switch (status) {
             case PENDING :
-                txt_status = `<div class="text-status">
-                                <span class="badge badge-warning">Chưa xử lý</span> 
-                                <i class="fa fa-edit text-warning c-pointer edit-status"></i>
-                                <button class="btn btn-warning btn-fast-update" data="13">Đã tạo đơn</button>
+                txt_status = `<div class="text-status text-center">
+                                <span class="badge badge-warning c-pointer edit-status">Chưa xử lý <i class="fa fa-edit"></i></span> 
+                                <br />
+                                <button class="btn btn-danger btn-fast-update" data="13">Đã tạo đơn</button>
                             </div>`;
                 break;
             case CREATED_BILL:
-                txt_status = `<div class="text-status">
-                                <span class="badge badge-info">Đã tạo đơn</span> 
-                                <i class="fa fa-edit text-info c-pointer edit-status"></i>
-                                <button class="btn btn-info btn-fast-update" data="1">Đã gói hàng</button>
+                txt_status = `<div class="text-status text-center">
+                                <span class="badge badge-info c-pointer edit-status">Đã tạo đơn <i class="fa fa-edit"></i></span> 
+                                <br />
+                                <button class="btn btn-danger btn-fast-update" data="1">Đã gói hàng</button>
                             </div>`;
                 break;
             case PACKED:
-                txt_status = `<div class="text-status">
-                                <span class="badge badge-info">Đã gói hàng</span> 
-                                <i class="fa fa-edit text-info c-pointer edit-status"></i>
-                                <button class="btn btn-primary btn-fast-update" data="2">Đã giao</button>
+                txt_status = `<div class="text-status text-center">
+                                <span class="badge badge-info c-pointer edit-status">Đã gói hàng <i class="fa fa-edit"></i></span> 
+                                <br />
+                                <button class="btn btn-danger btn-fast-update" data="2">Đã giao</button>
                             </div>`;
                 break;
             case DELIVERED:
-                txt_status = '<div class="text-status"><span class="badge badge-primary">Đã giao</span> <i class="fa fa-edit text-primary c-pointer edit-status"></i></div>';
+                txt_status = `<div class="text-status text-center">
+                                <span class="badge badge-primary c-pointer edit-status">Đã giao <i class="fa fa-edit"></i></span> 
+                                <br />
+                                <button class="btn btn-success btn-fast-update" data="13">Hoàn thành</button>
+                            </div>`;
                 break;
             case SUCCESS:
-                txt_status = '<div class="text-status"><span class="badge badge-success">Hoàn thành</span> <i class="fa fa-edit text-success c-pointer edit-status"></i></div>';
+                txt_status = '<div class="text-status text-center"><span class="badge badge-success c-pointer edit-status">Hoàn thành <i class="fa fa-edit"></i></span></div>';
                 break;
             case EXCHANGE:
-                txt_status = '<div class="text-status"><span class="badge badge-danger">Đã đổi size</span> <i class="fa fa-edit text-danger c-pointer edit-status"></i></div>';
+                txt_status = '<div class="text-status text-center"><span class="badge badge-danger c-pointer edit-status">Đã đổi size <i class="fa fa-edit"></i></span></div>';
                 break;
             case RETURN:
-                txt_status = '<div class="text-status"><span class="badge badge-secondary">Chuyển hoàn</span> <i class="fa fa-edit text-secondary c-pointer edit-status"></i></div>';
+                txt_status = '<div class="text-status text-center"><span class="badge badge-secondary c-pointer edit-status">Chuyển hoàn <i class="fa fa-edit"></i></span></div>';
                 break;
             case CANCEL:
-                txt_status = '<div class="text-status"><span class="badge badge-danger">Đã huỷ</span> <i class="fa fa-edit text-danger c-pointer edit-status"></i></div>';
+                txt_status = '<div class="text-status text-center"><span class="badge badge-danger c-pointer edit-status">Đã huỷ <i class="fa fa-edit"></i></span></div>';
                 break;
             case APPOINTMENT:
-                txt_status = '<div class="text-status"><span class="badge badge-warning">Giao hàng sau</span> <i class="fa fa-edit text-warning c-pointer edit-status"></i></div>';
+                txt_status = '<div class="text-status text-center"><span class="badge badge-warning c-pointer edit-status">Giao hàng sau <i class="fa fa-edit"></i></span></div>';
                 break;
             case WAITING:
-                txt_status = '<div class="text-status"><span class="badge badge-secondary">Đợi hàng về</span> <i class="fa fa-edit text-secondary c-pointer edit-status"></i></div>';
+                txt_status = '<div class="text-status text-center"><span class="badge badge-secondary c-pointer edit-status">Đợi hàng về <i class="fa fa-edit"></i></span></div>';
                 break;
             case WAITING_RETURN:
-                txt_status = '<div class="text-status"><span class="badge badge-danger">Chờ duyệt hoàn</span> <i class="fa fa-edit text-danger c-pointer edit-status"></i></div>';
+                txt_status = '<div class="text-status text-center"><span class="badge badge-danger c-pointer edit-status">Chờ duyệt hoàn <i class="fa fa-edit"></i></span></div>';
                 break;
             case APPROVED_RETURN:
-                txt_status = '<div class="text-status"><span class="badge badge-danger">Đã duyệt hoàn</span> <i class="fa fa-edit text-danger c-pointer edit-status"></i></div>';
+                txt_status = '<div class="text-status text-center"><span class="badge badge-danger c-pointer edit-status">Đã duyệt hoàn <i class="fa fa-edit"></i></span></div>';
                 break;
             case WAITING_EXCHANGE:
-                txt_status = '<div class="text-status"><span class="badge badge-danger">Chờ đổi size</span> <i class="fa fa-edit text-danger c-pointer edit-status"></i></div>';
+                txt_status = '<div class="text-status text-center"><span class="badge badge-danger c-pointer edit-status">Chờ đổi size <i class="fa fa-edit"></i></span></div>';
                 break;
             case EXCHANGED:
-                txt_status = '<div class="text-status"><span class="badge badge-secondary">Đang đổi size</span> <i class="fa fa-edit text-secondary c-pointer edit-status"></i></div>';
+                txt_status = '<div class="text-status text-center"><span class="badge badge-secondary c-pointer edit-status">Đang đổi size <i class="fa fa-edit"></i></span></div>';
                 break;
             
             default:
                 break;
         }
-
         return  txt_status;
     }
 
