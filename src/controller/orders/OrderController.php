@@ -665,7 +665,8 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $order = new Order();
         $order_type = $data->order_type;
         $cusId = $data->customer_id;
-        if(empty($cusId)) {
+        $tiki_order = 7;
+        if(empty($cusId) && isset($data->source) && $data->source != $tiki_order) {
             $customer = new Customer();
             $customer->setName($data->customerName);
             $customer->setPhone($data->customerPhone);

@@ -89,6 +89,7 @@ Common::authen();
                                 <option value="1">Website</option>
                                 <option value="3">Shopee</option>
                                 <option value="5">Lazada</option>
+                                <option value="7">Tiki</option>
                                 <option value="6">Zalo</option>
                             </select>
                         </div>
@@ -105,13 +106,12 @@ Common::authen();
                                 <option value="NINJAVAN">Ninja Van</option>
                                 <option value="GHN">Giao Hàng Nhanh</option>
                                 <option value="LEX">Lazada (LEX)</option>
+                                <option value="TED">Tiki (TED)</option>
                                 <option value="VTP">Viettel Post</option>
-                                <option value="GHN">Giao Hàng Nhanh</option>
                                 <option value="GHTK">Giao Hàng Tiết Kiệm</option>
                                 <option value="VNP">Việt Nam Post</option>
                                 <option value="VNPN">Việt Nam Post Nhanh</option>
                                 <option value="BESTEXPRESS">BEST Express</option>
-                                <option value="GRABEXPRESS">GRAB Express</option>
                             </select>
                         </div>
                         <!-- <div class="col-md-2 hidden">
@@ -465,20 +465,24 @@ Common::authen();
             $(".modal-body").find("input").removeClass("is-invalid");
             $(".modal-body").find("select").removeClass("is-invalid");
 
-            let customer_phone = $("#customer_phone").val();
-            let order_type = $('#order_type').val();
-            if (order_type === "1") {
-                if (!customer_phone) {
-                    $("#customer_phone").addClass("is-invalid");
-                    is_valid = false;
-                } else {
-                    $("#customer_phone").removeClass("is-invalid");
+            let order_source = $("#order_source").val();
+            if(order_source != 7) {//tiki
+                let customer_phone = $("#customer_phone").val();
+                let order_type = $('#order_type').val();
+                if (order_type === "1") {
+                    if (!customer_phone) {
+                        $("#customer_phone").addClass("is-invalid");
+                        is_valid = false;
+                    } else {
+                        $("#customer_phone").removeClass("is-invalid");
+                    }
+                }
+                let customer_id = $("#customer_id").val();
+                if (customer_phone && !customer_id) {
+                    check_exist_customer(customer_phone);
                 }
             }
-            let customer_id = $("#customer_id").val();
-            if (customer_phone && !customer_id) {
-                check_exist_customer(customer_phone);
-            }
+            
             let table = $("#table_list_product tbody tr").length;
             if (!table || table === 0) {
                 is_valid = false;
@@ -512,17 +516,6 @@ Common::authen();
                     }
                 });
             }
-            // let payment_type = $("#payment_type").val();
-            // if(payment_type && payment_type === "0") {
-            //     let customer_payment = format_money(replaceComma($("#payment").val()));
-            //     if (!customer_payment || isNaN(customer_payment)) {
-            //         $("#payment").addClass("is-invalid");
-            //         is_valid = false;
-            //         // toastr.error("Chưa nhập số tiền thanh toán");
-            //     } else {
-            //         $("#payment").removeClass("is-invalid");
-            //     }
-            // }
             if(!is_valid) {
                 toastr.error("Đã xảy ra lỗi");
             }
@@ -590,23 +583,23 @@ Common::authen();
             let order_type = $('#order_type').val();
             data["customer_id"] = customer_id;
 
-            let source = 0;// shop
-            let bill_of_lading_no = '';
-            let shipping_fee = 0;
-            let shipping_unit = 0;
-            let shopee_order_id = 0;
-            if (order_type == "1") {
+            // let source = 0;// shop
+            // let bill_of_lading_no = '';
+            // let shipping_fee = 0;
+            // let shipping_unit = 0;
+            // let shopee_order_id = 0;
+            // if (order_type == "1") {
                 // online
-                bill_of_lading_no = $("#bill_of_lading_no").val();
-                shipping_fee = replaceComma($("#shipping_fee").val());
-                shipping_unit = $("#shipping_unit").val();
-                source = $("#order_source").val();
-                shopee_order_id = $("#shopee_order_id").val();
-            }
-            data["bill_of_lading_no"] = bill_of_lading_no;
-            data["shipping_fee"] = shipping_fee;
-            data["shipping_unit"] = shipping_unit;
-            data["shopee_order_id"] = shopee_order_id;
+                // bill_of_lading_no = $("#bill_of_lading_no").val();
+                // shipping_fee = replaceComma($("#shipping_fee").val());
+                // shipping_unit = $("#shipping_unit").val();
+                // source = $("#order_source").val();
+                // shopee_order_id = $("#shopee_order_id").val();
+            // }
+            data["bill_of_lading_no"] = $("#bill_of_lading_no").val();
+            data["shipping_fee"] = replaceComma($("#shipping_fee").val());
+            data["shipping_unit"] = $("#shipping_unit").val();
+            data["shopee_order_id"] = $("#shopee_order_id").val();
 
             let order_status = $("#order_status").val();
             let order_date = $("#orderDate").val();
@@ -617,7 +610,7 @@ Common::authen();
             }
             let description = $("#description").val();
 
-            data["source"] = source;
+            data["source"] = $("#order_source").val();
             data["shipping"] = shipping;
             data["discount"] = discount;
             data["total_amount"] = total_amount;

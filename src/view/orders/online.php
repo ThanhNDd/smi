@@ -293,7 +293,6 @@ Common::authen();
                             <div class="dropdown-menu">
                                 <a class="dropdown-item print_order_JT" href="#">JNT</a>
                               <a class="dropdown-item print_order_GHN" href="#">GHN</a>
-                              <a class="dropdown-item print_order_VTP" href="#">VTP</a>
                             </div>
                           </div>
                     </div>
@@ -382,6 +381,11 @@ Common::authen();
                     <div class="col total-lex-status text-center">
                         <button type="button" class="btn btn-total-shipping-unit" id="totalLEX" style="background-color: #201adb;color: white;">
                         Lazada Express (LEX) <span class="badge badge-light total_lex">0</span>
+                        </button>
+                    </div>
+                    <div class="col total-lex-status text-center">
+                        <button type="button" class="btn btn-total-shipping-unit" id="totalTED" style="background-color: #26b2ff;color: white;">
+                        Tiki (TED) <span class="badge badge-light total_ted">0</span>
                         </button>
                     </div>
                 </div>
@@ -524,6 +528,28 @@ Common::authen();
                                 </div>
                             </div>
                         </div>
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header p-2" style="background-color: #27b7ff;color: white;">
+                                    <h3 class="card-title">Tiki</h3>
+                                </div>
+                                <div class="card-body p-2">
+                                    <div class="row col-md-12 p-0 m-0">
+                                        <div class="col-md-6 col-sm-12 p-0 pt-1">
+                                            <span class="row col-md-12 col-sm-12">
+                                                <h5 class="total_on_tiki"></h5>
+                                            </span>
+                                            <span class="row col-md-12 col-sm-12 total_profit_on_tiki"></span>
+                                            <span class="row col-md-12 col-sm-12 percent_on_tiki"></span>
+                                        </div>
+                                        <div class="col-md-6 col-sm-12 p-0 float-right">
+                                            <h1 class="text-danger text-right m-0 count_on_tiki"></h1>
+                                            <h5 class="text-right col-md-12 p-0 text-secondary total_product_on_tiki" style="padding-right: 6px !important;"></h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -620,6 +646,7 @@ Common::authen();
                         <option value="NINJAVAN">Ninja Van</option>
                         <option value="GHN">Giao Hàng Nhanh</option>
                         <option value="LEX">Lazada (LEX)</option>
+                        <option value="TED">Tiki (TED)</option>
                         <option value="VTP">Viettel Post</option>
                         <option value="GHTK">Giao Hàng Tiết Kiệm</option>
                         <option value="VNP">Việt Nam Post</option>
@@ -766,6 +793,7 @@ Common::authen();
     const NINJA = "NINJAVAN";
     const GHN = "GHN";
     const LEX = "LEX";
+    const TED = "TED";
     
     let statusSelected = null;
 
@@ -812,6 +840,7 @@ Common::authen();
         totalNinjaClick();
         totalGHNClick();
         totalLEXClick();
+        totalTEDClick();
 
         tab_all_click();
         tab_pending_click();
@@ -1170,6 +1199,14 @@ Common::authen();
             $(this).addClass("active");
             let status = statusSelected ?? `${CREATED_BILL},${PACKED}`;
             generate_datatable('', status, LEX);
+        });
+    }
+    function totalTEDClick() {
+        $("#totalTED").click(function () {
+            $(".btn-total-shipping-unit").removeClass("active");
+            $(this).addClass("active");
+            let status = statusSelected ?? `${CREATED_BILL},${PACKED}`;
+            generate_datatable('', status, TED);
         });
     }
 
@@ -1745,6 +1782,20 @@ Common::authen();
                     } else {
                         $(".percent_on_lazada").html("0%");
                     }
+                }
+                $(".total_on_tiki").html((res.total_on_tiki ? res.total_on_tiki : 0) + "&#8363;");
+                $(".count_on_tiki").html(res.count_on_tiki ? res.count_on_tiki+" <small style='font-size: 35%;' class='text-secondary'>Đơn</small>" : 0);
+                $(".total_product_on_tiki").html(Number(replaceComma(res.total_product_on_tiki)) > 0 ? res.total_product_on_tiki+" <small style='font-size: 64%;margin-right: 10px;' class='text-secondary'>SP</small>" : 0);
+                if(IS_ADMIN) {
+                    $(".total_profit_on_tiki").html((res.total_profit_on_tiki ? res.total_profit_on_tiki : 0) + "&#8363;");
+                    let percent_on_tiki = ((Number(replaceComma(res.total_profit_on_tiki)) / Number(replaceComma(res.total_on_tiki))) * 100).toFixed(2);
+                    if (!isNaN(percent_on_tiki)) {
+                        $(".percent_on_tiki").html(percent_on_tiki + "%");
+                    } else {
+                        $(".percent_on_tiki").html("0%");
+                    }
+                }
+                if(IS_ADMIN) {
                     $(".total_profit").html((res.total_profit ? res.total_profit : 0) + "&#8363;");
                     $(".percent_profit").html("0%");
                     let percent = ((Number(replaceComma(res.total_profit)) / Number(replaceComma(res.total_checkout))) * 100).toFixed(2);
@@ -2429,6 +2480,7 @@ Common::authen();
                 let ninja = 0;
                 let ghn = 0;
                 let lex = 0;
+                let ted = 0;
                 if(res.length > 0) {
                     $.each(res, function(k, v){
                         switch(v.shipping_unit) {
@@ -2447,6 +2499,9 @@ Common::authen();
                             case "LEX":
                                 lex = v.total;
                                 break;
+                            case "TED":
+                                ted = v.total;
+                                break;
                         }
                     });
                 }
@@ -2455,6 +2510,7 @@ Common::authen();
                 $(".total_ninja").text(ninja);
                 $(".total_ghn").text(ghn);
                 $(".total_lex").text(lex);
+                $(".total_ted").text(ted);
                 $(".btn-total-shipping-unit").removeClass("active");
             },
             error: function (data, errorThrown) {
@@ -2513,7 +2569,6 @@ Common::authen();
     function hidden_table_print_order() {
         $("#tbl_print_order_JNT").addClass("d-none");
         $("#tbl_print_order_GHN").addClass("d-none");
-        $("#tbl_print_order_VTP").addClass("d-none");
     }
     
     function print_order_JT() {
@@ -2976,53 +3031,63 @@ Common::authen();
     function format_customer_info(data) {
         
         let customer = `<p class="m-0"><i class="fas fa-exclamation-circle" title="Mã đơn hàng"></i> ${data.order_id}</p>`;
-            if(!data.customer_existed_id) {
-                customer += `<div>
-                                <p class="m-0"><i class="fas fa-phone-alt" title="Số điện thoại"></i> <a href="<?php  Common::getPath() ?>src/view/customer/?phone=${data.customer_phone}" target="_blank">${data.customer_phone}</a></p>
-                                <p class="m-0">
-                                    <i class="fas fa-user" title="Tên khách hàng"></i>  `;
-                                    if(data.link_fb) {
-                                        customer += `<a href="${data.link_fb}" target="_blank">
-                                                        ${data.customer_name}
-                                                    </a>`;
-                                    } else {
-                                        customer += `${data.customer_name}`;
-                                    }
-                                customer += `</p>
-                                <p class="m-0"><i class="fas fa-map-marker-alt"  title="Địa chỉ"></i>  ${data.customer_address}</p>`;
-                customer += `</div>`;
-            } else {
-                customer += `<div class="form-check">
-                                <label class="form-check-label">
-                                    <input type="radio" class="form-check-input customer-selected" name="customer_existed_checked" value="${data.customer_id}">
-                                    <div class="existed-customer">
-                                        <p class="m-0"><i class="fas fa-phone-alt" title="Số điện thoại"></i> ${data.customer_phone}</p>
-                                        <p class="m-0">
-                                            <i class="fas fa-user" title="Tên khách hàng"></i>  `;
-                                            if(data.link_fb) {
-                                                customer += `<a href="${data.link_fb}" target="_blank">
-                                                                ${data.customer_name}
-                                                            </a>`;
-                                            } else {
-                                                customer += `${data.customer_name}`;
-                                            }
-                                        customer += `</p>
-                                        <p class="m-0"><i class="fas fa-map-marker-alt"  title="Địa chỉ"></i>  ${data.customer_address}</p>
-                                    </div>
-                                </label>
-                            </div>`;
-                customer += `<div class="form-check">
-                                <label class="form-check-label">
-                                    <input type="radio" class="form-check-input customer-selected" name="customer_existed_checked" value="${data.customer_existed_id}">
-                                    <div class="existed-customer">
-                                        <p class="m-0"><i class="fas fa-phone-alt" title="Số điện thoại"></i> ${data.customer_existed_phone}</p>
-                                        <p class="m-0"><i class="fas fa-user" title="Tên khách hàng"></i>  ${data.customer_existed_name}</p>
-                                        <p class="m-0"><i class="fas fa-map-marker-alt"  title="Địa chỉ"></i>  ${data.customer_existed_address}</p>
-                                    </div>
-                                </label>    
-                            </div>`;
-            }
-            if(data.source == 3 && data.shopee_order_id && data.shopee_order_id != 0) {
+            // if(!data.customer_existed_id) {
+                if(data.source != 7) {
+                    customer += `<div>
+                                    <p class="m-0"><i class="fas fa-phone-alt" title="Số điện thoại"></i> <a href="<?php  Common::getPath() ?>src/view/customer/?phone=${data.customer_phone}" target="_blank">${data.customer_phone}</a></p>
+                                    <p class="m-0">
+                                        <i class="fas fa-user" title="Tên khách hàng"></i>  `;
+                                        if(data.link_fb) {
+                                            customer += `<a href="${data.link_fb}" target="_blank">
+                                                            ${data.customer_name}
+                                                        </a>`;
+                                        } else {
+                                            customer += `${data.customer_name}`;
+                                        }
+                        customer += `</p>   
+                                    <p class="m-0"><i class="fas fa-map-marker-alt"  title="Địa chỉ"></i>  ${data.customer_address}</p>
+                                </div>`;
+                } else {
+                    customer += `<div>
+                                    <p class="m-0">
+                                        <i class="fas fa-user" title="Tên khách hàng"></i> Khách hàng Tiki
+                                    </p>
+                                </div>`;
+                }
+            // } else {
+                
+            //         customer += `<div class="form-check">
+            //                         <label class="form-check-label">
+            //                             <input type="radio" class="form-check-input customer-selected" name="customer_existed_checked" value="${data.customer_id}">
+            //                             <div class="existed-customer">
+            //                                 <p class="m-0"><i class="fas fa-phone-alt" title="Số điện thoại"></i> ${data.customer_phone}</p>
+            //                                 <p class="m-0">
+            //                                     <i class="fas fa-user" title="Tên khách hàng"></i>  `;
+            //                                     if(data.link_fb) {
+            //                                         customer += `<a href="${data.link_fb}" target="_blank">
+            //                                                         ${data.customer_name}
+            //                                                     </a>`;
+            //                                     } else {
+            //                                         customer += `${data.customer_name}`;
+            //                                     }
+            //                                 customer += `</p>
+            //                                 <p class="m-0"><i class="fas fa-map-marker-alt"  title="Địa chỉ"></i>  ${data.customer_address}</p>
+            //                             </div>
+            //                         </label>
+            //                     </div>`;
+            //         customer += `<div class="form-check">
+            //                         <label class="form-check-label">
+            //                             <input type="radio" class="form-check-input customer-selected" name="customer_existed_checked" value="${data.customer_existed_id}">
+            //                             <div class="existed-customer">
+            //                                 <p class="m-0"><i class="fas fa-phone-alt" title="Số điện thoại"></i> ${data.customer_existed_phone}</p>
+            //                                 <p class="m-0"><i class="fas fa-user" title="Tên khách hàng"></i>  ${data.customer_existed_name}</p>
+            //                                 <p class="m-0"><i class="fas fa-map-marker-alt"  title="Địa chỉ"></i>  ${data.customer_existed_address}</p>
+            //                             </div>
+            //                         </label>    
+            //                     </div>`;
+                
+            // }
+            if(data.shopee_order_id && data.shopee_order_id != 0) {
                 // shopee
                 customer += `<p class="m-0"><i class="fas fa-shopping-bag"></i> ${data.shopee_order_id}</p>`;
             }
@@ -3155,7 +3220,11 @@ Common::authen();
                 d += '<div class="row col-12"><small>Địa chỉ</small> <h5 class="col-12 pl-0">' + data.address + '</h5></div>';
             }
         } else {
-            d += '<div class="col-4 col-sm-4 col-md-4"><small>Khách hàng</small> <h5>Khách lẻ</h5></div>';
+            if(data.source == 7) {
+                d += '<div class="col-4 col-sm-4 col-md-4"><small>Khách hàng</small> <h5>Khách hàng Tiki</h5></div>';
+            } else {
+                d += '<div class="col-4 col-sm-4 col-md-4"><small>Khách hàng</small> <h5>Khách lẻ</h5></div>';
+            }
         }
         if (data.voucher_code != null && data.voucher_code !== "") {
             voucher_value = Number((intoMoney * 10) / 100);
@@ -3415,6 +3484,8 @@ Common::authen();
             content += `<span class="badge badge-warning c-pointer edit-bill">GHN <i class="fa fa-edit"></i></span>`;
         } else if(shipping_unit == LEX) {
             content += `<span class="badge c-pointer edit-bill" style="background-color: #201adb;color: white;">LEX <i class="fa fa-edit" style="color: white;"></i></span>`;
+        } else if(shipping_unit == TED) {
+            content += `<span class="badge c-pointer edit-bill" style="background-color: #27b7ff;color: white;">TED <i class="fa fa-edit" style="color: white;"></i></span>`;
         }
         // content += '<br><i class="fa fa-edit c-pointer text-info edit-bill"></i>';
         return content;
@@ -3485,6 +3556,9 @@ Common::authen();
                 break;
             case 5:
                 src = '<span class="badge badge-primary" style="background-color: #201adb;color: white;">Lazada</span>';
+                break;
+            case 7:
+                src = '<span class="badge badge-primary" style="background-color: #27b7ff;color: white;">Tiki</span>';
                 break;
             default:
                 src = '<span class="badge badge-warning" >Cửa hàng</span>';

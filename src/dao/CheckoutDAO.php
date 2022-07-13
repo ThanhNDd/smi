@@ -804,24 +804,28 @@ class CheckoutDAO
             $total_on_zalo = 0;
             $total_on_website = 0;
             $total_on_lazada = 0;
+            $total_on_tiki = 0;
 
             $count_on_facebook = 0;
             $count_on_shopee = 0;
             $count_on_website = 0;
             $count_on_lazada = 0;
             $count_on_zalo = 0;
+            $count_on_tiki = 0;
 
             $total_product_on_facebook = 0;
             $total_product_on_website = 0;
             $total_product_on_lazada = 0;
             $total_product_on_shopee = 0;
             $total_product_on_zalo = 0;
+            $total_product_on_tiki = 0;
 
             $total_profit_on_facebook = 0;
             $total_profit_on_shopee = 0;
             $total_profit_on_website = 0;
             $total_profit_on_lazada = 0;
             $total_profit_on_zalo = 0;
+            $total_profit_on_tiki = 0;
 
             foreach ($result as $k => $row) {
                 $total_amount += $row["total_amount"];
@@ -878,6 +882,12 @@ class CheckoutDAO
                   $count_on_zalo++;
                   $total_product_on_zalo += $row["product"];
                   $total_profit_on_zalo += $row["total_profit"];
+                } else if ($row["source"] == 7) {
+                  // tiki
+                  $total_on_tiki += $row["total_checkout"];
+                  $count_on_tiki++;
+                  $total_product_on_tiki += $row["product"];
+                  $total_profit_on_tiki += $row["total_profit"];
                 }
             }
             $count_total = $count_on_shop + $count_online + $count_exchange;
@@ -905,24 +915,28 @@ class CheckoutDAO
             $arr["total_on_website"] = number_format($total_on_website);
             $arr["total_on_lazada"] = number_format($total_on_lazada);
             $arr["total_on_zalo"] = number_format($total_on_zalo);
+            $arr["total_on_tiki"] = number_format($total_on_tiki);
 
             $arr["count_on_website"] = $count_on_website;
             $arr["count_on_facebook"] = $count_on_facebook;
             $arr["count_on_shopee"] = $count_on_shopee;
             $arr["count_on_lazada"] = $count_on_lazada;
             $arr["count_on_zalo"] = $count_on_zalo;
+            $arr["count_on_tiki"] = $count_on_tiki;
 
             $arr["total_product_on_shopee"] = number_format($total_product_on_shopee);
             $arr["total_product_on_website"] = number_format($total_product_on_website);
             $arr["total_product_on_facebook"] = number_format($total_product_on_facebook);
             $arr["total_product_on_lazada"] = number_format($total_product_on_lazada);
             $arr["total_product_on_zalo"] = number_format($total_product_on_zalo);
+            $arr["total_product_on_tiki"] = number_format($total_product_on_tiki);
 
             $arr["total_profit_on_facebook"] = number_format($total_profit_on_facebook);
             $arr["total_profit_on_shopee"] = number_format($total_profit_on_shopee);
             $arr["total_profit_on_website"] = number_format($total_profit_on_website);
             $arr["total_profit_on_lazada"] = number_format($total_profit_on_lazada);
             $arr["total_profit_on_zalo"] = number_format($total_profit_on_zalo);
+            $arr["total_profit_on_tiki"] = number_format($total_profit_on_tiki);
             return $arr;
 
         } catch (Exception $e) {
@@ -1042,6 +1056,7 @@ class CheckoutDAO
                         A.status,
                         A.total_reduce,
                         A.voucher_code,
+                        A.source,
                         D.id as product_id,
                         D.name as product_name,
                         E.sku,
@@ -1092,6 +1107,7 @@ class CheckoutDAO
                         'payment_type' => $row["payment_type"],
                         'voucher_code' => $row["voucher_code"],
                         'product_name' => $row["product_name"],
+                        'source' => $row["source"],
                         'details' => array()
                     );
                     $qty = $row["quantity"];

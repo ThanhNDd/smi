@@ -667,7 +667,7 @@ Common::authen();
                     let _sku = $(".table-list tbody tr #sku_"+c+"_"+s).val();
                     let _weight = $(".table-list tbody tr #weight_"+c+"_"+s).val();
                     let _height = $(".table-list tbody tr #height_"+c+"_"+s).val();
-                    let _long = $(".table-list tbody tr #long_"+c+"_"+s).val();
+                    let _length = $(".table-list tbody tr #length_"+c+"_"+s).val();
                     let _age = $(".table-list tbody tr #age_"+c+"_"+s).val();
                     let _dimension = $(".table-list tbody tr #dimension_"+c+"_"+s).val();
 
@@ -685,7 +685,7 @@ Common::authen();
                     variations['sku'] = _sku;
                     variations['weight'] = _weight;
                     variations['height'] = _height;
-                    variations['length__'] = _long;
+                    variations['length__'] = _length;
                     variations['age'] = _age;
                     variations['dimension'] = _dimension;
                     arr.push(variations);
@@ -815,7 +815,7 @@ Common::authen();
             let fee = $("#fee").val();
             let profit = $("#profit").val();
             let product_id = $("#display_product_id").val();
-            let long = "";
+            let length_ = "";
             let weight = "";
             let height = "";
             let age = "";
@@ -896,9 +896,9 @@ Common::authen();
                         if(typeof _weight === 'undefined' || _weight === '') {
                             _weight = '';
                         }
-                        let _long = $(".table-list tbody tr #long_"+c+"_"+s).val();
-                        if(typeof _long === 'undefined' || _long === '') {
-                            _long = '';
+                        let _length = $(".table-list tbody tr #length_"+c+"_"+s).val();
+                        if(typeof _length === 'undefined' || _length === '') {
+                            _length = '';
                         }
                         let _height = $(".table-list tbody tr #height_"+c+"_"+s).val();
                         if(typeof _height === 'undefined' || _height === '') {
@@ -929,7 +929,7 @@ Common::authen();
                             "<td class='fee_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Phí vận chuyển' value='"+_fee+"' id='fee_"+c+"_"+s+"' onchange='onchange_fee_in_list("+c+", "+s+")' onkeyup='onchange_fee_in_list("+c+", "+s+")'></td>\n" +
                             "<td class='profit_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Profit' value='"+_profit+"' id='profit_"+c+"_"+s+"' readonly></td>\n" +
                             "<td class='sku_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_sku+"' id='sku_"+c+"_"+s+"' ></td>\n" +
-                            "<td class='long_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_long+"' id='long_"+c+"_"+s+"' ></td>\n" +
+                            "<td class='length_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_length+"' id='length_"+c+"_"+s+"' ></td>\n" +
                             "<td class='weight_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_weight+"' id='weight_"+c+"_"+s+"' ></td>\n" +
                             "<td class='height_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_height+"' id='height_"+c+"_"+s+"' ></td>\n" +
                             "<td class='age_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_age+"' id='age_"+c+"_"+s+"' ></td>\n" +
@@ -957,7 +957,7 @@ Common::authen();
                     "<td class='fee_1_"+d+"'><input type='text' class='form-control' value='"+fee+"' id='fee_1_"+d+"'></td>\n" +
                     "<td class='profit_1_"+d+"'><input type='text' class='form-control' value='"+profit+"' id='profit_1_"+d+"'></td>\n" +
                     "<td class='sku_1_"+d+"'><input type='text' class='form-control' value='"+sku+"' id='sku_1_"+d+"'></td>\n" +
-                    "<td class='long_1_"+d+"'><input type='text' class='form-control' value='"+long+"' id='long_1_"+d+"'></td>\n" +
+                    "<td class='length_1_"+d+"'><input type='text' class='form-control' value='"+length_+"' id='length_1_"+d+"'></td>\n" +
                     "<td class='weight_1_"+d+"'><input type='text' class='form-control' value='"+weight+"' id='weight_1_"+d+"'></td>\n" +
                     "<td class='height_1_"+d+"'><input type='text' class='form-control' value='"+height+"' id='height_1_"+d+"'></td>\n" +
                     "<td class='age_1_"+d+"'><input type='text' class='form-control' value='"+age+"' id='age_1_"+d+"'></td>\n" +
@@ -1022,7 +1022,7 @@ Common::authen();
                         let _percent = variations[i].percent;
                         let _profit = variations[i].profit;
                         let _fee = variations[i].fee;
-                        let _long = variations[i].long ? variations[i].long : "";
+                        let _length = variations[i].length__ ? variations[i].length__ : "";
                         let _weight = variations[i].weight ? variations[i].weight : "";
                         let _height = variations[i].height ? variations[i].height : "";
                         let _age = variations[i].age ? variations[i].age : "";
@@ -1048,7 +1048,7 @@ Common::authen();
                             table += "<td class='profit_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Profit' value='"+_profit+"' id='profit_"+c+"_"+s+"' readonly></td>";
                         }
                         table += "<td class='sku_"+c+"_"+s+"'><input type='text' class='form-control' value='"+sku+"' id='sku_"+c+"_"+s+"' ></td>";
-                        table += "<td class='long_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_long+"' id='long_"+c+"_"+s+"' ></td>";
+                        table += "<td class='length_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_length+"' id='length_"+c+"_"+s+"' ></td>";
                         table += "<td class='weight_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_weight+"' id='weight_"+c+"_"+s+"' ></td>";
                         table += "<td class='height_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_height+"' id='height_"+c+"_"+s+"' ></td>";
                         table += "<td class='age_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_age+"' id='age_"+c+"_"+s+"' ></td>";
@@ -1077,7 +1077,7 @@ Common::authen();
                     "<td class='fee_1_"+d+"'><input type='text' class='form-control' value='"+fee+"' id='fee_1_"+d+"'></td>\n" +
                     "<td class='profit_1_"+d+"'><input type='text' class='form-control' value='"+profit+"' id='profit_1_"+d+"'></td>\n" +
                     "<td class='sku_1_"+d+"'><input type='text' class='form-control' value='"+sku+"' id='sku_1_"+d+"'></td>\n" +
-                    "<td class='long_1_"+d+"'><input type='text' class='form-control' id='long_1_"+d+"'></td>\n" +
+                    "<td class='length_1_"+d+"'><input type='text' class='form-control' id='length_1_"+d+"'></td>\n" +
                     "<td class='weight_1_"+d+"'><input type='text' class='form-control' id='weight_1_"+d+"'></td>\n" +
                     "<td class='height_1_"+d+"'><input type='text' class='form-control' id='height_1_"+d+"'></td>\n" +
                     "<td class='age_1_"+d+"'><input type='text' class='form-control' id='age_1_"+d+"'></td>\n" +
