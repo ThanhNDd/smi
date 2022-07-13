@@ -5,6 +5,7 @@ include("../../model/Product/Product.php");
 include("../../model/Product/Variations.php");
 include("../../dao/ProductDAO.php");
 include("../../controller/product/PrinterBarcode.php");
+include("../../controller/product/PrinterBarcodeShoes.php");
 
 $db = new DBConnect();
 
@@ -68,6 +69,8 @@ $print_barcode = new PrinterBarcode();
 if (isset($_POST["method"]) && $_POST["method"] == "print_barcode") {
     try {
         Common::authen_get_data();
+        $customPrint = $_POST["customPrint"];
+        
         $data = $_POST["data"];
         $data = json_decode($data);
         $skus = '';
@@ -76,7 +79,12 @@ if (isset($_POST["method"]) && $_POST["method"] == "print_barcode") {
         }
         $skus = substr($skus, 0, strlen($skus) - 1);
         $lists = $dao->get_data_print_barcode($skus);
-        $filename = $print_barcode->print($lists, $data);
+        if($customPrint == "true") {
+            $printBarcodeShoes = new PrinterBarcodeShoes();
+            $filename = $printBarcodeShoes->print($lists, $data);
+        } else {
+            $filename = $print_barcode->print($lists, $data);
+        }
         $response_array['fileName'] = $filename;
         echo json_encode($response_array);
     } catch (Exception $ex) {

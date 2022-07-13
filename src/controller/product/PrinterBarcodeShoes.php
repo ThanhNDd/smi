@@ -5,7 +5,7 @@ require_once("../../common/common.php");
 /**
  *
  */
-class PrinterBarcode
+class PrinterBarcodeShoes
 {
     function __construct()
     {
@@ -91,16 +91,14 @@ class PrinterBarcode
     function getContent($data) {
         return '<table>
                         <tr>
-                            <td colspan="3" class="left">
-                                <span style="font-size: 24px;padding-top:15px"> 
-                                    Size: <b>'.$data["size"].'</b>
+                            <td class="right">
+                                <span style="font-size: 24px; padding-left:20px"> 
+                                    <b>'.$data["color"].'</b>
                                 </span>
                             </td>
-                        </tr>
-                        <tr>
-                            <td colspan="3" class="left">
-                                <span style="font-size: 24px"> 
-                                    Màu: <b>'.$data["color"].'</b>
+                            <td>
+                                <span style="font-size: 100px;padding-top:15px"> 
+                                    <b>'.$data["size"].'</b>
                                 </span>
                             </td>
                         </tr>

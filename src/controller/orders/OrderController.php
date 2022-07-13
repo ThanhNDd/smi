@@ -706,7 +706,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $order->setStatus($data->order_status ?? null);
         $order->setPayment_type($data->payment_type ?? null);
         $order->setVoucherValue(0);
-        $order->setOrder_date($data->order_date ?? null);
+        $order->setOrder_date($data->order_date ?? date('y-m-d h:i:s'));
         $order->setAppointmentDeliveryDate($data->appointment_delivery_date ?? null);
         $order->setSource($data->source ?? null);
         $order->setDescription($data->description ?? null);

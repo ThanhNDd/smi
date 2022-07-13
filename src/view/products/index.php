@@ -91,6 +91,10 @@ Common::authen();
             /*display: inline-block;*/
         }
 
+        td, th {
+            white-space: nowrap;
+        }
+
         /*.card.card-outline.card-danger {*/
         /*    min-height: 690px;*/
         /*}*/
@@ -159,7 +163,7 @@ Common::authen();
                 </div>
                 <div class="row col-md-12 mt-2 ml-3">
                     <button class="btn btn-info expandall" id="expandall">Expand all</button>
-                    <a href="<?php Common::getPath() ?>src/view/batch/updateQuantityShopee.php" type="button" class="btn btn-success btn-flat ml-2" id="updateShopee">Cập nhật Shopee</a>
+                    <!-- <a href="<?php Common::getPath() ?>src/view/batch/updateQuantityShopee.php" type="button" class="btn btn-success btn-flat ml-2" id="updateShopee">Cập nhật Shopee</a> -->
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body m-3">
@@ -330,6 +334,7 @@ Common::authen();
         });
     
         // getDataForChatBot();
+
     });
 
     function create_url() {
@@ -372,7 +377,7 @@ Common::authen();
         $(".number-checked").text(count);
     }
 
-    function printBarcode(data) {
+    function printBarcode(data, customPrint = false) {
         $(".iframeArea").html("");
         $.ajax({
             url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
@@ -380,7 +385,8 @@ Common::authen();
             dataType: "json",
             data: {
                 method: "print_barcode",
-                data: JSON.stringify(data)
+                data: JSON.stringify(data),
+                customPrint: customPrint 
             },
             success: function (res) {
                 let filename = res.fileName;
@@ -541,10 +547,11 @@ Common::authen();
                     success: function (res) {
                         let data = res.data;
                         if (data.length > 0) {
-                            row.child(format_variation(data, discount)).show();
+                            row.child(format_variation(productId, data, discount)).show();
                             tr.addClass('shown');
                             tdi.first().removeClass('fa-plus-square');
                             tdi.first().addClass('fa-minus-square');
+                            prinrBarcodeProductCustom();
                         }
                     },
                     error: function (data, errorThrown) {
@@ -695,24 +702,24 @@ Common::authen();
         });
 
         // Event click add new row variation
-        $('#product_datatable tbody').on('click', '.add_variation', function () {
-            let tr = $(this).closest('tr');
-            let tdi = tr.find("i.fa");
-            let row = table.row(tr);
-            //  if (!row.child.isShown()) {
-            // Open this row
-            let variations = row.data().variations;
-            let new_sku = Number(variations[variations.length - 1].sku) < 10 ? "0" + variations[variations.length - 1].sku : Number(variations[variations.length - 1].sku) + 1;
-            row.child(format_variation(variations, "isNew")).show();
-            tr.addClass('shown');
-            tdi.first().removeClass('fa-plus-square');
-            tdi.first().addClass('fa-minus-square');
+        // $('#product_datatable tbody').on('click', '.add_variation', function () {
+        //     let tr = $(this).closest('tr');
+        //     let tdi = tr.find("i.fa");
+        //     let row = table.row(tr);
+        //     //  if (!row.child.isShown()) {
+        //     // Open this row
+        //     let variations = row.data().variations;
+        //     let new_sku = Number(variations[variations.length - 1].sku) < 10 ? "0" + variations[variations.length - 1].sku : Number(variations[variations.length - 1].sku) + 1;
+        //     row.child(format_variation(variations, "isNew")).show();
+        //     tr.addClass('shown');
+        //     tdi.first().removeClass('fa-plus-square');
+        //     tdi.first().addClass('fa-minus-square');
 
-            generate_select2(".select-qty-" + new_sku, select_qty, "");
-            generate_select2(".select-color-" + new_sku, select_colors, "");
-            generate_select2(".select-size-" + new_sku, select_size, "");
-            //  }
-        });
+        //     generate_select2(".select-qty-" + new_sku, select_qty, "");
+        //     generate_select2(".select-color-" + new_sku, select_colors, "");
+        //     generate_select2(".select-size-" + new_sku, select_size, "");
+        //     //  }
+        // });
 
         // Event click Edit variation
         $('#product_datatable tbody').on('click', '.edit_variation', function () {
@@ -1660,9 +1667,8 @@ Common::authen();
 
     function format_action(data) {
         if(IS_ADMIN) {
-            let btn =  '<button type="button" class="btn bg-gradient-info btn-sm edit_product" title="Sửa sản phẩm"><i class="fas fa-edit"></i></button>&nbsp;'
-                + '<button type="button" class="btn bg-gradient-danger btn-sm out_of_stock" title="Cập nhật hết hàng"><i class="fas fa-eye-slash"></i></button>';
-                
+            let btn =  '<button type="button" class="btn bg-gradient-info btn-sm edit_product m-1" title="Sửa sản phẩm"><i class="fas fa-edit"></i></button>&nbsp;'
+                + '<button type="button" class="btn bg-gradient-danger btn-sm out_of_stock m-1" title="Cập nhật hết hàng"><i class="fas fa-eye-slash"></i></button>';
             return btn;
         }
         return null;
@@ -1709,13 +1715,21 @@ Common::authen();
         }
     }
 
-    function format_variation(variations, discount, isNew) {
-        let table = "<div class=\"card card-outline card-danger\" style='margin: 20px'>\n" +
-            // "        <div class=\"card-header\">\n" +
-            // "          <h3 class=\"card-title\">Danh sách sản phẩm</h3>\n" +
-            // "        </div>\n" +
+    function format_variation(productId, variations, discount, isNew) {
+        let table = "";
+        if(productId == 1079) {
+            table += `<div class="row col-md-12">
+                        <button class="btn btn-info mt-4 ml-4" data="${productId}" id="print_barcode_${productId}">
+                            <i class="fa fa-barcode"></i> In mã vạch
+                        </button>
+                    </div>`;
+        }
+        table += "<div class=\"card card-outline card-danger\" style='margin: 20px'>\n" +
             "        <div class=\"card-body\" style='width: 100%;overflow: scroll;'>";
-        table += '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;min-width: 1180px;overflow: scroll hidden;" class="table table-hover table-bodered">';
+        table += `<table cellpadding="5" cellspacing="0" border="0" 
+                    style="padding-left:50px;min-width: 1180px;overflow: scroll hidden;" 
+                    class="table table-hover table-bodered" 
+                    id="table_variations_${productId}">`;
         table += '<thead>' +
             '<tr>' +
             '<th style="width: 50px;" class="center"><input type="checkbox" id="selectall" onclick="checkAll(this)"></th>' +
@@ -1752,11 +1766,28 @@ Common::authen();
                     table += '<td rowspan="'+variations[i].length+'">' + variations[i][j].color + '</td>';
                 }
                 table += '<td>' + variations[i][j].sku + '</td>';
-                let size = variations[i][j].size;
-                if(variations[i][j].weight && variations[i][j].height && variations[i][j].age) {
-                    size += ` (${variations[i][j].weight}, ${variations[i][j].height}, ${variations[i][j].age})`;
+                let size = `<strong>${variations[i][j].size}</strong>`;
+                let ext = "";
+                if(variations[i][j].weight) {  
+                    ext += `${variations[i][j].weight}, `;
                 }
-                table += '<td>' + size + '</td>';
+                if(variations[i][j].height) {  
+                    ext += `${variations[i][j].height}, `;
+                }
+                if(variations[i][j].age) {  
+                    ext += `${variations[i][j].age}, `;
+                }
+                if(variations[i][j].dimension) {  
+                    ext += `${variations[i][j].dimension}, `;
+                }
+                if(variations[i][j].length__) {  
+                    ext += `${variations[i][j].length__}, `;
+                }
+                if(ext != "") {
+                    ext = ext.substring(0, ext.length - 2);
+                    size += ` (${ext})`;
+                }
+                table += `<td>${size}</td>`;
                 if(variations[i][j].quantity === "0") {
                     table += '<td id="qty"><span class=\"text-danger\">Hết hàng</span></td>';
                 } else if(variations[i][j].quantity > 0 && variations[i][j].quantity < 3) {
@@ -1817,6 +1848,29 @@ Common::authen();
         table += '</div>';
         table += '</div>';
         return table;
+    }
+
+    function prinrBarcodeProductCustom() {
+        $("button[id^='print_barcode_']").click(function(){
+            let dataPrint = [];
+            $("table[id^='table_variations_'] tbody tr").each(function(k, v){
+                let sku = $(v).attr("class");
+                let checked = $(`#${sku}`).is(":checked");
+                if(checked) {
+                    let qty = $(`#text_qty_${sku}`).val();
+                    let obj = {};
+                    obj.id = sku;
+                    obj.qty = qty;
+                    dataPrint.push(obj);
+                }
+            });
+            if(dataPrint.length == 0) {
+                toastr.error("Bạn chưa chọn sản phẩm để In");
+                return false;
+            }
+            console.log(dataPrint);
+            printBarcode(dataPrint, true);
+        });
     }
 
     function updatedQty(e, type, sku) {

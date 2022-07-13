@@ -102,12 +102,14 @@ Common::authen();
                             <select class="shipping-unit form-control" id="shipping_unit">
                                 <option value="J&T" selected="selected">J&T Express</option>
                                 <option value="SPXEXPRESS">SHOPEE Express</option>
+                                <option value="NINJAVAN">Ninja Van</option>
+                                <option value="GHN">Giao Hàng Nhanh</option>
+                                <option value="LEX">Lazada (LEX)</option>
                                 <option value="VTP">Viettel Post</option>
                                 <option value="GHN">Giao Hàng Nhanh</option>
                                 <option value="GHTK">Giao Hàng Tiết Kiệm</option>
                                 <option value="VNP">Việt Nam Post</option>
                                 <option value="VNPN">Việt Nam Post Nhanh</option>
-                                <option value="NINJAVAN">Ninja Van</option>
                                 <option value="BESTEXPRESS">BEST Express</option>
                                 <option value="GRABEXPRESS">GRAB Express</option>
                             </select>
@@ -118,8 +120,8 @@ Common::authen();
                                  placeholder="Phí đổi size" autocomplete="off">
                         </div> -->
                         <div class="col-md-2">
-                            <label>Mã đơn hàng Shopee</label>
-                            <input type="text" class="form-control" id="shopee_order_id" placeholder="Mã đơn hàng Shopee"
+                            <label>Mã đơn hàng</label>
+                            <input type="text" class="form-control" id="shopee_order_id" placeholder="Mã đơn hàng"
                                    autocomplete="off">
                         </div>
                         <!--<div class="col-md-2">-->
@@ -240,7 +242,7 @@ Common::authen();
             create_customer();
 
             $('.delivery-date').datetimepicker({
-                format: 'YYYY-MM-DD hh:mm:ss',
+                format: 'YYYY/MM/DD hh:mm:ss',
                 minDate: $("#orderDate").val(),
                 icons: {
                     time: 'far fa-clock',
@@ -1228,12 +1230,14 @@ Common::authen();
                 $("#table_list_product tbody tr").each(function (k, v) {
                     let row_index = $(this).attr("id");
                     row_index = row_index.split("_")[1];
-                    let subtotal = $("#total_" + row_index).text();
-                    if (subtotal && subtotal !== '') {
-                        total += Number(replaceComma(subtotal));
-                    }
-                    let price = Number(replaceComma($("#total_" + row_index).text()));
+                    // let subtotal = $("#total_" + row_index).text();
+                    // if (subtotal && subtotal !== '') {
+                    //     total += Number(replaceComma(subtotal));
+                    // }
                     let qty = Number(replaceComma($("#qty_" + row_index).val()));
+                    let price = Number(replaceComma($("#price_" + row_index).text()));
+                    total += price * qty;
+                    
                     let reduce = Number(replaceComma(replacePercent($("#reduce_" + row_index).val())));
                     if (reduce > 0) {
                         if (reduce < 101) {
@@ -1249,8 +1253,8 @@ Common::authen();
                         let shipping_fee = Number(replaceComma($("#shipping_fee").val()));
                         let shipping = Number(replaceComma($("#shipping").val()));
                         let discount = Number(replaceComma($("#discount").val()));
-                        let total_checkout = total + shipping - discount - shipping_fee;
                         total_reduce += discount;
+                        let total_checkout = total + shipping - total_reduce - shipping_fee;
                         $("#total_checkout").text(formatNumber(total_checkout));
                         $("#total_reduce").text(formatNumber(total_reduce));
                         $("#total_amount").text(formatNumber(total));

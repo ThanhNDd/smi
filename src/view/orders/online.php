@@ -234,6 +234,22 @@ Common::authen();
             padding: 3px 7px;
             border-radius: 15px;
         }
+        .btn-total-shipping-unit {
+            text-transform: uppercase;
+            border-radius: 26px !important;
+            width: 100%;
+            opacity: .8;
+        }
+        .btn-total-shipping-unit:hover {
+            opacity: 1 !important;
+        }
+        .active {
+            opacity: 1 !important;
+        }
+        .btn-total-shipping-unit span {
+            font-size: 15px;
+            border-radius: 50%;
+        }
     </style>
 </head>
 <?php require_once('../../common/header.php'); ?>
@@ -344,39 +360,28 @@ Common::authen();
             <div class="card">
                 <div class="card-body row status">
                     <div class="col total-jt-status text-center">
-                        <!-- <span class="info-box-number">
-                            <h4 class="total_jt text-warning">0</h4>
-                        </span>
-                        <span class="info-box-text" style="text-transform: uppercase;">J&T Express</span> -->
-                        <button type="button" class="btn btn-primary" id="totalJT" style="text-transform: uppercase;border-radius: 26px !important;width: 100%;">
-                            J&T Express <span class="badge badge-light total_jt" style="font-size: 15px;border-radius: 50%;">0</span>
+                        <button type="button" class="btn btn-primary btn-total-shipping-unit" id="totalJT">
+                            J&T Express <span class="badge badge-light total_jt">0</span>
                         </button>
                     </div>
                     <div class="col total-shopee-status text-center">
-                        <!-- <span class="info-box-number">
-                            <h4 class="total_shopee text-info">0</h4>
-                        </span>
-                        <span class="info-box-text" style="text-transform: uppercase;">Shopee Xpress</span> -->
-                        <button type="button" class="btn btn-danger" id="totalShopeeXpress" style="text-transform: uppercase;border-radius: 26px !important;width: 100%;">
-                            Shopee Xpress <span class="badge badge-light total_shopee" style="font-size: 15px;border-radius: 50%;">0</span>
+                        <button type="button" class="btn btn-danger btn-total-shipping-unit" id="totalShopeeXpress">
+                            Shopee Xpress <span class="badge badge-light total_shopee">0</span>
                         </button>
                     </div>
                     <div class="col total-ninja-status text-center">
-                        <!-- <span class="info-box-number">
-                            <h4 class="total_ninja text-info">0</h4>
-                        </span>
-                        <span class="info-box-text" style="text-transform: uppercase;">Ninja</span> -->
-                        <button type="button" class="btn btn-info" id="totalNinja" style="text-transform: uppercase;border-radius: 26px !important;width: 100%;">
-                            Ninja <span class="badge badge-light total_ninja" style="font-size: 15px;border-radius: 50%;">0</span>
+                        <button type="button" class="btn btn-info btn-total-shipping-unit" id="totalNinja">
+                            Ninja <span class="badge badge-light total_ninja">0</span>
                         </button>
                     </div>
                     <div class="col total-ghn-status text-center">
-                        <!-- <span class="info-box-number">
-                            <h4 class="total_ghn text-primary">0</h4>
-                        </span>
-                        <span class="info-box-text" style="text-transform: uppercase;">Giao Hàng Nhanh</span> -->
-                        <button type="button" class="btn btn-warning" id="totalGHN" style="text-transform: uppercase;border-radius: 26px !important;width: 100%;">
-                        Giao Hàng Nhanh <span class="badge badge-light total_ghn" style="font-size: 15px;border-radius: 50%;">0</span>
+                        <button type="button" class="btn btn-warning btn-total-shipping-unit" id="totalGHN">
+                        Giao Hàng Nhanh <span class="badge badge-light total_ghn">0</span>
+                        </button>
+                    </div>
+                    <div class="col total-lex-status text-center">
+                        <button type="button" class="btn btn-total-shipping-unit" id="totalLEX" style="background-color: #201adb;color: white;">
+                        Lazada Express (LEX) <span class="badge badge-light total_lex">0</span>
                         </button>
                     </div>
                 </div>
@@ -612,12 +617,13 @@ Common::authen();
                         <option value="-1">Chọn đơn vị vận chuyển</option>
                         <option value="J&T">J&T Express</option>
                         <option value="SPXEXPRESS">SHOPEE Express</option>
-                        <option value="VTP">Viettel Post</option>
+                        <option value="NINJAVAN">Ninja Van</option>
                         <option value="GHN">Giao Hàng Nhanh</option>
+                        <option value="LEX">Lazada (LEX)</option>
+                        <option value="VTP">Viettel Post</option>
                         <option value="GHTK">Giao Hàng Tiết Kiệm</option>
                         <option value="VNP">Việt Nam Post</option>
                         <option value="VNPN">Việt Nam Post Nhanh</option>
-                        <option value="NINJAVAN">Ninja Van</option>
                         <option value="BESTEXPRESS">BEST Express</option>
                         <option value="GRABEXPRESS">GRAB Express</option>
                     </select>
@@ -759,6 +765,7 @@ Common::authen();
     const SHOPEE_XPRESS = "SPXEXPRESS";
     const NINJA = "NINJAVAN";
     const GHN = "GHN";
+    const LEX = "LEX";
     
     let statusSelected = null;
 
@@ -804,6 +811,7 @@ Common::authen();
         totalShopeeXpressClick();
         totalNinjaClick();
         totalGHNClick();
+        totalLEXClick();
 
         tab_all_click();
         tab_pending_click();
@@ -1123,6 +1131,8 @@ Common::authen();
 
     function totalJTClick() {
         $("#totalJT").click(function () {
+            $(".btn-total-shipping-unit").removeClass("active");
+            $(this).addClass("active");
             let status = statusSelected ?? `${CREATED_BILL},${PACKED}`;
             generate_datatable('', status, JT_EXPRESS);
         });
@@ -1130,6 +1140,8 @@ Common::authen();
 
     function totalShopeeXpressClick() {
         $("#totalShopeeXpress").click(function () {
+            $(".btn-total-shipping-unit").removeClass("active");
+            $(this).addClass("active");
             let status = statusSelected ?? `${CREATED_BILL},${PACKED}`;
             generate_datatable('', status, SHOPEE_XPRESS);
         });
@@ -1137,6 +1149,8 @@ Common::authen();
 
     function totalNinjaClick() {
         $("#totalNinja").click(function () {
+            $(".btn-total-shipping-unit").removeClass("active");
+            $(this).addClass("active");
             let status = statusSelected ?? `${CREATED_BILL},${PACKED}`;
             generate_datatable('', status, NINJA);
         });
@@ -1144,8 +1158,18 @@ Common::authen();
 
     function totalGHNClick() {
         $("#totalGHN").click(function () {
+            $(".btn-total-shipping-unit").removeClass("active");
+            $(this).addClass("active");
             let status = statusSelected ?? `${CREATED_BILL},${PACKED}`;
             generate_datatable('', status, GHN);
+        });
+    }
+    function totalLEXClick() {
+        $("#totalLEX").click(function () {
+            $(".btn-total-shipping-unit").removeClass("active");
+            $(this).addClass("active");
+            let status = statusSelected ?? `${CREATED_BILL},${PACKED}`;
+            generate_datatable('', status, LEX);
         });
     }
 
@@ -1861,7 +1885,7 @@ Common::authen();
                 //     class: 'left'
                 // },
                 {
-                    "data": 'quantity',
+                    "data": format_quantity,
                     class: 'center'
                 },
                 {
@@ -2157,7 +2181,8 @@ Common::authen();
             let tr = $(this).closest('tr');
             let row = table.row(tr);
             let order_id = row.data().order_id;
-            let status = $(this).prev().prev('select').val();
+            let status = $(this).parent().prev().prev('select').val();
+            console.log()
             let appointment_delivery_date = '';
             if(status == 7) {
                 appointment_delivery_date = $(this).prev('input').val();
@@ -2403,6 +2428,7 @@ Common::authen();
                 let spx = 0;
                 let ninja = 0;
                 let ghn = 0;
+                let lex = 0;
                 if(res.length > 0) {
                     $.each(res, function(k, v){
                         switch(v.shipping_unit) {
@@ -2418,6 +2444,9 @@ Common::authen();
                             case "GHN":
                                 ghn = v.total;
                                 break;
+                            case "LEX":
+                                lex = v.total;
+                                break;
                         }
                     });
                 }
@@ -2425,6 +2454,8 @@ Common::authen();
                 $(".total_shopee").text(spx);
                 $(".total_ninja").text(ninja);
                 $(".total_ghn").text(ghn);
+                $(".total_lex").text(lex);
+                $(".btn-total-shipping-unit").removeClass("active");
             },
             error: function (data, errorThrown) {
                 console.log(data.responseText);
@@ -3354,6 +3385,10 @@ Common::authen();
         $(e).next().removeClass('hidden');
     }
 
+    function format_quantity(data) {
+        return `<p class="m-0" style="font-size: 17px;">${data.quantity}</p>`;
+    }
+
     function format_bill_of_lading_no(data) {
         let content = "";
         let bill_of_lading_no = data.bill_of_lading_no;
@@ -3378,6 +3413,8 @@ Common::authen();
             content += `<span class="badge badge-info c-pointer edit-bill">Ninja <i class="fa fa-edit"></i></span>`;
         } else if(shipping_unit == GHN) {
             content += `<span class="badge badge-warning c-pointer edit-bill">GHN <i class="fa fa-edit"></i></span>`;
+        } else if(shipping_unit == LEX) {
+            content += `<span class="badge c-pointer edit-bill" style="background-color: #201adb;color: white;">LEX <i class="fa fa-edit" style="color: white;"></i></span>`;
         }
         // content += '<br><i class="fa fa-edit c-pointer text-info edit-bill"></i>';
         return content;

@@ -1,4 +1,4 @@
-<?php
+    <?php
 require __DIR__ . '/../../../vendor/autoload.php';
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 require_once("../../common/common.php");
@@ -41,11 +41,6 @@ class PrinterBarcode
                     $mpdf->AddPage();
                     $mpdf->WriteHTML($content);
                 }
-//                $content = $this->getHeader();
-//                $content .= $this->getContent($list[0]);
-//                $content .= $this->getFooter();
-//                $mpdf->AddPage();
-//                $mpdf->WriteHTML($content);
             } else
             {
                 foreach ($list as $d) {
@@ -91,17 +86,8 @@ class PrinterBarcode
     function getContent($data) {
         return '<table>
                         <tr>
-                            <td colspan="3" class="left">
-                                <span style="font-size: 24px;padding-top:15px"> 
-                                    Size: <b>'.$data["size"].'</b>
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="3" class="left">
-                                <span style="font-size: 24px"> 
-                                    Màu: <b>'.$data["color"].'</b>
-                                </span>
+                            <td colspan="3" class="center">
+                                <h3>'.$data["name"].'</h3>
                             </td>
                         </tr>
                         <tr>
@@ -113,38 +99,16 @@ class PrinterBarcode
                             <td colspan="3" class="center"><h2>'.$data["sku"].'</h2></td>
                         </tr>
                         <tr>
-                            <td colspan="3" class="center">
-                                <h3>'.$data["name"].'</h3>
-                            </td>
+                            <td colspan="3" class="left">Size: <b>'.$data["size"].'</b></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="left">Màu: <b>'.$data["color"].'</b></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="left">Giá: <b>'.$data["price"].' <sup>đ</sup></b></td>
                         </tr>
                     </table>';
     }
-    // function getContent($data) {
-    //     return '<table>
-    //                     <tr>
-    //                         <td colspan="3" class="center">
-    //                             <h3>'.$data["name"].'</h3>
-    //                         </td>
-    //                     </tr>
-    //                     <tr>
-    //                         <td colspan="3" class="center">
-    //                             <barcode code="'.$data["sku"].'" type="C128A" size="2" height="0.5" class="barcode" />
-    //                         </td>
-    //                     </tr>
-    //                     <tr>
-    //                         <td colspan="3" class="center"><h2>'.$data["sku"].'</h2></td>
-    //                     </tr>
-    //                     <tr>
-    //                         <td colspan="3" class="left">Size: <b>'.$data["size"].'</b></td>
-    //                     </tr>
-    //                     <tr>
-    //                         <td colspan="3" class="left">Màu: <b>'.$data["color"].'</b></td>
-    //                     </tr>
-    //                     <tr>
-    //                         <td colspan="3" class="left">Giá: <b>'.$data["price"].' <sup>đ</sup></b></td>
-    //                     </tr>
-    //                 </table>';
-    // }
 
     function getHeader()
     {

@@ -2,7 +2,7 @@
 $(document).ready(function () {
 
     $('.datepicker').datepicker({
-        format: 'dd/mm/yyyy HH:mi:ss',
+        format: 'dd/mm/yyyy hh:mi:ss',
         language: 'vi',
         todayBtn: true,
         todayHighlight: true,
@@ -12,7 +12,7 @@ $(document).ready(function () {
     if (window.jQuery().datetimepicker) {
         $('.datetimepicker').datetimepicker({
             // Formats
-            format: 'YYYY-MM-DD hh:mm:ss',
+            format: 'YYYY-MM-DD HH:mm:ss',
             // Your Icons
             // as Bootstrap 4 is not using Glyphicons anymore
             icons: {
