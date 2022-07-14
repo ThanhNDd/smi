@@ -327,12 +327,12 @@ Common::authen();
                     </span>
                     <span class="info-box-text">Đã gói hàng</span>
                 </div>
-                <div class="col total-delivered-status text-center c-pointer">
+                <!-- <div class="col total-delivered-status text-center c-pointer">
                     <span class="info-box-number">
                         <h4 class="total_delivered text-primary">0</h4>
                     </span>
                     <span class="info-box-text">Đã giao</span>
-                </div>
+                </div> -->
                 <div class="col total-return-status text-center c-pointer">
                     <span class="info-box-number">
                         <h4 class="total_return text-danger">0</h4>
@@ -351,7 +351,12 @@ Common::authen();
                     </span>
                     <span class="info-box-text">Giao hàng sau</span>
                 </div>
-                
+                <div class="col total-following-status text-center c-pointer">
+                    <span class="info-box-number">
+                        <h4 class="total_following text-primary">0</h4>
+                    </span>
+                    <span class="info-box-text">Đang theo dõi</span>
+                </div>
             </div>
             </div>
         </div>

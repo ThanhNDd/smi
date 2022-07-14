@@ -456,7 +456,7 @@ class ProductDAO
                     $sql .= " ,B.product_id having sum(B.quantity) < $qty";
                 }
             }
-            $sql .= " ORDER BY A.created_at DESC";
+            $sql .= " ORDER BY A.id DESC";
 
 //            echo $sql."\n";
 
