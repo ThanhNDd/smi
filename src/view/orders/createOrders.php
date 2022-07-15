@@ -831,7 +831,6 @@ Common::authen();
                         type: 'POST',
                         success: function (data) {
                             if (data.length > 0) {
-                                console.log("draw_table");
                                 console.log(JSON.stringify(data));
                                 add_product_list(data);
                                 generate_description(data);
@@ -875,9 +874,9 @@ Common::authen();
                     retail = Number(replaceComma(v.retail));
                 }
                 let quantity = 1;
-                // if(v.quantity) {
-                //     quantity = v.quantity;
-                // }
+                if(v.qty) {
+                    quantity = v.qty;
+                }
                 let total = 0;
                 let reduce = '';
                 if (v.discount && v.discount !== '' && v.discount !== '0') {
