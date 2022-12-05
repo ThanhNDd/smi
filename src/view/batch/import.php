@@ -7,7 +7,7 @@ Common::authen();
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Tạo đơn hàng loạt</title>
+    <title>Tạo đơn hàng Shopee hàng loạt</title>
     <link rel="shortcut icon" type="image/x-icon" href="<?php Common::getPath() ?>dist/img/icon.png"/>
     <?php require_once('../../common/css.php'); ?>
     <?php require_once('../../common/js.php'); ?>
@@ -82,9 +82,6 @@ Common::authen();
     <a href="<?php Common::getPath() ?>src/view/orders/online.php" class="btn btn-sm btn-secondary btn-flat p-2">
         <i class="fas fa-backward"></i> Back
     </a>
-    <button class="btn btn-danger float-right" onclick="testCreateOrder()" style="border-radius: 4px !important;font-size: 12px;">
-        Test
-      </button>
   </div>
   <div class="card">
     <div class="card-body">

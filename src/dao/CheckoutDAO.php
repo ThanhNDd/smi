@@ -1,4 +1,7 @@
 <?php
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
 
 const PENDING = 0;
 const PACKED = 1;
@@ -14,8 +17,7 @@ const RETURNED = 10;
 const WAITING_EXCHANGE = 11;
 const EXCHANGING = 12;
 const CREATED_BILL = 13;
-
-
+const FOLLOWING = 15;
 
 class CheckoutDAO
 {
@@ -24,6 +26,391 @@ class CheckoutDAO
     function __construct($db) {
         $this->conn = $db->getConn();
     } 
+
+    function update_new_customer_id($old_id, $new_id) {
+        try {
+            $sql = "UPDATE `smi_orders` SET `new_customer_id`= ?  WHERE `customer_id` = ?";    
+            $stmt = $this->getConn()->prepare($sql);
+            $stmt->bind_param("ii", $new_id, $old_id);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function update_new_product_id_order_detail_by_sku($sku, $new_product_id, $new_sku) {
+        try {
+            $sql = "UPDATE `smi_order_detail` SET `new_product_id`= ?, `new_sku`= ? WHERE `sku` = ?";    
+            $stmt = $this->getConn()->prepare($sql);
+            $stmt->bind_param("iis", $new_product_id, $new_sku, $sku);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function find_all_order_online() {
+        try {
+            $sql = "SELECT * FROM `smi_orders` WHERE source <> 0 and deleted = 0 ORDER BY `smi_orders`.`id` ASC";
+            $result = mysqli_query($this->conn, $sql);
+            $data = array();
+            if (!empty($result)) {
+                foreach ($result as $k => $row) {
+                    $order = array(
+                        'order_id' => $row["id"]
+                    );
+                    array_push($data, $order);
+                }
+            }
+            return $data;
+        } catch (Exception $e) {
+            echo "Open connection database is error exception >> " . $e->getMessage();
+        }
+    }
+
+    function update_new_order_id($old_id, $new_id) {
+        try {
+            $sql = "UPDATE `smi_orders` SET `order_id`= ?  WHERE `id` = ?";    
+            $stmt = $this->getConn()->prepare($sql);
+            $stmt->bind_param("ii", $new_id, $old_id);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function update_new_order_id_order_detail($old_order_id, $new_order_id) {
+        try {
+            $sql = "UPDATE `smi_order_detail` SET `new_order_id`= ?  WHERE `order_id` = ?";    
+            $stmt = $this->getConn()->prepare($sql);
+            $stmt->bind_param("ii", $new_order_id, $old_order_id);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function update_new_order_id_order_logs($old_order_id, $new_order_id) {
+        try {
+            $sql = "UPDATE `smi_order_logs` SET `new_order_id`= ?  WHERE `order_id` = ?";    
+            $stmt = $this->getConn()->prepare($sql);
+            $stmt->bind_param("ii", $new_order_id, $old_order_id);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+
+    function find_all_order_details($source) {
+        try {
+            $sql = "SELECT b.*
+                    FROM `smi_orders` a
+                    LEFT JOIN smi_order_detail b ON a.order_id = b.order_id
+                    WHERE a.source <> $source
+                    GROUP BY `b`.`sku`";
+            $result = mysqli_query($this->conn, $sql);
+            $data = array();
+            if (!empty($result)) {
+                foreach ($result as $k => $row) {
+                    if(!empty($row["sku"])) {
+                        $order_detail = array(
+                            'detail_id' => $row["id"],
+                            'sku' => $row["sku"],
+                            'updated_id' => $row["updated_id"]
+                        );
+                        array_push($data, $order_detail);
+                    }
+                }
+            }
+            return $data;
+        } catch (Exception $e) {
+            echo "Open connection database is error exception >> " . $e->getMessage();
+        }
+    }
+
+    function update_sku_order_detail($old_sku, $new_sku) {
+        try {
+            $sql = "UPDATE `smi_order_detail` SET `sku`= ?  WHERE `sku` = ?";    
+            $stmt = $this->getConn()->prepare($sql);
+            $stmt->bind_param("ss", $new_sku, $old_sku);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function update_customer_id($order_id, $customer_id) {
+        try {
+            $stmt = $this->getConn()->prepare("UPDATE `smi_orders` SET `customer_id`= ?, `updated_id`= true  WHERE `id` = ?");
+            $stmt->bind_param("ii", $customer_id, $order_id);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function find_order_by_customer($customer_id) {
+        try {
+            $sql = "SELECT * FROM `smi_orders` WHERE customer_id = $customer_id";
+            $result = mysqli_query($this->conn, $sql);
+            // $row = $result->fetch_row();
+            $data = array();
+            if (!empty($result)) {
+                foreach ($result as $k => $row) {
+                    $order = array(
+                        'id' => $row["id"],
+                        'order_id' => $row["order_id"],
+                        'customer_id' => $row["customer_id"]
+                    );
+                    array_push($data, $order);
+                }
+            }
+            return $data;
+        } catch (Exception $e) {
+            echo "Open connection database is error exception >> " . $e->getMessage();
+        }
+    }
+
+    function find_all_orders() {
+        try {
+            $sql = "SELECT * FROM `smi_orders` where source <> 0";
+            $result = mysqli_query($this->conn, $sql);
+            $data = array();
+            if (!empty($result)) {
+                foreach ($result as $k => $row) {
+                    $order = array(
+                        'id' => $row["id"],
+                        'order_id' => $row["order_id"],
+                        'updated_id' => $row["updated_id"] == 0 ? false : true
+                    );
+                    array_push($data, $order);
+                }
+            }
+            return $data;
+        } catch (Exception $e) {
+            echo "Open connection database is error exception >> " . $e->getMessage();
+        }
+    }
+
+    function find_order_details($order_id) {
+        try {
+            $sql = "SELECT * FROM `smi_order_detail` WHERE order_id = $order_id";
+            $result = mysqli_query($this->conn, $sql);
+            // $row = $result->fetch_row();
+            $data = array();
+            if (!empty($result)) {
+                foreach ($result as $k => $row) {
+                    $order_detail = array(
+                        'id' => $row["id"],
+                        'order_id' => $row["order_id"],
+                        'sku' => $row["sku"],
+                        'product_id' => $row["product_id"],
+                        'variant_id' => $row["variant_id"],
+                        'updated_id' => $row["updated_id"]
+                    );
+                    array_push($data, $order_detail);
+                }
+            }
+            return $data;
+        } catch (Exception $e) {
+            echo "Open connection database is error exception >> " . $e->getMessage();
+        }
+    }
+
+    function find_order_logs($order_id) {
+        try {
+            $sql = "SELECT * FROM `smi_order_logs` WHERE order_id = $order_id AND `updated_id` = false";
+            $result = mysqli_query($this->conn, $sql);
+            // $row = $result->fetch_row();
+            $data = array();
+            if (!empty($result)) {
+                foreach ($result as $k => $row) {
+                    $order_detail = array(
+                        'id' => $row["id"],
+                        'order_id' => $row["order_id"],
+                        'updated_id' => $row["updated_id"]
+                    );
+                    array_push($data, $order_detail);
+                }
+            }
+            return $data;
+        } catch (Exception $e) {
+            echo "Open connection database is error exception >> " . $e->getMessage();
+        }
+    }
+
+    function update_order_logs($id, $order_id) {
+        try {
+            $stmt = $this->getConn()->prepare("UPDATE `smi_order_logs` SET `order_id`= ?, `updated_id`= true  WHERE `id` = ?");
+            $stmt->bind_param("ii", $order_id, $id);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function find_order_wallets($order_id) {
+        try {
+            $sql = "SELECT * FROM `smi_wallet` WHERE order_id = $order_id";
+            $result = mysqli_query($this->conn, $sql);
+            // $row = $result->fetch_row();
+            $data = array();
+            if (!empty($result)) {
+                foreach ($result as $k => $row) {
+                    $order_detail = array(
+                        'id' => $row["id"],
+                        'order_id' => $row["order_id"],
+                        'updated_id' => $row["updated_id"]
+                    );
+                    array_push($data, $order_detail);
+                }
+            }
+            return $data;
+        } catch (Exception $e) {
+            echo "Open connection database is error exception >> " . $e->getMessage();
+        }
+    }
+
+    function update_order_wallets($id, $order_id) {
+        try {
+            $stmt = $this->getConn()->prepare("UPDATE `smi_wallet` SET `order_id`= ?, `updated_id`= true  WHERE `id` = ?");
+            $stmt->bind_param("ii", $order_id, $id);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function find_customer_wallet($customer_id) {
+        try {
+            $sql = "SELECT * FROM `smi_wallet` WHERE customer_id = $customer_id";
+            $result = mysqli_query($this->conn, $sql);
+            // $row = $result->fetch_row();
+            $data = array();
+            if (!empty($result)) {
+                foreach ($result as $k => $row) {
+                    $order_detail = array(
+                        'id' => $row["id"],
+                        'customer_id' => $row["customer_id"],
+                        'updated_id' => $row["updated_id"]
+                    );
+                    array_push($data, $order_detail);
+                }
+            }
+            return $data;
+        } catch (Exception $e) {
+            echo "Open connection database is error exception >> " . $e->getMessage();
+        }
+    }
+
+    function update_customer_wallet($id, $customer_id) {
+        try {
+            $stmt = $this->getConn()->prepare("UPDATE `smi_wallet` SET `customer_id`= ?, `updated_id`= true  WHERE `id` = ?");
+            $stmt->bind_param("ii", $customer_id, $id);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function update_order_id($id, $order_id) {
+        try {
+            $stmt = $this->getConn()->prepare("UPDATE `smi_orders` SET `order_id`= ?, `updated_id`= true  WHERE `id` = ?");
+            $stmt->bind_param("ii", $order_id, $id);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function update_order_detail($id, $order_id) {
+        try {
+            $stmt = $this->getConn()->prepare("UPDATE `smi_order_detail` SET `order_id`= ?, `updated_id`= true WHERE id = ?");
+            $stmt->bind_param("ii", $order_id, $id);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function find_order($order_id) {
+        try {
+            $sql = "SELECT * FROM `smi_orders` WHERE id = $order_id";
+            $result = mysqli_query($this->conn, $sql);
+            $data = array();
+            if (!empty($result)) {
+                foreach ($result as $k => $row) {
+                    $order = array(
+                        'id' => $row["id"],
+                        'updated_id' => $row["updated_id"]
+                    );
+                    array_push($data, $order);
+                }
+            }
+            return $data;
+        } catch (Exception $e) {
+            echo "Open connection database is error exception >> " . $e->getMessage();
+        }
+    }
+
+    function find_order_detail_by_variant_id($variant_id) {
+        try {
+            $sql = "SELECT * FROM `smi_order_detail` WHERE variant_id = $variant_id";
+            $result = mysqli_query($this->conn, $sql);
+            // $row = $result->fetch_row();
+            $data = array();
+            if (!empty($result)) {
+                foreach ($result as $k => $row) {
+                    $order_detail = array(
+                        'id' => $row["id"],
+                        'order_id' => $row["order_id"],
+                        'updated_id' => $row["updated_id"]
+                    );
+                    array_push($data, $order_detail);
+                }
+            }
+            return $data;
+        } catch (Exception $e) {
+            echo "Open connection database is error exception >> " . $e->getMessage();
+        }
+    }
 
     function getTotalShippingUnit($status)
     {
@@ -551,7 +938,7 @@ class CheckoutDAO
     function find_all($start_date, $end_date, $order_id, $customer_id, $sku, $type, $status, $bill, $shipping_unit)
     {
         $sql = "select 
-                        A.id as order_id,
+                        A.id,
                         sum(B.quantity) as quantity,
                         A.total_amount + A.shipping - A.total_reduce as total_amount,
                         A.total_checkout,
@@ -571,33 +958,38 @@ class CheckoutDAO
                         A.utm_source,
                         A.shopee_order_id,
                         A.is_print";
-        if(isset($type) && $type == 1) {// online order
+        // if(isset($type) && $type == 1) {// online order
           $sql .= " ,C.id as customer_id,
                     C.name as customer_name,
                     C.phone as customer_phone,
                     C.full_address as customer_address,
                     C.facebook,
                     C.link_fb";
-        }
+        // }
         $sql .= " from smi_orders A  left join smi_order_detail B on A.id = B.order_id ";
-        if(isset($type) && $type == 1) {// online order
+        // if(isset($type) && $type == 1) {// online order
           $sql .= " left join smi_customers C on A.customer_id = C.id";
-        }
+        // }
         $sql .= " where 1=1 ";
         if (isset($sku) && !empty($sku)) {
             $sql .= " and B.sku = $sku ";
         }
         if (isset($start_date) && !empty($start_date) && isset($end_date) && !empty($end_date)) {
             $sql .= " and DATE(order_date) between DATE('" . $start_date . "') and DATE('" . $end_date . "')";
-        } else if (isset($order_id) && !empty($order_id)) {
+        } 
+        if (isset($order_id) && !empty($order_id)) {
             $sql .= " and A.id = $order_id";
-        } else if (isset($customer_id) && !empty($customer_id)) {
+        }
+        if (isset($customer_id) && !empty($customer_id)) {
             $sql .= " and A.customer_id = $customer_id";
-        } else if (isset($bill) && !empty($bill)) {
+        } 
+        if (isset($bill) && !empty($bill)) {
           $sql .= " and A.bill_of_lading_no = '$bill'";
         }
         if(isset($type) && !empty($type)) {
-          $sql .= " and A.type = $type";
+          $sql .= " and A.type = $type"; // ONLINE
+        } else {
+            $sql .= " and A.type in (0,2)";// SHOP
         }
 
         if (isset($shipping_unit) && !empty($shipping_unit)) {
@@ -628,7 +1020,7 @@ class CheckoutDAO
                         A.shopee_order_id
                   order by A.updated_date desc";
 
-//echo $sql;
+// var_dump($sql);
 
 
         $result = mysqli_query($this->conn, $sql);
@@ -641,17 +1033,17 @@ class CheckoutDAO
                 $customer_name = '';
                 $customer_phone = '';
                 $customer_address = '';
-                if(isset($type) && $type == 1) {
+                // if(isset($type) && $type == 1) {
                   $customer_id = $row["customer_id"];
                   $customer_name = $row["customer_name"];
                   $customer_phone = $row["customer_phone"];
                   $customer_address = $row["customer_address"];
                   $facebook = $row["facebook"];
                   $link_fb = $row["link_fb"];
-                }
+                // }
 
                 $order = array(
-                    'order_id' => $row["order_id"],
+                    'order_id' => $row["id"],
                     'quantity' => $row["quantity"],
                     'total_amount' => number_format($row["total_amount"]),
                     'total_checkout' => number_format($row["total_checkout"]),
@@ -688,11 +1080,203 @@ class CheckoutDAO
 //            throw new Exception($e);
 //        }
     }
-
     function get_info_total_checkout($start_date, $end_date, $order_id, $customer_id, $sku, $type, $status, $bill)
     {
         try {
-            $sql = "SELECT tmp.id,
+            $sql = "select tmp.id,
+                      tmp.total_checkout as total_checkout, 
+                      tmp.total_amount + case when tmp.shipping is null then 0 else sum(tmp.shipping) end - tmp.discount as total_amount, 
+                      (case when tmp.profit is null then 0 else sum(tmp.profit) end)  + 
+                      (case when tmp.shipping is null then 0 else sum(tmp.shipping) end) - tmp.discount - tmp.shipping_fee - tmp.wallet as total_profit,
+                      count(tmp.type) as count_type, 
+                      tmp.type,
+                      tmp.source,
+                      tmp.payment_type,
+                      count(tmp.product_id) as product
+                    from (
+                      SELECT A.id, A.discount, A.shipping_fee, 
+                        case when A.shipping is NULL then 0 else A.shipping end as shipping,
+                            t.p as profit,
+                            A.wallet,
+                            A.type,  A.payment_type,
+                            A.source,
+                            A.total_checkout,
+                            A.total_amount,
+                            D.id as product_id
+                      FROM smi_orders A
+                        LEFT JOIN smi_order_detail B ON A.id = B.order_id
+                        LEFT JOIN smi_customers C ON A.customer_id = C.id
+                        LEFT JOIN smi_products D ON D.id = B.product_id
+                            LEFT JOIN (select B.id,
+                            case B.type
+                            when 1 then sum(0 - (B.profit * B.quantity) - B.reduce) 
+                            when 3 then sum(0 - (B.profit * B.quantity) - B.reduce) 
+                            else sum((B.profit * B.quantity) - B.reduce) 
+                            end as p
+                            from smi_orders A
+                        LEFT JOIN smi_order_detail B ON A.id = B.order_id
+                        LEFT JOIN smi_products D ON D.id = B.product_id 
+                            where 1=1 ";
+            if (!empty($start_date) && !empty($end_date)) {
+                $sql .= " and DATE(order_date) between DATE('" . $start_date . "') and DATE('" . $end_date . "')";
+            } else if (!empty($order_id)) {
+                $sql .= " and A.id = $order_id";
+            } else if (!empty($customer_id)) {
+                $sql .= " and A.customer_id = $customer_id";
+            } else if (!empty($sku)) {
+                $sql .= " and B.sku = $sku";
+            }
+            $sql .= " and A.deleted = 0
+                            group by B.id,B.type) as t on t.id = B.id
+                      where 1=1 ";
+            // if(isset($type) && $type != 1) {
+            //   $sql .= "and A.status in (3,6)";
+            // }
+            if (!empty($start_date) && !empty($end_date)) {
+                $sql .= " and DATE(order_date) between DATE('" . $start_date . "') and DATE('" . $end_date . "')";
+            } else if (!empty($order_id)) {
+                $sql .= " and A.id = $order_id";
+            } else if (!empty($customer_id)) {
+                $sql .= " and A.customer_id = $customer_id";
+            } else if (!empty($sku)) {
+                $sql .= " and B.sku = $sku";
+            }
+            if(isset($type) && !empty($type)) {
+              $sql .= " and A.type = $type"; // ONLINE
+            } else {
+                 $sql .= " and A.type in (0,2)";// SHOP
+            }
+            if(isset($status) && $status != '' && $status != -1) {
+                $sql .= " and A.status in ($status)";
+            } else if(isset($type) && !empty($type) && $type != 1) {
+              $sql .= "and A.status in (3,6)";
+            } else {
+              $sql .= " and A.status in (0,1,2,3,13,6)";
+            }
+            $sql .= "  and A.deleted = 0) tmp
+                    group by
+                      tmp.id,
+                      tmp.type,
+                      tmp.payment_type
+                    order by 
+                      tmp.type";
+
+                    // echo $sql;
+
+            $result = mysqli_query($this->conn, $sql);
+            $total_amount = 0;
+            $total_checkout = 0;
+            $total_on_shop = 0;
+            $total_online = 0;
+            $count_on_shop = 0;
+            $count_online = 0;
+            $count_exchange = 0;
+            $total_exchange = 0;
+            $total_cash = 0;
+            $total_transfer = 0;
+            $total_profit = 0;
+            $total_product = 0;
+            $total_product_on_shop = 0;
+            $total_product_online = 0;
+            $total_product_exchange = 0;
+            $total_on_facebook = 0;
+            $total_on_shopee = 0;
+            $total_on_website = 0;
+            $count_on_facebook = 0;
+            $count_on_shopee = 0;
+            $count_on_website = 0;
+            $total_product_on_facebook = 0;
+            $total_product_on_website = 0;
+            $total_product_on_shopee = 0;
+            $total_profit_on_facebook = 0;
+            $total_profit_on_shopee = 0;
+            $total_profit_on_website = 0;
+            foreach ($result as $k => $row) {
+                $total_amount += $row["total_amount"];
+                $total_checkout += $row["total_checkout"];
+                $total_profit += $row["total_profit"];
+                if ($row["type"] == 0) {
+                    $total_on_shop += $row["total_checkout"];
+                    $count_on_shop++;
+                    $total_product += $row["product"];
+                    $total_product_on_shop += $row["product"];
+                } else if ($row["type"] == 1) {
+                    $total_online += $row["total_checkout"];
+                    $count_online++;
+                    $total_product += $row["product"];
+                    $total_product_online += $row["product"];
+                } else if ($row["type"] == 2) {
+                    $total_exchange += $row["total_checkout"];
+                    $count_exchange++;
+                    $total_product += $row["product"];
+                    $total_product_exchange += $row["product"];
+                }
+                if ($row["payment_type"] == 0) {
+                    $total_cash += $row["total_checkout"];
+                } else if ($row["payment_type"] == 1) {
+                    $total_transfer += $row["total_checkout"];
+                }
+                if ($row["source"] == 1) {
+                  //website
+                  $total_on_website += $row["total_checkout"];
+                  $count_on_website++;
+                  $total_product_on_website += $row["product"];
+                  $total_profit_on_website += $row["total_profit"];
+                } else if ($row["source"] == 2) {
+                  // facebook
+                  $total_on_facebook += $row["total_checkout"];
+                  $count_on_facebook++;
+                  $total_product_on_facebook += $row["product"];
+                  $total_profit_on_facebook += $row["total_profit"];
+                } else if ($row["source"] == 3) {
+                  // shopee
+                  $total_on_shopee += $row["total_checkout"];
+                  $count_on_shopee++;
+                  $total_product_on_shopee += $row["product"];
+                  $total_profit_on_shopee += $row["total_profit"];
+                }
+            }
+            $count_total = $count_on_shop + $count_online + $count_exchange;
+            $arr = array();
+            $arr["total_amount"] = number_format($total_amount);
+            $arr["total_checkout"] = number_format($total_checkout);
+            $arr["count_total"] = $count_total;
+            $arr["total_on_shop"] = number_format($total_on_shop);
+            $arr["count_on_shop"] = $count_on_shop;
+            $arr["total_online"] = number_format($total_online);
+            $arr["count_online"] = $count_online;
+            $arr["total_exchange"] = number_format($total_exchange);
+            $arr["count_exchange"] = $count_exchange;
+            $arr["total_cash"] = number_format($total_cash);
+            $arr["total_transfer"] = number_format($total_transfer);
+            $arr["total_profit"] = number_format($total_profit);
+            $arr["total_product"] = number_format($total_product);
+            $arr["total_product_on_shop"] = number_format($total_product_on_shop);
+            $arr["total_product_online"] = number_format($total_product_online);
+            $arr["total_product_exchange"] = number_format($total_product_exchange);
+            $arr["total_on_website"] = number_format($total_on_website);
+            $arr["count_on_website"] = $count_on_website;
+            $arr["total_product_on_website"] = number_format($total_product_on_website);
+            $arr["total_on_facebook"] = number_format($total_on_facebook);
+            $arr["count_on_facebook"] = $count_on_facebook;
+            $arr["total_product_on_facebook"] = number_format($total_product_on_facebook);
+            $arr["total_on_shopee"] = number_format($total_on_shopee);
+            $arr["count_on_shopee"] = $count_on_shopee;
+            $arr["total_product_on_shopee"] = number_format($total_product_on_shopee);
+            $arr["total_profit_on_facebook"] = number_format($total_profit_on_facebook);
+            $arr["total_profit_on_shopee"] = number_format($total_profit_on_shopee);
+            $arr["total_profit_on_website"] = number_format($total_profit_on_website);
+            return $arr;
+
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function get_info_total_checkout2($start_date, $end_date, $order_id, $customer_id, $sku, $type, $status, $bill)
+    {
+        try {
+            $sql = "SELECT tmp.order_id,
                            tmp.total_checkout AS total_checkout,
                            tmp.total_amount + CASE
                                                   WHEN tmp.shipping IS NULL THEN 0
@@ -711,7 +1295,7 @@ class CheckoutDAO
                             tmp.payment_type,
                             count(tmp.product_id) AS product
                     FROM (
-                    SELECT A.id,
+                    SELECT A.order_id,
                            A.discount,
                            A.shipping_fee,
                            A.shipping,
@@ -722,12 +1306,12 @@ class CheckoutDAO
                            A.source,
                            A.total_checkout,
                            A.total_amount,
-                           D.id AS 'product_id'
+                           D.product_id
                     FROM smi_orders A
-                    LEFT JOIN smi_order_detail B ON A.id = B.order_id
-                    LEFT JOIN smi_customers C ON A.customer_id = C.id
+                    LEFT JOIN smi_order_detail B ON A.order_id = B.order_id
+                    LEFT JOIN smi_customers C ON A.customer_id = C.customer_id
                     -- LEFT JOIN smi_variations E ON B.variant_id = E.id
-                    LEFT JOIN smi_products D ON B.product_id = D.id
+                    LEFT JOIN smi_products D ON B.product_id = D.product_id
                     LEFT JOIN (
                     SELECT B.id,
                            CASE B.type
@@ -736,14 +1320,14 @@ class CheckoutDAO
                                ELSE sum((B.profit - B.reduce) * B.quantity)
                            END AS p
                     FROM smi_orders A
-                    LEFT JOIN smi_order_detail B ON A.id = B.order_id
+                    LEFT JOIN smi_order_detail B ON A.order_id = B.order_id
                     -- LEFT JOIN smi_variations E ON B.variant_id = E.id
-                    LEFT JOIN smi_products D ON B.product_id = D.id
+                    LEFT JOIN smi_products D ON B.product_id = D.product_id
                     WHERE 1=1 ";
             if (!empty($start_date) && !empty($end_date)) {
                 $sql .= " and DATE(order_date) between DATE('" . $start_date . "') and DATE('" . $end_date . "')";
             } else if (!empty($order_id)) {
-                $sql .= " and A.id = $order_id";
+                $sql .= " and A.order_id = $order_id";
             } else if (!empty($customer_id)) {
                 $sql .= " and A.customer_id = $customer_id";
             } else if (!empty($sku)) {
@@ -774,7 +1358,7 @@ class CheckoutDAO
             }
             $sql .= "  and A.deleted = 0) tmp
                     group by
-                      tmp.id,
+                      tmp.order_id,
                       tmp.type,
                       tmp.payment_type
                     order by 
@@ -954,7 +1538,7 @@ class CheckoutDAO
         $sql .= " and DATE(order_date) between DATE('" . $start_date . "') and DATE('" . $end_date . "') ";
       }
       $sql .= " and type = 1
-                and status in (0, 1, 2, 7, 8, 9, 11, 12, 13)
+                and status in (0, 1, 2, 7, 8, 9, 10, 11, 12, 13, 15)
                 group by status";
 
     //  echo $sql;
@@ -970,6 +1554,7 @@ class CheckoutDAO
       $appointment = 0;
       $wating = 0;
       $created_bill = 0;
+      $following = 0;
       foreach ($result as $k => $row) {
         switch($row["status"]) {
           case PENDING:
@@ -1006,9 +1591,12 @@ class CheckoutDAO
           case CREATED_BILL:
             $created_bill += $row["c"];
             break;
+          case FOLLOWING:
+              $following += $row["c"];
+              break;
         }
       }
-      $count_total = $pending + $packed + $delivered + $success + $exchange + $return + $cancel + $appointment + $wating + $created_bill;
+      $count_total = $pending + $packed + $delivered + $success + $exchange + $return + $cancel + $appointment + $wating + $created_bill + $following;
       $arr = array();
       $arr["count_total"] = $count_total;
       $arr["pending"] = $pending;
@@ -1021,6 +1609,7 @@ class CheckoutDAO
       $arr["appointment"] = $appointment;
       $arr["wating"] = $wating;
       $arr["created_bill"] = $created_bill;
+      $arr["following"] = $following;
       return $arr;
 
     } catch (Exception $e) {
@@ -1078,6 +1667,8 @@ class CheckoutDAO
                         left join smi_products D on E.product_id = D.id
                     where A.deleted = 0 and A.id = " . $order_id . "
                     order by B.type";
+
+                    // echo $sql;
 
             $result = mysqli_query($this->conn, $sql);
             $data = array();

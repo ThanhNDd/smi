@@ -84,6 +84,7 @@ if (isset($_POST["type"]) && $_POST["type"] == "checkout") {
         $order->setPaymentExchangeType($data->payment_exchange_type);
         $order->setSource($data->source);
         $order->setOrder_date(date('Y-m-d H:i:s'));
+        $order->setCreatedBy($_COOKIE["acc"]);
         $orderId = $checkout_dao->saveOrder($order);
         $order->setId($orderId);
         if (empty($orderId)) {

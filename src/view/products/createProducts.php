@@ -102,7 +102,7 @@ Common::authen();
                                         <div id="select_colors">
 <!--                                            <input class="select_color_0 form-control" type="text" placeholder="Chọn màu sắc" autocomplete="off" spellcheck="false">-->
                                         </div>
-                                        <button type="button" class="btn btn-info btn-flat mt-2" id="btn_add_color" title="Thêm màu">
+                                        <button type="button" class="btn btn-default mt-2" id="btn_add_color" title="Thêm màu">
                                             <i class="fa fa-plus-circle"></i> Thêm màu
                                         </button>
                                     </div>
@@ -111,200 +111,22 @@ Common::authen();
                                         <div id="select_sizes">
 <!--                                            <input class="typeahead form-control" type="text" placeholder="Chọn size" autocomplete="off" spellcheck="false">-->
                                         </div>
-                                        <button type="button" class="btn btn-info btn-flat mt-2" id="btn_add_size" title="Thêm size">
+                                        <button type="button" class="btn btn-default mt-2" id="btn_add_size" title="Thêm size">
                                             <i class="fa fa-plus-circle"></i> Thêm size
                                         </button>
                                     </div>
                                     <div class="form-group col-md-3">
                                         <label for="image">Hình ảnh:</label>
                                         <div id="image"></div>
-                                        <button type="button" class="btn btn-info btn-flat" id="btn_add_image" title="Thêm hình ảnh">
+                                        <button type="button" class="btn btn-default" id="btn_add_image" title="Thêm hình ảnh">
                                             <i class="fa fa-plus-circle"></i> Thêm hình ảnh
                                         </button>
                                     </div>
                                     <div class="form-group col-md-3">
                                         <label for="image">Hình ảnh theo màu sắc:</label>
-                                        <div id="image_by_color">
-<!--                                            <div class="input-group mb-1 image-by-color" style="margin-top: 10px;">-->
-<!--                                                <img onerror="this.onerror=null;this.src='<?php //Common::image_error() ?>//'" width="40" src="" id="img_by_color_0" class="mr-1">
-//                                                <input type="text" class="form-control" placeholder="Nhập link hình ảnh màu " onchange="onchange_image_link(0, 'byColor')" id="link_image_by_color_0" autocomplete="off">
-//                                                <input type="hidden" class="form-control" id="image_type_by_color_0">
-//                                            </div>-->
-                                        </div>
+                                        <div id="image_by_color"></div>
                                     </div>
                                 </div>
-<!--                                <div class="row col-md-12">-->
-<!--                                    <button class="btn btn-secondary btn-flat" id="create_variation">-->
-<!--                                        Tạo biến thể-->
-<!--                                    </button>-->
-<!--                                </div>-->
-
-                                        <!--                                <div class="table-responsive">-->
-<!--                                    <table class="table table-info-product">-->
-<!--                                        <tr>-->
-<!--                                            <td width="150px">Mã sản phẩm</td>-->
-<!--                                            <td>-->
-<!--                                                <input type="text" class="form-control ml-2" id="display_product_id"-->
-<!--                                                       value="" disabled>-->
-<!--                                                <input type="hidden" class="form-control ml-2 col-sm-10" id="product_id"-->
-<!--                                                       value="0">-->
-<!--                                            </td>-->
-<!--                                        </tr>-->
-<!--                                        <tr>-->
-<!--                                            <td>Tên sản phẩm</td>-->
-<!--                                            <td>-->
-<!--                                                <input type="text" class="form-control ml-2"-->
-<!--                                                       id="name" placeholder="Nhập tên sản phẩm">-->
-<!--                                            </td>-->
-<!--                                        </tr>-->
-<!--                                        <tr>-->
-<!--                                            <td>Link sản phẩm</td>-->
-<!--                                            <td>-->
-<!--                                                <input type="text" class="form-control ml-2" id="link"-->
-<!--                                                       placeholder="Nhập link sản phẩm">-->
-<!---->
-<!--                                            </td>-->
-<!--                                        </tr>-->
-<!--                                        <tr>-->
-<!--                                            <td>Phí vận chuyển</td>-->
-<!--                                            <td>-->
-<!--                                                <div class="input-group mb-1">-->
-<!--                                                    <input type="text" class="form-control ml-2" id="fee" value="0"-->
-<!--                                                           placeholder="Nhập phí vận chuyển">-->
-<!--                                                    <div class="input-group-append">-->
-<!--                                                        <span class="input-group-text"-->
-<!--                                                              style="border-radius: 0;">đ</span>-->
-<!--                                                    </div>-->
-<!--                                                </div>-->
-<!--                                            </td>-->
-<!--                                        </tr>-->
-<!--                                        <tr>-->
-<!--                                            <td>Giá nhập</td>-->
-<!--                                            <td>-->
-<!--                                                <div class="input-group mb-1">-->
-<!--                                                    <input type="text" class="form-control ml-2" id="price" value="" placeholder="Nhập giá nhập sản phẩm">-->
-<!--                                                    <div class="input-group-append">-->
-<!--                                                        <span class="input-group-text"-->
-<!--                                                              style="border-radius: 0;">đ</span>-->
-<!--                                                    </div>-->
-<!--                                                </div>-->
-<!--                                            </td>-->
-<!--                                        </tr>-->
-<!--                                        <tr>-->
-<!--                                            <td>Giá bán lẻ</td>-->
-<!--                                            <td>-->
-<!--                                                <div class="input-group mb-1">-->
-<!--                                                        <input type="text" class="form-control ml-2 col-sm-10" id="retail" placeholder="Nhập giá bán lẻ">-->
-<!--                                                        <input type="text" class="form-control ml-2" id="percent" value="100">-->
-<!--                                                        <div class="input-group-append">-->
-<!--                                                            <span class="input-group-text" style="border-radius: 0;">%</span>-->
-<!--                                                        </div>-->
-<!--                                                </div>-->
-<!--                                            </td>-->
-<!--                                        </tr>-->
-<!--                                        <tr class="">-->
-<!--                                            <td></td>-->
-<!--                                            <td>-->
-<!--                                                <input type="text" class="form-control ml-2" id="profit">-->
-<!--                                            </td>-->
-<!--                                        </tr>-->
-<!--                                        <tr>-->
-<!--                                            <td>Giới tính</td>-->
-<!--                                            <td>-->
-<!--                                                <select class="select-type form-control ml-2 col-sm-10" id="select_type" data-placeholder="Chọn giới tính"-->
-<!--                                                      style="width: 100%;"></select>-->
-<!--                                            </td>-->
-<!--                                        </tr>-->
-<!--                                        <tr>-->
-<!--                                            <td>Danh mục</td>-->
-<!--                                            <td>-->
-<!--                                                <select class="select-cat form-control ml-2 col-sm-10" id="select_cat" data-placeholder="Chọn danh mục"-->
-<!--                                                      style="width: 100%;"></select>-->
-<!--                                            </td>-->
-<!--                                        </tr>-->
-<!--                                        <tr>-->
-<!--                                            <td>Màu sắc</td>-->
-<!--                                            <td>-->
-<!--                                                <div id="select_colors">-->
-<!--                                                    <input class="select_color form-control" type="text" placeholder="Chọn màu sắc">-->
-<!--                                                </div>-->
-<!--                                                <button type="button" class="btn btn-info btn-flat mt-2" id="btn_add_color" title="Thêm màu">-->
-<!--                                                    <i class="fa fa-plus-circle"></i>-->
-<!--                                                </button>-->
-<!--                                            </td>-->
-<!--                                        </tr>-->
-<!--                                        <tr>-->
-<!--                                            <td>Size</td>-->
-<!--                                            <td>-->
-<!--                                                <div id="select_sizes">-->
-<!--                                                    <input class="typeahead form-control" type="text" placeholder="Chọn size">-->
-<!--                                                    <button type="button" class="btn btn-info btn-flat mt-2" id="btn_add_size" title="Thêm size">-->
-<!--                                                        <i class="fa fa-plus-circle"></i>-->
-<!--                                                    </button>-->
-<!--                                                </div>-->
-<!--                                            </td>-->
-<!--                                        </tr>-->
-<!--                                        <tr>-->
-<!--                                            <td>Hình ảnh</td>-->
-<!--                                            <td>-->
-<!--                                                --><?php //for ($i = 0; $i < 8; $i++) { ?>
-<!--                                                    <div class="input-group mb-1">-->
-<!--                                                        <input type="text" class="form-control"-->
-<!--                                                               placeholder="Nhập link hình ảnh --><?php //echo $i+1; ?><!--"-->
-<!--                                                               onchange="onchange_image_link(--><?php //echo $i; ?><!--)"id="link_image_<?php //echo $i; ?>">-->
-<!--                                                        <input type="hidden" class="form-control"-->
-<!--                                                               id="image_type_--><?php //echo $i; ?><!--">-->
-<!--                                                        <div class="input-group-append">-->
-<!--                                                            <form id="form_--><?php //echo $i; ?><!--" action="" method="post"-->
-<!--                                                                  enctype="multipart/form-data">-->
-<!--                                                                <input id="image_--><?php //echo $i; ?><!--" type="file"-->
-<!--                                                                       accept="image/*" name="image" class="hidden"/>-->
-<!--                                                                <button type="button" class="btn btn-info btn-flat"-->
-<!--                                                                        id="btn_upload_--><?php //echo $i; ?><!--">-->
-<!--                                                                    <span class="spinner-border spinner-border-sm hidden"-->
-<!--                                                                          id="spinner_--><?php //echo $i; ?><!--"></span>-->
-<!--                                                                    <i class="fa fa-upload"></i>-->
-<!--                                                                </button>-->
-<!--                                                            </form>-->
-<!--                                                        </div>-->
-<!--                                                    </div>-->
-<!--                                                --><?php //} ?>
-<!--                                                <div class="input-group mb-1">-->
-<!--                                                    --><?php //for ($i = 0; $i < 8; $i++) { ?>
-<!--                                                        <img onerror="this.onerror=null;this.src='--><?php //Common::image_error() ?><!--'"width="80" id="img_<?php //echo $i; ?>" class="hidden mr-1">-->
-<!--                                                    --><?php //} ?>
-<!--                                                </div>-->
-<!--                                            </td>-->
-<!--                                        </tr>-->
-<!--                                        <tr>-->
-<!--                                            <td>Số lượng</td>-->
-<!--                                            <td>-->
-<!--                                                <input type="number" class="form-control ml-2" id="qty" min="1" placeholder="Nhập số lượng">-->
-<!--                                            </td>-->
-<!--                                        </tr>-->
-<!--                                        <tr>-->
-<!--                                            <td>Chất liệu</td>-->
-<!--                                            <td>-->
-<!--                                                <select class="select-material form-control ml-2 col-sm-10" id="select_material" data-placeholder="Chọn chất liệu sản phẩm"-->
-<!--                                                        style="width: 100%;"></select>-->
-<!--                                            </td>-->
-<!--                                        </tr>-->
-<!--                                        <tr>-->
-<!--                                            <td>Xuất xứ</td>-->
-<!--                                            <td>-->
-<!--                                                <select class="select-origin form-control ml-2 col-sm-10" id="select_origin" data-placeholder="Chọn xuất xứ sản phẩm"-->
-<!--                                                        style="width: 100%;"></select>-->
-<!--                                            </td>-->
-<!--                                        </tr>-->
-<!--                                        <tr>-->
-<!--                                            <td colspan="2" style="text-align: center;">-->
-<!--                                                <button class="btn btn-secondary btn-flat" id="create_variation">Tạo-->
-<!--                                                    biến thể-->
-<!--                                                </button>-->
-<!--                                            </td>-->
-<!--                                        </tr>-->
-<!--                                    </table>-->
-<!--                                </div>-->
                             </div>
                         </div>
                     </div>
@@ -315,30 +137,9 @@ Common::authen();
                             </div>
                             <div class="card-body" style="width: 100%;overflow: scroll;">
                                 <div style="padding: 15px;width: 1660px;overflow: scroll hidden;">
-                                    <table class="table table-list table-bordered table-striped" cellspacing="0"
-  width="100%">
-                                        <thead>
-                                            <!-- <tr>
-                                                <th class="hidden">id</th>
-                                                <th width="100px">Hình ảnh</th>
-                                                <th width="100px">Màu sắc</th>
-                                                <th width="150px">Size</th>
-                                                <th width="100px">Số lượng</th>
-                                                <th width="100px">Giá nhập</th>
-                                                <th width="100px">Giá bán</th>
-                                                <th width="80px">%</th>
-                                                <th width="130px">Phí vận chuyển</th>
-                                                <th width="100px">Profit</th>
-                                                <th width="100px">SKU</th>
-                                                <th width="150px">Chiều dài</th>
-                                                <th width="150px">Cân nặng</th>
-                                                <th width="150px">Chiều cao</th>
-                                                <th width="150px">Tuổi</th>
-                                                <th width="150px">Kích thước</th>
-                                            </tr> -->
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
+                                    <table class="table table-list table-bordered table-striped" cellspacing="0" width="100%">
+                                        <thead> </thead>
+                                        <tbody> </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -362,10 +163,6 @@ Common::authen();
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-secondary btn-flat" data-dismiss="modal">Close</button>
-<!--                <button type="button" class="btn btn-success form-control add-new-prod w80 btn-flat"-->
-<!--                        title="Thêm biến thể sản phẩm" disabled>-->
-<!--                    <i class="fa fa-plus-circle" aria-hidden="true"> </i>-->
-<!--                </button>-->
                 <button type="button" class="btn btn-primary create-new btn-flat">Tạo mới</button>
             </div>
         </div>
@@ -374,14 +171,12 @@ Common::authen();
     <!-- /.modal-dialog -->
     <?php require_once('../../common/js.php'); ?>
     <script>
-        // let flagError = 0;
-        // let number_image_upload = 4;
-        // const Toast = Swal.mixin({
-        //     toast: true,
-        //     position: 'top-end',
-        //     showConfirmButton: false,
-        //     timer: 3000
-        // });
+
+        let length_of_colors = 0;
+        let length_of_sizes = 0;
+
+        let color_ids = [];
+        let size_ids = [];
 
         $(document).ready(function () {
 
@@ -390,27 +185,16 @@ Common::authen();
             });
             $('.product-create').click(function () {
                 open_modal_product_create();
-                get_max_id();
+                // get_max_id();
             });
             $('#create_product').on('hidden.bs.modal', function () {
                 let table = $('#example').DataTable();
                 table.ajax.reload(init_select2, false);
             });
 
-            // custom_select2('#select_size', select_size);
-            // custom_select2('#select_color', select_colors);
             custom_select2('#select_gender', select_types);
             custom_select2('#select_cat', select_cats);
-            // custom_select2('#select_material', select_material);
             custom_select2('#select_origin', select_origin);
-
-            // $("#create_variation").click(function () {
-            //     create_variation();
-            // });
-
-            // $("#fee").on('keyup keypress blur change', function () {
-            //     onchange_fee();
-            // });
 
             $("#price").on('keyup keypress blur change', function () {
                 onchange_price();
@@ -430,32 +214,20 @@ Common::authen();
             });
 
             $("#qty").on('keyup keypress blur change', function () {
-                console.log('keyup');
                 let qty = $(this).val();
                 onchange_qty(qty);
             });
 
-            // $(".add-new-prod").click(function () {
-            //     let no_row = $('.table-list tr:last').attr('class');
-            //     let sku = $('.table-list tr:last').find('[id=sku_' + no_row + ']').val();
-            //     sku = Number(sku) + 1;
-            //     no_row++;
-            //     generate_variations(no_row, 1, 0, '', '', sku);
-            // });
-
             $(".create-new").click(function () {
                 create_product();
             });
-            // for(let i=0; i<4; i++) {
-                btn_upload(0);
-                onpaste_image_link(0);
-                // btn_upload(0, 'byColor');
-                onpaste_image_link(0, 'byColor');
-            // }
+            btn_upload(0);
+            onpaste_image_link(0);
+            onpaste_image_link(0, 'byColor');
 
             // load_size();
-            $("#btn_add_color").click(function () {
-                add_color();
+            $("#btn_add_color").click(async function () {
+                await add_color();
                 draw_table_variations();
             });
             $("#btn_add_size").click(function () {
@@ -469,11 +241,11 @@ Common::authen();
             $("#btn_add_image").click(function(){
                 add_image();
             });
-            // add_color();
-            // add_size();
-            // add_image();
-            // draw_table_variations();
         });
+
+        function randstr(prefix) {
+            return Math.random().toString(36).replace('0.',prefix || '');
+        }
         
         function get_max_id() {
             $.ajax({
@@ -534,6 +306,7 @@ Common::authen();
             $("#select_colors").html("");
             $("#select_sizes").html("");
             $(".select_material").html("");
+            draw_table_variations();
         }
 
 
@@ -570,9 +343,9 @@ Common::authen();
                                 'success'
                             ).then((result) => {
                                 if (result.value) {
-                                    // $('#create_product').modal('hide');
                                     close_modal('#create_product');
                                     reset_modal();
+                                    $('#product_datatable').DataTable().ajax.reload();
                                 }
                             });
                             hide_loading();
@@ -641,7 +414,7 @@ Common::authen();
             product['retail'] = replaceComma(retail);
             product['profit'] = replaceComma(profit);
             product['percent'] = percent;
-            product['type'] = gender;
+            product['gender'] = gender;
             product['cat'] = cat;
             product['description'] = description;
             product['material'] = material;
@@ -695,119 +468,25 @@ Common::authen();
             return JSON.stringify(product);
         }
 
-        // function create_variation() {
-        //     if (!validate_product()) {
-        //         return;
-        //     }
-        //     let size = $("#select_size").val();
-        //     let color = $("#select_color").val();
-        //     let qty = $("#qty").val();
-        //     let variations = size.length * color.length;
-        //     if (variations == 0) {
-        //         Swal.fire({
-        //             type: 'error',
-        //             title: 'Đã xảy ra lỗi',
-        //             text: 'Không có biến thể nào đươc tạo ',
-        //         });
-        //         return;
-        //     }
-        //     let msg = "Sẽ có " + variations + " biến thể sản phẩm được tạo ra!";
-        //     Swal.fire({
-        //         title: 'Bạn chắc chắn chứ?',
-        //         text: msg,
-        //         type: 'warning',
-        //         showCancelButton: true,
-        //         confirmButtonColor: '#3085d6',
-        //         cancelButtonColor: '#d33',
-        //         confirmButtonText: 'Đồng ý'
-        //     }).then((result) => {
-        //         if (result.value) {
-        //             let count = 1;
-        //             let product_id = $("#display_product_id").val();
-        //             for (let i = 0; i < color.length; i++) {
-        //                 for (let j = 0; j < size.length; j++) {
-        //                     console.log(size[j]);
-        //                     console.log(color[i]);
-        //                     let sku = "";
-        //                     if (count < 10) {
-        //                         sku = product_id + "0" + count;
-        //                     } else {
-        //                         sku = product_id + count;
-        //                     }
-        //                     generate_variations(count, qty, 0, color[i], size[j], sku);
-        //                     count++;
-        //                     $('.add-new-prod').prop('disabled', '');
-        //                 }
-        //             }
-        //             $("#create_variation").prop('disabled', true);
-        //         }
-        //     });
-        //
-        // }
-
-        // function generate_variations(no, qty, id, color, size, sku) {
-        //     $(".table-list tbody").append('<tr class="' + no + '">\n' +
-        //         '                     <input type="hidden" class="form-control col-md-10" value="' + id + '" id="variation_id_' + no + '">\n' +
-        //         '                    <td align="center">' + no + '</td>\n' +
-        //         '                    <td align="center">' +
-        //         '                     <input type="text" class="form-control col-md-10" value="' + sku + '" id="sku_' + no + '" disabled>\n' +
-        //         '                    </td>\n' +
-        //         '                    <td >\n' +
-        //         '                       <select class="form-control ml-2 mr-2 col-sm-10" id="select_size_' + no + '" style="width: 100%"></select>' +
-        //         '                    </td>\n' +
-        //         '                    <td >\n' +
-        //         '                       <select class="form-control ml-2 mr-2 col-sm-10" id="select_color_' + no + '"  style="width: 100%"></select>' +
-        //         '                    </td>\n' +
-        //         '                    <td >\n' +
-        //         '                       <input type="number" class="form-control " id="qty_' + no + '" value="' + qty + '">\n' +
-        //         '                    </td>\n' +
-        //         '                    <td>\n' +
-        //         '                       <button type="button" class="btn btn-danger btn-flat" id="delete_product_' + no + '" ' + (id != '' ? 'disabled' : '') + '>\n' +
-        //         '                            <i class="fa fa-trash"></i>\n' +
-        //         '                          </button>' +
-        //         '                    </td>\n' +
-        //         '                  </tr>');
-        //     custom_select2("[id=select_size_" + no + "]", select_size);
-        //     custom_select2("[id=select_color_" + no + "]", select_colors);
-        //     $("[id=select_size_" + no + "]").val(size).trigger('change');
-        //     $("[id=select_color_" + no + "]").val(color).trigger('change');
-        //     delete_product(no);
-        // }
-
-        // function delete_product(no) {
-        //     $("[id=delete_product_" + no + "]").click(function () {
-        //         $(this).closest('tr').remove();
-        //         reindex();
-        //     });
-        // }
-
-        // function reindex() {
-        //     let no = 0;
-        //     $(".table-list > tbody > tr").each(function () {
-        //         no++;
-        //         let curr_class = $(this).attr('class');
-        //         $(this).removeClass("" + curr_class + "");
-        //         $(this).addClass("" + no + "");
-        //         $(this).find("td:first").text(no);
-        //     });
-        //     if (no === 0) {
-        //         $("#create_variation").prop('disabled', '');
-        //     } else {
-        //         $("#create_variation").prop('disabled', true);
-        //     }
-        // }
 
         function get_color_length() {
-            return $("#select_colors").find(".twitter-typeahead").length;
+            return $("#select_colors").children(".color-item").length;
         }
 
         function get_size_length() {
-            return $("#select_sizes").find(".twitter-typeahead").length;
+            return $("#select_sizes").find(".size-item").length;
         }
 
-        function draw_table_variations() {
-            let color = get_color_length();
-            let size = get_size_length();
+        function draw_table_variations(exclude_color_id = null) {
+            return new Promise((resolve) => {
+
+
+            // let color = get_color_length();
+            // let size = get_size_length();
+            let color = length_of_colors;
+            let size = length_of_sizes;
+
+
             let qty = $("#qty").val();
             let price = $("#price").val();
             let retail = $("#retail").val();
@@ -819,8 +498,11 @@ Common::authen();
             let weight = "";
             let height = "";
             let age = "";
+            let dimension = "";
+            let sku = "";
             // $(".table-list tbody").html("");
             let width_img = 35;
+            // let c = 1;
             let d = 1;
             let thead = `<tr>`;
                 thead += `<th class="hidden">id</th>`;
@@ -846,7 +528,8 @@ Common::authen();
                 // let c = 1;
                 for (let c = 1; c <= color; c++) {
                     // let s = 1;
-                    for (let s = 1; s <= size; s++) {
+                    if(c != exclude_color_id) {
+                        for (let s = 1; s <= size; s++) {
                         let _id = $(".table-list tbody tr #id_"+c+"_"+s).text();
                         if(typeof _id === 'undefined' || _id === '') {
                             _id = '';
@@ -912,23 +595,28 @@ Common::authen();
                         if(typeof _dimension === 'undefined' || _dimension === '') {
                             _dimension = '';
                         }
-                        let _sku = product_id + (d < 10 ? "0" + d : d);
+                        let _sku = $(".table-list tbody tr #sku_"+c+"_"+s).val();
+                        if(typeof _sku === 'undefined' || _sku === '') {
+                            // _sku = product_id + (d < 10 ? "0" + d : d);
+                            _sku = "";
+                        }
                         table += "<tr class=\"" + d + "\">\n";
                         table += "<td class=\"hidden\" id='id_"+c+"_"+s+"'>"+_id+"</td>";
                         if(s === 1) {
-                            table += "<td class='image_"+c+"' rowspan='"+size+"'>"+
-                                "<img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width='80px' src=\""+_img+"\" id=\"img_variation_"+c+"\" class=\"mr-1\" style=\"max-width: 80px;\">" +
-                                "</td>\n";
+                            table += `<td class='image_${c}' rowspan='${size}'>
+                                        <img onerror="this.onerror=null;this.src='<?php Common::image_error() ?>'"  
+                                        src="${_img}" id="img_variation_${c}" class="mr-1 img-variant">
+                                    </td>\n`;
                             table += "<td class='color_"+c+"' rowspan='"+size+"'>"+_color+"</td>\n";
                         }
                         table += "<td class='size_"+c+"_"+s+"'>"+_size+"</td>\n" +
-                            "<td class='qty_"+c+"_"+s+"'><input type='number' class='form-control' placeholder='Số lượng' value='"+_qty+"' id='qty_"+c+"_"+s+"'></td>\n" +
-                            "<td class='price_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá nhâp' value='"+_price+"' id='price_"+c+"_"+s+"' onchange='onchange_price_in_list("+c+", "+s+")' onkeyup='onchange_price_in_list("+c+", "+s+")'></td>\n" +
-                            "<td class='retail_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá bán' value='"+_retail+"' id='retail_"+c+"_"+s+"' onchange='onchange_retail_in_list("+c+", "+s+")' onkeyup='onchange_retail_in_list("+c+", "+s+")'></td>\n" +
+                            "<td class='qty_"+c+"_"+s+"'><input type='number' class='form-control' placeholder='Số lượng' value='"+_qty+"' id='qty_"+c+"_"+s+"' min='0'></td>\n" +
+                            "<td class='price_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá nhâp' value='"+_price+"' id='price_"+c+"_"+s+"' style='width:100px' onchange='onchange_price_in_list("+c+", "+s+")' onkeyup='onchange_price_in_list("+c+", "+s+")'></td>\n" +
+                            "<td class='retail_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá bán' value='"+_retail+"' id='retail_"+c+"_"+s+"' style='width:100px' onchange='onchange_retail_in_list("+c+", "+s+")' onkeyup='onchange_retail_in_list("+c+", "+s+")'></td>\n" +
                             "<td class='percent_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='%' value='"+_percent+"' id='percent_"+c+"_"+s+"' onchange='onchange_percent_in_list("+c+", "+s+")' onkeyup='onchange_percent_in_list("+c+", "+s+")'></td>\n" +
                             "<td class='fee_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Phí vận chuyển' value='"+_fee+"' id='fee_"+c+"_"+s+"' onchange='onchange_fee_in_list("+c+", "+s+")' onkeyup='onchange_fee_in_list("+c+", "+s+")'></td>\n" +
-                            "<td class='profit_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Profit' value='"+_profit+"' id='profit_"+c+"_"+s+"' readonly></td>\n" +
-                            "<td class='sku_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_sku+"' id='sku_"+c+"_"+s+"' ></td>\n" +
+                            "<td class='profit_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Profit' value='"+_profit+"' id='profit_"+c+"_"+s+"' style='width:100px' readonly></td>\n" +
+                            "<td class='sku_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_sku+"' id='sku_"+c+"_"+s+"' style='width:100px'></td>\n" +
                             "<td class='length_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_length+"' id='length_"+c+"_"+s+"' ></td>\n" +
                             "<td class='weight_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_weight+"' id='weight_"+c+"_"+s+"' ></td>\n" +
                             "<td class='height_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_height+"' id='height_"+c+"_"+s+"' ></td>\n" +
@@ -940,23 +628,24 @@ Common::authen();
                         d++;
                     }
                     // c++;
+                    }
                 }
                 $(".table-list tbody").html(table);
             } else {
-                let sku = product_id + (d < 10 ? "0" + d : d);
+                // let sku = product_id + (d < 10 ? "0" + d : d);
                 $(".table-list tbody").html("<tr class=\"" + d + "\">" +
-                    "<td class='image_"+c+"' rowspan='"+size+"'>"+
-                    "<img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width=\"80px\" src=\"\" id=\"img_variation_"+c+"\" class=\"mr-1\" style=\"max-width: 80px;\">" +
+                    "<td class='image_"+d+"' rowspan='"+size+"'>"+
+                    "<img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" src=\"\" id=\"img_variation_"+d+"\" class=\"mr-1 img-variant\" >" +
                     "</td>\n" +
                     "<td class='color_"+d+"' colspan='"+size+"'>Màu "+d+"</td>\n" +
                     "<td class='size_1_"+d+"'>Size "+d+"</td>\n" +
-                    "<td class='qty_1_"+d+"'><input type='number' class='form-control' value='"+qty+"' id='qty_1_"+d+"'></td>\n" +
+                    "<td class='qty_1_"+d+"'><input type='number' class='form-control' value='"+qty+"' id='qty_1_"+d+"' min='0'></td>\n" +
                     "<td class='price_1_"+d+"'><input type='text' class='form-control' value='"+price+"' id='price_1_"+d+"'></td>\n" +
                     "<td class='retail_1_"+d+"'><input type='text' class='form-control' value='"+retail+"' id='retail_1_"+d+"'></td>\n" +
                     "<td class='percent_1_"+d+"'><input type='text' class='form-control' value='"+percent+"' id='percent_1_"+d+"'></td>\n" +
                     "<td class='fee_1_"+d+"'><input type='text' class='form-control' value='"+fee+"' id='fee_1_"+d+"'></td>\n" +
-                    "<td class='profit_1_"+d+"'><input type='text' class='form-control' value='"+profit+"' id='profit_1_"+d+"'></td>\n" +
-                    "<td class='sku_1_"+d+"'><input type='text' class='form-control' value='"+sku+"' id='sku_1_"+d+"'></td>\n" +
+                    "<td class='profit_1_"+d+"'><input type='text' class='form-control' value='"+profit+"' id='profit_1_"+d+"' style='width:100px'></td>\n" +
+                    "<td class='sku_1_"+d+"'><input type='text' class='form-control' value='"+sku+"' id='sku_1_"+d+"' style='width:100px'></td>\n" +
                     "<td class='length_1_"+d+"'><input type='text' class='form-control' value='"+length_+"' id='length_1_"+d+"'></td>\n" +
                     "<td class='weight_1_"+d+"'><input type='text' class='form-control' value='"+weight+"' id='weight_1_"+d+"'></td>\n" +
                     "<td class='height_1_"+d+"'><input type='text' class='form-control' value='"+height+"' id='height_1_"+d+"'></td>\n" +
@@ -965,7 +654,8 @@ Common::authen();
                     "</tr>");
             }
 
-
+            resolve();
+            });
         }
 
 
@@ -1032,22 +722,22 @@ Common::authen();
                         table += "<td class=\"hidden\" id='id_"+c+"_"+s+"'>"+_id+"</td>";
                         if(s === 1) {
                             table += "<td class='image_"+c+"' rowspan='"+size+"'>"+
-                                "<img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width=\"80px\" src=\""+_img+"\" id=\"img_variation_"+c+"\" class=\"mr-1\" style=\"max-width: 80px;\">" +
+                                "<img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" src=\""+_img+"\" id=\"img_variation_"+c+"\" class=\"mr-1 img-variant\" >" +
                                 "</td>\n";
                             table += "<td class='color_"+c+"' rowspan='"+size+"'>"+_color+"</td>\n";
                         }
                         table += "<td class='size_"+c+"_"+s+"'>"+_size+"</td>";
                         table += "<td class='qty_"+c+"_"+s+"'><input type='number' class='form-control' placeholder='Số lượng' value='"+_qty+"' id='qty_"+c+"_"+s+"'></td>";
                         if(IS_ADMIN) {
-                            table += "<td class='price_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá nhâp' value='"+_price+"' id='price_"+c+"_"+s+"' onchange='onchange_price_in_list("+c+", "+s+")' onkeyup='onchange_price_in_list("+c+", "+s+")'></td>";
+                            table += "<td class='price_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá nhâp' value='"+_price+"' id='price_"+c+"_"+s+"' style='width:100px' onchange='onchange_price_in_list("+c+", "+s+")' onkeyup='onchange_price_in_list("+c+", "+s+")'></td>";
                         }
-                        table += "<td class='retail_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá bán' value='"+_retail+"' id='retail_"+c+"_"+s+"' onchange='onchange_retail_in_list("+c+", "+s+")' onkeyup='onchange_retail_in_list("+c+", "+s+")'></td>";
+                        table += "<td class='retail_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá bán' value='"+_retail+"' id='retail_"+c+"_"+s+"' style='width:100px' onchange='onchange_retail_in_list("+c+", "+s+")' onkeyup='onchange_retail_in_list("+c+", "+s+")'></td>";
                         if(IS_ADMIN) {
                             table += "<td class='percent_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='%' value='"+_percent+"' id='percent_"+c+"_"+s+"' onchange='onchange_percent_in_list("+c+", "+s+")' onkeyup='onchange_percent_in_list("+c+", "+s+")'></td>";
                             table += "<td class='fee_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Phí vận chuyển' value='"+_fee+"' id='fee_"+c+"_"+s+"' onchange='onchange_fee_in_list("+c+", "+s+")' onkeyup='onchange_fee_in_list("+c+", "+s+")'></td>";
-                            table += "<td class='profit_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Profit' value='"+_profit+"' id='profit_"+c+"_"+s+"' readonly></td>";
+                            table += "<td class='profit_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Profit' value='"+_profit+"' id='profit_"+c+"_"+s+"' style='width:100px' readonly></td>";
                         }
-                        table += "<td class='sku_"+c+"_"+s+"'><input type='text' class='form-control' value='"+sku+"' id='sku_"+c+"_"+s+"' ></td>";
+                        table += "<td class='sku_"+c+"_"+s+"'><input type='text' class='form-control' value='"+sku+"' id='sku_"+c+"_"+s+"'  style='width:100px'></td>";
                         table += "<td class='length_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_length+"' id='length_"+c+"_"+s+"' ></td>";
                         table += "<td class='weight_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_weight+"' id='weight_"+c+"_"+s+"' ></td>";
                         table += "<td class='height_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_height+"' id='height_"+c+"_"+s+"' ></td>";
@@ -1063,7 +753,8 @@ Common::authen();
                 }
                 $(".table-list tbody").html(table);
             } else {
-                let sku = product_id + (d < 10 ? "0" + d : d);
+                // let sku = product_id + (d < 10 ? "0" + d : d);
+                let sku = "";
                 $(".table-list tbody").append("<tr class=\"" + d + "\">" +
                     "<td class='image_"+c+"' rowspan='"+size+"'>"+
                     "<img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width=\"80px\" src=\"\" id=\"img_variation_"+c+"\" class=\"mr-1\" style=\"max-width: 80px;\">" +
@@ -1463,27 +1154,45 @@ Common::authen();
             open_modal('#create_product');
         }
 
-        let c = 1;
+        let sequence_of_color = 1;
         function add_color(value) {
-            $("#select_colors").append("<div id='w_select_color_"+c+"'><input id='select_color_"+c+"' class=\"select_color_"+c+" form-control\" type=\"text\" placeholder=\"Chọn màu "+c+"\" autocomplete=\"off\" spellcheck=\"false\">" +
-                "<button class='btn btn-secondary btn-flat' id='delete_color_"+c+"'><i class='fa fa-trash'></i></button></div>");
-            $('#select_color_'+c).typeahead({
-                hint: true,
-                highlight: true,
-                minLength: 1
-            },
-            {
-                name: 'color',
-                source: substringMatcher(colors),
-                limit: 10
-            });
-            if(value) {
-                $('#select_color_'+c).typeahead('val', value);
-            }
-            onchange_select_color(c);
-            add_image_by_color(c);
-            delete_color(c);
-            c++;
+            return new Promise((resolve) => {
+
+                // $("#select_colors").append(`<div id='w_select_color_${c}'>
+                //                             <input id='select_color_${c}' class="select_color_${c} form-control" type="text" 
+                //                             placeholder=\"Chọn màu "+c+"\" autocomplete=\"off\" spellcheck=\"false\">" +
+                //     "<button class='btn btn-secondary btn-flat' id='delete_color_"+c+"'><i class='fa fa-trash'></i></button></div>`);
+
+                $("#select_colors").append(`<div class="input-group mb-1 color-item" id='w_select_color_${sequence_of_color}'>
+                                                <input id='select_color_${sequence_of_color}' class="select_color_${sequence_of_color} form-control" type="text" placeholder="Nhập tên màu ${sequence_of_color}">
+                                                <div class="input-group-append">
+                                                    <button class='btn btn-secondary input-group-text' id='delete_color_${sequence_of_color}'>
+                                                        <i class='fa fa-trash'></i>
+                                                    </button>
+                                                </div>
+                                            </div>`);
+                // $('#select_color_'+c).typeahead({
+                //     hint: true,
+                //     highlight: true,
+                //     minLength: 1
+                // },
+                // {
+                //     name: 'color',
+                //     source: substringMatcher(colors),
+                //     limit: 10
+                // });
+                if(value) {
+                    // $('#select_color_'+c).typeahead('val', value);
+                    $('#select_color_'+sequence_of_color).val(value);
+                }
+                
+                onchange_select_color(sequence_of_color);
+                add_image_by_color(sequence_of_color);
+                delete_color(sequence_of_color);
+                sequence_of_color++;
+                length_of_colors++;
+            resolve();
+            })
         }
         function delete_color(color) {
             $("#delete_color_"+color).on('click', function(){
@@ -1495,23 +1204,74 @@ Common::authen();
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Ok'
-                }).then((result) => {
+                }).then(async (result) => {
                     if (result.value) {
-                        let arr_color = [];
-                        let color_length = get_color_length();
-                        for(let i=1; i<=color_length; i++) {
-                            let color = $("#select_color_"+i).val();
-                            arr_color.push(color);
+
+                        await draw_table_variations(color);
+
+
+                        // get all value of color
+                        let colors = [];
+                        let images = [];
+                        for(let i=1; i<=length_of_colors; i++) {
+                            if(i != color) {
+                                let color_value = $("#select_color_"+i).val();
+                                colors.push(color_value);
+                                let image_value = $("#link_image_by_color_"+i).val();
+                                images.push(image_value);
+                            }
                         }
-                        arr_color.splice(color-1,1);
-                        $(this).parent("#w_select_color_"+color).remove();
+
+                        // delete all colors
                         $("#select_colors").html("");
-                        c = 1;
-                        for(let i=0; i<arr_color.length; i++) {
-                            add_color(arr_color[i]);
-                            $("#select_color_"+(i+1)).trigger('change');
+                        $("#image_by_color").html("");
+
+                        // reset length_of_colors
+                        length_of_colors = 0;
+
+                        // reset sequence_of_color
+                        sequence_of_color = 1;
+
+                        // recreate colors
+                        if(colors.length > 0) {
+                            for(let i=0; i < colors.length; i++) {
+                                await add_color(colors[i]);
+                                add_image_by_color(i+1, images[i]);
+                            }
+                        } else {
+                            add_color();
                         }
-                        draw_table_variations();
+
+
+                        
+                        // $("#image_by_color_"+color).remove();
+
+                        // $("#select_colors").html("");
+                        
+                        // let arr_color = [];
+                        // let color_length = get_color_length();
+                        // console.log("color_length: ", color_length);
+                        // if(length_of_colors > 1) {
+                        //     for(let i=1; i<=color_length; i++) {
+                        //         let color = $("#select_color_"+i).val();
+                        //         console.log("color: ", color);
+                        //     //     // arr_color.push(color);
+                        //     //     $("#select_color_"+i).trigger('change');
+                        //     //     // add_color(color);
+                        //     }
+                        // }
+                        // arr_color.splice(color-1,1);
+                        
+                        // $("#select_colors").html("");
+                        // c = 1;
+                        // for(let i=0; i<arr_color.length; i++) {
+                        //     add_color(arr_color[i]);
+                        //     $("#select_color_"+(i+1)).trigger('change');
+                        // }
+
+                        
+
+                       
                     }
                 });
             });
@@ -1521,11 +1281,18 @@ Common::authen();
             if(!src) {
                 src = '';
             }
-            $("#image_by_color").append("<div class=\"input-group mb-1 image-by-color\" style=\"margin-top: 10px;\">\n" +
-                "<img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width=\"40\" src=\""+src+"\" id=\"img_by_color_"+c+"\" class=\"mr-1\">\n" +
-                "<input type=\"text\" class=\"form-control\" placeholder=\"Nhập link hình ảnh màu "+c+"\" value=\""+src+"\" onchange=\"onchange_image_link("+c+", 'byColor')\" id=\"link_image_by_color_"+c+"\" autocomplete=\"off\">\n" +
-                "<input type=\"hidden\" class=\"form-control\" id=\"image_type_by_color_"+c+"\">\n" +
-                "</div>");
+            $("#image_by_color .image-by-color").each((k, v) => {
+                let sequence = $(v).attr("id").replace("image_by_color_","");
+                if(c == sequence) {
+                    $(`#image_by_color_${c}`).remove();
+                }
+            });
+            $("#image_by_color").append(`<div class="input-group mb-1 image-by-color" id="image_by_color_${c}">
+                <img onerror="this.onerror=null;this.src='<?php Common::image_error() ?>'" width="40" src="${src}" id="img_by_color_${c}" class="mr-1">
+                <input type="text" class="form-control" placeholder="Nhập link hình ảnh màu ${c}" value="${src}" onchange="onchange_image_link(${c}, 'byColor')" 
+                    id="link_image_by_color_${c}">
+                <input type="hidden" class="form-control" id="image_type_by_color_${c}">
+                </div>`);
             onpaste_image_link(c, 'byColor');
         }
 
@@ -1539,25 +1306,32 @@ Common::authen();
 
         let s = 1;
         function add_size(value) {
-            $("#select_sizes").append("<div id='w_select_size_"+s+"'><input id='select_size_"+s+"' class=\"select_size_"+s+" form-control\" type=\"text\" placeholder=\"Chọn size "+s+"\" autocomplete=\"off\" spellcheck=\"false\">" +
-                "<button class='btn btn-secondary btn-flat' id='delete_size_"+s+"'><i class='fa fa-trash'></i></button></div>");
-            $('#select_size_'+s).typeahead({
-                    hint: true,
-                    highlight: true,
-                    minLength: 1
-                },
-                {
-                    name: 'size',
-                    source: substringMatcher(size),
-                    limit: 10
-                });
+            // $("#select_sizes").append("<div id='w_select_size_"+s+"'><input id='select_size_"+s+"' class=\"select_size_"+s+" form-control\" type=\"text\" placeholder=\"Chọn size "+s+"\" autocomplete=\"off\" spellcheck=\"false\">" +
+            //     "<button class='btn btn-secondary btn-flat' id='delete_size_"+s+"'><i class='fa fa-trash'></i></button></div>");
+            $("#select_sizes").append(`<div class="input-group mb-1 size-item" id='w_select_size_${s}'>
+                                            <input id='select_size_${s}' class="select_size_${s} form-control" type="text" placeholder="Nhập tên size ${s}">
+                                            <div class="input-group-append">
+                                                <button class='btn btn-secondary input-group-text' id='delete_size_${s}'><i class='fa fa-trash'></i></button>
+                                            </div>
+                                        </div>`);
+                // $('#select_size_'+s).typeahead({
+            //         hint: true,
+            //         highlight: true,
+            //         minLength: 1
+            //     },
+            //     {
+            //         name: 'size',
+            //         source: substringMatcher(size),
+            //         limit: 10
+            //     });
             if(value) {
-                $('#select_size_'+s).typeahead('val', value);
+                $('#select_size_'+s).val(value);
             }
             onchange_select_size(s);
             delete_size(s);
             // draw_table_variations();
             s++;
+            length_of_sizes++;
         }
 
         function delete_size(size) {
@@ -1582,10 +1356,15 @@ Common::authen();
                         $(this).parent("#w_select_size_"+size).remove();
                         $("#select_sizes").html("");
                         s = 1;
+
+
+                        length_of_sizes = 0;
+
                         for(let i=0; i<arr_size.length; i++) {
                             add_size(arr_size[i]);
                             $("#select_size_"+(i+1)).trigger('change');
                         }
+
                         draw_table_variations();
                     }
                 });
@@ -1608,14 +1387,14 @@ Common::authen();
             if(!type) {
                 type = '';
             }
-            $("#image").append("<div class=\"input-group mb-1 image\" style=\"margin-top: 10px;\">\n" +
+            $("#image").append("<div class=\"input-group mb-1 image\" style=\"margin-bottom: 10px;\">\n" +
                 "<img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width=\"40\" src=\""+src+"\" id=\"img_"+idx_image+"\" class=\"mr-1\">\n" +
                 "<input type=\"text\" class=\"form-control\" placeholder=\"Nhập link hình ảnh "+idx_image+"\" value=\""+src+"\" onchange=\"onchange_image_link("+idx_image+")\" id=\"link_image_"+idx_image+"\" autocomplete=\"off\">\n" +
                 "<input type=\"hidden\" class=\"form-control\" id=\"image_type_"+idx_image+"\" value=\""+type+"\">\n" +
                 "<div class=\"input-group-append\">\n" +
                 "<form id=\"form_0\" action=\"\" method=\"post\" enctype=\"multipart/form-data\">\n" +
                 "<input id=\"image_"+idx_image+"\" type=\"file\" accept=\"image/*\" name=\"image\" class=\"hidden\"/>\n" +
-                "<button type=\"button\" class=\"btn btn-info btn-flat\" id=\"btn_upload_"+idx_image+"\">\n" +
+                "<button type=\"button\" class=\"btn btn-default btn-flat\" id=\"btn_upload_"+idx_image+"\" style=\"height: 38px;\">\n" +
                 "<span class=\"spinner-border spinner-border-sm hidden\" id=\"spinner_"+idx_image+"\"></span>\n" +
                 "<i class=\"fa fa-upload\"></i>\n" +
                 "</button>\n" +
@@ -1640,15 +1419,15 @@ Common::authen();
                 success: function (response) {
                     // console.log(response);
                     size = response;
-                    $('#select_sizes .typeahead').typeahead({
-                            hint: true,
-                            highlight: true,
-                            minLength: 1
-                        },
-                        {
-                            name: 'size',
-                            source: substringMatcher(response)
-                        });
+                    // $('#select_sizes .typeahead').typeahead({
+                    //         hint: true,
+                    //         highlight: true,
+                    //         minLength: 1
+                    //     },
+                    //     {
+                    //         name: 'size',
+                    //         source: substringMatcher(response)
+                    //     });
                     let product_id = $("#product_id").val();
                     if(product_id === '0') {
                         // add new product
@@ -1675,21 +1454,21 @@ Common::authen();
                     method: 'load_color'
                 },
                 type: 'POST',
-                success: function (response) {
+                success: async function (response) {
                     colors = response;
                     // console.log(response);
-                    $('.select_color_0').typeahead({
-                        hint: true,
-                        highlight: true
-                    },
-                    {
-                        name: 'size',
-                        source: substringMatcher(response),
-                        limit: 10
-                    });
+                    // $('.select_color_0').typeahead({
+                    //     hint: true,
+                    //     highlight: true
+                    // },
+                    // {
+                    //     name: 'size',
+                    //     source: substringMatcher(response),
+                    //     limit: 10
+                    // });
                     let product_id = $("#product_id").val();
                     if(product_id === '0') {
-                        add_color();
+                        await add_color();
                     }
                     onchange_select_color(0);
                 },
@@ -1718,15 +1497,15 @@ Common::authen();
                     materials = response;
                     // console.log(response);
                     $(".select_material").html("<label for=\"select_material\">Chất liệu:</label><input id='select_material' class=\"form-control\" type=\"text\" placeholder=\"Chọn chất liệu\" autocomplete=\"off\" spellcheck=\"false\">");
-                    $('#select_material').typeahead({
-                        hint: true,
-                        highlight: true
-                    },
-                    {
-                        name: 'size',
-                        source: substringMatcher(response),
-                        limit: 10
-                    });
+                    // $('#select_material').typeahead({
+                    //     hint: true,
+                    //     highlight: true
+                    // },
+                    // {
+                    //     name: 'size',
+                    //     source: substringMatcher(response),
+                    //     limit: 10
+                    // });
                 },
                 error: function (data, errorThrown) {
                     console.log(data.responseText);
@@ -1752,7 +1531,6 @@ Common::authen();
         //         cb(matches);
         //     };
         // }
-
         function onchange_image_color(no, value) {
             $(".table-list > tbody > tr").each(function () {
                 $("[id=img_variation_" + no + "]").attr("src", value);

@@ -64,7 +64,8 @@ require_once("common.php");
 	let root_path = '<?php Common::getPath(); ?>';
 	const IS_ADMIN = <?php echo Common::isAdmin() ?>;
 	function set_title(title) {
-		$(".title-page").text(document.getElementsByTagName("title")[0].innerHTML);
+		// $(".title-page").text(document.getElementsByTagName("title")[0].innerHTML);
+		$(".title-page").text(title ? title : document.getElementsByTagName("title")[0].innerHTML);
 	}
 	$(document).ready(() => {
 		$(".title-page").text(document.getElementsByTagName("title")[0].innerHTML);

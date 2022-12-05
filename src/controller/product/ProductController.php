@@ -215,6 +215,34 @@ if (isset($_POST["method"]) && $_POST["method"] == "update_stock") {
     $db->commit();
 }
 
+if (isset($_POST["method"]) && $_POST["method"] == "update_visibility") {
+    try {
+        Common::authen_get_data();
+        $product_id = $_POST["product_id"];
+        $dao->update_visibility((int)$product_id);
+        $response_array['response'] = "success";
+        echo json_encode($response_array);
+    } catch (Exception $e) {
+        $db->rollback();
+        throw new Exception("update_out_of_stock error exception: " . $e);
+    }
+    $db->commit();
+}
+
+if (isset($_POST["method"]) && $_POST["method"] == "delete_product") {
+    try {
+        Common::authen_get_data();
+        $product_id = $_POST["product_id"];
+        $dao->delete_product((int)$product_id);
+        $response_array['response'] = "success";
+        echo json_encode($response_array);
+    } catch (Exception $e) {
+        $db->rollback();
+        throw new Exception("update_out_of_stock error exception: " . $e);
+    }
+    $db->commit();
+}
+
 if (isset($_POST["type"]) && $_POST["type"] == "edit_product") {
     try {
         Common::authen_get_data();
@@ -233,13 +261,14 @@ if (isset($_GET["method"]) && $_GET["method"] == "findall") {
         $operator = isset($_GET["operator"]) ? $_GET["operator"] : '';
         $quantity = isset($_GET["quantity"]) ? $_GET["quantity"] : '';
         $sku = isset($_GET["sku"]) ? $_GET["sku"] : '';
+        $product_type = isset($_GET["product_type"]) ? $_GET["product_type"] : '';
 
 //        var_dump($status."\n");
 //        var_dump($operator."\n");
 //        var_dump($quantity."\n");
 //        var_dump($sku."\n");
 
-        $lists = $dao->find_all($status, $operator, $quantity, $sku);
+        $lists = $dao->find_all($status, $operator, $quantity, $sku, $product_type);
         echo json_encode($lists);
     } catch (Exception $e) {
         echo $e->getMessage();
@@ -275,7 +304,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $product->setProfit($data->profit);
         $product->setPercent($data->percent);
         $product->setRetail($data->retail);
-        $product->setType($data->type);
+        $product->setGender($data->gender);
         $product->setCategory_id($data->cat);
         $product->setImage($data->image);
         $product->setDescription($data->description);
@@ -296,14 +325,24 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         } catch (Exception $e) {
             throw new Exception("Delete variation failed!!");
         }
+        $number = 0;
         $variations = $data->variations;
         for ($i = 0; $i < count($variations); $i++) {
+            if($number < 10) {
+                $new_sku = (int) $prodId."00".$number;
+            } else if($number >= 10 && $number < 100) {
+                $new_sku = (int) $prodId."0".$number;
+            } else {
+                $new_sku = (int) $prodId.$number;
+            }
+            $number++;
+
             $variation = new Variations();
             $variation->setProductId($prodId);
             $variation->setSize($variations[$i]->size);
             $variation->setColor($variations[$i]->color);
             $variation->setQuantity($variations[$i]->qty);
-            $variation->setSku($variations[$i]->sku);
+            $variation->setSku(empty($variations[$i]->sku) ? $new_sku : $variations[$i]->sku);
             $variation->setPrice($variations[$i]->price);
             $variation->setRetail($variations[$i]->retail);
             $variation->setFee($variations[$i]->fee);
@@ -325,6 +364,21 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
     }
     $db->commit();
 
+}
+
+if (isset($_POST["method"]) && $_POST["method"] == "update_product_type") {
+    try {
+        Common::authen_get_data();
+        $product_id = $_POST["product_id"];
+        $product_type = $_POST["product_type"];
+        $dao->update_product_type($product_id, $product_type);
+        $response_array['success'] = 'success';
+        echo json_encode($response_array);
+    } catch (Exception $e) {
+        $db->rollback();
+        throw new Exception($e);
+    }
+    $db->commit();
 }
 
 if (isset($_POST["method"]) && $_POST["method"] == "social_publish") {

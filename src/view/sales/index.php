@@ -14,6 +14,11 @@ Common::authen();
     <link rel="stylesheet" href="<?php Common::getPath() ?>plugins/typeahead/css/typeaheadjs.css">
     <script src="<?php Common::getPath() ?>plugins/typeahead/js/typeahead.jquery.min.js"></script>
     <script src="<?php Common::getPath() ?>plugins/typeahead/js/bloodhound.min.js"></script>
+    <style>
+        .table td, .table th {
+            vertical-align: middle;
+        }
+    </style>
 </head>
 <?php require_once('../../common/header.php'); ?>
 <?php require_once('../../common/menu.php'); ?>
@@ -32,17 +37,17 @@ Common::authen();
                 </div>
                 <div class="card-body" style="min-height: 615px;">
                     <input type="hidden" id="noRow" value="0">
-                    <table class="table table-bordered table-head-fixed" id="tableProd">
+                    <table class="table table-striped table-hover table-head-fixed" id="tableProd">
                         <thead>
                         <tr>
                             <th class="w10">#</th>
                             <th class="hidden"></th>
                             <th class="hidden"></th>
-                            <th class="w70">ID</th>
-                            <th class="w70">Hình ảnh</th>
-                            <th class="w150">Tên sản phẩm</th>
-                            <th class="w130">Size</th>
-                            <th class="w130">Màu</th>
+                            <!-- <th class="w70">ID</th> -->
+                            <th class="w100">Hình ảnh</th>
+                            <th style="width: auto;">Sản phẩm</th>
+                            <th class="hidden">Size</th>
+                            <th class="hidden">Màu</th>
                             <th class="w100">Đơn giá</th>
                             <th class="w120">Số lượng</th>
                             <th class="w150">Giảm trừ</th>
@@ -1077,16 +1082,25 @@ Common::authen();
                         + '<td class="hidden"><input type="hidden" name="variantId" id="variantId_' + noRow + '" class="form-control" value="' + products[0].variant_id + '"></td>'
                         + '<td class="hidden"><input type="hidden" name="sku" id="sku_' + noRow + '" class="form-control" value="' + products[0].sku + '"></td>'
                         + '<td class="hidden"><input type="hidden" name="profit" id="profit_' + noRow + '" class="form-control" value="' + products[0].profit + '"></td>'
-                        + '<td>' + products[0].sku + '</td>'
-                        + '<td><img src="' + products[0].image + '" onerror=\'this.onerror=null;this.src="<?php Common::image_error()?>"\' width="50px"></td>'
-                        + '<td><span class="product-name" id="name_' + noRow + '">' + products[0].name + '</span></td>'
-                        + '<td><span class="size" id="size_' + noRow + '">' + products[0].size + '</span></td>'
-                        + '<td><span class="color" id="color_' + noRow + '">' + products[0].color + '</span></td>'
-                        + '<td><span class="price" id="price_' + noRow + '">' + products[0].retail + '</span> <sup>đ</sup></td>'
+                        // + '<td>' + products[0].sku + '</td>'
+                        + '<td><img src="' + products[0].image + '" onerror=\'this.onerror=null;this.src="<?php Common::image_error()?>"\' width="50px" style="border-radius: 5px;border: 3px solid white;"></td>'
+                        + `<td>
+                            <strong class="product-name" id="name_${noRow}">${products[0].name}</strong>
+                            <br>
+                            <small>ID: ${products[0].sku}</small>
+                            <br>
+                            <small>Màu: ${products[0].color}</small>
+                            <br>
+                            <small>Size: ${products[0].size}</small>
+                        </td>`
+                        + '<td class="hidden"><span class="size" id="size_' + noRow + '">' + products[0].size + '</span></td>'
+                        + '<td class="hidden"><span class="color" id="color_' + noRow + '">' + products[0].color + '</span></td>'
+                        + '<td><span class="price" id="price_' + noRow + '">' + products[0].retail + '</span>&#8363;</td>'
                         + '<td><input type="number" name="qty" id="qty_' + noRow + '" class="form-control" min="1" value="' + qty + '" onchange="on_change_qty(\'price_' + noRow + '\', \'qty_' + noRow + '\', \'intoMoney_' + noRow + '\', \'reduce_' + noRow + '\')"></td>'
                         + '<td><input type="text" name="reduce" id="reduce_' + noRow + '" class="form-control" value="' + discount + '" onchange="on_change_reduce(\'price_' + noRow + '\',\'qty_' + noRow + '\', \'intoMoney_' + noRow + '\', \'reduce_' + noRow + '\')"></td>'
-                        + '<td><span class="intoMoney" id="intoMoney_' + noRow + '">' + products[0].retail + '</span> <sup>đ</sup></td>'
-                        + '<td><button type="button" class="btn btn-danger form-control add-new-prod" title="Xóa"  onclick="del_product(this, \'product-' + noRow + '\')"><i class="fa fa-trash" aria-hidden="true"></i> Xóa</button></td>'
+                        + '<td><span class="intoMoney" id="intoMoney_' + noRow + '">' + products[0].retail + '</span>&#8363;</td>'
+                        // + '<td><button type="button" class="btn btn-danger form-control add-new-prod" title="Xóa"  onclick="del_product(this, \'product-' + noRow + '\')"><i class="fa fa-trash" aria-hidden="true"></i> Xóa</button></td>'
+                        + '<td align="center"><i class="fa fa-times c-pointer text-danger" onclick="del_product(this, \'product-' + noRow + '\')"></i></td>'
                         + '</tr>');
                     $('[id=qty_' + noRow + ']').trigger("change");
                 }

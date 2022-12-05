@@ -11,7 +11,7 @@ class Product {
     private $profit;
     private $percent;
     private $retail;
-    private $type;
+    private $gender;
     private $status;
     private $category_id;
     private $social_publish;
@@ -21,6 +21,7 @@ class Product {
     private $material;
     private $origin;
     private $short_description;
+    private $product_type;
 
     /**
      * Get the value of id
@@ -242,26 +243,26 @@ class Product {
     }
 
     /**
-     * Get the value of type
+     * Get the value of gender
      */ 
-    public function getType()
+    public function getGender()
     {
-        if(empty($this->type))
+        if(empty($this->gender))
         {
             return "0";
         } else {
-            return $this->type;    
+            return $this->gender;    
         }
     }
 
     /**
-     * Set the value of type
+     * Set the value of gender
      *
      * @return  self
      */ 
-    public function setType($type)
+    public function setGender($gender)
     {
-        $this->type = $type;
+        $this->gender = $gender;
 
         return $this;
     }
@@ -423,6 +424,22 @@ class Product {
     public function setShortDescription($short_description): void
     {
         $this->short_description = $short_description;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getProductType()
+    {
+        return $this->product_type;
+    }
+
+    /**
+     * @param mixed $product_type
+     */
+    public function setProductType($product_type): void
+    {
+        $this->product_type = $product_type;
     }
 
 }

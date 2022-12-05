@@ -8,9 +8,77 @@ class CustomerDAO
         $this->conn = $db->getConn();
     } 
 
+    function find_all_customers_online() {
+        try {
+            $sql = "SELECT * FROM `smi_customers` WHERE id in (SELECT customer_id FROM `smi_orders` WHERE source <> 0 and deleted = 0 GROUP by customer_id)";
+            $result = mysqli_query($this->conn, $sql);
+            $data = array();
+            if (!empty($result)) {
+                foreach ($result as $k => $row) {
+                    $customer = array(
+                        'id' => $row["id"]
+                    );
+                    array_push($data, $customer);
+                }
+            }
+            return $data;
+        } catch (Exception $e) {
+            echo $e;
+        }
+    }
+
+    function update_new_customer_id($old_id, $new_id) {
+        try {
+            $sql = "UPDATE `smi_customers` SET `customer_id`= ?  WHERE `id` = ?";    
+            $stmt = $this->getConn()->prepare($sql);
+            $stmt->bind_param("ii", $new_id, $old_id);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function find_customers() {
+        try {
+            // $sql = "SELECT * FROM `smi_customers` WHERE `updated_id` = false";
+            $sql = "SELECT * FROM `smi_customers`";
+            $result = mysqli_query($this->conn, $sql);
+            $data = array();
+            if (!empty($result)) {
+                foreach ($result as $k => $row) {
+                    $customer = array(
+                        'id' => $row["id"],
+                        'customer_id' => $row["customer_id"],
+                        'updated_id' => $row["updated_id"] == 0 ? false : true
+                    );
+                    array_push($data, $customer);
+                }
+            }
+            return $data;
+        } catch (Exception $e) {
+            echo "Open connection database is error exception >> " . $e->getMessage();
+        }
+    }
+
+    function update_customer_id($id, $customer_id) {
+        try {
+            $stmt = $this->getConn()->prepare("UPDATE `smi_customers` SET `customer_id`= ?, `updated_id`= true  WHERE `id` = ?");
+            $stmt->bind_param("ii", $customer_id, $id);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
     function findCustomerByPhone($phone) {
         try {
-            $sql = "SELECT id,
+            $sql = "SELECT customer_id,
                             name,
                             city_id,
                             district_id,

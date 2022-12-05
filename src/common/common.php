@@ -85,7 +85,7 @@ class Common
     public static function authen_get_data()
     {
         if (!Common::check_logged()) {
-            echo "Forbidden! You don't have permission to access this resource.";
+            throw new Exception("403");
         }
     }
 

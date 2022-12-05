@@ -8,6 +8,175 @@ class ProductDAO
         $this->conn = $db->getConn();
     } 
 
+    function update_visibility($product_id, $visibility = "HIDE")
+    {
+        try {
+            $stmt = $this->getConn()->prepare("UPDATE smi_products SET visibility = ? WHERE id = ?");
+            $stmt->bind_param("si", $visibility, $product_id);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function find_all_products_online() {
+        try {
+            $sql = "SELECT * FROM `smi_products`
+                    WHERE id in
+                        (SELECT product_id FROM `smi_variations`
+                         WHERE sku in
+                             (SELECT sku FROM `smi_order_detail`
+                              WHERE order_id in
+                                  (SELECT id FROM `smi_orders` WHERE SOURCE <> 0 AND deleted = 0)
+                              GROUP BY sku)
+                         GROUP BY product_id)";
+            $result = mysqli_query($this->conn, $sql);
+            $data = array();
+            if (!empty($result)) {
+                foreach ($result as $k => $row) {
+                    $product = array(
+                        'id' => $row["id"]
+                    );
+                    array_push($data, $product);
+                }
+            }
+            return $data;
+        } catch (Exception $e) {
+            echo $e;
+        }
+    }
+
+    function find_variant_by_product_id($product_id) {
+        try {
+            $sql = "SELECT * FROM `smi_variations` WHERE `product_id` = $product_id";
+            $result = mysqli_query($this->conn, $sql);
+            $data = array();
+            if (!empty($result)) {
+                foreach ($result as $k => $row) {
+                    $variant = array(
+                        'id' => $row["id"],
+                        'sku' => $row["sku"]
+                    );
+                    array_push($data, $variant);
+                }
+            }
+            return $data;
+        } catch (Exception $e) {
+            echo "Open connection database is error exception >> " . $e->getMessage();
+        }
+    }
+
+    function update_new_product_id($old_id, $new_id) {
+        try {
+            $sql = "UPDATE `smi_products` SET `product_id`= ?  WHERE `id` = ?";    
+            $stmt = $this->getConn()->prepare($sql);
+            $stmt->bind_param("ii", $new_id, $old_id);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function update_new_product_id_variations($variant_id, $new_product_id, $new_sku) {
+        try {
+            $sql = "UPDATE `smi_variations` SET `new_product_id`= ?, `new_sku`= ?  WHERE `id` = ?";    
+            $stmt = $this->getConn()->prepare($sql);
+            $stmt->bind_param("iii", $new_product_id, $new_sku, $variant_id);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function update_sku_variantions($old_sku, $new_sku) {
+        try {
+            $sql = "UPDATE `smi_variations` SET `sku`= ?  WHERE `sku` = ?";    
+            $stmt = $this->getConn()->prepare($sql);
+            $stmt->bind_param("ss", $new_sku, $old_sku);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function update_product_id($id, $product_id) {
+        try {
+            $stmt = $this->getConn()->prepare("UPDATE `smi_products` SET `product_id`= ?, `updated_id`= true WHERE `id` = ?");
+            $stmt->bind_param("ii", $product_id, $id);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function update_variant_id($pid, $product_id) {
+        try {
+            $stmt = $this->getConn()->prepare("UPDATE `smi_variations` SET `product_id`= ?, `updated_id`= true WHERE product_id = ?");
+            $stmt->bind_param("ii", $product_id, $pid);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
+    function find_all_products() {
+        try {
+            $sql = "SELECT * FROM `smi_products` WHERE `updated_id` = false";
+            $result = mysqli_query($this->conn, $sql);
+            $data = array();
+            if (!empty($result)) {
+                foreach ($result as $k => $row) {
+                    $product = array(
+                        'id' => $row["id"],
+                        'updated_id' => $row["updated_id"] == 0 ? false : true
+                    );
+                    array_push($data, $product);
+                }
+            }
+            return $data;
+        } catch (Exception $e) {
+            echo $e;
+        }
+    }
+
+    function find_variants($product_id) {
+        try {
+            $sql = "SELECT * FROM `smi_variations` WHERE `product_id` = $product_id AND `updated_id` = false";
+            $result = mysqli_query($this->conn, $sql);
+            $data = array();
+            if (!empty($result)) {
+                foreach ($result as $k => $row) {
+                    $variant = array(
+                        'id' => $row["id"],
+                        'updated_id' => $row["updated_id"] == 0 ? false : true
+                    );
+                    array_push($data, $variant);
+                }
+            }
+            return $data;
+        } catch (Exception $e) {
+            echo "Open connection database is error exception >> " . $e->getMessage();
+        }
+    }
+
     function update_quantity($qty, $variant_id) {
         try {
             $stmt = $this->getConn()->prepare("UPDATE `smi_variations` SET `quantity`= ?, updated_at = NOW() WHERE id = ?");
@@ -228,11 +397,11 @@ class ProductDAO
                         B.size,
                         B.color
                     from 
-                        smi_products A left join smi_variations B on A.id = B.product_id 
+                        smi_products A left join smi_variations B on A.product_id = B.product_id 
                     where 
                         B.sku in (" . $skus . ")
                     order by 
-                        A.id desc, B.sku";
+                        A.product_id desc, B.sku";
             $result = mysqli_query($this->conn, $sql);
             $data = array();
             foreach ($result as $k => $row) {
@@ -256,7 +425,7 @@ class ProductDAO
     function find_all_for_select2()
     {
         try {
-            $sql = "select A.id as product_id,  
+            $sql = "select A.product_id,  
                         B.id as variation_id, 
                         concat(B.sku,'-',trim(A.name),'-',B.size,'-',B.color) as name, 
                         A.retail 
@@ -291,13 +460,13 @@ class ProductDAO
     function find_by_id($id)
     {
         try {
-            $sql = "select A.id AS product_id,
+            $sql = "select A.id as product_id,
                            A.name,
                            A.name_for_website,
                            A.image,
                            A.link,
                            A.fee_transport,
-                           A.type,
+                           A.gender,
                            A.category_id,
                            A.description,
                            A.material,
@@ -317,7 +486,8 @@ class ProductDAO
                            B.length__,
                            B.weight,
                            B.height,
-                           B.age
+                           B.age,
+                           B.dimension
                     FROM smi_products A
                     LEFT JOIN smi_variations B ON A.id = B.product_id
                     WHERE A.id = " . $id;
@@ -336,7 +506,7 @@ class ProductDAO
                         'name_for_website' => $row["name_for_website"],
                         'image' => $row["image"],
                         'link' => $row["link"],
-                        'type' => $row["type"],
+                        'gender' => $row["gender"],
                         'category_id' => $row["category_id"],
                         'fee_transport' => number_format($row["fee_transport"]),
                         'description' => $row["description"],
@@ -364,7 +534,8 @@ class ProductDAO
                         'length__' => $row["length__"],
                         'weight' => $row["weight"],
                         'height' => $row["height"],
-                        'age' => $row["age"]
+                        'age' => $row["age"],
+                        'dimension' => $row["dimension"]
                     );
                     array_push($product['variations'], $variation);
                     array_push($data, $product);
@@ -387,7 +558,8 @@ class ProductDAO
                         'length__' => $row["length__"],
                         'weight' => $row["weight"],
                         'height' => $row["height"],
-                        'age' => $row["age"]
+                        'age' => $row["age"],
+                        'dimension' => $row["dimension"]
                     );
                     array_push($data[$i - 1]['variations'], $variation);
                 }
@@ -407,7 +579,7 @@ class ProductDAO
         }
     }
 
-    function find_all($status, $operator, $qty, $sku)
+    function find_all($status, $operator, $qty, $sku, $product_type, $visibility = "SHOW")
     {
         try {
             $sql = "SELECT A.id as product_id, 
@@ -426,13 +598,33 @@ class ProductDAO
                             A.origin,
                             A.short_description,
                             A.category_id,
-                            A.type,
+                            A.gender,
+                            A.system,
+                            A.product_type,
                             sum(B.quantity) as total_quantity
                     FROM `smi_products` A
                     LEFT JOIN smi_variations B ON A.id = B.product_id
-                    where A.status = $status";
+                    where A.status = $status and A.visibility = '".$visibility."'";
             if(!empty($sku)) {
                 $sql .= "  and B.sku = $sku";
+            }
+            if(!empty($product_type)) {
+                // $sql .= "  and A.product_type = '".$product_type."'";
+                switch($product_type) {
+                    case "facebook" :
+                        $sql .= " and JSON_CONTAINS(A.social_publish, 1, '$.facebook') = 1";
+                        break;
+                    case "shopee" :
+                        $sql .= " and JSON_CONTAINS(A.social_publish, 1, '$.shopee') = 1";
+                        break;
+                    case "website" :
+                        $sql .= " and JSON_CONTAINS(A.social_publish, 1, '$.website') = 1";
+                        break;
+                    case "online" :
+                        $sql .= " and A.product_type = '".$product_type."'";
+                        break;
+                }
+                
             }
             $sql .= " GROUP BY A.id,
                              A.name,
@@ -446,7 +638,97 @@ class ProductDAO
                               A.origin,
                               A.short_description,
                               A.category_id,
-                              A.type";
+                              A.gender,
+                              A.product_type,
+                              A.system";
+            if(!empty($qty) && !empty($operator)) {
+                if($operator == "=") {
+                    $sql .= " ,B.product_id having sum(B.quantity) = $qty";
+                } else if($operator == ">") {
+                    $sql .= " ,B.product_id having sum(B.quantity) > $qty";
+                } else {
+                    $sql .= " ,B.product_id having sum(B.quantity) < $qty";
+                }
+            }
+            $sql .= " ORDER BY A.created_at DESC";
+
+           // echo $sql."\n";
+
+            $result = mysqli_query($this->conn, $sql);
+            $data = array();
+            foreach ($result as $k => $row) {
+                $product = array(
+                    'product_id' => $row["product_id"],
+                    'name' => $row["name"],
+                    'name_for_website' => $row["name_for_website"],
+                    'image' => $row["image"],
+                    'variant_image' => $row["variant_image"],
+                    'link' => $row["link"],
+                    'retail' => $row["max_retail"] == $row["min_retail"] ? number_format($row['min_retail']) : number_format($row['min_retail'])." - ".number_format($row['max_retail']),
+                    'discount' => $row["discount"],
+                    'profit' => $row["max_profit"] == $row["min_profit"] ? number_format($row['min_profit']) : number_format($row['min_profit'])." - ".number_format($row['max_profit']),
+                    'social_publish' => $row["social_publish"],
+                    'material' => $row["material"],
+                    'origin' => $row["origin"],
+                    'short_description' => $row["short_description"],
+                    'category_id' => $row["category_id"],
+                    'gender' => $row["gender"],
+                    'system' => $row["system"],
+                    'product_type' => $row["product_type"],
+                    'total_quantity' => $row["total_quantity"]
+                );
+                array_push($data, $product);
+            }
+            $arr = array();
+            $arr["data"] = $data;
+            return $arr;
+        } catch (Exception $e) {
+            echo "Open connection database is error exception >> " . $e->getMessage();
+        }
+    }
+
+    function find_all2($status, $operator, $qty, $sku)
+    {
+        try {
+            $sql = "SELECT A.id, 
+                            A.product_id,
+                           A.name,
+                           A.name_for_website,
+                           A.image,
+                           B.image as variant_image, 
+                           A.link, 
+                           MAX(B.retail) as max_retail,
+                           MIN(B.retail) as min_retail,
+                            A.discount,
+                            MAX(B.profit) as max_profit,
+                            MIN(B.profit) as min_profit,
+                            A.social_publish,
+                            A.material,
+                            A.origin,
+                            A.short_description,
+                            A.category_id,
+                            A.gender,
+                            sum(B.quantity) as total_quantity
+                    FROM `smi_products` A
+                    LEFT JOIN smi_variations B ON A.product_id = B.product_id
+                    where A.status = $status and A.deleted = false";
+            if(!empty($sku)) {
+                $sql .= "  and B.sku = $sku";
+            }
+            $sql .= " GROUP BY A.id,
+                            A.product_id,
+                             A.name,
+                             A.name_for_website,
+                             A.image , 
+                             A.link , 
+                             A.discount,
+                              A.profit,
+                              A.social_publish,
+                              A.material,
+                              A.origin,
+                              A.short_description,
+                              A.category_id,
+                              A.gender";
             if(!empty($qty) && !empty($operator)) {
                 if($operator == "=") {
                     $sql .= " ,B.product_id having sum(B.quantity) = $qty";
@@ -458,7 +740,7 @@ class ProductDAO
             }
             $sql .= " ORDER BY A.id DESC";
 
-//            echo $sql."\n";
+           // echo $sql."\n";
 
             $result = mysqli_query($this->conn, $sql);
             $data = array();
@@ -575,24 +857,24 @@ class ProductDAO
     }
   }
 
-    function delete_product($product_id)
-    {
-        try {
-            $stmt = $this->getConn()->prepare("delete from smi_products where id = ?");
-            $stmt->bind_param("i", $product_id);
-            if(!$stmt->execute()) {
-                throw new Exception($stmt->error);
-            }
-            $stmt->close();
-        } catch (Exception $e) {
-            throw new Exception ($e->getMessage());
-        }
-    }
+    // function delete_product($product_id)
+    // {
+    //     try {
+    //         $stmt = $this->getConn()->prepare("delete from smi_products where id = ?");
+    //         $stmt->bind_param("i", $product_id);
+    //         if(!$stmt->execute()) {
+    //             throw new Exception($stmt->error);
+    //         }
+    //         $stmt->close();
+    //     } catch (Exception $e) {
+    //         throw new Exception ($e->getMessage());
+    //     }
+    // }
 
     function update_discount($discount, $product_id)
     {
         try {
-            $stmt = $this->getConn()->prepare("update smi_products SET discount = ? where id = ?");
+            $stmt = $this->getConn()->prepare("update smi_products SET discount = ? where product_id = ?");
             $stmt->bind_param("ii", $discount, $product_id);
             if(!$stmt->execute()) {
                 throw new Exception($stmt->error);
@@ -608,9 +890,9 @@ class ProductDAO
         try {
 
             if($type == "material") {
-                $sql = "update smi_products SET material = ? where id = ?";
+                $sql = "update smi_products SET material = ? where product_id = ?";
             } else {
-                $sql = "update smi_products SET origin = ? where id = ?";
+                $sql = "update smi_products SET origin = ? where product_id = ?";
             }
             $stmt = $this->getConn()->prepare($sql);
             $stmt->bind_param("ii", $data, $product_id);
@@ -671,7 +953,7 @@ class ProductDAO
                 $stmt = $this->getConn()->prepare("UPDATE smi_products
                                                     SET status = ?,
                                                         updated_at = NOW()
-                                                    WHERE id IN
+                                                    WHERE product_id IN
                                                         (SELECT a.id
                                                          FROM smi_products a
                                                          LEFT JOIN smi_variations b ON a.id = b.product_id
@@ -742,7 +1024,7 @@ class ProductDAO
             $profit = $product->getProfit();
             $retail = $product->getRetail();
             $percent = $product->getPercent();
-            $type = $product->getType();
+            $gender = $product->getGender();
             $cat_id = $product->getCategory_id();
             $social_publish = '{"shopee": 0, "website": 0, "facebook": 0, "lazada": 0, "feature": 0}';
             $description = $product->getDescription();
@@ -759,7 +1041,7 @@ class ProductDAO
                                 `profit`,
                                 `retail`,
                                 `percent`,
-                                `type`,
+                                `gender`,
                                 `category_id`,
                                 `social_publish`,
                                 `description`,
@@ -778,7 +1060,7 @@ class ProductDAO
                                 $profit,
                                 $retail,
                                 $percent,
-                                $type,
+                                $gender,
                                 $cat_id,
                                 $social_publish,
                                 $description,
@@ -900,7 +1182,7 @@ class ProductDAO
     function find_by_sku($sku)
     {
         try {
-            $sql = "SELECT A.id AS product_id,
+            $sql = "SELECT A.id as product_id,
                            B.id AS variant_id,
                            A.name,
                            B.image,
@@ -967,6 +1249,20 @@ class ProductDAO
         }
     }
 
+    function delete_product($product_id)
+    {
+        try {
+              $stmt = $this->getConn()->prepare("update smi_products set deleted = true where id = ?");
+              $stmt->bind_param("i", $product_id);
+            if(!$stmt->execute()) {
+                throw new Exception($stmt->error);
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+    }
+
     function find_variation_by_product_id($product_id)
     {
         try {
@@ -983,6 +1279,21 @@ class ProductDAO
       try {
           $stmt = $this->getConn()->prepare("update smi_products set social_publish = JSON_SET(`social_publish`, '$.".$type."', ?), `updated_at` = NOW() where id = ?");
           $stmt->bind_param("ii", $status, $product_id);
+          if(!$stmt->execute()) {
+            print_r($this->getConn()->error);
+            throw new Exception($stmt->error);
+          }
+          $stmt->close();
+      } catch (Exception $e) {
+        throw new Exception($e);
+      }
+    }
+
+    function update_product_type($product_id, $product_type)
+    {
+      try {
+          $stmt = $this->getConn()->prepare("update smi_products set product_type = ?, `updated_at` = NOW() where id = ?");
+          $stmt->bind_param("si", $product_type, $product_id);
           if(!$stmt->execute()) {
             print_r($this->getConn()->error);
             throw new Exception($stmt->error);

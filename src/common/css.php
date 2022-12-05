@@ -59,3 +59,4 @@ require_once("common.php");
 <link rel="stylesheet" href="<?php Common::getPath() ?>plugins/typeahead/css/typeaheadjs.css">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.css">
+

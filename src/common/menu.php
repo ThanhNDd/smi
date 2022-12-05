@@ -4,7 +4,7 @@ require_once("common.php");
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="/" class="brand-link">
-        <img src="<?php Common::getPath()?>dist/img/icon.png" alt="AdminLTE Logo"
+        <img src="<?php Common::getPath()?>dist/img/icon.png"
              class="brand-image img-circle elevation-3"
              style="opacity: .8">
         <span class="brand-text font-weight-light">SHOP MẸ ỈN</span>
@@ -41,7 +41,6 @@ require_once("common.php");
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
-                        <?php if(Common::isAdminRole()) { ?>
                             <li class="nav-item">
                                 <a href="<?php Common::getPath() ?>src/view/sales/" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
@@ -51,16 +50,15 @@ require_once("common.php");
                             <li class="nav-item">
                                 <a href="<?php Common::getPath() ?>src/view/orders/" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>Đơn hàng</p>
+                                    <p>Đơn hàng Shop</p>
                                 </a>
                             </li>
-                        <?php } ?>
-                        <li class="nav-item">
-                            <a href="<?php Common::getPath() ?>src/view/orders/online.php" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>Đơn hàng online</p>
-                            </a>
-                        </li>
+                            <li class="nav-item">
+                                <a href="<?php Common::getPath() ?>src/view/orders/online.php" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Đơn hàng online</p>
+                                </a>
+                            </li>
                         <?php if(Common::isAdminRole()) { ?>
                             <li class="nav-item">
                                 <a href="<?php Common::getPath() ?>src/view/exchange/" class="nav-link">
@@ -75,7 +73,7 @@ require_once("common.php");
                     <a href="#" class="nav-link active">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>
-                            Kho
+                            Sản phẩm
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
@@ -83,21 +81,45 @@ require_once("common.php");
                         <li class="nav-item">
                             <a href="<?php Common::getPath() ?>src/view/products/" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Sản phẩm</p>
+                                <p>Tất cả sản phẩm</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?php Common::getPath() ?>src/view/products/?type=facebook" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Facebook</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?php Common::getPath() ?>src/view/products/?type=shopee" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Shopee</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?php Common::getPath() ?>src/view/products/?type=website" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Website</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?php Common::getPath() ?>src/view/products/?type=online" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Online</p>
                             </a>
                         </li>
                         <?php if(Common::isAdminRole()) { ?>
-                            <li class="nav-item">
+                            <!-- <li class="nav-item">
                                 <a href="<?php Common::getPath()?>src/view/check/" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Kiểm hàng</p>
                                 </a>
-                            </li>
+                            </li> -->
                         <?php } ?>
                     </ul>
                 </li>
                 <?php if(Common::isAdminRole()) { ?>
-                    <li class="nav-item has-treeview menu-open">
+                    <!-- <li class="nav-item has-treeview menu-open">
                         <a href="#" class="nav-link active">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>
@@ -142,7 +164,7 @@ require_once("common.php");
                                 </a>
                             </li>
                         </ul>
-                    </li>
+                    </li> -->
                 <?php } ?>
                 <li class="nav-item has-treeview menu-open">
                   <a href="#" class="nav-link active">

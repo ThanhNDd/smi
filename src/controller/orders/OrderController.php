@@ -1,4 +1,7 @@
 <?php
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
 // require '../../common/WooAPI.php';
 require_once("../../common/common.php");
 include("../../common/DBConnection.php");
@@ -566,6 +569,7 @@ if (isset($_GET["method"]) && $_GET["method"] == "find_all") {
         Common::authen_get_data();
         // $pass = $userDao->generate_password('12345678');
         // var_dump("pass: [".$pass."]");
+        
         $start_date = '';
         $end_date = '';
         if(isset($_GET["start_date"]) && isset($_GET["end_date"])) {
@@ -588,14 +592,12 @@ if (isset($_GET["method"]) && $_GET["method"] == "find_all") {
                 echo json_encode($arr);
                 return;
             }
+        } else if(isset($_GET["customer_id"])) {
+            $customer_id = $_GET["customer_id"];
         }
         $sku = '';
         if(isset($_GET["sku"])) {
             $sku = $_GET["sku"];
-        }
-//        $customer_id = '';
-        if(isset($_GET["customer_id"])) {
-            $customer_id = $_GET["customer_id"];
         }
         $type = '';
         if(isset($_GET["type"])) {

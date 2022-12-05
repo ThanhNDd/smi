@@ -1,6 +1,12 @@
 <?php
+
 class DBConnect {
-    private $db = "cudwlevvhosting_online";
+    // private $db = "cudwlevvhosting_online";
+    // private $db = "cudwlevvhosting_admin2";
+    private $db = "cudwlevvhosting_smi";
+    // private $db = "online";
+    // private $db = "admin";
+    // private $db = "shopmein";
     private $host = "127.0.0.1";
     private $user = "root";
 //    private $user = "smi";
@@ -14,7 +20,7 @@ class DBConnect {
     // private $pass = "";
     // private $conn;
 
-    function DBConnect()
+    function __construct()
     {
         $this->conn = $this->open_connection();
     }

@@ -7,7 +7,7 @@ class UserDAO
     function getAllStaff()
     {
         try {
-            $sql = "SELECT username, display_name FROM smi_user";
+            $sql = "SELECT username, display_name FROM smi_user where active = true";
             $result = mysqli_query($this->conn, $sql);
             $data = array();
             foreach ($result as $k => $row) {
@@ -26,7 +26,7 @@ class UserDAO
     function find_user($username, $password)
     {
         try {
-            $sql = "SELECT * FROM smi_user WHERE username = '$username'";
+            $sql = "SELECT * FROM smi_user WHERE username = '$username' and active = true";
             $result = mysqli_query($this->conn, $sql);
             $user = mysqli_fetch_array($result);
             $pwd =  $user['password'];

@@ -21,11 +21,13 @@ if (isset($_POST["method"]) && $_POST["method"] == "exportOrderJT") {
 	$highestRow = $sheet->getHighestRow();
 	$start_row = 10;
 	for ($i = 0; $i < count($data); $i++){
+		$order_value = "";
 		$payment_type = intval($data[$i]["payment_type"]);
 		if($payment_type == 0) {
 			$total_checkout = str_replace(",", "", $data[$i]["total_checkout"]);
 		} else {
 			$total_checkout = 0;
+			$order_value = str_replace(",", "", $data[$i]["total_checkout"]);
 		}
 		$sheet->getCell('A' . $start_row)->setValue($data[$i]["order_id"]);
 		$sheet->getCell('B' . $start_row)->setValue($data[$i]["customer_name"]);
@@ -38,13 +40,14 @@ if (isset($_POST["method"]) && $_POST["method"] == "exportOrderJT") {
 		$sheet->getCell('I' . $start_row)->setValue("Hàng hóa");
 		$sheet->getCell('J' . $start_row)->setValue("0.5");
 		$sheet->getCell('K' . $start_row)->setValue("1");
-		$sheet->getCell('L' . $start_row)->setValue("");
+		$sheet->getCell('L' . $start_row)->setValue($order_value);
 		$sheet->getCell('M' . $start_row)->setValue($total_checkout);
 		$sheet->getCell('N' . $start_row)->setValue("");
 		$sheet->getCell('O' . $start_row)->setValue("x");
-		$sheet->getCell('P' . $start_row)->setValue("EXPRESS");
-		$sheet->getCell('Q' . $start_row)->setValue("PP_PM");
-		$sheet->getCell('R' . $start_row)->setValue("Cho khách xem hàng;Không giao được liên hệ SĐT shop, không tự ý huỷ đơn;");
+		$sheet->getCell('P' . $start_row)->setValue("x");
+		$sheet->getCell('Q' . $start_row)->setValue("EXPRESS");
+		$sheet->getCell('R' . $start_row)->setValue("PP_PM");
+		$sheet->getCell('S' . $start_row)->setValue("Cho khách xem và thử hàng;Không giao được liên hệ SĐT shop, không tự ý chuyển hoàn;");
 		$start_row++;
 	}
 

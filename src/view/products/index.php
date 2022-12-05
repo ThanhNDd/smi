@@ -67,7 +67,7 @@ Common::authen();
         }
 
         input[type=text], input[type=number], .select2-container--bootstrap4 .select2-selection {
-            border-radius: 0 !important;
+/*            border-radius: 0 !important;*/
             margin: 0 !important;
         }
 
@@ -103,13 +103,34 @@ Common::authen();
             width: 86%;
         }
         .select_material label {
-            margin-bottom: 0 !important;
+            margin-bottom: 4px !important;
         }
         .select_material .twitter-typeahead {
             margin-top: 8px !important;
         }
         table#product_datatable {
             width: 100% !important;
+        }
+        .img-variant {
+            width: 50px;
+            border: 2px solid white;
+            border-radius: 5px;
+        }
+        /*.img-variant:hover, img#thumbnail:hover {
+            transform: scale(3);
+            position: relative;
+            left: 50px;
+            top: 62px;
+        }*/
+        img#thumbnail {
+            width: 70px !important;
+            border: 2px solid white;
+            border-radius: 5px;
+        }
+        .item-list-color {
+            display: inline-block;
+            width: 100%;
+            margin-bottom: 15px;
         }
     </style>
 </head>
@@ -162,29 +183,35 @@ Common::authen();
                     </section>
                 </div>
                 <div class="row col-md-12 mt-2 ml-3">
-                    <button class="btn btn-info expandall" id="expandall">Expand all</button>
+                    <!-- <button class="btn btn-info expandall" id="expandall">Expand all</button>
+                    <button class="btn btn-danger ml-3" id="refactorProductID">Cập nhật Product</button>
+                    <button class="btn btn-danger ml-3" id="refactorOrderID">Cập nhật Order</button>
+                    <button class="btn btn-danger ml-3" id="refactorCustomerID">Cập nhật Customer</button>
+                    <button class="btn btn-danger ml-3" id="refactorSKU">Cập nhật SKU</button> -->
+                    <!-- <button class="btn btn-danger ml-3" id="refactorOrderOnline">Cập nhật Order Online</button>
+                    <button class="btn btn-danger ml-3" id="refactorProductOnline">Cập nhật Product Online</button>
+                    <button class="btn btn-danger ml-3" id="refactorCustomerOnline">Cập nhật Customer Online</button> -->
                     <!-- <a href="<?php Common::getPath() ?>src/view/batch/updateQuantityShopee.php" type="button" class="btn btn-success btn-flat ml-2" id="updateShopee">Cập nhật Shopee</a> -->
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body m-3">
-                    <table id="product_datatable" class="table table-bordered table-striped">
+                    <table id="product_datatable" class="table table-hovered table-striped">
                         <thead>
                         <tr>
-                            <td class="center clearAll">
-                                <i class="fa fa-trash" aria-hidden="true" style="color: red;cursor: pointer;"></i>
-                            </td>
-                            <th class="">ID</th>
-                            <td>Hình ảnh</td>
+                            <td class="center"></td>
+                            <th class="hidden">ID</th>
+                            <td class="center">Hình ảnh</td>
                             <th>Tên sản phẩm</th>
                             <th>Giá bán lẻ</th>
                             <th>Số lượng</th>
                             <th>Giảm giá</th>
-                            <th>Giá sale</th>
-                            <th>Danh mục</th>
-                            <th>Giới tính</th>
-                            <th>Chất liệu</th>
-                            <th>Xuất xứ</th>
-                            <!-- <td>Publish</td> -->
+                            <!-- <th>Giá sale</th> -->
+                            <th class="hidden">Danh mục</th>
+                            <th class="hidden">Giới tính</th>
+                            <!-- <th>Chất liệu</th>
+                            <th>Xuất xứ</th> -->
+                            <td>Publish</td>
+                            <td>Nguồn</td>
                             <td>Hành động</td>
                         </tr>
                         </thead>
@@ -207,16 +234,25 @@ Common::authen();
 <div class="iframeArea hidden"></div>
 <?php require_once('../../common/footer.php'); ?>
 <script>
+    let product_type = "<?php echo (isset($_GET['type']) ? $_GET['type'] : '') ?>";
     let table;
     let dataUpdateQuantity = [];
     $(document).ready(function () {
-        set_title("Danh sách sản phẩm");
+        if(product_type) {
+            set_title("Danh sách sản phẩm online");
+            $(".product-create").remove();
+        } else {
+            set_title("Danh sách sản phẩm");
+        }
+
+
+        
         count_out_of_stock();
 
-        $('#product_datatable thead th').each( function () {
-            var title = $(this).text();
-            $(this).html( '<input type="text" class="form-control" placeholder="'+title+'" />' );
-        });
+        // $('#product_datatable thead th').each( function () {
+        //     var title = $(this).text();
+        //     $(this).html( '<input type="text" class="form-control" placeholder="'+title+'" />' );
+        // });
 
         let operator = "<?php echo (isset($_GET['operator']) ? $_GET['operator'] : '=') ?>";
         $("#search_operator").val(operator);
@@ -334,8 +370,81 @@ Common::authen();
         });
     
         // getDataForChatBot();
-
+        // refactorProductID();
+        // refactorOrderID();
+        // refactorCustomerID();
+        // refactorSKU();
+        refactorOrderOnline();
+        refactorProductOnline();
+        refactorCustomerOnline();
     });
+    
+    function refactorCustomerOnline() {
+        $("#refactorCustomerOnline").click(function(){
+            refactorID("CUSTOMER_ONLINE");
+        });
+    }
+
+    function refactorProductOnline() {
+        $("#refactorProductOnline").click(function(){
+            refactorID("PRODUCT_ONLINE");
+        });
+    }
+    
+    function refactorOrderOnline() {
+        $("#refactorOrderOnline").click(function(){
+            refactorID("ORDER_ONLINE");
+        });
+    }
+
+    function refactorSKU() {
+        $("#refactorSKU").click(function(){
+            refactorID("SKU");
+        });
+    }
+
+    function refactorCustomerID() {
+        $("#refactorCustomerID").click(function(){
+            refactorID("CUSTOMER");
+        });
+    }
+
+    function refactorProductID() {
+        $("#refactorProductID").click(function(){
+            refactorID("PRODUCT");
+        });
+    }
+
+    function refactorOrderID() {
+        $("#refactorOrderID").click(function(){
+            refactorID("ORDER");
+        });
+    }
+
+    function refactorID(update_type) {
+        $.ajax({
+            url: '<?php Common::getPath() ?>src/controller/batch/RefactorIDController.php',
+            type: "POST",
+            dataType: "json",
+            data: {
+                method: "refactorID",
+                update_type: update_type
+            },
+            success: function (res) {
+                console.log(res);
+                toastr.success('Cập nhật thành công.');
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                })
+            }
+        });
+    }
 
     function create_url() {
         let url = window.location.href;
@@ -409,6 +518,7 @@ Common::authen();
     }
 
     function generate_datatable() {
+
         if ($.fn.dataTable.isDataTable('#product_datatable')) {
             let dt =  $('#product_datatable').DataTable();
             dt.destroy();
@@ -451,12 +561,13 @@ Common::authen();
                 },
                 {
                     "data": "product_id",
-                    "className": '',
+                    "className": 'hidden',
                     width: "5px"
                 },
                 {
                     "data": format_image,
-                    width: "70px"
+                    "width": "70px",
+                    "class": "center"
                 },
                 {
                     "data": format_name,
@@ -473,51 +584,60 @@ Common::authen();
                 },
                 {
                     "data": format_discount,
-                    width: "50px"
+                    width: "100px"
                 },
-                {
-                    "data": format_discount_display,
-                    width: "50px"
-                },
+                // {
+                //     "data": format_discount_display,
+                //     width: "100px"
+                // },
                 {
                     "data": format_category,
+                    "className": 'hidden',
                     width: "50px"
                 },
                 {
                     "data": format_gender,
-                    width: "50px"
-                },
-                {
-                    "data": "material",
-                    width: "50px"
-                },
-                {
-                    "data": format_origin,
+                    "className": 'hidden',
                     width: "50px"
                 },
                 // {
-                //     "data": format_publish,
+                //     "data": "material",
+                //     width: "50px"
+                // },
+                // {
+                //     "data": format_origin,
                 //     width: "50px"
                 // },
                 {
+                    "data": format_publish,
+                    "className": product_type ? 'hidden' : '',
+                    width: "50px"
+                },
+                {
+                    "data": "system",
+                    "className": product_type ? 'hidden' : '',
+                    width: "50px"
+                },
+                {
                     "data": format_action,
+                    "className": "center",
                     width: "50px"
                 }
             ],
             "lengthMenu": [[200, 500], [200, 500]]
         });
         
-        $("#expandall").click(function () {
-            let cls = $(this).attr("class");
-            if(cls.indexOf('expandall') > -1) {
-                $(this).removeClass('expandall');
-                $(this).html('Collapse all');
-            } else {
-                $(this).addClass('expandall');
-                $(this).html('Expand all');
-            }
-            table.rows(':not(.parent)').nodes().to$().find('td:first-child').trigger('click');
-        });
+        // $("#expandall").click(function () {
+        //     let cls = $(this).attr("class");
+        //     if(cls.indexOf('expandall') > -1) {
+        //         $(this).removeClass('expandall');
+        //         $(this).html('Collapse all');
+        //     } else {
+        //         $(this).addClass('expandall');
+        //         $(this).html('Expand all');
+        //     }
+        //     table.rows(':not(.parent)').nodes().to$().find('td:first-child').trigger('click');
+        // });
 
         // Add event listener for opening and closing details
         $('#product_datatable tbody').on('click', '.details-control', function (event) {
@@ -570,12 +690,12 @@ Common::authen();
         });
 
         $('#product_datatable tbody').on('click', '.edit_product', function () {
+            let table =  $('#product_datatable').DataTable();
             let tr = $(this).closest('tr');
             let td = tr.find("td");
-            let product_id = $(td[1]).text();
-            // clear();
-            // open_modal();
-            // add_new_product();
+            let row = table.row(tr);
+            let product_id = row.data().product_id;
+
             $.ajax({
                 url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
                 type: "POST",
@@ -614,29 +734,31 @@ Common::authen();
                     }
 
                     // $(".select_material").html("<label for=\"select_material\">Chất liệu:</label><input id='select_material' class=\"form-control\" type=\"text\" placeholder=\"Chọn chất liệu\" autocomplete=\"off\" spellcheck=\"false\">");
-                    $('#select_material').typeahead({
-                        hint: true,
-                        highlight: true,
-                        minLength: 1
-                    },
-                    {
-                        name: 'size',
-                        source: substringMatcher(materials),
-                        limit: 10
-                    });
-                    setTimeout(function(){
-                        if(arr[0].material) {
-                            $('#select_material').typeahead('val', arr[0].material);
-                        }
-                    },200);
+                    // $('#select_material').typeahead({
+                    //     hint: true,
+                    //     highlight: true,
+                    //     minLength: 1
+                    // },
+                    // {
+                    //     name: 'size',
+                    //     source: substringMatcher(materials),
+                    //     limit: 10
+                    // });
+                    // setTimeout(function(){
+                    //     if(arr[0].material) {
+                    //         $('#select_material').typeahead('val', arr[0].material);
+                    //     }
+                    // },200);
 
                     let color = arr[0].colors;
                     for(let i=0; i<color.length; i++) {
-                        add_color(color[i]);
+                        let c = `${color[i]}`;
+                        add_color(c.trim());
                     }
                     let size = arr[0].sizes;
                     for(let i=0; i<size.length; i++) {
-                        add_size(size[i]);
+                        let s = `${size[i]}`;
+                        add_size(s.trim());
                     }
 
                     let image = arr[0].image;
@@ -697,6 +819,51 @@ Common::authen();
                         text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
                     });
                     hide_loading();
+                }
+            });
+        });
+
+        $('#product_datatable tbody').on('click', '.delete_product', function () {
+            let table =  $('#product_datatable').DataTable();
+            let tr = $(this).closest('tr');
+            let td = tr.find("td");
+            let row = table.row(tr);
+            let product_id = row.data().product_id;
+
+            Swal.fire({
+                title: 'Bạn có chắc chắn muốn xóa sản phẩm này?',
+                text: "",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ok'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            method: "delete_product",
+                            product_id: product_id
+                        },
+                        success: function (res) {
+                            toastr.success('Sản phẩm đã được xoá thành công.');
+                            let table = $('#product_datatable').DataTable();
+                            table.ajax.reload();
+                        },
+                        error: function (data, errorThrown) {
+                            console.log(data.responseText);
+                            console.log(errorThrown);
+                            Swal.fire({
+                                type: 'error',
+                                title: 'Đã xảy ra lỗi',
+                                text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                            });
+                            hide_loading();
+                        }
+                    });
                 }
             });
         });
@@ -916,11 +1083,47 @@ Common::authen();
                 }
             });
         });
-
-        $('#product_datatable tbody').on('click', '.out_of_stock', function () {
+        
+        $('#product_datatable tbody').on('click', '.update_visibility', function () {
+            let table =  $('#product_datatable').DataTable();
             let tr = $(this).closest('tr');
             let td = tr.find("td");
-            let product_id = $(td[1]).text();
+            let row = table.row(tr);
+            let product_id = row.data().product_id;
+
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected');
+            } else {
+                $('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+            $(this).prop("disabled", true);
+            let that = this;
+            Swal.fire({
+                title: 'Xác nhận',
+                text: "Bạn chắc chắn muốn ẩn sản phẩm này?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Đồng ý'
+            }).then((result) => {
+                if (result.value) {
+                    update_visibility(product_id);
+                } else {
+                    $(that).prop("disabled", '');
+                }
+            })
+            
+        });
+
+        $('#product_datatable tbody').on('click', '.out_of_stock', function () {
+            let table =  $('#product_datatable').DataTable();
+            let tr = $(this).closest('tr');
+            let td = tr.find("td");
+            let row = table.row(tr);
+            let product_id = row.data().product_id;
+
             if ($(this).hasClass('selected')) {
                 $(this).removeClass('selected');
             } else {
@@ -955,10 +1158,26 @@ Common::authen();
         //     });
         // });
 
-        $('#product_datatable tbody').on('click', '.website-publish', function () {
+        $('#product_datatable tbody').on('click', '.online_for_sale', function () {
+            let table =  $('#product_datatable').DataTable();
             let tr = $(this).closest('tr');
             let td = tr.find("td");
-            let product_id = $(td[1]).text();
+            let row = table.row(tr);
+            let product_id = row.data().product_id;
+            let checked = $(this).parent().children('input').prop('checked');
+            let product_type = "SHOP";
+            if(checked) {
+                product_type = "ONLINE";
+            }
+            update_product_type(product_id, product_type);
+        });
+
+        $('#product_datatable tbody').on('click', '.website-publish', function () {
+            let table =  $('#product_datatable').DataTable();
+            let tr = $(this).closest('tr');
+            let td = tr.find("td");
+            let row = table.row(tr);
+            let product_id = row.data().product_id;
             let checked = $(this).parent().children('input').prop('checked');
             let status = 0;
             if(checked) {
@@ -968,9 +1187,11 @@ Common::authen();
         });
 
         $('#product_datatable tbody').on('click', '.facebook-publish', function () {
+            let table =  $('#product_datatable').DataTable();
             let tr = $(this).closest('tr');
             let td = tr.find("td");
-            let product_id = $(td[1]).text();
+            let row = table.row(tr);
+            let product_id = row.data().product_id;
             let checked = $(this).parent().children('input').prop('checked');
             let status = 0;
             if(checked) {
@@ -980,9 +1201,11 @@ Common::authen();
         });
 
         $('#product_datatable tbody').on('click', '.shopee-publish', function () {
+            let table =  $('#product_datatable').DataTable();
             let tr = $(this).closest('tr');
             let td = tr.find("td");
-            let product_id = $(td[1]).text();
+            let row = table.row(tr);
+            let product_id = row.data().product_id;
             let checked = $(this).parent().children('input').prop('checked');
             let status = 0;
             if(checked) {
@@ -993,9 +1216,11 @@ Common::authen();
 
 
         $('#product_datatable tbody').on('click', '.feature-publish', function () {
+            let table =  $('#product_datatable').DataTable();
             let tr = $(this).closest('tr');
             let td = tr.find("td");
-            let product_id = $(td[1]).text();
+            let row = table.row(tr);
+            let product_id = row.data().product_id;
             let checked = $(this).parent().children('input').prop('checked');
             let status = 0;
             if(checked) {
@@ -1005,13 +1230,78 @@ Common::authen();
         });
 
         $('#product_datatable tbody').on('click', '.edit-quantity', function () {
+            let table =  $('#product_datatable').DataTable();
             let tr = $(this).closest('tr');
             let td = tr.find("td");
-            let product_id = $(td[1]).text();
-            let product_name = $(td[3]).text();
+            let row = table.row(tr);
+            let product_id = row.data().product_id;
+            let product_name = row.data().name;
             edit_quantity(product_id, product_name);
         });
 
+
+        $('#product_datatable tbody').on('click', '.show-more-images', function () {
+            let table =  $('#product_datatable').DataTable();
+            let tr = $(this).closest('tr');
+            let td = tr.find("td");
+            let row = table.row(tr);
+            let images = row.data().image;
+            images = JSON.parse(images);
+            if(images.length == 0) {
+                let img = {
+                    src: row.data().variant_image,
+                    type: ""
+                };
+                images.push(img);
+            }
+            show_more_images(images);
+        });
+
+    }
+
+    async function show_more_images(images) {
+        console.log("images show: ", images);
+        $("#modalShowMoreImages").remove();
+            let carousel = `<div id='carousel' class='carousel slide' data-ride='carousel'>
+                                    <ol class='carousel-indicators'>`;
+                                    $.each(images, function(k, v) {
+                                        carousel += `<li data-target='#carousel' data-slide-to='${k}' class='${k == 0 ? 'active' : ''}' ></li>`;
+                                    });
+                    carousel += `</ol>
+                                    <div class='carousel-inner'>`;
+                                    $.each(images, function(k, v) {
+                                        carousel += `<div class='carousel-item ${k == 0 ? 'active' : ''}'>
+                                                            <img class='img-size' src='${v.src}' style="width: 100%"/>
+                                                        </div>`;  
+                                    });
+                    carousel += `</div>
+                                    <a class='carousel-control-prev' href='#carousel' role='button' data-slide='prev' >
+                                      <span class='carousel-control-prev-icon' aria-hidden='true' ></span>
+                                      <span class='sr-only'>Previous</span>
+                                    </a>
+                                    <a class='carousel-control-next' href='#carousel' role='button' data-slide='next' >
+                                      <span class='carousel-control-next-icon' aria-hidden='true' ></span>
+                                      <span class='sr-only'>Next</span>
+                                    </a>
+                                  </div>`;
+        
+        let contentModal = `<div class="modal fade" id="modalShowMoreImages" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-body">
+                                  ${carousel}
+                                </div>
+                              </div>
+                            </div>`;
+        $("body").append(contentModal);
+        $("#modalShowMoreImages").modal();
+        // $("#largeModal").on('shown.bs.modal', function(){
+        //     $("#carouselExampleIndicators").carousel();
+        // });   
+    }
+
+    function randstr(prefix = "") {
+        return Math.random().toString(36).replace('0.',prefix || '');
     }
 
     function edit_quantity(productId, productName) {
@@ -1057,9 +1347,9 @@ Common::authen();
                                                                             <input type="hidden" class="form-control" value="${v.sku}" />
                                                                         </td>`;
                                                                         if(k == 0 ) {
-                                                        contentModal += `<td rowspan="${value.length}">
+                                                        contentModal += `<td rowspan="${value.length}" class="center">
                                                                             <a href="${v.image}" target="_blank">
-                                                                                <img src="${v.image}" width="100px" id="thumbnail" onerror="this.onerror=null;this.src='http://localhost/online/dist/img/img_err.jpg'">
+                                                                                <img src="${v.image}" id="thumbnail" onerror="this.onerror=null;this.src='http://localhost/online/dist/img/img_err.jpg'">
                                                                             </a>
                                                                         </td>
                                                                         <td rowspan="${value.length}" style="white-space: nowrap;">${v.color}</td>`;
@@ -1116,13 +1406,13 @@ Common::authen();
                     }
                 });
             });
-            console.log("dataUpdateQuantity: ", dataUpdateQuantity);
+            // console.log("dataUpdateQuantity: ", dataUpdateQuantity);
         });
     }
 
     function btnUpdateQuantityClick() {
         $("#updateQuantity").click(function(){
-            console.log("dataUpdateQuantity: ", dataUpdateQuantity);
+            // console.log("dataUpdateQuantity: ", dataUpdateQuantity);
             Swal.fire({
                 title: 'Bạn có chắc chắn muốn cập nhật tồn kho sản phẩm này?',
                 text: "",
@@ -1136,6 +1426,32 @@ Common::authen();
                     updateQuantity();
                 }
             });
+        });
+    }
+
+    
+    function update_visibility(product_id) {
+        $.ajax({
+            url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
+            type: "POST",
+            dataType: "json",
+            data: {
+                method: "update_visibility",
+                product_id: product_id
+            },
+            success: function (res) {
+                toastr.success('Cập nhật thành công!');
+                $("#product_datatable").DataTable().ajax.reload();
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                })
+            }
         });
     }
 
@@ -1153,6 +1469,32 @@ Common::authen();
                 table.ajax.reload();
                 toastr.success('Cập nhật thành công!');
                 $("#modalEditQuantity").modal("hide");
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                });
+                hide_loading();
+            }
+        });
+    }
+
+    function update_product_type(product_id, product_type) {
+        $.ajax({
+            url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
+            type: "POST",
+            dataType: "json",
+            data: {
+                method: "update_product_type",
+                product_id: product_id,
+                product_type: product_type
+            },
+            success: function () {
+                toastr.success('Cập nhật thành công!');
             },
             error: function (data, errorThrown) {
                 console.log(data.responseText);
@@ -1219,11 +1561,8 @@ Common::authen();
     function format_publish(data) {
         let product_id = data.product_id;
         let social_publish = JSON.parse(data.social_publish);
-        let website = social_publish.website === 0 ? '' : 'checked';
-        let btn = '<div class="custom-control custom-switch">' +
-            '<input type="checkbox" class="custom-control-input website-publish" id="Website_'+product_id+'" '+website+'>' +
-            '<label class="custom-control-label" for="Website_'+product_id+'">Website</label>' +
-            '</div>';
+        let btn = "";
+        
         let facebook = social_publish.facebook === 0 ? '' : 'checked';
         btn += '<div class="custom-control custom-switch">' +
             '<input type="checkbox" class="custom-control-input facebook-publish" id="facebook_'+product_id+'" '+facebook+'>' +
@@ -1234,10 +1573,20 @@ Common::authen();
             '<input type="checkbox" class="custom-control-input shopee-publish" id="shopee_'+product_id+'" '+shopee+'>' +
             '<label class="custom-control-label" for="shopee_'+product_id+'">Shopee</label>' +
             '</div>';
-        let feature = social_publish.feature ? (social_publish.feature === 0 ? '' : 'checked') : '';
+        let website = social_publish.website === 0 ? '' : 'checked';
         btn += '<div class="custom-control custom-switch">' +
-            '<input type="checkbox" class="custom-control-input feature-publish" id="feature_'+product_id+'" '+feature+'>' +
-            '<label class="custom-control-label" for="feature_'+product_id+'">Nổi bật</label>' +
+            '<input type="checkbox" class="custom-control-input website-publish" id="Website_'+product_id+'" '+website+'>' +
+            '<label class="custom-control-label" for="Website_'+product_id+'">Website</label>' +
+            '</div>';
+        // let feature = social_publish.feature ? (social_publish.feature === 0 ? '' : 'checked') : '';
+        // btn += '<div class="custom-control custom-switch">' +
+        //     '<input type="checkbox" class="custom-control-input feature-publish" id="feature_'+product_id+'" '+feature+'>' +
+        //     '<label class="custom-control-label" for="feature_'+product_id+'">Nổi bật</label>' +
+        //     '</div>';
+        let online_for_sale = data.product_type == "SHOP" ? '' : 'checked';
+        btn += '<div class="custom-control custom-switch">' +
+            '<input type="checkbox" class="custom-control-input online_for_sale" id="Online_'+product_id+'" '+online_for_sale+'>' +
+            '<label class="custom-control-label" for="Online_'+product_id+'">Bán Online</label>' +
             '</div>';
         return btn;
     }
@@ -1312,6 +1661,24 @@ Common::authen();
         return `${totalQty} <br /><i class="fa fa-edit text-info c-pointer edit-quantity"></i>`;
     }
 
+    // function format_discount(data) {
+    //     let discount = data.discount;
+    //     if (!discount || discount === "0") {
+    //         discount = "";
+    //     } else {
+    //         if (discount < 100) {
+    //             discount = discount + "%";
+    //         } else {
+    //             discount = formatNumber(discount);
+    //         }
+    //     }
+    //     let retail = data.retail;
+    //     let profit = data.profit;
+    //     let product_id = data.product_id;
+    //     return '<input type="text" onchange="onchange_discount(this, \'' + profit + '\', \'' + retail + '\')" onblur="onchange_discount(this, \'' + profit + '\', \'' + retail + '\')" class="form-control col-md-12 float-left" value="' + discount + '"/>&nbsp;' +
+    //         '<button type="button" class="btn bg-gradient-info btn-sm mt-1" onclick="update_discount(this, ' + product_id + ')" title="Lưu khuyến mãi"><i class="fas fa-save"></i></button>';
+    // }
+
     function format_discount(data) {
         let discount = data.discount;
         if (!discount || discount === "0") {
@@ -1326,8 +1693,19 @@ Common::authen();
         let retail = data.retail;
         let profit = data.profit;
         let product_id = data.product_id;
-        return '<input type="text" onchange="onchange_discount(this, \'' + profit + '\', \'' + retail + '\')" onblur="onchange_discount(this, \'' + profit + '\', \'' + retail + '\')" class="form-control col-md-12 float-left" value="' + discount + '"/>&nbsp;' +
-            '<button type="button" class="btn bg-gradient-info btn-sm mt-1" onclick="update_discount(this, ' + product_id + ')" title="Lưu khuyến mãi"><i class="fas fa-save"></i></button>';
+        // return '<input type="text" onchange="onchange_discount(this, \'' + profit + '\', \'' + retail + '\')" onblur="onchange_discount(this, \'' + profit + '\', \'' + retail + '\')" class="form-control col-md-12 float-left" value="' + discount + '"/>&nbsp;' +
+        //     '<button type="button" class="btn bg-gradient-info btn-sm mt-1" onclick="update_discount(this, ' + product_id + ')" title="Lưu khuyến mãi"><i class="fas fa-save"></i></button>';
+
+        return `<div class="input-group">
+                  <input type="text" class="form-control" onchange="onchange_discount(this, '${profit}', '${retail}')" value="${discount}"
+                  placeholder="Giảm giá">
+                  <div class="input-group-append">
+                    <button class="input-group-text btn btn-info" onclick="update_discount(this, ${product_id})">
+                        <i class="fas fa-save"></i>
+                    </button>
+                  </div>
+                </div>
+                ${format_discount_display(data)}`;
     }
 
     function onchange_discount(e, profit, retail) {
@@ -1357,7 +1735,7 @@ Common::authen();
         }
         let salePrice = '';
 
-        if (!isNaN(discount) && discount > 0) {
+        if (!isNaN(discount) && discount >= 0) {
             if (discount > 100) {
                 if(min_price > 0 || max_price > 0) {
                     profit = formatNumber(Math.round(min_profit - discount)) +" - "+formatNumber(Math.round(max_profit - discount));
@@ -1386,11 +1764,12 @@ Common::authen();
             $(e).addClass("is-invalid");
             $("#update_discount").prop("disabled", true);
         }
-        $(e).parent().next("td").html(formatNumber(salePrice)+'<br><small>'+formatNumber(profit)+'</small>');
+        // $(e).parent().parent().next("td").html(formatNumber(salePrice)+'<br><small>'+formatNumber(profit)+'</small>');
+        $(e).parent().append(`<div class="w-100 mt-2">${formatNumber(salePrice)}<br><small>${formatNumber(profit)}</small><div>`);
     }
 
     function update_discount(e, product_id) {
-        let discount = $(e).parent().find("input").val();
+        let discount = $(e).parent().parent().find("input").val();
         discount = replaceComma(discount);
         discount = replacePercent(discount);
         if (!discount || discount < 0) {
@@ -1426,7 +1805,7 @@ Common::authen();
         generate_datatable();
     }
 
-    function get_data_search(type) {
+    function get_data_search() {
         let quantity = $("#search_qty").val();
         let operator = $("#search_operator").val();
         let sku = $("#search_sku").val();
@@ -1440,6 +1819,7 @@ Common::authen();
             quantity : quantity.trim(),
             operator : operator.trim(),
             sku : sku.trim(),
+            product_type: product_type.toLowerCase() ?? ""
         }
         // if(type === 'qty') {
         //     return {
@@ -1666,12 +2046,29 @@ Common::authen();
     }
 
     function format_action(data) {
-        if(IS_ADMIN) {
-            let btn =  '<button type="button" class="btn bg-gradient-info btn-sm edit_product m-1" title="Sửa sản phẩm"><i class="fas fa-edit"></i></button>&nbsp;'
-                + '<button type="button" class="btn bg-gradient-danger btn-sm out_of_stock m-1" title="Cập nhật hết hàng"><i class="fas fa-eye-slash"></i></button>';
-            return btn;
-        }
-        return null;
+            // let btn =  `<button type="button" class="btn bg-gradient-info btn-sm edit_product m-1" title="Sửa sản phẩm">
+            //                 <i class="fas fa-edit"></i>
+            //             </button>&nbsp;
+            //             <button type="button" class="btn bg-gradient-danger btn-sm out_of_stock m-1" title="Cập nhật hết hàng">
+            //                 <i class="fas fa-eye-slash"></i>
+            //             </button>
+            //             </button>`;
+            if(IS_ADMIN) {
+                return `<div class="btn-group">
+                          <button type="button" class="btn btn-info edit_product" title="Sửa sản phẩm"><i class="fas fa-edit"></i></button>
+                          <button type="button" class="btn btn-danger out_of_stock" title="Cập nhật hết hàng"><i class="fa fa-times"></i></button>
+                          <button type="button" class="btn btn-secondary update_visibility" title="Ẩn sản phẩm"><i class="fas fa-eye-slash"></i></button>
+                        </div>`;
+            } else {
+                return `<div class="btn-group">
+                          <button type="button" class="btn btn-danger out_of_stock" title="Cập nhật hết hàng"><i class="fa fa-times"></i></button>
+                          <button type="button" class="btn btn-secondary update_visibility" title="Ẩn sản phẩm"><i class="fas fa-eye-slash"></i></button>
+                        </div>`;
+            }
+
+        // &nbsp;
+        //                 <button type="button" class="btn bg-gradient-danger btn-sm delete_product m-1" title="Xoá sản phẩm">
+        //                     <i class="fas fa-trash"></i>
     }
 
     function format_intomoney(data) {
@@ -1686,16 +2083,17 @@ Common::authen();
     }
 
     function format_name(data) {
-        if(data.link == null || data.link == "") {
-            return data.name;
+        if(!IS_ADMIN || data.link == null || data.link == "") {
+            return data.name + `<br /> <small>ID: ${data.product_id}</small>`;
         } else {
-            return "<a href='" + data.link + "' target='_blank'>" + data.name + "</a>";
+            return "<a href='" + data.link + "' target='_blank'>" + data.name + "</a>" + `<br /> <small>ID: ${data.product_id}</small>`;
         }
     }
 
     function format_image(data) {
         if(data.variant_image) {
-            return "<a href='"+data.variant_image+"' target='_blank'><img src='" + data.variant_image + "' width='100px' id='thumbnail' onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"'></a>";
+            // return "<a href='"+data.variant_image+"' target='_blank'><img src='" + data.variant_image + "' id='thumbnail' onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"'></a>";
+            return `<img src='${data.variant_image}' id='thumbnail' class="c-pointer show-more-images" onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"'>`;
         } else {
             let image = !data.image || data.image === '[]' ? data.variant_image : data.image;
             try {
@@ -1708,9 +2106,11 @@ Common::authen();
                         src = '<?php Common::path_img() ?>' + src;
                     }
                 }
-                return "<a href='"+src+"' target='_blank'><img src='" + src + "' width='100px' id='thumbnail' onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"'></a>";
+                // return "<a href='"+src+"' target='_blank'><img src='" + src + "' width='100px' id='thumbnail' onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"'></a>";
+                return `<img src='${src}' width='100px' id='thumbnail' class="c-pointer show-more-images" onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"'>`;
             } catch (e) {
-                return "<a href='"+image+"' target='_blank'><img src='" + image + "' width='100px' id='thumbnail' onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"'></a>";
+                // return "<a href='"+image+"' target='_blank'><img src='" + image + "' width='100px' id='thumbnail' onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"'></a>";
+                return `<img src='${image}' width='100px' id='thumbnail' class="c-pointer show-more-images" onerror='this.onerror=null;this.src=\"<?php Common::image_error()?>\"'>`;
             }
         }
     }
@@ -1733,7 +2133,7 @@ Common::authen();
         table += '<thead>' +
             '<tr>' +
             '<th style="width: 50px;" class="center"><input type="checkbox" id="selectall" onclick="checkAll(this)"></th>' +
-            '<th style="width: 100px;">Hình ảnh</th>' +
+            '<th style="width: 100px;" class="center">Hình ảnh</th>' +
             '<th style="width: 80px;">Màu</th>' +
             '<th style="width: 150px;">Mã sản phẩm</th>' +
             '<th style="width: 350px;">Size</th>' +
@@ -1762,7 +2162,10 @@ Common::authen();
                 table += '<input type="hidden" class="product-id-' + variations[i][j].sku + '" value="' + variations[i][j].product_id + '">';
                 table += '<td class="center"><input type="checkbox" id="' + variations[i][j].sku + '" onclick="check(this)" '+(variations[i][j].quantity === "0" ? "disabled" : "")+'></td>';
                 if(j === 0) {
-                    table += "<td rowspan=\""+variations[i].length+"\"><img onerror=\"this.onerror=null;this.src='<?php Common::image_error() ?>'\" width=\""+(width_img*len)+"\" src=\""+variations[i][j].image+"\" style=\"max-width: 70px;\"></td>";
+                    table += `<td rowspan="${variations[i].length}" class="center">
+                                <img onerror="this.onerror=null;this.src='<?php Common::image_error() ?>'" 
+                                width="${width_img*len}" src="${variations[i][j].image}" 
+                                class="img-variant"></td>`;
                     table += '<td rowspan="'+variations[i].length+'">' + variations[i][j].color + '</td>';
                 }
                 table += '<td>' + variations[i][j].sku + '</td>';
@@ -1789,9 +2192,9 @@ Common::authen();
                 }
                 table += `<td>${size}</td>`;
                 if(variations[i][j].quantity === "0") {
-                    table += '<td id="qty"><span class=\"text-danger\">Hết hàng</span></td>';
+                    table += '<td id="qty" class=" center"><span class=\"text-danger\">Hết hàng</span></td>';
                 } else if(variations[i][j].quantity > 0 && variations[i][j].quantity < 3) {
-                    table += '<td id="qty" class="bg-warning">' +
+                    table += '<td id="qty" class="bg-warning center">' +
                         '<span id="qty_'+variations[i][j].sku+'">'+variations[i][j].quantity+'</span>' +
                         '<input type="number" value="'+variations[i][j].quantity+'" class="hidden form-control" width="50px" id="text_qty_'+variations[i][j].sku+'" min="1" max="'+variations[i][j].quantity+'">' +
                         '</td>';
@@ -1801,12 +2204,12 @@ Common::authen();
                         '<input type="number" value="'+variations[i][j].quantity+'" class="hidden form-control" width="50px" id="text_qty_'+variations[i][j].sku+'" min="1" max="'+variations[i][j].quantity+'">' +
                         '</td>';
                 } else {    
-                    table += '<td id="qty">' +
+                    table += '<td id="qty" class="center">' +
                         '<span id="qty_'+variations[i][j].sku+'">'+variations[i][j].quantity+'</span>' +
                         '<input type="number" value="'+variations[i][j].quantity+'" class="hidden form-control" width="50px" id="text_qty_'+variations[i][j].sku+'" min="1" max="'+variations[i][j].quantity+'">' +
                         '</td>';
                 }
-                table += '<td id="retail">' + variations[i][j].retail + '</td>';
+                table += '<td id="retail" class="right">' + variations[i][j].retail + '</td>';
                 let sale_price = '';
                 if(discount && discount > 0) {
                     if(discount < 100) {
@@ -1815,7 +2218,7 @@ Common::authen();
                         sale_price = Number(replaceComma(variations[i][j].retail)) - Number(discount);
                     }
                 }
-                table += '<td id="sale_price">' + formatNumber(sale_price) + '</td>';
+                table += '<td id="sale_price" class="right">' + formatNumber(sale_price) + '</td>';
                 table += `<td>${variations[i][j].length__ ? variations[i][j].length__ : ""}</td>`;
                 table += `<td>${variations[i][j].weight ? variations[i][j].weight : ""}</td>`;
                 table += `<td>${variations[i][j].height ? variations[i][j].height : ""}</td>`;

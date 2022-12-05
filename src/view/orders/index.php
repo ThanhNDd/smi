@@ -8,10 +8,13 @@ Common::authenIsNotAdminRole();
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="shortcut icon" type="image/x-icon" href="<?php Common::getPath() ?>dist/img/icon.png"/>
-    <title>Quản lý đơn hàng</title>
+    <title>Quản lý đơn hàng tại Shop</title>
     <?php require_once('../../common/css.php'); ?>
     <?php require_once('../../common/js.php'); ?>
     <style>
+        th, td {
+            white-space: nowrap;
+        }
 
         td.details-control {
             text-align: center;
@@ -57,10 +60,10 @@ Common::authenIsNotAdminRole();
                             </div>
                             <input type="text" class="form-control float-left" id="reservation">
                         </div>
-                        <div class="col-md-1 float-left d-inline-block mt-1">
+                        <div class="col-md-2 float-left d-inline-block mt-1">
                             <input type="text" class="form-control col-md-12" placeholder="Mã ĐH" id="search_order_id">
                         </div>
-                        <div class="col-md-1 float-left d-inline-block mt-1">
+                        <div class="col-md-2 float-left d-inline-block mt-1">
                             <input type="text" class="form-control col-md-12" placeholder="Mã KH" id="search_customer_id">
                         </div>
                         <div class="col-md-2 float-left d-inline-block mt-1">
@@ -70,7 +73,8 @@ Common::authenIsNotAdminRole();
                             <input type="text" class="form-control col-md-12" placeholder="Mã sản phẩm" id="search_sku">
                         </div>
                         <div class="col-md-1 float-right mt-1">
-                            <a href="javascript:void(0)" class="btn btn-sm btn-info order-create float-right">Tạo mới</a>
+                            <!-- <a href="javascript:void(0)" class="btn btn-sm btn-info order-create float-right" style="height: 38px;padding-top: 8px;">Tạo mới</a> -->
+                             <a href="<?php Common::getPath() ?>src/view/sales/" target="_blank" class="btn btn-sm btn-info float-right" style="height: 38px;padding-top: 8px;">Tạo mới</a>
                         </div>
                     </div>
                 </div>
@@ -81,17 +85,18 @@ Common::authenIsNotAdminRole();
                             <thead>
                             <tr>
                                 <th></th>
-                                <th class="w100">ID</th>
+                                <th>Mã Đơn Hàng</th>
                                 <!-- <th>Khách hàng</th> -->
                                 <!-- <th>Số điện thoại</th>
                                 <th>Địa chỉ</th> -->
                                 <!--  <th class="right">Phí ship</th> -->
                                 <!-- <th class="right">Chiết khấu</th> -->
+                                <th class="left">Khách hàng</th>
                                 <th class="right">Tổng tiền</th>
                                 <th class="center">Ngày mua hàng</th>
                                 <th class="left">Loại đơn</th>
                                 <th class="left">Thanh toán</th>
-                                <th class="left">Nguồn</th>
+                                <!-- <th class="left">Nguồn</th> -->
 <!--                                <th class="left">Trạng thái</th>-->
                                 <th class="left">Hành động</th>
                             </tr>
@@ -113,7 +118,7 @@ Common::authenIsNotAdminRole();
                                 <div class="col-md-6 col-sm-12 text-left">
                                     <span class="info-box-text">Tổng tiền</span>
                                     <span class="info-box-number">
-                                        <h5 class="total_money">0<sup>đ</sup></h5>
+                                        <h5 class="total_money">0&#8363;</h5>
                                      </span>
                                 </div>
                                 <div class="col-md-6 col-sm-12 text-left pl-0">
@@ -131,7 +136,7 @@ Common::authenIsNotAdminRole();
                                 <div class="col-md-6 col-sm-12 text-left">
                                     <span class="info-box-text">Shop</span>
                                     <span class="info-box-number">
-                                        <h5 class="total_on_shop">0<sup>đ</sup></h5>
+                                        <h5 class="total_on_shop">0&#8363;</h5>
                                      </span>
                                     <span class="info-box-text" id="percent_onshop"></span>
                                 </div>
@@ -152,7 +157,7 @@ Common::authenIsNotAdminRole();
                                 <div class="col-md-6 col-sm-12 text-left">
                                     <span class="info-box-text">Online</span>
                                     <span class="info-box-number">
-                                        <h5 class="total_online">0<sup>đ</sup></h5>
+                                        <h5 class="total_online">0&#8363;</h5>
                                      </span>
                                     <span class="info-box-text" id="percent_online"></span>
                                 </div>
@@ -171,7 +176,7 @@ Common::authenIsNotAdminRole();
                                 <div class="col-md-6 col-sm-12 text-left">
                                     <span class="info-box-text">Đổi hàng</span>
                                     <span class="info-box-number">
-                                        <h5 class="total_exchange">0<sup>đ</sup></h5>
+                                        <h5 class="total_exchange">0&#8363;</h5>
                                      </span>
                                     <span class="info-box-text" id="percent_exchange"></span>
                                 </div>
@@ -193,9 +198,7 @@ Common::authenIsNotAdminRole();
                             <div class="info-box-content">
                                 <span class="info-box-text">Tiền mặt</span>
                                 <span class="info-box-number">
-                                    <h5 class="total_cash">
-                                      <sup>đ</sup>
-                                    </h5>
+                                    <h5 class="total_cash">&#8363;</h5>
                                 </span>
                             </div>
                         </div>
@@ -208,24 +211,20 @@ Common::authenIsNotAdminRole();
                             <div class="info-box-content">
                                 <span class="info-box-text">Chuyển khoản</span>
                                 <span class="info-box-number">
-                                    <h5 class="total_transfer">
-                                        <sup>đ</sup>
-                                    </h5>
+                                    <h5 class="total_transfer">&#8363;</h5>
                                 </span>
                             </div>
                             <!-- /.info-box-content -->
                         </div>
                         <!-- /.info-box -->
                     </div>
-                    <div class="col-12 col-sm-12 col-md-12" style="display: block;">
+                    <div class="col-12 col-sm-12 col-md-12" style="display: block;" id="profit_block">
                         <div class="info-box mb-3">
                             <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-wallet"></i></span>
                             <div class="info-box-content">
                                 <span class="info-box-text" id="percent_profit"></span>
                                 <span class="info-box-number">
-                                    <h5 class="total_profit">
-                                      <sup>đ</sup>
-                                    </h5>
+                                    <h5 class="total_profit">&#8363;</h5>
                                 </span>
                             </div>
                             <!-- /.info-box-content -->
@@ -246,6 +245,7 @@ Common::authenIsNotAdminRole();
 <?php require_once ('../../common/footer.php'); ?>
 <script>
     let table;
+    let CURRENCY_SIGN = "&#8363;";
     $(document).ready(function () {
         // set title for page
         set_title("Danh sách đơn hàng");
@@ -476,21 +476,23 @@ Common::authenIsNotAdminRole();
             dataType: "json",
             data: get_data_search_info_total(type),
             success: function (res) {
-                $(".total_money").html((res.total_checkout ? res.total_checkout : 0) + "<sup>đ</sup>");
+                $(".total_money").html((res.total_checkout ? res.total_checkout : 0) + CURRENCY_SIGN);
                 $(".total_orders").html(res.count_total ? res.count_total : 0);
                 $(".total_products").html(res.total_product ? res.total_product : 0);
-                $(".total_on_shop").html((res.total_on_shop ? res.total_on_shop : 0) + "<sup>đ</sup>");
+                $(".total_on_shop").html((res.total_on_shop ? res.total_on_shop : 0) + CURRENCY_SIGN);
                 $(".count_on_shop").html(res.count_on_shop ? res.count_on_shop : 0);
                 $(".total_product_on_shop").html(res.total_product_on_shop ? res.total_product_on_shop : 0);
-                $(".total_online").html((res.total_online ? res.total_online : 0) + "<sup>đ</sup>");
+                $(".total_online").html((res.total_online ? res.total_online : 0) + CURRENCY_SIGN);
                 $(".count_online").html(res.count_online ? res.count_online : 0);
                 $(".total_product_online").html(res.total_product_online ? res.total_product_online : 0);
-                $(".total_exchange").html((res.total_exchange ? res.total_exchange : 0) + "<sup>đ</sup>");
+                $(".total_exchange").html((res.total_exchange ? res.total_exchange : 0) + CURRENCY_SIGN);
                 $(".count_exchange").html(res.count_exchange ? res.count_exchange : 0);
                 $(".total_product_exchange").html(res.total_product_exchange ? res.total_product_exchange : 0);
-                $(".total_cash").html((res.total_cash ? res.total_cash : 0) + "<sup>đ</sup>");
-                $(".total_transfer").html((res.total_transfer ? res.total_transfer : 0) + "<sup>đ</sup>");
-                $(".total_profit").html((res.total_profit ? res.total_profit : 0) + "<sup>đ</sup>");
+                $(".total_cash").html((res.total_cash ? res.total_cash : 0) + CURRENCY_SIGN);
+                $(".total_transfer").html((res.total_transfer ? res.total_transfer : 0) + CURRENCY_SIGN);
+                if(IS_ADMIN) {
+                    $(".total_profit").html((res.total_profit ? res.total_profit : 0) + CURRENCY_SIGN);
+                }
 
                 $("#percent_profit").html("");
                 $("#percent_onshop").html("");
@@ -500,7 +502,7 @@ Common::authenIsNotAdminRole();
                 let total_checkout = Number(replaceComma(res.total_checkout));
                 let total_profit = Number(replaceComma(res.total_profit));
                 let percent = ((total_profit/total_checkout) * 100).toFixed(2);
-                if(!isNaN(percent)) {
+                if(IS_ADMIN && !isNaN(percent)) {
                     $("#percent_profit").html(percent+"<sup>%</sup>");
                 }
                 let total_onshop = Number(replaceComma(res.total_on_shop));
@@ -517,6 +519,9 @@ Common::authenIsNotAdminRole();
                 let percent_exchange = ((total_exchange/total_checkout) * 100).toFixed(2);
                 if(!isNaN(percent_exchange)) {
                     $("#percent_exchange").html(percent_exchange+"<sup>%</sup>");
+                }
+                if(!IS_ADMIN) {
+                    $("#profit_block").remove();
                 }
             },
             error: function (data, errorThrown) {
@@ -548,7 +553,7 @@ Common::authenIsNotAdminRole();
             "dom": '<"top"flp<"clear">>rt<"bottom"p<"clear">>',
             searching: false,
             ordering: false,
-            scrollY: '50vh',
+            scrollY: '640px',
             scrollCollapse: true,
             "language": {
                 "emptyTable": "Không có dữ liệu",
@@ -569,41 +574,38 @@ Common::authenIsNotAdminRole();
                     "render": function () {
                         return '<i class="fa fa-plus-square" aria-hidden="true"></i>';
                     },
-                    width: "5px"
                 },
                 {
                     "data": "order_id",
-                    width: "30px",
+                },
+                {
+                    "data": format_customer,
+                    class: 'left'
                 },
                 {
                     "data": format_total_checkout,
-                    width: "50px",
                     class: 'right'
                 },
                 {
                     "data": "order_date",
-                    width: "70px",
                     class: 'center'
                 },
                 {
                     "data": format_type,
-                    width: "30px"
                 },
                 {
                     "data": format_payment,
-                    width: "30px"
                 },
-                {
-                    "data": format_source,
-                    width: "30px"
-                },
+                // {
+                //     "data": format_source,
+                //     width: "30px"
+                // },
                 // {
                 //     "data": format_status,
                 //     width: "30px"
                 // },
                 {
                     "data": format_action,
-                    width: "50px"
                 }
             ],
             "lengthMenu": [[50, 100, -1], [50, 100, "All"]]
@@ -847,19 +849,22 @@ Common::authenIsNotAdminRole();
         let order_refer = row_data.order_refer;
         let details = data.details;
         let order_type = data.order_type;
-        let table = '<div class="card-body">';
-        table += '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
+        let table = '<div class="card">';
+        table += '<div class="card-body table-responsive">';
+        table += '<table class="table" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
         table += '<thead>' +
             '<tr>' +
-            '<th>Mã</th>' +
-            '<th>Tên</th>' +
-            '<th>Size</th>' +
-            '<th>Màu</th>' +
-            '<th>Số lượng</th>' +
+            // '<th>Mã</th>' +
+            '<th>Sản phẩm</th>' +
+            // '<th>Màu</th>' +
+            // '<th>Size</th>' +
+            '<th class="center">Số lượng</th>' +
             '<th class="right">Giá</th>' +
             '<th class="right">Giảm trừ</th>' +
-            '<th class="right">Thành tiền</th>' +
-            '<th class="right"></th>';
+            '<th class="right">Thành tiền</th>';
+        if(IS_ADMIN) {
+            table += '<th class="right"></th>';
+        }
             // '<th class="center">Shopee</th>' +
             // '<th class="center">Lazada</th>' +
         if(order_type === EXCHANGE) {
@@ -902,15 +907,31 @@ Common::authenIsNotAdminRole();
             table += '<tr class="' + class_text + '">' +
                 '<input type="hidden" id="product_id_' + i + '" value="' + details[i].product_id + '"/>' +
                 '<input type="hidden" id="variant_id_' + i + '" value="' + details[i].variant_id + '"/>' +
-                '<td>' + details[i].sku + '</td>' +
-                '<td>' + details[i].product_name + '</td>' +
-                '<td>' + details[i].size + '</td>' +
-                '<td>' + details[i].color + '</td>' +
-                '<td>' + details[i].quantity + '</td>' +
-                '<td class="right">' + details[i].price + '<sup>đ</sup></td>' +
-                '<td class="right">' + details[i].reduce + '<sup>đ</sup></td>' +
-                '<td class="right">' + details[i].intoMoney + '<sup>đ</sup></td>' +
-                '<td class="right">' + formatNumber(detail_profit) + '<sup>đ</sup></td>';
+                // '<td>' + details[i].sku + '</td>' +
+                `<td>
+                    <a href="${details[i].image}" target="_blank">
+                        <img class="d-inline-block align-top" src="${details[i].image}" width="50px" style="border: 3px solid white;border-radius: 5px;cursor: pointer;"/>
+                    </a>
+                    <div class="d-inline-block align-top">
+                        <strong>${details[i].product_name}</strong>
+                        <br>
+                        <small>SKU: ${details[i].sku}</small>
+                        <br>
+                        <small>Màu: ${details[i].color}</small>
+                        <br>
+                        <small>Size: ${details[i].size}</small>
+                    </div>
+                </td>` +
+                // '<td>' + details[i].color + '</td>' +
+                // '<td>' + details[i].size + '</td>' +
+                '<td class="center">' + details[i].quantity + '</td>' +
+                '<td class="right">' + details[i].price + CURRENCY_SIGN+'</td>' +
+                '<td class="right">' + details[i].reduce + CURRENCY_SIGN+'</td>' +
+                '<td class="right">' + details[i].intoMoney + CURRENCY_SIGN+'</td>';
+                if(IS_ADMIN) {
+                    table += '<td class="right">' + formatNumber(detail_profit) + CURRENCY_SIGN+'</td>';
+                }
+                
                 // '<td class="center"><div class="custom-control custom-switch">' +
                 // '<input type="checkbox" class="custom-control-input upd-qty-shopee" id="shopee_'+details[i].sku+'" '+shopee+' onchange="updatedQty(this, \'shopee\', '+details[i].sku+')">' +
                 // '<label class="custom-control-label" for="shopee_'+details[i].sku+'"></label>' +
@@ -935,6 +956,7 @@ Common::authenIsNotAdminRole();
         table += '</table>';
         table += '</div>';
         table += '</div>';
+        table += '</div>';
 
         let voucher_value = 0;
         // let order_type = data.type;
@@ -952,7 +974,7 @@ Common::authenIsNotAdminRole();
                     '</div>' +
                     '<div class="col-2 col-sm-2 col-md-2"><small>Số điện thoại</small> <h5>' + data.phone + '</h5></div>';
                 if(data.address) {
-                    d +='<div class="row col-12"><small>Địa chỉ</small> <h5 class="col-12 pl-0">' + data.address + '</h5></div>';
+                    d +='<div class="col-12"><small>Địa chỉ</small> <h5 class="col-12 pl-0">' + data.address + '</h5></div>';
                 }
             } else {
                 d += '<div class="col-2 col-sm-2 col-md-2"><small>Khách hàng</small> <h5>Khách lẻ</h5></div>';
@@ -969,31 +991,31 @@ Common::authenIsNotAdminRole();
         profit = profit - discount - voucher_value;
 
         d += '<div class="row">' +
-                '<div class="col-2 col-sm-2 col-md-2"><small>Tổng đơn hàng</small> <h5>' + data.total_amount + '<sup>đ</sup></h5></div>' +
-                '<div class="col-2 col-sm-2 col-md-2"><small>CK trên tổng đơn</small> <h5>' + data.discount + '<sup>đ</sup></h5></div>';
+                '<div class="col-2 col-sm-2 col-md-2"><small>Tổng đơn hàng</small> <h5>' + data.total_amount + CURRENCY_SIGN+'</h5></div>' +
+                '<div class="col-2 col-sm-2 col-md-2"><small>CK trên tổng đơn</small> <h5>' + data.discount + CURRENCY_SIGN+'</h5></div>';
 
         if (data.customer_id && Number(data.customer_id) > 0) {
             profit = profit - Number(replaceComma(data.wallet));
-            d += '<div class="col-2 col-sm-2 col-md-2"><small>Tiền trong Ví</small> <h5>' + data.wallet + '<sup>đ</sup></h5></div>';
+            d += '<div class="col-2 col-sm-2 col-md-2"><small>Tiền trong Ví</small> <h5>' + data.wallet + CURRENCY_SIGN+'</h5></div>';
         }
-        d += '<div class="col-2 col-sm-2 col-md-2"><small>Tổng giảm trừ</small> <h5>' + data.total_reduce + '<sup>đ</sup></h5></div>';
+        d += '<div class="col-2 col-sm-2 col-md-2"><small>Tổng giảm trừ</small> <h5>' + data.total_reduce + CURRENCY_SIGN+'</h5></div>';
         if(order_type === ONLINE) {
             let shipping_fee = replaceComma(data.shipping_fee);
             if(shipping_fee && shipping_fee > 0) {
-                d += '<div class="col-2 col-sm-2 col-md-2"><small>Phí ship Shop trả</small> <h5>' + formatNumber(shipping_fee) + '<sup>đ</sup></h5></div>';
+                d += '<div class="col-2 col-sm-2 col-md-2"><small>Phí ship Shop trả</small> <h5>' + formatNumber(shipping_fee) + CURRENCY_SIGN+'</h5></div>';
                 profit = profit - Number(shipping_fee);
             }
             let total_amount = Number(replaceComma(data.total_amount));
             let shipping = Number(replaceComma(data.shipping));
             if(shipping && shipping > 0) {
-                d += '<div class="col-2 col-sm-2 col-md-2"><small>Phí ship KH trả</small> <h5>' + formatNumber(shipping) + '<sup>đ</sup></h5></div>';
+                d += '<div class="col-2 col-sm-2 col-md-2"><small>Phí ship KH trả</small> <h5>' + formatNumber(shipping) + CURRENCY_SIGN+'</h5></div>';
                 profit += shipping;
                 total_amount += shipping;
             } else {
                 d += '<div class="col-2 col-sm-2 col-md-2"><small>Phí ship KH trả</small> <h5>Miễn Ship</h5></div>';
             }
             total_amount -= Number(replaceComma(data.total_reduce));
-            d +='<div class="col-2 col-sm-2 col-md-2"><small>Tổng tiền Khách thanh toán</small> <h5>' + formatNumber(total_amount)+ '<sup>đ</sup></h5></div>';
+            d +='<div class="col-2 col-sm-2 col-md-2"><small>Tổng tiền Khách thanh toán</small> <h5>' + formatNumber(total_amount)+ CURRENCY_SIGN+'</h5></div>';
         }
         let total_checkout = data.total_checkout;
         if (payment_exchange_type === '2') {
@@ -1001,9 +1023,11 @@ Common::authenIsNotAdminRole();
                 total_checkout = '-' + total_checkout;
             }
         }
-        d +='<div class="col-2 col-sm-2 col-md-2"><small>Tổng tiền Shop nhận</small> <h5>' + total_checkout + '<sup>đ</sup></h5></div>' +
-            '<div class="col-2 col-sm-2 col-md-2" style="display: block;"><small>-</small> <h5>' + formatNumber(profit) + '<sup>đ</sup></h5></div>' +
-            '</div>' +
+        d +='<div class="col-2 col-sm-2 col-md-2"><small>Tổng tiền Shop nhận</small> <h5>' + total_checkout + CURRENCY_SIGN+'</h5></div>';
+        if(IS_ADMIN) {
+            d +='<div class="col-2 col-sm-2 col-md-2" style="display: block;"><small>-</small> <h5>' + formatNumber(profit) + CURRENCY_SIGN+'</h5></div>';
+        }
+        d +='</div>' +
             '</div>' +
             '</div>';
         return d + table;
@@ -1055,15 +1079,31 @@ Common::authenIsNotAdminRole();
         let content = '';
         // online
         // if (data.type == 1) {
-        content += '<a href="<?php Common::getPath() ?>src/view/exchange/?oid='+order_id+'" target="_blank" class="exchange mr-1 text-success" title="Đổi hàng"><i class="fas fa-reply"></i></a>';
-        content += '<a href="javascript:void(0);" class="print_receipt mr-1 text-info" title="In hoá đơn"><i class="fa fa-print"></i></a>';
+        content += '<a href="<?php Common::getPath() ?>src/view/exchange/?oid='+order_id+'" target="_blank" class="exchange mr-2 text-success" title="Đổi hàng"><i class="fas fa-reply"></i></a>';
+        content += '<a href="javascript:void(0);" class="print_receipt mr-2 text-info" title="In hoá đơn"><i class="fa fa-print"></i></a>';
 
         // }
         if (order_type !== 2) {
-            content += '<a href="javascript:void(0);" class="edit_order mr-1 text-primary" title="Sửa đơn hàng"><i class="fa fa-edit"></i></a>';
+            content += '<a href="javascript:void(0);" class="edit_order mr-2 text-primary" title="Sửa đơn hàng"><i class="fa fa-edit"></i></a>';
         }
-        content += '<a href="javascript:void(0);" class="delete_order mr-1 text-danger" title="Xoá đơn hàng"><i class="fa fa-trash"></i></a>';
+        content += '<a href="javascript:void(0);" class="delete_order mr-2 text-danger" title="Xoá đơn hàng"><i class="fa fa-times"></i></a>';
         return content;
+    }
+
+    function format_customer(data) {
+        let id = data.customer_id;
+        let name = data.customer_name;
+        let phone = data.customer_phone;
+        if(!name) {
+            return "<strong>Khách lẻ</strong>";
+        }
+        let customer = `<strong>${name}</strong>
+                        <a href="javascript:void(0)" class="d-inline-block text-warning" onclick="show_history(${id},'${name}','${phone}')">
+                            <i class="fas fa-history"></i>
+                        </a>
+                        <br>
+                        <span>${phone}</span>`;
+        return customer;
     }
 
     function format_total_checkout(data) {
@@ -1071,15 +1111,15 @@ Common::authenIsNotAdminRole();
         let payment_exchange_type = data.payment_exchange_type;
         switch (payment_exchange_type) {
             case '1':
-                return total_checkout + "<sup>đ</sup>";
+                return total_checkout + CURRENCY_SIGN;
             case '2':
                 if(total_checkout.indexOf("-") > -1) {
-                    return total_checkout + "<sup>đ</sup>";
+                    return total_checkout + CURRENCY_SIGN;
                 } else {
-                    return '-' + total_checkout + "<sup>đ</sup>";
+                    return '-' + total_checkout + CURRENCY_SIGN;
                 }
             default:
-                return total_checkout + "<sup>đ</sup>";
+                return total_checkout + CURRENCY_SIGN;
         }
     }
 
@@ -1087,11 +1127,11 @@ Common::authenIsNotAdminRole();
         let type = data.order_type;
         switch (type) {
             case '0' :
-                return '<span class="badge badge-warning">Shop</span>';
+                return '<span class="badge badge-warning" style="font-weight: normal;">Shop</span>';
             case '1':
-                return '<span class="badge badge-success">Online</span>';
+                return '<span class="badge badge-success" style="font-weight: normal;">Online</span>';
             case '2':
-                return '<span class="badge badge-danger">Đổi hàng</span>';
+                return '<span class="badge badge-danger" style="font-weight: normal;">Đổi hàng</span>';
             default:
                 return '';
         }
@@ -1101,13 +1141,13 @@ Common::authenIsNotAdminRole();
         let source = Number(data.source);
         switch (source) {
             case 1 :
-                return '<span class="badge badge-success">Website</span>';
+                return '<span class="badge badge-success" style="font-weight: normal;">Website</span>';
             case 2:
-                return '<span class="badge badge-primary">Facebook</span>';
+                return '<span class="badge badge-primary" style="font-weight: normal;">Facebook</span>';
             case 3:
-                return '<span class="badge badge-danger">Shopee</span>';
+                return '<span class="badge badge-danger" style="font-weight: normal;">Shopee</span>';
             default:
-                return '<span class="badge badge-warning">Cửa hàng</span>';
+                return '<span class="badge badge-warning" style="font-weight: normal;">Cửa hàng</span>';
         }
     }
 
@@ -1115,13 +1155,13 @@ Common::authenIsNotAdminRole();
         let type = data.payment_type;
         switch (type) {
             case '0' :
-                return '<span class="badge badge-info">Tiền mặt</span>';
+                return '<span class="badge badge-info" style="font-weight: normal;">Tiền mặt</span>';
             case '1':
-                return '<span class="badge badge-success">Chuyển khoản</span>';
+                return '<span class="badge badge-success" style="font-weight: normal;">Chuyển khoản</span>';
             case '2':
-                return '<span class="badge badge-warning">Nợ</span>';
+                return '<span class="badge badge-warning" style="font-weight: normal;">Nợ</span>';
             case '3':
-                return '<span class="badge badge-primary">COD</span>';
+                return '<span class="badge badge-primary" style="font-weight: normal;">COD</span>';
             default:
                 return '';
         }
@@ -1134,19 +1174,19 @@ Common::authenIsNotAdminRole();
         let status = data.status;
         switch (status) {
             case '0' :
-                return '<span class="badge badge-danger">Chưa xử lý</span>';
+                return '<span class="badge badge-danger" style="font-weight: normal;">Chưa xử lý</span>';
             case '1':
-                return '<span class="badge badge-primary">Đang xử lý</span>';
+                return '<span class="badge badge-primary" style="font-weight: normal;">Đang xử lý</span>';
             case '2':
-                return '<span class="badge badge-info">Đã giao</span>';
+                return '<span class="badge badge-info" style="font-weight: normal;">Đã giao</span>';
             case '3':
-                return '<span class="badge badge-success">Hoàn thành</span>';
+                return '<span class="badge badge-success" style="font-weight: normal;">Hoàn thành</span>';
             case '4':
-                return '<span class="badge badge-danger">Đã hủy</span>';
+                return '<span class="badge badge-danger" style="font-weight: normal;">Đã hủy</span>';
             case '5':
-                return '<span class="badge badge-danger">Hoàn hàng</span>';
+                return '<span class="badge badge-danger" style="font-weight: normal;">Hoàn hàng</span>';
             case '6':
-                return '<span class="badge badge-danger">Đổi size</span>';
+                return '<span class="badge badge-danger" style="font-weight: normal;">Đổi size</span>';
             default:
                 break;
         }

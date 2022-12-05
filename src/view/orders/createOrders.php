@@ -415,49 +415,88 @@ Common::authen();
             });
         }
 
-        function check_exist_customer(phone) {
+        async function check_exist_customer(phone) {
             $("#customer_phone").removeClass("is-invalid");
             if(!validate_phone(phone)) {
                 toastr.error("Số điện thoại chưa đúng");
                 $("#customer_phone").addClass("is-invalid");
                 return;
             }
-            $.ajax({
-                url: "<?php Common::getPath() ?>src/controller/customer/CustomersController.php",
-                dataType: 'JSON',
-                type: 'post',
-                data: {
+            let url = "<?php Common::getPath() ?>src/controller/customer/CustomersController.php";
+            let  data = {
                     value: phone,
                     type: 'phone',
                     method: 'find_customer'
-                },
-                success: function (res) {
-                    console.log(res);
-                    if(!res) {
-                        $("#customer_id").val("");
-                        $("#customer_name").val("");
-                        Swal.fire({
-                            title: "Số điện thoại chưa tồn tại",
-                            text: "Bạn có muốn tạo khách hàng mới không?",
-                            type: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#3085d6',
-                            cancelButtonColor: '#d33',
-                            confirmButtonText: 'Ok'
-                        }).then((result) => {
-                            if (result.value) {
-                                reset_data_customer();
-                                $("#phone_number").val(format_phone(phone));
-                                generate_select2_city();
-                                open_modal('#create_customer');
-                            }
-                        })
-                    } else {
-                        $("#customer_id").val(res.id);
-                        $("#customer_name").val(res.name);
+                };
+            let res = await sendData(url, data);
+            if(!res) {
+                $("#customer_id").val("");
+                $("#customer_name").val("");
+                Swal.fire({
+                    title: "Số điện thoại chưa tồn tại",
+                    text: "Bạn có muốn tạo khách hàng mới không?",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ok'
+                }).then((result) => {
+                    if (result.value) {
+                        reset_data_customer();
+                        $("#phone_number").val(format_phone(phone));
+                        generate_select2_city();
+                        open_modal('#create_customer');
                     }
-                }
-            });
+                })
+            } else {
+                $("#customer_id").val(res.id);
+                $("#customer_name").val(res.name);
+            }
+            // $.ajax({
+            //     url: "<?php Common::getPath() ?>src/controller/customer/CustomersController.php",
+            //     dataType: 'JSON',
+            //     type: 'post',
+            //     data: {
+            //         value: phone,
+            //         type: 'phone',
+            //         method: 'find_customer'
+            //     },
+            //     success: function (res) {
+            //         console.log(res);
+            //         if(!res) {
+            //             if(res == "403") {
+            //                 redirectLoginPage();
+            //             }
+            //             $("#customer_id").val("");
+            //             $("#customer_name").val("");
+            //             Swal.fire({
+            //                 title: "Số điện thoại chưa tồn tại",
+            //                 text: "Bạn có muốn tạo khách hàng mới không?",
+            //                 type: 'warning',
+            //                 showCancelButton: true,
+            //                 confirmButtonColor: '#3085d6',
+            //                 cancelButtonColor: '#d33',
+            //                 confirmButtonText: 'Ok'
+            //             }).then((result) => {
+            //                 if (result.value) {
+            //                     reset_data_customer();
+            //                     $("#phone_number").val(format_phone(phone));
+            //                     generate_select2_city();
+            //                     open_modal('#create_customer');
+            //                 }
+            //             })
+            //         } else {
+            //             $("#customer_id").val(res.id);
+            //             $("#customer_name").val(res.name);
+            //         }
+            //     },
+            //     error: function(res) {
+            //         console.log(res);
+            //         if(res == "403") {
+            //             redirectLoginPage();
+            //         }
+            //     }
+            // });
         }
 
         function validate_order() {
@@ -874,9 +913,9 @@ Common::authen();
                     retail = Number(replaceComma(v.retail));
                 }
                 let quantity = 1;
-                if(v.qty) {
-                    quantity = v.qty;
-                }
+                // if(v.qty) {
+                //     quantity = v.qty;
+                // }
                 let total = 0;
                 let reduce = '';
                 if (v.discount && v.discount !== '' && v.discount !== '0') {

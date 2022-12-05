@@ -62,7 +62,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "find_customer") {
         $customer = $dao->find_customer($value, $type);
         echo json_encode($customer);
     } catch (Exception $e) {
-        throw new Exception($e);
+        echo $e->getMessage();
     }
 }
 

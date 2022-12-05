@@ -32,6 +32,34 @@ $(document).ready(function () {
 
 });
 
+function sendData(url, data, type = "POST") {
+    return new Promise((resolve) => {
+        $.ajax({
+            url: url,
+            dataType: 'JSON',
+            type: type,
+            data: data,
+            success: function (res) {
+                console.log(res);
+                if (res == "403") {
+                    redirectLoginPage();
+                    resolve();
+                } else {
+                    resolve(res);
+                }
+            },
+            error: function (error) {
+                console.log(error);
+                resolve(error);
+            }
+        });
+    });
+}
+
+function redirectLoginPage() {
+    window.location.href = `${root_path}src/view/login`;
+}
+
 function download(url) {
     const a = document.createElement('a')
     a.href = url
@@ -44,7 +72,8 @@ function download(url) {
 function format_phone(phone) {
     let index = phone.indexOf('84');
     if (index == 0) {
-        phone = phone.replace('84', '0');
+        phone = phone.substring(2, phone.length);
+        phone = "0" + phone;
     } else {
         index = phone.indexOf('0');
         if (index != 0) {

@@ -14,7 +14,7 @@ class DBOnlineConnect {
     // private $pass = "";
     // private $conn;
 
-    function DBConnect()
+    function __construct()
     {
         $this->conn = $this->open_connection();
     }

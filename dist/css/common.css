@@ -117,7 +117,7 @@ div.dataTables_wrapper div.dataTables_filter {
 	padding-right: 5px;
 }
 input, button, select, .select2-container--bootstrap4 .select2-selection {
-	border-radius: 0 !important;
+/*	border-radius: 0 !important;*/
 }
 .select2-selection__rendered {
 	font-size: 13px;

@@ -114,9 +114,10 @@ if (isset($_POST) && !empty($_FILES['file'])) {
 
             } else {
                 $shopeeFee = intval($sheet->getCell('AS' . $row)->getValue());
+                $serviceCharge = intval($sheet->getCell('AT' . $row)->getValue());
                 $paymentFee = intval($sheet->getCell('AU' . $row)->getValue());
                 $voucherShop = intval($sheet->getCell('AC' . $row)->getValue());
-                $totalFee = $shopeeFee + $paymentFee + $voucherShop;
+                $totalFee = $shopeeFee + $serviceCharge + $paymentFee + $voucherShop;
                 // $totalAmount = intval($sheet->getCell('AB' . $row)->getValue());
 
                 $cityName = $sheet->getCell('AZ' . $row)->getValue();
@@ -145,6 +146,7 @@ if (isset($_POST) && !empty($_FILES['file'])) {
                 $rowData["productName"] = $sheet->getCell('O' . $row)->getValue();   
                 $rowData["shopeeFee"] = $sheet->getCell('AS' . $row)->getValue();
                 $rowData["paymentFee"] = $sheet->getCell('AU' . $row)->getValue();
+                $rowData["serviceCharge"] = $sheet->getCell('AT' . $row)->getValue();
                 $rowData["discount"] = $rowData["total_reduce"] =  $totalFee;
                 $rowData["account"] = $sheet->getCell('AW' . $row)->getValue();
 
