@@ -55,6 +55,18 @@
             top: 20px;
         }
 
+        .alert-success {
+            color: #155724 !important;
+            background-color: #d4edda !important;
+            border-color: #c3e6cb !important;
+        }
+
+        .alert-danger {
+            color: #721c24 !important;
+            background-color: #f8d7da !important;
+            border-color: #f5c6cb !important;
+        }
+
         #thumbnail:hover {
             /*width: 100% !important;*/
             /*transform: scale(1.2);
@@ -68,22 +80,43 @@
 </head>
 <?php require_once('../../common/header.php'); ?>
 <?php require_once('../../common/menu.php'); ?>
-<section class="content">
-    <div class="row">
-        <div class="col-12">
+<section class="content pt-3">
+    <!-- <div class="row">
+        <div class="col-12"> -->
             <div class="card">
                 <div class="row col-12" style="display: inline-block;">
                     <p class="float-left pt-4 ml-4" style="display: inline-block;" id="total_product_display"></p>
                     <input type="hidden" id="total_products" value="">
                     <input type="hidden" id="total_money" value="">
-                    <section style="display: inline-block;float: right;padding-top: 1.25rem;">
+                    <!-- <section style="display: inline-block;float: right;padding-top: 1.25rem;">
                         <button type="button" class="btn btn-success btn-flat" id="create_new_checking">
                             <i class="fa fa-plus-circle" aria-hidden="true"></i> Tạo mới
                         </button>
-                    </section>
+                    </section> -->
+                </div>
+                <div class=" col-md-12 m-3">
+                    <form id="import" method="post" enctype="multipart/form-data" class="d-inline-block">
+                        <label for="fileToUpload">Tải lên file excel dữ liệu</label>
+                        <input type="file" name="fileToUpload" id="fileToUpload" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                        <button class="btn btn-primary" name="submit" id="submit" disabled style="border-radius: 4px !important;font-size: 12px;">
+                          <i class="fas fa-upload" id="uploadIcon"></i>
+                          <div class="spinner-border d-none" id="spinnerIcon" style="width: 15px;height: 15px;"></div> 
+                          Tải lên
+                        </button>
+                    </form>
+                </div>
+                <div class=" col-md-12 mt-3 d-none" id="message_updated">
+                    <div class="alert alert-success" role="alert">
+                      Cập nhật thành công <strong id="sku_updated_success"></strong> mã sản phẩm
+                    </div>
+                    <div class="alert alert-danger" role="alert">
+                      Các mã sản phẩm cập nhật không thành công:
+                      <br>
+                      <strong id="sku_updated_fail"></strong>
+                    </div>
                 </div>
                 <!-- /.card-header -->
-                <div class="card-body">
+                <!-- <div class="card-body">
                     <table id="example" class="table table-hover table-striped">
                         <thead>
                         <tr>
@@ -101,13 +134,13 @@
 
                         </tbody>
                     </table>
-                </div>
+                </div> -->
                 <!-- /.card-body -->
             </div>
             <!-- /.card -->
-        </div>
+        <!-- </div> -->
         <!-- /.col -->
-    </div>
+    <!-- </div> -->
     <!-- /.row -->
 </section>
 <!-- /.content -->
@@ -119,28 +152,92 @@
     $(document).ready(function () {
         set_title("Danh sách kiểm hàng");
         count_all_products();
-        generate_datatable();
+        // generate_datatable();
 
-        $(".print-barcode").on("click", function () {
-            let data = [];
-            $.each($("#example tbody td input[type='checkbox']:checked"), function () {
-                let id = $(this).attr("id");
-                if (id != "selectall") {
-                    data.push($(this).attr("id"));
-                }
-            });
-            if (data.length > 0) {
-                printBarcode(data);
-            }
-        });
-        $(".clearAll").on("click", function () {
-            clearAll();
-        });
+        chooseFile();
+        upload();
 
-        $("#create_new_checking").click(function(){
-            validate_new_checking();
-        });
+        // $(".print-barcode").on("click", function () {
+        //     let data = [];
+        //     $.each($("#example tbody td input[type='checkbox']:checked"), function () {
+        //         let id = $(this).attr("id");
+        //         if (id != "selectall") {
+        //             data.push($(this).attr("id"));
+        //         }
+        //     });
+        //     if (data.length > 0) {
+        //         printBarcode(data);
+        //     }
+        // });
+        // $(".clearAll").on("click", function () {
+        //     clearAll();
+        // });
+
+        // $("#create_new_checking").click(function(){
+        //     validate_new_checking();
+        // });
     });
+
+    function chooseFile() {
+        $("#fileToUpload").change(() => {
+          let file_data = $("#fileToUpload").prop('files')[0];
+          console.log(file_data.name);
+          
+          if(file_data) {
+            let filename = file_data.name;
+            const lastDot = filename.lastIndexOf('.');
+            const ext = filename.substring(lastDot + 1);
+            if(ext == 'xls' || ext == 'xlsx') {
+              $("#submit").removeAttr("disabled");
+            } else {
+              toastr.error('Định dạng file không đúng');
+              return false;
+            }
+          } else {
+            $("#submit").attr("disabled", true);
+          }
+        });
+    }
+
+    function upload() {
+        $("#submit").click(function(e) {
+            e.preventDefault();    
+            $("#uploadIcon").addClass("d-none");
+            $("#spinnerIcon").removeClass("d-none");
+            $("#submit").attr("disabled", true);
+
+            var form = $("#import");
+            let file_data = $("#fileToUpload").prop('files')[0];
+            var formData = new FormData(form[0]);
+            formData.append('file', file_data);
+
+            $.ajax({
+                url: "<?php Common::getPath() ?>src/controller/Check/CheckController.php",
+                type: 'POST',
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: (response) => {
+                  console.log(typeof response);  
+                  toastr.success(`Cập nhật thành công ${response}`);
+                  response = JSON.parse(response);
+                  let updated_success = response.updated_sku + " / " + response.total_sku;
+                  let updated_fail = JSON.stringify(response.sku_update_failed);
+                  $("#sku_updated_success").html(updated_success);
+                  $("#sku_updated_fail").html(updated_fail);
+                  $("#message_updated").removeClass("d-none");
+                }
+              })
+            .done(function() {
+                $("#fileToUpload").val("");
+                $("#uploadIcon").removeClass("d-none");
+                $("#spinnerIcon").addClass("d-none");
+                $("#submit").attr("disabled", true);
+                toastr.success(`Cập nhật thành công`);
+              });
+        });
+    }
 
     function validate_new_checking() {
         $.ajax({

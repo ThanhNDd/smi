@@ -518,7 +518,23 @@
         },
         {
             id: '11',
-            text: 'Gấu bông'
+            text: 'Đồ chơi'
+        },
+        {
+            id: '12',
+            text: 'Balo Mầm Non'
+        },
+        {
+            id: '13',
+            text: 'Balo Tiểu Học'
+        },
+        {
+            id: '14',
+            text: 'Balo Mầm non và Tiểu Học'
+        },
+        {
+            id: '15',
+            text: 'Áo gió'
         }
     ];
     let select_origin = [

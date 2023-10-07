@@ -115,10 +115,13 @@ if (isset($_POST["type"]) && $_POST["type"] == "del_product") {
 if (isset($_POST["method"]) && $_POST["method"] == "update_discount") {
     try {
         Common::authen_get_data();
-        $product_id = $_POST["product_id"];
-        $discount = $_POST["discount"];
-        $dao->update_discount((int)$discount, (int)$product_id);
-        $response_array['response'] = "success";
+        $data = $_POST["data"];
+        // $product_id = $data["product_id"];
+        // $saleValue = $data["saleValue"];
+        // $saleType = $data["saleType"];
+
+        $result = $dao->update_discount($data);
+        $response_array['response'] = $result;
         echo json_encode($response_array);
     } catch (Exception $e) {
         $db->rollback();
@@ -262,13 +265,14 @@ if (isset($_GET["method"]) && $_GET["method"] == "findall") {
         $quantity = isset($_GET["quantity"]) ? $_GET["quantity"] : '';
         $sku = isset($_GET["sku"]) ? $_GET["sku"] : '';
         $product_type = isset($_GET["product_type"]) ? $_GET["product_type"] : '';
+        $sorted = isset($_GET["sorted"]) ? $_GET["sorted"] : '';
 
 //        var_dump($status."\n");
 //        var_dump($operator."\n");
 //        var_dump($quantity."\n");
 //        var_dump($sku."\n");
 
-        $lists = $dao->find_all($status, $operator, $quantity, $sku, $product_type);
+        $lists = $dao->find_all($status, $operator, $quantity, $sku, $product_type, $sorted);
         echo json_encode($lists);
     } catch (Exception $e) {
         echo $e->getMessage();
@@ -344,8 +348,11 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
             $variation->setQuantity($variations[$i]->qty);
             $variation->setSku(empty($variations[$i]->sku) ? $new_sku : $variations[$i]->sku);
             $variation->setPrice($variations[$i]->price);
-            $variation->setRetail($variations[$i]->retail);
             $variation->setFee($variations[$i]->fee);
+            $variation->setCostPrice($variations[$i]->costPrice);
+            $variation->setRetail($variations[$i]->retail);
+            $variation->setSalePrice($variations[$i]->salePrice);
+            $variation->setPercentSale($variations[$i]->percentSale);
             $variation->setProfit($variations[$i]->profit);
             $variation->setPercent($variations[$i]->percent);
             $variation->setLength__($variations[$i]->length__);

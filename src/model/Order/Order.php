@@ -9,12 +9,14 @@ class Order {
     private $wallet;
     private $total_amount;
     private $total_checkout;
+    private $cod;
     private $customer_payment;
     private $payment_type;
     private $repay;
     private $transfer_to_wallet;
     private $customer_id;
     private $customer_name;
+    private $customer_phone;
     private $type;
     private $bill_of_lading_no;
     private $shipping_fee;
@@ -204,6 +206,26 @@ class Order {
     }
 
     /**
+     * Get the value of cod
+     */
+    public function getCod()
+    {
+        return $this->cod;
+    }
+
+    /**
+     * Set the value of cod
+     *
+     * @return  self
+     */
+    public function setCod($cod)
+    {
+        $this->cod = $cod;
+
+        return $this;
+    }
+
+    /**
      * Get the value of customer_payment
      */
     public function getCustomer_payment()
@@ -327,6 +349,22 @@ class Order {
     public function setCustomerName($customer_name): void
     {
         $this->customer_name = $customer_name;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCustomerPhone()
+    {
+        return $this->customer_phone;
+    }
+
+    /**
+     * @param mixed $customer_phone
+     */
+    public function setCustomerPhone($customer_phone): void
+    {
+        $this->customer_phone = $customer_phone;
     }
 
     /**

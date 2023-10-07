@@ -1,3 +1,4 @@
+
 <?php
 require_once("../../common/common.php");
 Common::authen();
@@ -208,15 +209,15 @@ Common::authen();
                                 <option value="1">Chuyển khoản</option>
                             </select>
                             <input type="text" class="form-control mt-2 hidden" name="payment" id="payment"
-                                   width="100px" style="text-align: right;">
+                            placeholder="Tiền COD" width="100px">
                         </div>
                     </div>
-                    <div class="row pd-t-5 col-md-12">
+                    <!-- <div class="row pd-t-5 col-md-12">
                         <div class="col-6 right pd-t-10 text-right">
                             <label>Trả lại</label>
                         </div>
                         <h6 class="col-6 right pt-2 text-left" id="repay">0</h6>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <div class="modal-footer justify-content-between">
@@ -261,14 +262,24 @@ Common::authen();
                 let order_type = $(this).val();
                 onchange_order_type(order_type);
             });
-            // $("#payment_type").change(function(){
-            //     if ($(this).val() === "0") {
-            //         $("#payment").removeClass("hidden").focus();
-            //     } else {
-            //         $("#payment").val("").addClass("hidden");
-            //     }
-            // });
-            // $("#payment").change(function() {
+            $("#payment_type").change(function(){
+                if ($(this).val() === "0") {
+                    let payment = replaceComma($("#payment").val());
+                    if(!payment) {
+                        let total_checkout = replaceComma($("#total_checkout").text());
+                        let shipping = replaceComma($("#shipping").val());
+                        let discount = replaceComma($("#discount").val());
+                        payment = Number(total_checkout) + Number(shipping) - Number(discount);
+                    }
+                    $("#payment").val(formatNumber(payment));
+                    $("#payment").removeClass("hidden").focus();
+                } else {
+                    $("#payment").val("").addClass("hidden");
+                }
+            });
+            $("#payment").change(function() {
+                let value = $(this).val();
+                $(this).val(formatNumber(value));
             //     $("#payment").removeClass("is-invalid");
             //     let customer_payment = format_money(replaceComma($("#payment").val()));
             //     if (customer_payment && isNaN(customer_payment)) {
@@ -285,7 +296,7 @@ Common::authen();
             //     }
             //     $(this).val(formatNumber(customer_payment));
             //     $("#repay").text(formatNumber(repay));
-            // });
+            });
 
             $('.order-create').click(function () {
                 reset_data();
@@ -411,6 +422,7 @@ Common::authen();
         function create_customer() {
             $("#btn_add_customer").click(function () {
                 reset_data_customer();
+                generate_select2_city();
                 open_modal('#create_customer');
             });
         }
@@ -505,7 +517,11 @@ Common::authen();
             $(".modal-body").find("select").removeClass("is-invalid");
 
             let order_source = $("#order_source").val();
-            if(order_source != 7) {//tiki
+            let shopee_order = 3;
+            let lazada_order = 5;
+            let tiki_order = 7;
+            if(order_source != shopee_order && order_source != lazada_order && order_source != tiki_order) {
+            //shopee, lazada, tiki
                 let customer_phone = $("#customer_phone").val();
                 let order_type = $('#order_type').val();
                 if (order_type === "1") {
@@ -601,6 +617,7 @@ Common::authen();
             let total_amount = replaceComma($("#total_amount").text());
             let total_reduce = replaceComma($("#total_reduce").text());
             let total_checkout = replaceComma($("#total_checkout").text());
+            let shipping = replaceComma($("#shipping").val());
             let discount = replaceComma($("#discount").val());
             if (discount.indexOf("%") > -1) {
                 discount = discount.replace("%", "");
@@ -622,6 +639,18 @@ Common::authen();
             let order_type = $('#order_type').val();
             data["customer_id"] = customer_id;
 
+
+            let customer_payment = Number(total_amount) + Number(shipping) - Number(discount);
+
+            let cod = 0;
+            if(payment_type == 0) {
+                let payment = $("#payment").val();
+                if(!payment) {
+                    payment = customer_payment;
+                }
+                cod = replaceComma(payment);
+            }
+            data["cod"] = cod;
             // let source = 0;// shop
             // let bill_of_lading_no = '';
             // let shipping_fee = 0;
@@ -642,7 +671,7 @@ Common::authen();
 
             let order_status = $("#order_status").val();
             let order_date = $("#orderDate").val();
-            let shipping = $("#shipping").val() ? replaceComma($("#shipping").val()) : 0;
+            // let shipping = $("#shipping").val() ? replaceComma($("#shipping").val()) : 0;
             let appointment_delivery_date = '';
             if(order_status == 7) {
                 appointment_delivery_date = $("#orderAppointmentDeliveryDate").val();
@@ -662,7 +691,7 @@ Common::authen();
             data["order_date"] = order_date;
             data["appointment_delivery_date"] = appointment_delivery_date;
             data["order_status"] = Number(order_status);
-            data["customer_payment"] = total_checkout;
+            data["customer_payment"] = customer_payment;
             data["voucher_code"] = '';
             data["voucher_value"] = '';
             data["current_order_id"] = 0;
@@ -775,6 +804,7 @@ Common::authen();
             $("#create_new_order").text("Tạo mới");
             $("#order_type").val("1").trigger("change");
             $("#payment_type").val("0").trigger("change");
+            $("#payment").val("").trigger("change");
             $("#customer_id").val("");
             $("#bill_of_lading_no").val("");
             $("#customer_name").val("");
@@ -913,9 +943,9 @@ Common::authen();
                     retail = Number(replaceComma(v.retail));
                 }
                 let quantity = 1;
-                // if(v.qty) {
-                //     quantity = v.qty;
-                // }
+                if(v.qty) {
+                    quantity = v.qty;
+                }
                 let total = 0;
                 let reduce = '';
                 if (v.discount && v.discount !== '' && v.discount !== '0') {
@@ -1257,6 +1287,7 @@ Common::authen();
             let total_reduce = 0;
             // let row_index = 1;
             let data_length = $("#table_list_product tbody tr").length;
+            let cod = "";
             if(data_length > 0) {
                 $("#table_list_product tbody tr").each(function (k, v) {
                     let row_index = $(this).attr("id");
@@ -1289,6 +1320,8 @@ Common::authen();
                         $("#total_checkout").text(formatNumber(total_checkout));
                         $("#total_reduce").text(formatNumber(total_reduce));
                         $("#total_amount").text(formatNumber(total));
+                        cod = total + shipping - discount;
+                        $("#payment").val(formatNumber(cod));
                     }
                 });
             } else {

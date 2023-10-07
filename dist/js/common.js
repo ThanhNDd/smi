@@ -93,9 +93,12 @@ function formatNumber(num) {
 
 function replaceComma(value) {
     if (value) {
+        value = value.toString();
         value = value.replace(/,/g, '');
         if (value.indexOf("đ") > -1) {
             value = value.replace(" đ", "");
+        } else if(value.indexOf("₫") > -1) {
+            value = value.replace("₫", "");
         }
         value = value.replace(/ /g, '');
     }
@@ -104,9 +107,12 @@ function replaceComma(value) {
 
 function replacePercent(value) {
     if (value) {
+        value = value.toString();
         value = value.replace(/%/g, '');
         if (value.indexOf("đ") > -1) {
             value = value.replace("đ", "");
+        } else if(value.indexOf("₫") > -1) {
+            value = value.replace("₫", "");
         }
         value = value.replace(/ /g, '');
     }

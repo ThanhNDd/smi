@@ -617,7 +617,7 @@ Common::authen();
                                 + '<td><span class="size" id="size_' + noRow + '">' + details[i].size + '</span></td>'
                                 + '<td><span class="color" id="color_' + noRow + '">' + details[i].color + '</span></td>'
                                 + '<td><div><span class="price" id="price_' + noRow + '">' + details[i].retail + ' <small><sup>đ</sup></small></span></div></td>'
-                                + '<td><span class="qty" id="qty_' + noRow + '">' + details[i].quantity + '</span></td>'
+                                + '<td><span class="qty" id="qty_' + noRow + '">' + details[i].qty + '</span></td>'
                                 + '<td><span class="reduce" id="reduce_' + noRow + '">' + formatNumber(reduce) + '</span></td>'
                                 + '<td><div><span class="intoMoney" id="intoMoney_' + noRow + '">' + details[i].intoMoney + '</span> <small><sup>đ</sup></small></div></td>'
                                 + '<td><button type="button" id="exchange_' + noRow + '" class="btn btn-info form-control d-inline-block w50" onclick="exchangeBtn(this, ' + noRow + ')" title="Đổi hàng"><i class="fas fa-sync"></i></button>'

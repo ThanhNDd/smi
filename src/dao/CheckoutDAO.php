@@ -440,7 +440,7 @@ class CheckoutDAO
     function checkExistOrderShopee($shopeeOrderId)
     {
         try {
-            $sql = "select count(*) as orderNumber from smi_orders where shopee_order_id = '$shopeeOrderId'";
+            $sql = "select count(*) as orderNumber from smi_orders where shopee_order_id = '$shopeeOrderId' and deleted = false";
             $result = mysqli_query($this->conn, $sql);
             $orderNumber = 0;
             $row = $result -> fetch_assoc();
@@ -676,6 +676,7 @@ class CheckoutDAO
                         a.shipping,
                         a.discount,
                         a.total_checkout,
+                        a.COD as cod,
                         a.payment_type,
                         a.order_date,
                         a.source,
@@ -744,6 +745,7 @@ class CheckoutDAO
                         'shipping' => number_format($row["shipping"]),
                         'discount' => number_format($row["discount"]),
                         'total_checkout' => number_format($row["total_checkout"]),
+                        'cod' => number_format($row["cod"]),
                         'payment_type' => $row["payment_type"],
                         'order_date' => $row["order_date"],
                         'source' => $row["source"],
@@ -780,8 +782,8 @@ class CheckoutDAO
                                 'profit' => $row["profit"]
                             );
                             array_push($order['details'], $detail);
-                            array_push($data, $order);
                         }
+                        // array_push($data, $order);
                     } else {
                         $detail = array(
                             'order_detail_id' => $row["order_detail_id"],
@@ -799,8 +801,9 @@ class CheckoutDAO
                             'profit' => $row["profit"]
                         );
                         array_push($order['details'], $detail);
-                        array_push($data, $order);
+                        // array_push($data, $order);
                     }
+                    array_push($data, $order);
                     $order_id = $row["order_id"];
                     $i++;
                 } else {
@@ -829,6 +832,7 @@ class CheckoutDAO
                             array_push($data[$i - 1]['details'], $detail);
                         }
                     } else {
+
                         $detail = array(
                             'order_detail_id' => $row["order_detail_id"],
                             'product_id' => $row["product_id"],
@@ -846,8 +850,10 @@ class CheckoutDAO
                         );
                         array_push($data[$i - 1]['details'], $detail);
                     }
+
                 }
             }
+
             $arr = array();
             $arr["data"] = $data;
             return $arr;
@@ -942,6 +948,7 @@ class CheckoutDAO
                         sum(B.quantity) as quantity,
                         A.total_amount + A.shipping - A.total_reduce as total_amount,
                         A.total_checkout,
+                        A.cod,
                         A.order_date,
                         A.appointment_delivery_date,
                         A.type as order_type,
@@ -1018,7 +1025,7 @@ class CheckoutDAO
                         A.estimated_delivery,
                         A.bill_of_lading_no,
                         A.shopee_order_id
-                  order by A.updated_date desc";
+                  order by A.order_date desc, A.updated_date desc";
 
 // var_dump($sql);
 
@@ -1047,6 +1054,7 @@ class CheckoutDAO
                     'quantity' => $row["quantity"],
                     'total_amount' => number_format($row["total_amount"]),
                     'total_checkout' => number_format($row["total_checkout"]),
+                    'cod' => number_format($row["cod"]),
                     'order_date' => date_format(date_create($row["order_date"]), "d/m/Y H:i:s"),
                     'appointment_delivery_date' => !empty($row["appointment_delivery_date"]) ? date_format(date_create($row["appointment_delivery_date"]), "d/m/Y") : '',
                     'delivery_date' => !empty($row["delivery_date"]) ? date_format(date_create($row["delivery_date"]), "d/m/Y") : '',
@@ -1151,7 +1159,7 @@ class CheckoutDAO
             } else if(isset($type) && !empty($type) && $type != 1) {
               $sql .= "and A.status in (3,6)";
             } else {
-              $sql .= " and A.status in (0,1,2,3,13,6)";
+              $sql .= " and A.status in (0,1,2,3,13,6,15)";
             }
             $sql .= "  and A.deleted = 0) tmp
                     group by
@@ -1179,18 +1187,35 @@ class CheckoutDAO
             $total_product_on_shop = 0;
             $total_product_online = 0;
             $total_product_exchange = 0;
+
             $total_on_facebook = 0;
             $total_on_shopee = 0;
+            $total_on_zalo = 0;
             $total_on_website = 0;
+            $total_on_lazada = 0;
+            $total_on_tiki = 0;
+
             $count_on_facebook = 0;
             $count_on_shopee = 0;
             $count_on_website = 0;
+            $count_on_lazada = 0;
+            $count_on_zalo = 0;
+            $count_on_tiki = 0;
+
             $total_product_on_facebook = 0;
             $total_product_on_website = 0;
+            $total_product_on_lazada = 0;
             $total_product_on_shopee = 0;
+            $total_product_on_zalo = 0;
+            $total_product_on_tiki = 0;
+
             $total_profit_on_facebook = 0;
             $total_profit_on_shopee = 0;
             $total_profit_on_website = 0;
+            $total_profit_on_lazada = 0;
+            $total_profit_on_zalo = 0;
+            $total_profit_on_tiki = 0;
+
             foreach ($result as $k => $row) {
                 $total_amount += $row["total_amount"];
                 $total_checkout += $row["total_checkout"];
@@ -1222,7 +1247,7 @@ class CheckoutDAO
                   $count_on_website++;
                   $total_product_on_website += $row["product"];
                   $total_profit_on_website += $row["total_profit"];
-                } else if ($row["source"] == 2) {
+                } else if ($row["source"] == 2 || $row["source"] == 4) {
                   // facebook
                   $total_on_facebook += $row["total_checkout"];
                   $count_on_facebook++;
@@ -1234,6 +1259,24 @@ class CheckoutDAO
                   $count_on_shopee++;
                   $total_product_on_shopee += $row["product"];
                   $total_profit_on_shopee += $row["total_profit"];
+                } else if ($row["source"] == 5) {
+                  // lazada
+                  $total_on_lazada += $row["total_checkout"];
+                  $count_on_lazada++;
+                  $total_product_on_lazada += $row["product"];
+                  $total_profit_on_lazada += $row["total_profit"];
+                } else if ($row["source"] == 6) {
+                  // zalo
+                  $total_on_zalo += $row["total_checkout"];
+                  $count_on_zalo++;
+                  $total_product_on_zalo += $row["product"];
+                  $total_profit_on_zalo += $row["total_profit"];
+                } else if ($row["source"] == 7) {
+                  // tiki
+                  $total_on_tiki += $row["total_checkout"];
+                  $count_on_tiki++;
+                  $total_product_on_tiki += $row["product"];
+                  $total_profit_on_tiki += $row["total_profit"];
                 }
             }
             $count_total = $count_on_shop + $count_online + $count_exchange;
@@ -1251,21 +1294,38 @@ class CheckoutDAO
             $arr["total_transfer"] = number_format($total_transfer);
             $arr["total_profit"] = number_format($total_profit);
             $arr["total_product"] = number_format($total_product);
+
             $arr["total_product_on_shop"] = number_format($total_product_on_shop);
             $arr["total_product_online"] = number_format($total_product_online);
             $arr["total_product_exchange"] = number_format($total_product_exchange);
-            $arr["total_on_website"] = number_format($total_on_website);
-            $arr["count_on_website"] = $count_on_website;
-            $arr["total_product_on_website"] = number_format($total_product_on_website);
+
             $arr["total_on_facebook"] = number_format($total_on_facebook);
-            $arr["count_on_facebook"] = $count_on_facebook;
-            $arr["total_product_on_facebook"] = number_format($total_product_on_facebook);
             $arr["total_on_shopee"] = number_format($total_on_shopee);
+            $arr["total_on_website"] = number_format($total_on_website);
+            $arr["total_on_lazada"] = number_format($total_on_lazada);
+            $arr["total_on_zalo"] = number_format($total_on_zalo);
+            $arr["total_on_tiki"] = number_format($total_on_tiki);
+
+            $arr["count_on_website"] = $count_on_website;
+            $arr["count_on_facebook"] = $count_on_facebook;
             $arr["count_on_shopee"] = $count_on_shopee;
+            $arr["count_on_lazada"] = $count_on_lazada;
+            $arr["count_on_zalo"] = $count_on_zalo;
+            $arr["count_on_tiki"] = $count_on_tiki;
+
             $arr["total_product_on_shopee"] = number_format($total_product_on_shopee);
+            $arr["total_product_on_website"] = number_format($total_product_on_website);
+            $arr["total_product_on_facebook"] = number_format($total_product_on_facebook);
+            $arr["total_product_on_lazada"] = number_format($total_product_on_lazada);
+            $arr["total_product_on_zalo"] = number_format($total_product_on_zalo);
+            $arr["total_product_on_tiki"] = number_format($total_product_on_tiki);
+
             $arr["total_profit_on_facebook"] = number_format($total_profit_on_facebook);
             $arr["total_profit_on_shopee"] = number_format($total_profit_on_shopee);
             $arr["total_profit_on_website"] = number_format($total_profit_on_website);
+            $arr["total_profit_on_lazada"] = number_format($total_profit_on_lazada);
+            $arr["total_profit_on_zalo"] = number_format($total_profit_on_zalo);
+            $arr["total_profit_on_tiki"] = number_format($total_profit_on_tiki);
             return $arr;
 
         } catch (Exception $e) {
@@ -1640,12 +1700,14 @@ class CheckoutDAO
                         A.wallet,
                         A.total_amount,
                         A.total_checkout,
+                        A.customer_payment,
                         A.order_date,
                         A.type as order_type,
                         A.status,
                         A.total_reduce,
                         A.voucher_code,
                         A.source,
+                        A.created_by,
                         D.id as product_id,
                         D.name as product_name,
                         E.sku,
@@ -1692,6 +1754,7 @@ class CheckoutDAO
                         'total_amount' => number_format($row["total_amount"]),
                         'total_checkout' => number_format($row["total_checkout"]),
                         'total_reduce' => number_format($row["total_reduce"]),
+                        'customer_payment' => number_format($row["customer_payment"]),
                         'order_date' => date_format(date_create($row["order_date"]), "d/m/Y H:i:s"),
                         'order_type' => $row["order_type"],
                         'status' => $row["status"],
@@ -1699,6 +1762,7 @@ class CheckoutDAO
                         'voucher_code' => $row["voucher_code"],
                         'product_name' => $row["product_name"],
                         'source' => $row["source"],
+                        'created_by' => $row["created_by"],
                         'details' => array()
                     );
                     $qty = $row["quantity"];
@@ -1717,7 +1781,7 @@ class CheckoutDAO
                         'price' => number_format($price),
                         'reduce' => number_format($qty * $reduce),
                         'intoMoney' => number_format($intoMoney),
-                        'profit' => number_format(($row["profit"] - $reduce) * $qty),
+                        'profit' => number_format($row["profit"]),
                         'product_type' => $row["product_type"],
                         'updated_qty' => $row["updated_qty"]
                     );
@@ -1742,7 +1806,7 @@ class CheckoutDAO
                         'price' => number_format($price),
                         'reduce' => number_format($qty * $reduce),
                         'intoMoney' => number_format($intoMoney),
-                        'profit' => number_format(($row["profit"] - $reduce) * $qty),
+                        'profit' => number_format($row["profit"]),
                         'product_type' => $row["product_type"],
                         'updated_qty' => $row["updated_qty"]
                     );
@@ -1765,6 +1829,7 @@ class CheckoutDAO
             $wallet = $order->getWallet();
             $total_amount = $order->getTotal_amount();
             $total_checkout = $order->getTotal_checkout();
+            $cod = $order->getCod() ?? 0;
             $customer_payment = $order->getCustomer_payment();
             $repay = $order->getRepay();
             $transfer_to_wallet = $order->getTransferToWallet();
@@ -1800,6 +1865,7 @@ class CheckoutDAO
                     `wallet`,
                     `total_amount`,
                     `total_checkout`,
+                    `cod`,
                     `customer_payment`,
                     `payment_type`,
                     `repay`,
@@ -1822,9 +1888,9 @@ class CheckoutDAO
                     `created_by`,
                     `created_date`,
                     `updated_date`) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
-            $stmt->bind_param("sdddddddiddiisddsisdiiissss", $shopee_order_id, $total_reduce, $total_reduce_percent, $discount, $wallet, $total_amount,
-                $total_checkout, $customer_payment, $payment_type, $repay, $transfer_to_wallet, $customer_id, $type, $bill, $shipping_fee,
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+            $stmt->bind_param("sddddddddiddiisddsisdiiissss", $shopee_order_id, $total_reduce, $total_reduce_percent, $discount, $wallet, $total_amount,
+                $total_checkout, $cod, $customer_payment, $payment_type, $repay, $transfer_to_wallet, $customer_id, $type, $bill, $shipping_fee,
                 $shipping, $shipping_unit, $status, $voucher_code, $voucher_value, $orderRefer, $paymentExchangeType, $source, $orderDate, $deliveryDate, $description, $createdBy);
             if (!$stmt->execute()) {
                 throw new Exception($stmt->error);
@@ -1844,6 +1910,7 @@ class CheckoutDAO
             $discount = $order->getDiscount();
             $total_amount = $order->getTotal_amount();
             $total_checkout = $order->getTotal_checkout();
+            $cod = $order->getCod();
             $customer_payment = $order->getCustomer_payment();
             $repay = $order->getRepay();
             $customer_id = $order->getCustomer_id();
@@ -1864,12 +1931,12 @@ class CheckoutDAO
             $createdBy = $order->getCreatedBy();
             $id = $order->getId();
             $stmt = $this->getConn()->prepare("update `smi_orders` SET `total_reduce` = ?, `total_reduce_percent` = ?, 
-                            `discount` = ?, `total_amount` = ?, `total_checkout` = ?, `customer_payment` = ?, `repay` = ?, 
+                            `discount` = ?, `total_amount` = ?, `total_checkout` = ?, `COD` = ?, `customer_payment` = ?, `repay` = ?, 
                             `customer_id` = ?, `type` = ?, `bill_of_lading_no` = ?, `shipping_fee` = ?, `shipping` = ?, 
                             `shipping_unit` = ?, `status` = ?, `updated_date` = NOW(), `deleted` = b'0', `payment_type` = ?, 
                             `order_date` = ?, `source` = ?, `delivery_date` = ?, `description` = ?, `created_by` = ? WHERE `id` = ?");
-            $stmt->bind_param("dddddddiisddsiisisssi", $total_reduce, $total_reduce_percent, $discount, $total_amount,
-              $total_checkout, $customer_payment, $repay, $customer_id, $type, $bill, $shipping_fee, $shipping,
+            $stmt->bind_param("ddddddddiisddsiisisssi", $total_reduce, $total_reduce_percent, $discount, $total_amount,
+              $total_checkout, $cod, $customer_payment, $repay, $customer_id, $type, $bill, $shipping_fee, $shipping,
               $shipping_unit, $status, $payment_type, $order_date, $source, $delivery_date, $description, $createdBy, $id);
             if (!$stmt->execute()) {
                 throw new Exception($stmt->error);

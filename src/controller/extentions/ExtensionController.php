@@ -14,7 +14,7 @@ include("../../model/Order/OrderLogs.php");
 include("../../model/Customer/Customer.php");
 
 $db = new DBConnect();
-$customerDAO = new CustomerDAO($db);
+// $customerDAO = new CustomerDAO($db);
 $checkoutDAO = new CheckoutDAO($db);
 $productDAO = new ProductDAO($db);
 $userDAO = new UserDAO($db);
@@ -53,12 +53,12 @@ if (isset($_POST["method"]) && $_POST["method"] == "searchOrder") {
                 $details = [];
                     $order["order_id"] = $ord["order_id"];
                     $order["product_name"] = $ord["product_name"];
-                    $order["customer_id"] = $ord["customer_id"];
-                    $order["customer_name"] = $ord["customer_name"];
-                    $order["customer_phone"] = $ord["phone"];
-                    $order["full_address"] = $ord["address"];
-                    $order["facebook"] = $ord["facebook"];
-                    $order["link_fb"] = $ord["link_fb"];
+                    // $order["customer_id"] = $ord["customer_id"];
+                    // $order["customer_name"] = $ord["customer_name"];
+                    // $order["customer_phone"] = $ord["phone"];
+                    // $order["full_address"] = $ord["address"];
+                    // $order["facebook"] = $ord["facebook"];
+                    // $order["link_fb"] = $ord["link_fb"];
                     $order["total_checkout"] = $ord["total_checkout"];
                     $order["order_date"] = $ord["order_date"];
                     $order["bill_of_lading_no"] = $ord["bill_of_lading_no"];
@@ -86,15 +86,15 @@ if (isset($_POST["method"]) && $_POST["method"] == "searchOrder") {
     }
 }
 
-if (isset($_POST["method"]) && $_POST["method"] == "checkPhone") {
-    try {
-        $phone = $_POST["data"];
-        $customer = $customerDAO->findCustomerByPhone($phone);
-        echo json_encode($customer);
-    } catch (Exception $e) {
-        throw new Exception($e);
-    }
-}
+// if (isset($_POST["method"]) && $_POST["method"] == "checkPhone") {
+//     try {
+//         $phone = $_POST["data"];
+//         $customer = $customerDAO->findCustomerByPhone($phone);
+//         echo json_encode($customer);
+//     } catch (Exception $e) {
+//         throw new Exception($e);
+//     }
+// }
 
 if (isset($_POST["method"]) && $_POST["method"] == "getAllStaff") {
     try {
@@ -230,7 +230,6 @@ if (isset($_POST["method"]) && $_POST["method"] == "getData") {
                 $totalReduceOnProduct += intval($variant["reduce"]);
                 $totalAmount += intval(str_replace(",","",$variation["retail"]));
             }
-            // array_push($newProducts, $variant);
             array_push($rowData['products'], $variant);
         }
         $rowData["quantity"] = $totalQty;
@@ -240,8 +239,6 @@ if (isset($_POST["method"]) && $_POST["method"] == "getData") {
         $rowData["total_amount"] = intval($totalAmount);
         $rowData["total_checkout"] = intval($totalAmount) - intval($rowData["total_reduce"]);
         
-        
-
         echo json_encode($rowData);
 
     } catch (Exception $ex) {
@@ -274,21 +271,23 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $order = new Order();
         $order_type = $data->order_type;
         $cusId = $data->customer_id;
-        $customer = new Customer();
-        $customer->setName($data->customerName);
-        $customer->setPhone($data->customerPhone);
-        $customer->setFullAddress($data->fullAddress);
-        $customer->setAddress($data->address);
-        $customer->setCityId($data->cityId);
-        $customer->setDistrictId($data->districtId);
-        $customer->setVillageId($data->villageId);
-        $customer->setLinkFb($data->linkFb ?? null);
-        $customer->setFacebook($data->facebook ?? null);
-        if(empty($cusId)) {
-            $cusId = $customerDAO->save_customer($customer);
-        } else {
-            $customer->setId($cusId);
-            $customerDAO->update_customer($customer);
+        if(!empty($data->source) && $data->source == 2) {
+            $customer = new Customer();
+            $customer->setName($data->customerName);
+            $customer->setPhone($data->customerPhone);
+            $customer->setFullAddress($data->fullAddress);
+            $customer->setAddress($data->address);
+            $customer->setCityId($data->cityId);
+            $customer->setDistrictId($data->districtId);
+            $customer->setVillageId($data->villageId);
+            $customer->setLinkFb($data->linkFb ?? null);
+            $customer->setFacebook($data->facebook ?? null);
+            if(empty($cusId)) {
+                $cusId = $customerDAO->save_customer($customer);
+            } else {
+                $customer->setId($cusId);
+                $customerDAO->update_customer($customer);
+            }
         }
 
         $total_checkout = $data->total_checkout;
@@ -310,6 +309,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $order->setDiscount($data->discount ?? 0);
         $order->setWallet($data->wallet ?? 0);
         $order->setTotal_checkout($data->total_checkout);
+        $order->setCod($data->cod ?? 0);
         $order->setCustomer_payment($data->customer_payment ?? 0);
         $order->setPayment_type($data->payment_type ?? 1);
         $order->setRepay($data->repay ?? 0);
@@ -318,7 +318,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $order->setType($order_type ?? 0);
         $order->setStatus($data->order_status ?? 0);
         $order->setVoucherValue(0);
-        $order->setOrder_date($data->order_date ?? date('y-m-d h:i:s'));
+        $order->setOrder_date($data->order_date ?? date('Y-m-d H:i:s'));
         $order->setAppointmentDeliveryDate($data->appointment_delivery_date ?? null);
         $order->setSource($data->source ?? 2);
         $order->setDescription($data->description ?? null);

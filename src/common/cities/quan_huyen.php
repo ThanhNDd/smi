@@ -206,6 +206,7 @@ $quan_huyen = array(
 	"203" => array("maqh"=>"290","name"=>"Thị xã Chí Linh","matp"=>"30"),
 	"204" => array("maqh"=>"291","name"=>"Huyện Nam Sách","matp"=>"30"),
 	"205" => array("maqh"=>"292","name"=>"Huyện Kinh Môn","matp"=>"30"),
+	"713" => array("maqh"=>"974","name"=>"Thị Xã Kinh Môn","matp"=>"30"),
 	"206" => array("maqh"=>"293","name"=>"Huyện Kim Thành","matp"=>"30"),
 	"207" => array("maqh"=>"294","name"=>"Huyện Thanh Hà","matp"=>"30"),
 	"208" => array("maqh"=>"295","name"=>"Huyện Cẩm Giàng","matp"=>"30"),
@@ -555,6 +556,7 @@ $quan_huyen = array(
 	"552" => array("maqh"=>"753","name"=>"Huyện Đất Đỏ","matp"=>"77"),
 	"553" => array("maqh"=>"754","name"=>"Huyện Tân Thành","matp"=>"77"),
 	"554" => array("maqh"=>"755","name"=>"Huyện Côn Đảo","matp"=>"77"),
+	"714" => array("maqh"=>"974","name"=>"Thị Xã Phú Mỹ","matp"=>"77"),
 	"555" => array("maqh"=>"760","name"=>"Quận 1","matp"=>"79"),
 	"556" => array("maqh"=>"761","name"=>"Quận 12","matp"=>"79"),
 	"557" => array("maqh"=>"762","name"=>"Quận Thủ Đức","matp"=>"79"),
@@ -713,4 +715,6 @@ $quan_huyen = array(
 	"710" => array("maqh"=>"971","name"=>"Huyện Năm Căn","matp"=>"96"),
 	"711" => array("maqh"=>"972","name"=>"Huyện Phú Tân","matp"=>"96"),
 	"712" => array("maqh"=>"973","name"=>"Huyện Ngọc Hiển","matp"=>"96"),
+	"713" => array("maqh"=>"974","name"=>"Thị Xã Nghi Sơm","matp"=>"38"),
+	"715" => array("maqh"=>"975","name"=>"Huyện Quảng Hoà","matp"=>"04"),
 );

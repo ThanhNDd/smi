@@ -136,7 +136,7 @@ Common::authen();
                                 <h3 class="card-title">Danh sách biến thể sản phẩm</h3>
                             </div>
                             <div class="card-body" style="width: 100%;overflow: scroll;">
-                                <div style="padding: 15px;width: 1660px;overflow: scroll hidden;">
+                                <div style="padding: 15px;">
                                     <table class="table table-list table-bordered table-striped" cellspacing="0" width="100%">
                                         <thead> </thead>
                                         <tbody> </tbody>
@@ -314,6 +314,8 @@ Common::authen();
             if (!validate_product()) {
                 return;
             }
+            let payload = get_data_inform();
+            console.log(payload);       
             Swal.fire({
                 title: 'Bạn có chắc chắn muốn tạo các sản phẩm này?',
                 text: "",
@@ -325,14 +327,14 @@ Common::authen();
             }).then((result) => {
                 if (result.value) {
                     show_loading();
-                    let product = get_data_inform();
-                    // console.log(product);
+                    let payload = get_data_inform();
+                    console.log(payload);
                     $.ajax({
                         dataType: 'json',
                         url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
                         data: {
-                            method: 'add_new',
-                            data: product
+                        method: 'add_new',
+                            data: payload
                         },
                         type: 'POST',
                         success: function (data) {
@@ -345,7 +347,8 @@ Common::authen();
                                 if (result.value) {
                                     close_modal('#create_product');
                                     reset_modal();
-                                    $('#product_datatable').DataTable().ajax.reload();
+                                    // $('#product_datatable').DataTable().ajax.reload();
+                                    window.location.reload();
                                 }
                             });
                             hide_loading();
@@ -433,9 +436,12 @@ Common::authen();
                     let _size  = $(".table-list tbody tr .size_"+c+"_"+s).text();
                     let _qty = $(".table-list tbody tr #qty_"+c+"_"+s).val();
                     let _price = $(".table-list tbody tr #price_"+c+"_"+s).val();
+                    let _fee = $(".table-list tbody tr #fee_"+c+"_"+s).val();
+                    let _costPrice = $(".table-list tbody tr #costPrice_"+c+"_"+s).val();
                     let _retail = $(".table-list tbody tr #retail_"+c+"_"+s).val();
                     let _percent = $(".table-list tbody tr #percent_"+c+"_"+s).val();
-                    let _fee = $(".table-list tbody tr #fee_"+c+"_"+s).val();
+                    let _salePrice= $(".table-list tbody tr #salePrice_"+c+"_"+s).val();
+                    let _percentSale = $(".table-list tbody tr #percentSale_"+c+"_"+s).val();
                     let _profit = $(".table-list tbody tr #profit_"+c+"_"+s).val();
                     let _sku = $(".table-list tbody tr #sku_"+c+"_"+s).val();
                     let _weight = $(".table-list tbody tr #weight_"+c+"_"+s).val();
@@ -451,9 +457,12 @@ Common::authen();
                     variations['size'] = _size;
                     variations['qty'] = _qty;
                     variations['price'] = replaceComma(_price);
+                    variations['fee'] = replaceComma(_fee);
+                    variations['costPrice'] = Number(replaceComma(_price)) + Number(replaceComma(_fee));
                     variations['retail'] = replaceComma(_retail);
                     variations['percent'] = _percent;
-                    variations['fee'] = replaceComma(_fee);
+                    variations['salePrice'] = replaceComma(_salePrice);
+                    variations['percentSale'] = _percentSale;
                     variations['profit'] = replaceComma(_profit);
                     variations['sku'] = _sku;
                     variations['weight'] = _weight;
@@ -487,13 +496,19 @@ Common::authen();
             let size = length_of_sizes;
 
 
-            let qty = $("#qty").val();
-            let price = $("#price").val();
-            let retail = $("#retail").val();
-            let percent = $("#percent").val();
-            let fee = $("#fee").val();
-            let profit = $("#profit").val();
-            let product_id = $("#display_product_id").val();
+            let qty = $("#qty").val() ?? "";
+            let price = $("#price").val() ?? "";
+            let fee = $("#fee").val() ?? "";
+            let costPrice = Number(replaceComma(price)) + Number(replaceComma(fee));
+            if(isNaN(costPrice)) {
+                costPrice = "";
+            }
+            let retail = $("#retail").val() ?? "";
+            let percent = $("#percent").val() ?? "";
+            let salePrice = $("#salePrice").val() ?? "";
+            let percentSale = $("#percentSale").val() ?? "";
+            let profit = $("#profit").val() ?? "";
+            let product_id = $("#display_product_id").val() ?? "";
             let length_ = "";
             let weight = "";
             let height = "";
@@ -511,10 +526,13 @@ Common::authen();
                 thead += `<th width="150px">Size</th>`;
                 thead += `<th width="100px">Số lượng</th>`;
                 thead += `<th width="100px">Giá nhập</th>`;
-                thead += `<th width="100px">Giá bán</th>`;
-                thead += `<th width="80px">%</th>`;
                 thead += `<th width="130px">Phí vận chuyển</th>`;
-                thead += `<th width="100px">Profit</th>`;
+                thead += `<th width="100px">Giá vốn</th>`;
+                thead += `<th width="100px">Giá bán</th>`;
+                thead += `<th width="100px">Giá sale</th>`;
+                thead += `<th width="80px">% Sale</th>`;
+                thead += `<th width="80px">% Lãi</th>`;
+                thead += `<th width="100px">Lãi</th>`;
                 thead += `<th width="100px">SKU</th>`;
                 thead += `<th width="150px">Chiều dài</th>`;
                 thead += `<th width="150px">Cân nặng</th>`;
@@ -553,27 +571,39 @@ Common::authen();
                         }
                         let _qty = $(".table-list tbody tr #qty_"+c+"_"+s).val();
                         if(typeof _qty === 'undefined' || _qty === '') {
-                            _qty = $("#qty").val();
+                            _qty = qty ?? "";
                         }
                         let _price = $(".table-list tbody tr #price_"+c+"_"+s).val();
                         if(typeof _price === 'undefined' || _price === '') {
-                            _price = $("#price").val();
-                        }
-                        let _retail = $(".table-list tbody tr #retail_"+c+"_"+s).val();
-                        if(typeof _retail === 'undefined' || _retail === '') {
-                            _retail = $("#retail").val();
-                        }
-                        let _percent = $(".table-list tbody tr #percent_"+c+"_"+s).val();
-                        if(typeof _percent === 'undefined' || _percent === '') {
-                            _percent = $("#percent").val();
+                            _price = price ?? "";
                         }
                         let _fee = $(".table-list tbody tr #fee_"+c+"_"+s).val();
                         if(typeof _fee === 'undefined' || _fee === '') {
-                            _fee = $("#fee").val();
+                            _fee = fee ?? "";
+                        }
+                        let _costPice = Number(replaceComma(_price)) + Number(replaceComma(_fee));
+                        if(isNaN(_costPice)) {
+                            _costPice = "";
+                        }
+                        let _retail = $(".table-list tbody tr #retail_"+c+"_"+s).val();
+                        if(typeof _retail === 'undefined' || _retail === '') {
+                            _retail = retail ?? "";
+                        }
+                        let _salePrice = $(".table-list tbody tr #salePrice_"+c+"_"+s).val();
+                        if(typeof _salePrice === 'undefined' || _salePrice === '') {
+                            _salePrice = salePrice ?? "";
+                        }
+                        let _percentSale = $(".table-list tbody tr #percentSale_"+c+"_"+s).val();
+                        if(typeof _percentSale === 'undefined' || _percentSale === '') {
+                            _percentSale = percentSale ?? "";
+                        }
+                        let _percent = $(".table-list tbody tr #percent_"+c+"_"+s).val();
+                        if(typeof _percent === 'undefined' || _percent === '') {
+                            _percent = $("#percent").val() ?? "";
                         }
                         let _profit = $(".table-list tbody tr #profit_"+c+"_"+s).val();
                         if(typeof _profit === 'undefined' || _profit === '') {
-                            _profit = $("#profit").val();
+                            _profit = profit ?? "";
                         }
                         let _weight = $(".table-list tbody tr #weight_"+c+"_"+s).val();
                         if(typeof _weight === 'undefined' || _weight === '') {
@@ -610,18 +640,21 @@ Common::authen();
                             table += "<td class='color_"+c+"' rowspan='"+size+"'>"+_color+"</td>\n";
                         }
                         table += "<td class='size_"+c+"_"+s+"'>"+_size+"</td>\n" +
-                            "<td class='qty_"+c+"_"+s+"'><input type='number' class='form-control' placeholder='Số lượng' value='"+_qty+"' id='qty_"+c+"_"+s+"' min='0'></td>\n" +
-                            "<td class='price_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá nhâp' value='"+_price+"' id='price_"+c+"_"+s+"' style='width:100px' onchange='onchange_price_in_list("+c+", "+s+")' onkeyup='onchange_price_in_list("+c+", "+s+")'></td>\n" +
-                            "<td class='retail_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá bán' value='"+_retail+"' id='retail_"+c+"_"+s+"' style='width:100px' onchange='onchange_retail_in_list("+c+", "+s+")' onkeyup='onchange_retail_in_list("+c+", "+s+")'></td>\n" +
-                            "<td class='percent_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='%' value='"+_percent+"' id='percent_"+c+"_"+s+"' onchange='onchange_percent_in_list("+c+", "+s+")' onkeyup='onchange_percent_in_list("+c+", "+s+")'></td>\n" +
-                            "<td class='fee_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Phí vận chuyển' value='"+_fee+"' id='fee_"+c+"_"+s+"' onchange='onchange_fee_in_list("+c+", "+s+")' onkeyup='onchange_fee_in_list("+c+", "+s+")'></td>\n" +
+                            "<td class='qty_"+c+"_"+s+"'><input type='number' class='form-control' placeholder='Số lượng' style='width:100px' value='"+_qty+"' id='qty_"+c+"_"+s+"' min='0'></td>\n" +
+                            "<td class='price_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá nhâp' value='"+_price+"' id='price_"+c+"_"+s+"' style='width:100px' onchange='onchange_price_in_list("+c+", "+s+")'></td>\n" +
+                            "<td class='fee_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Phí vận chuyển' style='width:130px' value='"+_fee+"' id='fee_"+c+"_"+s+"' onchange='onchange_fee_in_list("+c+", "+s+")'></td>\n" +
+                            "<td class='costPrice_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá vốn' style='width:100px' value='"+_costPice+"' id='costPice_"+c+"_"+s+"' style='width:100px' disabled></td>\n" +
+                            "<td class='retail_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá bán' value='"+_retail+"' id='retail_"+c+"_"+s+"' style='width:100px' onchange='onchange_retail_in_list("+c+", "+s+")'></td>\n" +
+                            "<td class='salePrice_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá sale' value='"+_salePrice+"' id='salePrice_"+c+"_"+s+"' style='width:100px' onchange='onchange_sale_price_in_list("+c+", "+s+")'></td>\n" +
+                            "<td class='percentSale_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='% sale' value='"+_percentSale+"' id='percentSale_"+c+"_"+s+"' style='width:100px' onchange='onchange_percent_sale_in_list("+c+", "+s+")'></td>\n" +
+                            "<td class='percent_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='%' value='"+_percent+"' id='percent_"+c+"_"+s+"' style='width:80px' onchange='onchange_percent_in_list("+c+", "+s+")'></td>\n" +
                             "<td class='profit_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Profit' value='"+_profit+"' id='profit_"+c+"_"+s+"' style='width:100px' readonly></td>\n" +
                             "<td class='sku_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_sku+"' id='sku_"+c+"_"+s+"' style='width:100px'></td>\n" +
-                            "<td class='length_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_length+"' id='length_"+c+"_"+s+"' ></td>\n" +
-                            "<td class='weight_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_weight+"' id='weight_"+c+"_"+s+"' ></td>\n" +
-                            "<td class='height_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_height+"' id='height_"+c+"_"+s+"' ></td>\n" +
-                            "<td class='age_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_age+"' id='age_"+c+"_"+s+"' ></td>\n" +
-                            "<td class='dimension_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_dimension+"' id='dimension_"+c+"_"+s+"' ></td>\n" +
+                            "<td class='length_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_length+"' placeholder='Chiều dài' style='width:150px' id='length_"+c+"_"+s+"' ></td>\n" +
+                            "<td class='weight_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_weight+"' placeholder='Cân nặng' style='width:150px' id='weight_"+c+"_"+s+"' ></td>\n" +
+                            "<td class='height_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_height+"' placeholder='Chiều cao' style='width:150px' id='height_"+c+"_"+s+"' ></td>\n" +
+                            "<td class='age_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_age+"' placeholder='Tuổi' style='width:150px' id='age_"+c+"_"+s+"' ></td>\n" +
+                            "<td class='dimension_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_dimension+"' placeholder='Kích thước' style='width:150px' id='dimension_"+c+"_"+s+"' ></td>\n" +
                             "</tr>";
                         $(".table-list tbody").append(table);
                         // s++;
@@ -639,18 +672,21 @@ Common::authen();
                     "</td>\n" +
                     "<td class='color_"+d+"' colspan='"+size+"'>Màu "+d+"</td>\n" +
                     "<td class='size_1_"+d+"'>Size "+d+"</td>\n" +
-                    "<td class='qty_1_"+d+"'><input type='number' class='form-control' value='"+qty+"' id='qty_1_"+d+"' min='0'></td>\n" +
-                    "<td class='price_1_"+d+"'><input type='text' class='form-control' value='"+price+"' id='price_1_"+d+"'></td>\n" +
-                    "<td class='retail_1_"+d+"'><input type='text' class='form-control' value='"+retail+"' id='retail_1_"+d+"'></td>\n" +
-                    "<td class='percent_1_"+d+"'><input type='text' class='form-control' value='"+percent+"' id='percent_1_"+d+"'></td>\n" +
-                    "<td class='fee_1_"+d+"'><input type='text' class='form-control' value='"+fee+"' id='fee_1_"+d+"'></td>\n" +
-                    "<td class='profit_1_"+d+"'><input type='text' class='form-control' value='"+profit+"' id='profit_1_"+d+"' style='width:100px'></td>\n" +
-                    "<td class='sku_1_"+d+"'><input type='text' class='form-control' value='"+sku+"' id='sku_1_"+d+"' style='width:100px'></td>\n" +
-                    "<td class='length_1_"+d+"'><input type='text' class='form-control' value='"+length_+"' id='length_1_"+d+"'></td>\n" +
-                    "<td class='weight_1_"+d+"'><input type='text' class='form-control' value='"+weight+"' id='weight_1_"+d+"'></td>\n" +
-                    "<td class='height_1_"+d+"'><input type='text' class='form-control' value='"+height+"' id='height_1_"+d+"'></td>\n" +
-                    "<td class='age_1_"+d+"'><input type='text' class='form-control' value='"+age+"' id='age_1_"+d+"'></td>\n" +
-                    "<td class='dimension_1_"+d+"'><input type='text' class='form-control' value='"+dimension+"' id='dimension_1_"+d+"'></td>\n" +
+                    "<td class='qty_1_"+d+"'><input type='number' class='form-control' value='"+qty+"' placeholder='Số lượng' style='width:100px' id='qty_1_"+d+"' min='0'></td>\n" +
+                    "<td class='price_1_"+d+"'><input type='text' class='form-control' value='"+price+"' placeholder='Giá nhập' style='width:100px' id='price_1_"+d+"'></td>\n" +
+                    "<td class='fee_1_"+d+"'><input type='text' class='form-control' value='"+fee+"' placeholder='Phí vận chuyển' style='width:130px' id='fee_1_"+d+"'></td>\n" +
+                    "<td class='costPrice_1_"+d+"'><input type='text' class='form-control' value='"+costPrice+"' placeholder='Giá vốn' style='width:100px' id='costPrice_1_"+d+"' disabled></td>\n" +
+                    "<td class='retail_1_"+d+"'><input type='text' class='form-control' value='"+retail+"'  placeholder='Giá bán' style='width:100px'id='retail_1_"+d+"'></td>\n" +
+                    "<td class='salePrice_1_"+d+"'><input type='text' class='form-control' value='"+salePrice+"' placeholder='Giá sale' style='width:100px' id='salePrice_1_"+d+"'></td>\n" +
+                    "<td class='percentSale_1_"+d+"'><input type='text' class='form-control' value='"+percentSale+"' placeholder='% sale' style='width:80px' id='percentSale_1_"+d+"'></td>\n" +
+                    "<td class='percent_1_"+d+"'><input type='text' class='form-control' value='"+percent+"' placeholder='% Lãi' style='width:80px' id='percent_1_"+d+"'></td>\n" +
+                    "<td class='profit_1_"+d+"'><input type='text' class='form-control' value='"+profit+"' placeholder='Lãi' id='profit_1_"+d+"' style='width:100px'></td>\n" +
+                    "<td class='sku_1_"+d+"'><input type='text' class='form-control' value='"+sku+"' id='sku_1_"+d+"' placeholder='Sku' style='width:100px'></td>\n" +
+                    "<td class='length_1_"+d+"'><input type='text' class='form-control' value='"+length_+"' placeholder='Chiều dài' style='width:150px' id='length_1_"+d+"'></td>\n" +
+                    "<td class='weight_1_"+d+"'><input type='text' class='form-control' value='"+weight+"' placeholder='Cân nặng' style='width:150px' id='weight_1_"+d+"'></td>\n" +
+                    "<td class='height_1_"+d+"'><input type='text' class='form-control' value='"+height+"' placeholder='Chiều cao' style='width:150px' id='height_1_"+d+"'></td>\n" +
+                    "<td class='age_1_"+d+"'><input type='text' class='form-control' value='"+age+"' placeholder='Tuổi' style='width:150px' id='age_1_"+d+"'></td>\n" +
+                    "<td class='dimension_1_"+d+"'><input type='text' class='form-control' value='"+dimension+"' placeholder='Kích thước' style='width:150px' id='dimension_1_"+d+"'></td>\n" +
                     "</tr>");
             }
 
@@ -665,9 +701,16 @@ Common::authen();
 
             let qty = $("#qty").val();
             let price = $("#price").val();
-            let retail = $("#retail").val();
-            let percent = $("#percent").val();
             let fee = $("#fee").val();
+            let costPrice = Number(replaceComma(price)) + Number(replaceComma(fee));
+            if(isNaN(costPrice)) {
+                costPrice = 0;
+            }
+            let retail = $("#retail").val();
+            let salePrice = $("#salePrice").val();
+            let percentSale = $("#percentSale").val();
+            let percent = $("#percent").val();
+            
             let profit = $("#profit").val();
             let product_id = $("#display_product_id").val();
 
@@ -679,12 +722,15 @@ Common::authen();
                 thead += `<th width="100px">Số lượng</th>`;
                 if(IS_ADMIN) {
                     thead += `<th width="100px">Giá nhập</th>`;
+                    thead += `<th width="130px">Phí vận chuyển</th>`;
+                    thead += `<th width="100px">Giá vốn</th>`;
                 }
                 thead += `<th width="100px">Giá bán</th>`;
+                thead += `<th width="100px">Giá sale</th>`;
+                thead += `<th width="80px">% Sale</th>`;
                 if(IS_ADMIN) {
-                    thead += `<th width="80px">%</th>`;
-                    thead += `<th width="130px">Phí vận chuyển</th>`;
-                    thead += `<th width="100px">Profit</th>`;
+                    thead += `<th width="80px">% Lãi</th>`;
+                    thead += `<th width="100px">Lãi</th>`;
                 }
                 thead += `<th width="100px">SKU</th>`;
                 thead += `<th width="150px">Chiều dài</th>`;
@@ -702,21 +748,29 @@ Common::authen();
                 for (let c = 1; c <= color; c++) {
                     // let s = 1;
                     for (let s = 1; s <= size; s++) {
-                        let _id = variations[i].id;
-                        let _img = variations[i].image;
-                        let _color = variations[i].color;
-                        let _size = variations[i].size;
-                        let _qty = variations[i].quantity;
-                        let _price = variations[i].price;
-                        let _retail = variations[i].retail;
-                        let _percent = variations[i].percent;
-                        let _profit = variations[i].profit;
-                        let _fee = variations[i].fee;
-                        let _length = variations[i].length__ ? variations[i].length__ : "";
-                        let _weight = variations[i].weight ? variations[i].weight : "";
-                        let _height = variations[i].height ? variations[i].height : "";
-                        let _age = variations[i].age ? variations[i].age : "";
-                        let _dimension = variations[i].dimension ? variations[i].dimension : "";
+                        let _id = variations[i].id ?? "";
+                        let _img = variations[i].image ?? "";
+                        let _color = variations[i].color ?? "";
+                        let _size = variations[i].size ?? "";
+                        let _qty = variations[i].quantity ?? "";
+                        let _price = variations[i].price ?? "";
+                        let _fee = variations[i].fee ?? "";
+                        let _costPrice = Number(replaceComma(_price)) + Number(replaceComma(_fee));
+                        if(isNaN(_costPrice)) {
+                            _costPrice = 0;
+                        } else {
+                            _costPrice = formatNumber(_costPrice);
+                        }
+                        let _retail = variations[i].retail ?? "";
+                        let _salePrice = variations[i].salePrice ?? "";
+                        let _percentSale = variations[i].percentSale ?? "";
+                        let _percent = variations[i].percent ?? "";
+                        let _profit = variations[i].profit ?? "";
+                        let _length = variations[i].length__  ?? "";
+                        let _weight = variations[i].weight  ?? "";
+                        let _height = variations[i].height  ?? "";
+                        let _age = variations[i].age  ?? "";
+                        let _dimension = variations[i].dimension  ?? "";
                         let sku = variations[i].sku;
                         table += "<tr class=\"" + d + "\">\n";
                         table += "<td class=\"hidden\" id='id_"+c+"_"+s+"'>"+_id+"</td>";
@@ -727,22 +781,25 @@ Common::authen();
                             table += "<td class='color_"+c+"' rowspan='"+size+"'>"+_color+"</td>\n";
                         }
                         table += "<td class='size_"+c+"_"+s+"'>"+_size+"</td>";
-                        table += "<td class='qty_"+c+"_"+s+"'><input type='number' class='form-control' placeholder='Số lượng' value='"+_qty+"' id='qty_"+c+"_"+s+"'></td>";
+                        table += "<td class='qty_"+c+"_"+s+"'><input type='number' class='form-control' placeholder='Số lượng' value='"+_qty+"' style='width:100px' id='qty_"+c+"_"+s+"'></td>";
                         if(IS_ADMIN) {
-                            table += "<td class='price_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá nhâp' value='"+_price+"' id='price_"+c+"_"+s+"' style='width:100px' onchange='onchange_price_in_list("+c+", "+s+")' onkeyup='onchange_price_in_list("+c+", "+s+")'></td>";
+                            table += "<td class='price_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá nhập' value='"+_price+"' style='width:100px' id='price_"+c+"_"+s+"' onchange='onchange_price_in_list("+c+", "+s+")'></td>";
+                            table += "<td class='fee_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Phí vận chuyển' value='"+_fee+"' style='width:130px' id='fee_"+c+"_"+s+"' onchange='onchange_fee_in_list("+c+", "+s+")'></td>";
+                            table += "<td class='costPrice_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá vốn' value='"+_costPrice+"' style='width:100px' id='costPrice_"+c+"_"+s+"' disabled></td>";
                         }
-                        table += "<td class='retail_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá bán' value='"+_retail+"' id='retail_"+c+"_"+s+"' style='width:100px' onchange='onchange_retail_in_list("+c+", "+s+")' onkeyup='onchange_retail_in_list("+c+", "+s+")'></td>";
+                        table += "<td class='retail_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá bán' value='"+_retail+"' style='width:100px' id='retail_"+c+"_"+s+"' onchange='onchange_retail_in_list("+c+", "+s+")'></td>";
+                        table += "<td class='salePrice_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Giá sale' value='"+_salePrice+"' style='width:100px' id='salePrice_"+c+"_"+s+"' onchange='onchange_sale_price_in_list("+c+", "+s+")'></td>";
+                        table += "<td class='percentSale_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='% Sale' value='"+_percentSale+"' style='width:80px' id='percentSale_"+c+"_"+s+"' onchange='onchange_percent_sale_in_list("+c+", "+s+")'></td>";
                         if(IS_ADMIN) {
-                            table += "<td class='percent_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='%' value='"+_percent+"' id='percent_"+c+"_"+s+"' onchange='onchange_percent_in_list("+c+", "+s+")' onkeyup='onchange_percent_in_list("+c+", "+s+")'></td>";
-                            table += "<td class='fee_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Phí vận chuyển' value='"+_fee+"' id='fee_"+c+"_"+s+"' onchange='onchange_fee_in_list("+c+", "+s+")' onkeyup='onchange_fee_in_list("+c+", "+s+")'></td>";
-                            table += "<td class='profit_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Profit' value='"+_profit+"' id='profit_"+c+"_"+s+"' style='width:100px' readonly></td>";
+                            table += "<td class='percent_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='%' value='"+_percent+"' style='width:80px' id='percent_"+c+"_"+s+"' onchange='onchange_percent_in_list("+c+", "+s+")'></td>";
+                            table += "<td class='profit_"+c+"_"+s+"'><input type='text' class='form-control' placeholder='Profit' value='"+_profit+"' style='width:100px' id='profit_"+c+"_"+s+"' readonly></td>";
                         }
-                        table += "<td class='sku_"+c+"_"+s+"'><input type='text' class='form-control' value='"+sku+"' id='sku_"+c+"_"+s+"'  style='width:100px'></td>";
-                        table += "<td class='length_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_length+"' id='length_"+c+"_"+s+"' ></td>";
-                        table += "<td class='weight_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_weight+"' id='weight_"+c+"_"+s+"' ></td>";
-                        table += "<td class='height_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_height+"' id='height_"+c+"_"+s+"' ></td>";
-                        table += "<td class='age_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_age+"' id='age_"+c+"_"+s+"' ></td>";
-                        table += "<td class='dimension_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_dimension+"' id='dimension_"+c+"_"+s+"' ></td>";
+                        table += "<td class='sku_"+c+"_"+s+"'><input type='text' class='form-control' value='"+sku+"' id='sku_"+c+"_"+s+"'  placeholder='Sku' style='width:100px'></td>";
+                        table += "<td class='length_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_length+"' style='width:150px' placeholder='Chiều dài' id='length_"+c+"_"+s+"' ></td>";
+                        table += "<td class='weight_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_weight+"' style='width:150px' placeholder='Cân nặng' id='weight_"+c+"_"+s+"' ></td>";
+                        table += "<td class='height_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_height+"' style='width:150px' placeholder='Chiều cao' id='height_"+c+"_"+s+"' ></td>";
+                        table += "<td class='age_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_age+"' style='width:150px' placeholder='Tuổi' id='age_"+c+"_"+s+"' ></td>";
+                        table += "<td class='dimension_"+c+"_"+s+"'><input type='text' class='form-control' value='"+_dimension+"' style='width:150px' placeholder='Kích thước' id='dimension_"+c+"_"+s+"' ></td>";
                         table += "</tr>";
                         $(".table-list tbody").append(table);
                         // s++;
@@ -763,17 +820,19 @@ Common::authen();
                     "<td class='size_1_"+d+"'>Size "+d+"</td>\n" +
                     "<td class='qty_1_"+d+"'><input type='number' class='form-control' value='"+qty+"' id='qty_1_"+d+"'></td>\n" +
                     "<td class='price_1_"+d+"'><input type='text' class='form-control' value='"+price+"' id='price_1_"+d+"'></td>\n" +
-                    "<td class='retail_1_"+d+"'><input type='text' class='form-control' value='"+retail+"' id='retail_1_"+d+"'></td>\n" +
-                    "<td class='percent_1_"+d+"'><input type='text' class='form-control' value='"+percent+"' id='percent_1_"+d+"'></td>\n" +
                     "<td class='fee_1_"+d+"'><input type='text' class='form-control' value='"+fee+"' id='fee_1_"+d+"'></td>\n" +
+                    "<td class='costPrice_1_"+d+"'><input type='text' class='form-control' value='"+costPrice+"' id='costPrice_1_"+d+"'></td>\n" +
+                    "<td class='retail_1_"+d+"'><input type='text' class='form-control' value='"+retail+"' id='retail_1_"+d+"'></td>\n" +
+                    "<td class='salePrice_1_"+d+"'><input type='text' class='form-control' value='"+salePrice+"' id='salePrice_1_"+d+"'></td>\n" +
+                    "<td class='percentSale_1_"+d+"'><input type='text' class='form-control' value='"+percentSale+"' id='percentSale_1_"+d+"'></td>\n" +
+                    "<td class='percent_1_"+d+"'><input type='text' class='form-control' value='"+percent+"' id='percent_1_"+d+"'></td>\n" +
                     "<td class='profit_1_"+d+"'><input type='text' class='form-control' value='"+profit+"' id='profit_1_"+d+"'></td>\n" +
                     "<td class='sku_1_"+d+"'><input type='text' class='form-control' value='"+sku+"' id='sku_1_"+d+"'></td>\n" +
-                    "<td class='length_1_"+d+"'><input type='text' class='form-control' id='length_1_"+d+"'></td>\n" +
-                    "<td class='weight_1_"+d+"'><input type='text' class='form-control' id='weight_1_"+d+"'></td>\n" +
-                    "<td class='height_1_"+d+"'><input type='text' class='form-control' id='height_1_"+d+"'></td>\n" +
-                    "<td class='age_1_"+d+"'><input type='text' class='form-control' id='age_1_"+d+"'></td>\n" +
-                    "<td class='dimension_1_"+d+"'><input type='text' class='form-control' id='dimension_1_"+d+"'></td>\n" +
-                    "<td><i class='fa fa-trash'></i></td>\n" +
+                    "<td class='length_1_"+d+"'><input type='text' class='form-control' style='width:150px' id='length_1_"+d+"'></td>\n" +
+                    "<td class='weight_1_"+d+"'><input type='text' class='form-control' style='width:150px' id='weight_1_"+d+"'></td>\n" +
+                    "<td class='height_1_"+d+"'><input type='text' class='form-control' style='width:150px' id='height_1_"+d+"'></td>\n" +
+                    "<td class='age_1_"+d+"'><input type='text' class='form-control' style='width:150px' id='age_1_"+d+"'></td>\n" +
+                    "<td class='dimension_1_"+d+"'><input type='text' class='form-control' style='width:150px' id='dimension_1_"+d+"'></td>\n" +
                     "</tr>");
             }
         });
@@ -1825,6 +1884,66 @@ Common::authen();
             }
         }
 
+        function onchange_sale_price_in_list(c, s) {
+            let salePrice = $(".table-list tbody tr td #salePrice_"+c+"_"+s).val();
+            // val = format_money(val);
+            salePrice = Number(replaceComma(salePrice));
+            if (isNaN(salePrice)) {
+                $(".table-list tbody tr td #salePrice_"+c+"_"+s).addClass("is-invalid");
+            } else if(salePrice < 1000) {
+                toastr.error('Giá sale phải lớn hơn 1000đ');
+                $(".table-list tbody tr td #salePrice_"+c+"_"+s).addClass("is-invalid");
+                return false;
+            } else {
+                // onchange_percent_sale_in_list(c, s);
+                // calc_profit_in_list(c, s);
+                let retail = $(".table-list tbody tr td #retail_"+c+"_"+s).val();
+                retail = Number(replaceComma(retail));
+                if(isNaN(retail)) {
+                    $(".table-list tbody tr td #retail_"+c+"_"+s).addClass("is-invalid");
+                    return false;
+                }
+                if(salePrice > retail) {
+                    $(".table-list tbody tr td #salePrice_"+c+"_"+s).addClass("is-invalid");
+                    return false;
+                }
+                
+                $(".table-list tbody tr td #salePrice_"+c+"_"+s).removeClass("is-invalid").val(formatNumber(salePrice));
+                // calculate percent sale
+                // 100% - salePrice * 100 / Retail
+                let percentSale = 100 - Math.round(salePrice * 100 / retail);
+                $(".table-list tbody tr td #percentSale_"+c+"_"+s).removeClass("is-invalid").val(percentSale);
+                calc_percent_in_list(c, s);
+                calc_profit_in_list(c, s);
+            }
+        }
+
+        function onchange_percent_sale_in_list(c, s) {
+            let percentSale = $(".table-list tbody tr td #percentSale_"+c+"_"+s).val();
+            percentSale = Number(percentSale);
+            if (isNaN(percentSale)) {
+                $(".table-list tbody tr td #percentSale_"+c+"_"+s).addClass("is-invalid").focus();
+            } else {
+                $(".table-list tbody tr td #percentSale_"+c+"_"+s).removeClass("is-invalid");
+
+                let retail = $(".table-list tbody tr td #retail_"+c+"_"+s).val();
+                retail = Number(replaceComma(retail));
+                if(isNaN(retail)) {
+                    $(".table-list tbody tr td #retail_"+c+"_"+s).addClass("is-invalid");
+                    return false;
+                }
+
+                // let priceSale = $(".table-list tbody tr td #priceSale_"+c+"_"+s).val();
+                // priceSale = Number(replaceComma(priceSale));
+
+                // let fee = Number(replaceComma($("#fee_"+c+"_"+s).val()));
+                let salePrice = retail - percentSale * retail / 100;
+                $(".table-list tbody tr td #salePrice_"+c+"_"+s).val(formatNumber(salePrice));
+                calc_percent_in_list(c, s);
+                calc_profit_in_list(c, s);
+            }
+        }
+
         function onchange_retail_in_list(c, s) {
             let val = $(".table-list tbody tr td #retail_"+c+"_"+s).val();
             val = format_money(val);
@@ -1832,10 +1951,43 @@ Common::authen();
                 $(".table-list tbody tr td #retail_"+c+"_"+s).addClass("is-invalid");
             } else {
                 $(".table-list tbody tr td #retail_"+c+"_"+s).removeClass("is-invalid").val(formatNumber(val));
-                calc_percent_in_list(c, s);
-                calc_profit_in_list(c, s);
+                let salePrice = $(".table-list tbody tr td #salePrice_"+c+"_"+s).val();
+                if(!salePrice) {
+                    calc_percent_in_list(c, s);
+                    calc_profit_in_list(c, s);
+                } else {
+                    calc_percent_sale_in_list(c, s);
+                }
             }
         }
+
+        function calc_percent_sale_in_list(c, s) {
+            let val = $(".table-list tbody tr td #percentSale_"+c+"_"+s).val();
+            if (isNaN(val)) {
+                $(".table-list tbody tr td #percentSale_"+c+"_"+s).addClass("is-invalid").focus();
+            } else {
+                $(".table-list tbody tr td #percentSale_"+c+"_"+s).removeClass("is-invalid");
+
+                let retail = $(".table-list tbody tr td #retail_"+c+"_"+s).val();
+                retail = Number(replaceComma(retail));
+                if(retail && isNaN(retail)) {
+                    $(".table-list tbody tr td #retail_"+c+"_"+s).addClass("is-invalid");
+                    return false;
+                }
+
+                let salePrice = $(".table-list tbody tr td #salePrice_"+c+"_"+s).val();
+                salePrice = Number(replaceComma(salePrice));
+                if(salePrice && isNaN(salePrice)) {
+                    $(".table-list tbody tr td #salePrice_"+c+"_"+s).addClass("is-invalid");
+                    return false;
+                }
+
+                let percentSale = 100 - Math.round(salePrice * 100 / retail);
+                $(".table-list tbody tr td #percentSale_"+c+"_"+s).val(percentSale);
+            }
+        }
+
+        
 
         function onchange_percent_in_list(c, s) {
             let val = $(".table-list tbody tr td #percent_"+c+"_"+s).val();
@@ -1859,38 +2011,37 @@ Common::authen();
             if(!fee) {
                 return;
             }
-            fee = format_money(replaceComma(fee));
+            fee = Number(replaceComma(fee));
             if (isNaN(fee)) {
                 $(".table-list tbody tr td #fee_"+c+"_"+s).addClass("is-invalid").focus();
             } else {
                 $(".table-list tbody tr td #fee_"+c+"_"+s).removeClass("is-invalid").val(formatNumber(fee));
 
+
                 let price = $(".table-list tbody tr td #price_"+c+"_"+s).val();
                 if(!price) {
-                    return;
+                    return false;
                 }
                 price = Number(replaceComma(price));
-                let retail = $(".table-list tbody tr td #retail_"+c+"_"+s).val();
-                if(!retail) {
-                    return;
-                }
-                retail = Number(replaceComma(retail));
-                let profit = retail - price - fee;
-                $(".table-list tbody tr td #profit_"+c+"_"+s).val(formatNumber(profit));
+
+                let costPrice = fee + price;
+                $(".table-list tbody tr td #costPrice_"+c+"_"+s).val(formatNumber(costPrice));
+
+                // let retail = $(".table-list tbody tr td #retail_"+c+"_"+s).val();
+                // if(!retail) {
+                //     return false;
+                // }
+                // retail = Number(replaceComma(retail));
+
+                // let profit = retail - price - fee;
+                // $(".table-list tbody tr td #profit_"+c+"_"+s).val(formatNumber(profit));
                 // calc_profit_in_list(c, s);
+                calc_profit_in_list(c, s);
+                calc_percent_in_list(c, s); 
             }
         }
 
-        function calc_profit_in_list(c, s) {
-            let retail = $(".table-list tbody tr td #retail_"+c+"_"+s).val();
-            retail = replaceComma(retail);
-            let price = $(".table-list tbody tr td #price_"+c+"_"+s).val();
-            price = replaceComma(price);
-            let fee = $("#fee_"+c+"_"+s).val();
-            fee = replaceComma(fee);
-            let profit = Number(retail) - Number(price) - Number(fee);
-            $(".table-list tbody tr td #profit_"+c+"_"+s).val(formatNumber(profit));
-        }
+
 
         function calculate_profit_in_list() {
             let fee = $("#fee").val();
@@ -1909,39 +2060,104 @@ Common::authen();
             }
         }
 
+        function calc_profit_in_list(c, s) {
+            let retail = $(".table-list tbody tr td #retail_"+c+"_"+s).val();
+            retail = Number(replaceComma(retail));
+            if(!retail || isNaN(retail)) {
+                $(".table-list tbody tr td #retail_"+c+"_"+s).addClass("is-invalid");
+                return false;
+            }
+
+            let price = $(".table-list tbody tr td #price_"+c+"_"+s).val();
+            price = Number(replaceComma(price));
+            if(!price || isNaN(price)) {
+                $(".table-list tbody tr td #price_"+c+"_"+s).addClass("is-invalid");
+                return false;
+            }
+
+            let salePrice = $(".table-list tbody tr td #salePrice_"+c+"_"+s).val();
+            salePrice = Number(replaceComma(salePrice));
+            if(salePrice && isNaN(salePrice)) {
+                $(".table-list tbody tr td #salePrice_"+c+"_"+s).addClass("is-invalid");
+                return false;
+            }
+            
+            let fee = $("#fee_"+c+"_"+s).val();
+            fee = Number(replaceComma(fee));
+            if(!fee) {
+                fee = 0;
+            } else if(isNaN(fee)) {
+                $("#fee_"+c+"_"+s).addClass("is-invalid");
+                return false;
+            }
+
+            let costPrice = price + fee;
+
+            let profit = 0;
+            if(salePrice > 0) {
+                profit = salePrice - costPrice;
+            } else {
+                profit = retail - costPrice;
+            }
+            $(".table-list tbody tr td #profit_"+c+"_"+s).val(formatNumber(profit));
+        }
+
         function calc_percent_in_list(c, s) {
             let retail = $(".table-list tbody tr td #retail_"+c+"_"+s).val();
-            if(!retail) {
-                return;
+            retail = Number(replaceComma(retail));
+            if(!retail || isNaN(retail)) {
+                $(".table-list tbody tr td #retail_"+c+"_"+s).addClass("is-invalid");
+                return false;
             }
-            retail = replaceComma(retail);
+            
             let price = $(".table-list tbody tr td #price_"+c+"_"+s).val();
-            if(!price) {
-                return;
+            price = Number(replaceComma(price));
+            if(!price || isNaN(price)) {
+                $(".table-list tbody tr td #price_"+c+"_"+s).addClass("is-invalid");
+                return false;
             }
-            price = replaceComma(price);
+
+            let salePrice = $(".table-list tbody tr td #salePrice_"+c+"_"+s).val();
+            salePrice = Number(replaceComma(salePrice));
+            if(salePrice && isNaN(salePrice)) {
+                $(".table-list tbody tr td #salePrice_"+c+"_"+s).addClass("is-invalid");
+                return false;
+            }
+            
             let fee = $("#fee_"+c+"_"+s).val();
+            fee = Number(replaceComma(fee));
             if(!fee) {
-                return;
+                fee = 0;
+            } else if(isNaN(fee)) {
+                $("#fee_"+c+"_"+s).addClass("is-invalid");
+                return false;
             }
-            fee = replaceComma(fee);
-            if (isNaN(retail)) {
-                $(".table-list tbody tr td #retail_"+c+"_"+s).addClass("is-invalid").focus();
-            } else if (isNaN(price)) {
-                $(".table-list tbody tr td #price_"+c+"_"+s).addClass("is-invalid").focus();
-            } else if (isNaN(fee)) {
-                $("#fee_"+c+"_"+s).addClass("is-invalid").focus();
-            } else {
+            
+            let costPrice = price + fee;
+
+            // if (isNaN(retail)) {
+            //     // $(".table-list tbody tr td #retail_"+c+"_"+s).addClass("is-invalid").focus();
+            // } else if (isNaN(price)) {
+            //     // $(".table-list tbody tr td #price_"+c+"_"+s).addClass("is-invalid").focus();
+            // } else if (isNaN(fee)) {
+            //     // $("#fee_"+c+"_"+s).addClass("is-invalid").focus();
+            // } else {
                 $(".table-list tbody tr td #retail_"+c+"_"+s).removeClass("is-invalid");
                 $(".table-list tbody tr td #price_"+c+"_"+s).removeClass("is-invalid");
-                $("#fee_"+c+"_"+s).removeClass("is-invalid");
-                retail = Number(retail);
-                price = Number(price);
-                fee = Number(fee);
-                let percent = (retail - price - fee) * 100 / (price + fee);
+                $(".table-list tbody tr td #salePrice_"+c+"_"+s).removeClass("is-invalid");
+                $(".table-list tbody tr td #fee_"+c+"_"+s).removeClass("is-invalid");
+                // retail = Number(retail);
+                // price = Number(price);
+                // fee = Number(fee);
+                let percent = 0;
+                if(salePrice > 0) {
+                    percent = (salePrice - costPrice) * 100 / costPrice;
+                } else {
+                    percent = (retail - costPrice) * 100 / costPrice;
+                }
                 percent = Math.round(percent);
                 $(".table-list tbody tr td #percent_"+c+"_"+s).val(percent);
-            }
+            // }
         }
 
 

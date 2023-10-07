@@ -63,6 +63,7 @@ require_once("common.php");
 <script type="text/javascript">
 	let root_path = '<?php Common::getPath(); ?>';
 	const IS_ADMIN = <?php echo Common::isAdmin() ?>;
+	const _CURRENCE_DONG_SIGN = "&#8363;";
 	function set_title(title) {
 		// $(".title-page").text(document.getElementsByTagName("title")[0].innerHTML);
 		$(".title-page").text(title ? title : document.getElementsByTagName("title")[0].innerHTML);

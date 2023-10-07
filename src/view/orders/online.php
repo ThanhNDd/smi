@@ -315,6 +315,10 @@ Common::authen();
         table.dataTable thead th, table.dataTable thead td, .dataTables_wrapper.no-footer .dataTables_scrollBody {
             white-space: nowrap;
         }
+        
+        th {
+            white-space: nowrap;
+        }
     </style>
 </head>
 <?php require_once('../../common/header.php'); ?>
@@ -363,7 +367,7 @@ Common::authen();
                     </div>
                     <div class="m-2 update-bulk-bill-order-jnt">
                         <a href="<?php Common::getPath() ?>src/view/batch/update.php" class="btn btn-sm btn-info btn-flat p-2">
-                            <i class="fas fa-bolt"></i> Cập nhật đơn hàng J&T
+                            <i class="fas fa-bolt"></i> Cập nhật mã vận đơn
                         </a>
                     </div>
                 </div>
@@ -598,7 +602,7 @@ Common::authen();
                                 </div>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col d-none">
                             <div class="card">
                                 <div class="card-header p-2" style="background-color: #27b7ff;color: white;">
                                     <h3 class="card-title">Tiki</h3>
@@ -615,6 +619,28 @@ Common::authen();
                                         <div class="col-md-6 col-sm-12 p-0 float-right">
                                             <h1 class="text-danger text-right m-0 count_on_tiki"></h1>
                                             <h5 class="text-right col-md-12 p-0 text-secondary total_product_on_tiki" style="padding-right: 6px !important;"></h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header p-2" style="background-color: #27b7ff;color: white;">
+                                    <h3 class="card-title">Zalo</h3>
+                                </div>
+                                <div class="card-body p-2">
+                                    <div class="row col-md-12 p-0 m-0">
+                                        <div class="col-md-6 col-sm-12 p-0 pt-1">
+                                            <span class="row col-md-12 col-sm-12">
+                                                <h5 class="total_on_zalo"></h5>
+                                            </span>
+                                            <span class="row col-md-12 col-sm-12 total_profit_on_zalo"></span>
+                                            <span class="row col-md-12 col-sm-12 percent_on_zalo"></span>
+                                        </div>
+                                        <div class="col-md-6 col-sm-12 p-0 float-right">
+                                            <h1 class="text-danger text-right m-0 count_on_zalo"></h1>
+                                            <h5 class="text-right col-md-12 p-0 text-secondary total_product_on_zalo" style="padding-right: 6px !important;"></h5>
                                         </div>
                                     </div>
                                 </div>
@@ -936,6 +962,7 @@ Common::authen();
 
         batch_update_order_status_print();
         print_order_JT();
+        print_order_GHN();
     });
 
     function current_date() {
@@ -1937,8 +1964,6 @@ Common::authen();
                     } else {
                         $(".percent_on_tiki").html("0%");
                     }
-                }
-                if(IS_ADMIN) {
                     $(".total_profit").html((res.total_profit ? res.total_profit : 0) + "&#8363;");
                     $(".percent_profit").html("0%");
                     let percent = ((Number(replaceComma(res.total_profit)) / Number(replaceComma(res.total_checkout))) * 100).toFixed(2);
@@ -1966,6 +1991,26 @@ Common::authen();
                 //         $(".percent_profit").html(percent + "%");
                 //     }
                 // }
+
+                // zalo
+                $(".total_on_zalo").html((res.total_on_zalo ? res.total_on_zalo : 0) + "&#8363;");
+                $(".count_on_zalo").html(res.count_on_zalo ? res.count_on_zalo+" <small style='font-size: 35%;' class='text-secondary'>Đơn</small>" : 0);
+                $(".total_product_on_zalo").html(Number(replaceComma(res.total_product_on_zalo)) > 0 ? res.total_product_on_zalo+" <small style='font-size: 64%;margin-right: 10px;' class='text-secondary'>SP</small>" : 0);
+                if(IS_ADMIN) {
+                    $(".total_profit_on_zalo").html((res.total_profit_on_zalo ? res.total_profit_on_zalo : 0) + "&#8363;");
+                    let percent_on_zalo = ((Number(replaceComma(res.total_profit_on_zalo)) / Number(replaceComma(res.total_on_zalo))) * 100).toFixed(2);
+                    if (!isNaN(percent_on_zalo)) {
+                        $(".percent_on_zalo").html(percent_on_zalo + "%");
+                    } else {
+                        $(".percent_on_zalo").html("0%");
+                    }
+                    $(".total_profit").html((res.total_profit ? res.total_profit : 0) + "&#8363;");
+                    $(".percent_profit").html("0%");
+                    let percent = ((Number(replaceComma(res.total_profit)) / Number(replaceComma(res.total_checkout))) * 100).toFixed(2);
+                    if (!isNaN(percent)) {
+                        $(".percent_profit").html(percent + "%");
+                    }
+                }
             },
             error: function (data, errorThrown) {
                 console.log(data.responseText);
@@ -2716,18 +2761,12 @@ Common::authen();
     }
     
     function print_order_JT() {
-        
         hidden_table_print_order();
         $(".print_order_JT").click(function () {
             return new Promise((resolve) => {
                 $(".show_loading_print_order_checked").removeClass("hidden");
                 $(".print_order").attr("disabled", true);
-                // $("#spinnerDownloadFileJnT").removeClass("d-none");
-                // $("#tbl_body_print_order_JNT").html("");
                 $.each(data_print, function(k, v) {
-                     // let name = v.customer_name;
-                     // let phone = v.customer_phone;
-                     // let customer_address = "";
                      let address = "";
                      let city = "";
                      let district = "";
@@ -2747,30 +2786,7 @@ Common::authen();
                      data_print[k]["city"] = city;
                      data_print[k]["district"] = district;
                      data_print[k]["village"] = village;
-
-                     // let description = v.description ? v.description : "";
-                     // let COD = v.total_checkout;
-                     // let tr = "<tr>";
-                     // tr += "<td>"+v.order_id+"</td>";
-                     // tr += "<td>"+name+"</td>";
-                     // tr += "<td>"+phone+"</td>";
-                     // tr += "<td>"+address+"</td>";
-                     // tr += "<td>"+city+"</td>";
-                     // tr += "<td>"+district+"</td>";
-                     // tr += "<td>"+village+"</td>";
-                     // tr += "<td>"+description+"</td>"; 
-                     // tr += "<td>Hàng hóa</td>"; 
-                     // tr += "<td>0.5</td>"; 
-                     // tr += "<td>1</td>"; 
-                     // tr += "<td></td>"; 
-                     // tr += "<td>"+COD.replaceAll(",",".")+"</td>"; 
-                     // tr += "</tr>";
-                     // $("#tbl_body_print_order_JNT").append(tr);
                 });
-                // $("#tbl_print_order_JNT").removeClass("d-none");
-                // open_modal('#modal_print_order');
-                
-                // console.log("data_print: ", JSON.stringify(data_print));
                 exportOrderJnT(data_print);
 
                 resolve();
@@ -2816,55 +2832,117 @@ Common::authen();
         hidden_table_print_order();
         $(".print_order_GHN").click(function () {
             return new Promise((resolve) => {
-                $(".show_loading_update_print_status").removeClass("hidden");
-                $("#tbl_body_print_order_GHN").html("");
+                $(".show_loading_print_order_checked").removeClass("hidden");
+                $(".print_order").attr("disabled", true);
                 $.each(data_print, function(k, v) {
-                     let name = v.customer_name;
-                     let phone = v.customer_phone;
-                     let customer_address = "";
-                     // let address = "";
-                     // let city = "";
-                     // let district = "";
-                     // let village = "";
-                     // if(v.customer_address) {
-                     //     customer_address = v.customer_address.split(",");
-                     //     city = customer_address[customer_address.length - 1];
-                     //     district = customer_address[customer_address.length - 2];
-                     //     village = customer_address[customer_address.length - 3];
-                     //    let c = customer_address.length - 3;
-                     //    for(let i=0;i<c;i++) {
-                     //      address += customer_address[i]+','
-                     //    }
-                     //   address = address.substr(0, address.length-1);
-                     // }
-                     let description = v.description ? v.description : "";
-                     let COD = v.total_checkout;
-                     let tr = "<tr>";
-                     tr += "<td>"+name+"</td>";
-                     tr += "<td>"+phone+"</td>";
-                     tr += "<td>"+customer_address+"</td>";
-                     tr += "<td>2</td>";
-                     tr += "<td>"+COD.replaceAll(",",".")+"</td>";
-                     tr += "<td>1</td>";
-                     tr += "<td>500</td>"; 
-                     tr += "<td>10</td>"; 
-                     tr += "<td>10</td>"; 
-                     tr += "<td>10</td>"; 
-                     tr += "<td>x</td>"; 
-                     tr += "<td>"+COD.replaceAll(",",".")+"</td>"; 
-                     tr += "<td>x</td>"; 
-                     tr += "<td></td>"; 
-                     tr += "<td></td>"; 
-                     tr += "<td>x</td>"; 
-                     tr += "</tr>";
-                     $("#tbl_body_print_order_GHN").append(tr);
+                     let address = "";
+                     let city = "";
+                     let district = "";
+                     let village = "";
+                     if(v.customer_address) {
+                         customer_address = v.customer_address.split(",");
+                         city = customer_address[customer_address.length - 1];
+                         district = customer_address[customer_address.length - 2];
+                         village = customer_address[customer_address.length - 3];
+                        let c = customer_address.length - 3;
+                        for(let i=0;i<c;i++) {
+                          address += customer_address[i]+','
+                        }
+                       address = address.substr(0, address.length-1);
+                     }
+                     data_print[k]["address"] = address;
+                     data_print[k]["city"] = city;
+                     data_print[k]["district"] = district;
+                     data_print[k]["village"] = village;
+                     let description = v.description.replaceAll("\n",":1/");
+                     description = description.substr(0, description.length-1);
+                     data_print[k]["description"] = description;
+                     const d = new Date();
+                    //  let hour = d.getHours();
+                     let time = 2;// lấy hàng ca chiều
+                    //  if(hour > 9 && hour < 16) {
+                    //     time = 2; // lấy hàng ca chiều
+                    //  }
+                     data_print[k]["time"] = time;
+
+                     // let qty = Number(v.quantity) * 300;
+                     let qty = 300;
+                     let q = Number(v.quantity);
+                     if(q < 2) {
+                        qty = q * 300;
+                     } else if(q < 4) {
+                        qty = q * 200;
+                     } else if(q < 7) {
+                        qty = q * 150;
+                     } else {
+                        qty = 1000;
+                     }
+                     data_print[k]["mass"] = qty;
+
                 });
-                $("#tbl_print_order_GHN").removeClass("d-none");
-                open_modal('#modal_print_order');
+                console.log("data_print: ", data_print);
+                exportOrderGHN(data_print);
+
+                // $(".show_loading_update_print_status").removeClass("hidden");
+                // $("#tbl_body_print_order_GHN").html("");
+                // $.each(data_print, function(k, v) {
+                //      let name = v.customer_name;
+                //      let phone = v.customer_phone;
+                //      let customer_address = "";
+                //      let description = v.description ? v.description : "";
+                //      let COD = v.total_checkout;
+                //      let tr = "<tr>";
+                //      tr += "<td>"+name+"</td>";
+                //      tr += "<td>"+phone+"</td>";
+                //      tr += "<td>"+customer_address+"</td>";
+                //      tr += "<td>2</td>";
+                //      tr += "<td>"+COD.replaceAll(",",".")+"</td>";
+                //      tr += "<td>1</td>";
+                //      tr += "<td>500</td>"; 
+                //      tr += "<td>10</td>"; 
+                //      tr += "<td>10</td>"; 
+                //      tr += "<td>10</td>"; 
+                //      tr += "<td>x</td>"; 
+                //      tr += "<td>"+COD.replaceAll(",",".")+"</td>"; 
+                //      tr += "<td>x</td>"; 
+                //      tr += "<td></td>"; 
+                //      tr += "<td></td>"; 
+                //      tr += "<td>x</td>"; 
+                //      tr += "</tr>";
+                //      $("#tbl_body_print_order_GHN").append(tr);
+                // });
+                // $("#tbl_print_order_GHN").removeClass("d-none");
+                // open_modal('#modal_print_order');
                 resolve();
             });
         });
     }
+
+    function exportOrderGHN(data_print) {
+        $.ajax({
+            url: '<?php Common::getPath() ?>src/controller/batch/ExportController.php',
+            type: "POST",
+            dataType: "json",
+            data: {
+                method: "exportOrderGHN",
+                data: data_print
+            },
+            success: function (res) {
+                console.log(res);
+                if(res) {
+                    download(res);
+                    $(".show_loading_print_order_checked").addClass("hidden");
+                    $(".print_order").removeAttr("disabled");
+                }
+            },
+            error: () => {
+                toastr.error("Đã xảy ra lỗi");
+                $(".show_loading_print_order_checked").addClass("hidden");
+                $(".print_order").removeAttr("disabled");   
+            }
+        });
+    }
+
 
     function batch_print_receipt(order_ids) {
         $.ajax({
@@ -3155,8 +3233,15 @@ Common::authen();
                 //     $("#shipping").prop("disabled", true);
                 //     // $("#order_status").val(3);//complete
                 // }
-                $("#payment_type").val(value[0].payment_type);
-                $("#payment").val(value[0].customer_payment);
+                $("#payment_type").val(value[0].payment_type).trigger("change");
+                let cod = replaceComma(value[0].cod);
+                if(!cod) {
+                    let total_checkout = replaceComma(value[0].total_checkout);
+                    let shipping = replaceComma(value[0].shipping);
+                    let discount = replaceComma(value[0].discount);
+                    cod = Number(total_checkout) + Number(shipping) - Number(discount);
+                }
+                $("#payment").val(cod).trigger("change");
                 $("#total_amount").html(value[0].total_amount+'&#8363;');
                 $("#discount").val(Number(replaceComma(value[0].discount)) > 0 ? value[0].discount : '');
                 $("#total_checkout").html(value[0].total_checkout+'&#8363;');
@@ -3176,7 +3261,7 @@ Common::authen();
         
         let customer = `<p class="m-0"><i class="fas fa-exclamation-circle" title="Mã đơn hàng"></i> ${data.order_id}</p>`;
             // if(!data.customer_existed_id) {
-                if(data.source != 7) {
+                if(data.source != 3 && data.source != 5 && data.source != 7) {
                     customer += `<div>
                                     <p class="m-0"><i class="fas fa-phone-alt" title="Số điện thoại"></i> <a href="<?php  Common::getPath() ?>src/view/customer/?phone=${data.customer_phone}" target="_blank">${data.customer_phone}</a></p>
                                     <p class="m-0">
@@ -3192,11 +3277,25 @@ Common::authen();
                                     <p class="m-0 customer-address"><i class="fas fa-map-marker-alt"  title="Địa chỉ"></i>  ${data.customer_address}</p>
                                 </div>`;
                 } else {
-                    customer += `<div>
+                    if(data.source == 3) {
+                        customer += `<div> 
+                                    <p class="m-0">
+                                        <i class="fas fa-user" title="Tên khách hàng"></i> Khách hàng Shopee
+                                    </p>
+                                </div>`;
+                    } else if(data.source == 5) {
+                        customer += `<div> 
+                                    <p class="m-0">
+                                        <i class="fas fa-user" title="Tên khách hàng"></i> Khách hàng Lazada
+                                    </p>
+                                </div>`;
+                    } else if(data.source == 7) {
+                        customer += `<div> 
                                     <p class="m-0">
                                         <i class="fas fa-user" title="Tên khách hàng"></i> Khách hàng Tiki
                                     </p>
                                 </div>`;
+                    }
                 }
             // } else {
                 
@@ -3261,11 +3360,12 @@ Common::authen();
         table += '<table class="table table-striped" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
         table += '<thead>' +
             '<tr>' +
-            '<th>Hình ảnh</th>' +
-            '<th>Mã</th>' +
-            '<th>Tên</th>' +
-            '<th>Size</th>' +
-            '<th>Màu</th>' +
+            // '<th>Hình ảnh</th>' +
+            // '<th>Mã</th>' +
+            // '<th>Tên</th>' +
+            // '<th>Size</th>' +
+            // '<th>Màu</th>' +
+            '<th>Sản phẩm</th>' +
             '<th>Số lượng</th>' +
             '<th class="right">Giá</th>' +
             '<th class="right">Giảm trừ</th>' +
@@ -3305,11 +3405,25 @@ Common::authen();
             table += '<tr class="' + class_text + '">' +
                 '<input type="hidden" id="product_id_' + i + '" value="' + details[i].product_id + '"/>' +
                 '<input type="hidden" id="variant_id_' + i + '" value="' + details[i].variant_id + '"/>' +
-                '<td><img src=\'' + details[i].image + '\' width=\'50px\' style=\'border-radius:50%\' id=\'thumbnail\' onerror=\'this.onerror=null;this.src=\\"<?php Common::image_error()?>\\"\'></td>' +
-                '<td>' + details[i].sku + '</td>' +
-                '<td>' + details[i].product_name + '</td>' +
-                '<td>' + details[i].size + '</td>' +
-                '<td>' + details[i].color + '</td>' +
+                // '<td><img src=\'' + details[i].image + '\' width=\'50px\' style=\'border-radius:50%\' id=\'thumbnail\' onerror=\'this.onerror=null;this.src=\\"<?php Common::image_error()?>\\"\'></td>' +
+                // '<td>' + details[i].sku + '</td>' +
+                // '<td>' + details[i].product_name + '</td>' +
+                // '<td>' + details[i].size + '</td>' +
+                // '<td>' + details[i].color + '</td>' +
+                `<td>
+                    <a href="${details[i].image}" target="_blank">
+                        <img class="d-inline-block align-top" src="${details[i].image}" width="50px" style="border: 3px solid white;border-radius: 5px;cursor: pointer;"/>
+                    </a>
+                    <div class="d-inline-block align-top">
+                        <strong>${details[i].product_name}</strong>
+                        <br>
+                        <small>SKU: ${details[i].sku}</small>
+                        <br>
+                        <small>Màu: ${details[i].color}</small>
+                        <br>
+                        <small>Size: ${details[i].size}</small>
+                    </div>
+                </td>` +
                 '<td>' + details[i].quantity + '</td>' +
                 '<td class="right">' + details[i].price + '&#8363;</td>' +
                 '<td class="right">' + details[i].reduce + '&#8363;</td>' +
@@ -3364,7 +3478,14 @@ Common::authen();
                 d += '<div class="row col-12"><small>Địa chỉ</small> <h5 class="col-12 pl-0">' + data.address + '</h5></div>';
             }
         } else {
-            if(data.source == 7) {
+            const SHOPEE_ORDER = 3;
+            const LAZADA_ORDER = 5;
+            const TIKI_ORDER = 7;
+            if(data.source == SHOPEE_ORDER) {
+                d += '<div class="col-4 col-sm-4 col-md-4"><small>Khách hàng</small> <h5>Khách hàng Shopee</h5></div>';
+            } else if(data.source == LAZADA_ORDER) {
+                d += '<div class="col-4 col-sm-4 col-md-4"><small>Khách hàng</small> <h5>Khách hàng Lazada</h5></div>';
+            } else if(data.source == TIKI_ORDER) {
                 d += '<div class="col-4 col-sm-4 col-md-4"><small>Khách hàng</small> <h5>Khách hàng Tiki</h5></div>';
             } else {
                 d += '<div class="col-4 col-sm-4 col-md-4"><small>Khách hàng</small> <h5>Khách lẻ</h5></div>';
@@ -3399,17 +3520,17 @@ Common::authen();
                 d += '<div class="col-2 col-sm-2 col-md-2"><small>Phí ship Shop trả</small> <h5>' + formatNumber(shipping_fee) + '&#8363;</h5></div>';
                 profit -= Number(shipping_fee);
             }
-            let total_amount = Number(replaceComma(data.total_amount));
+            // let total_amount = Number(replaceComma(data.total_amount));
             let shipping = Number(replaceComma(data.shipping));
             if (shipping && shipping > 0) {
                 d += '<div class="col-2 col-sm-2 col-md-2"><small>Phí ship KH trả</small> <h5>' + formatNumber(shipping) + '&#8363;</h5></div>';
                 profit += shipping;
-                total_amount += shipping;
+                // total_amount += shipping;
             } else {
                 d += '<div class="col-2 col-sm-2 col-md-2"><small>Phí ship KH trả</small> <h5>Miễn Ship</h5></div>';
             }
-            total_amount -= Number(replaceComma(data.total_reduce));
-            d += '<div class="col-2 col-sm-2 col-md-2"><small>Tổng tiền KH thanh toán</small> <h5>' + formatNumber(total_amount) + '&#8363;</h5></div>';
+            // total_amount -= Number(replaceComma(data.total_reduce));
+            d += '<div class="col-2 col-sm-2 col-md-2"><small>Tổng tiền KH thanh toán</small> <h5>' + formatNumber(data.customer_payment) + '&#8363;</h5></div>';
         }
 
         if (payment_exchange_type === '2') {
@@ -3614,6 +3735,8 @@ Common::authen();
                 content += '<a href="https://viettelpost.vn/thong-tin-don-hang?peopleTracking=sender&orderNumber='+bill_of_lading_no.trim()+'" target="_blank">'+bill_of_lading_no+'</a>'+'<br>';
             } else if(shipping_unit === 'J&T') {
                 content += '<a href="https://vip.jtexpress.vn/#/service/expressTrack?id='+bill_of_lading_no.trim()+'" target="_blank">'+bill_of_lading_no+'</a>'+'<br>';
+            } else if(shipping_unit === 'GHN') {
+                content += '<a href="https://khachhang.ghn.vn/order/search/'+bill_of_lading_no.trim()+'/false" target="_blank">'+bill_of_lading_no+'</a>'+'<br>';
             } else {
                 content += bill_of_lading_no+'<br>';
             }
@@ -3701,9 +3824,13 @@ Common::authen();
             case 5:
                 src = '<span class="badge badge-primary" style="background-color: #201adb;color: white;">Lazada</span>';
                 break;
+            case 6:
+                src = '<span class="badge badge-primary" style="background-color: #0091ff;color: white;">Zalo</span>';
+                break;
             case 7:
                 src = '<span class="badge badge-primary" style="background-color: #27b7ff;color: white;">Tiki</span>';
                 break;
+
             default:
                 src = '<span class="badge badge-warning" >Cửa hàng</span>';
                 break;
@@ -3880,6 +4007,7 @@ Common::authen();
             case '0' :
                 return `<div class="text-payment-type text-center">
                             <span class="badge badge-info c-pointer edit-payment-type">COD <i class="fa fa-edit"></i></span>
+                            <span class="w-100 d-inline-block">${data.cod}&#8363;</span>
                         </div>`;
             case '1':
                 return `<div class="text-payment-type text-center">

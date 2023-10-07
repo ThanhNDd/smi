@@ -150,7 +150,7 @@ if (isset($_POST["type"]) && $_POST["type"] == "checkout") {
 
                 array_push($detailsObj, $detail);
                 if (!empty($sku)) {
-                    $dao->update_qty_variation_by_sku((string)$sku, (int)$qty, 1);
+                    $dao->update_qty_variation_by_sku((string)$sku, (int)$qty);
                 } else {
                     throw new Exception("SKU is empty");
                 }
@@ -182,13 +182,16 @@ if (isset($_POST["type"]) && $_POST["type"] == "checkout") {
                 $printer = new PrinterReceipt();
                 try {
                     $customer_name = '';
+                    $customer_phone = '';
                     if(!empty($data->customer_id)) {
                         $customer = $customerDAO->find_by_id($data->customer_id);
                         if(!empty($customer)) {
                             $customer_name = $customer[0]["name"];
+                            $customer_phone = $customer[0]["phone"];
                         }
                     }
                     $order->setCustomerName($customer_name);
+                    $order->setCustomerPhone($customer_phone);
                     $order->setPointSave($data->wallet_saved);
                     $filename = $printer->print($order, $detailsObj);
                     $response_array['fileName'] = $filename;

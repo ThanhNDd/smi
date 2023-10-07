@@ -358,10 +358,12 @@ if (isset($_POST["method"]) && $_POST["method"] == "print_receipt") {
             $details = $checkoutDAO->find_order_detail_by_order_id($order_id);
             $customer_id = $order->getCustomer_id();
             $customer_name = '';
+            $customer_phone = '';
             if(!empty($customer_id)) {
                 $customer = $customerDAO->find_by_id($customer_id);
                 if(!empty($customer)) {
                     $customer_name = $customer[0]["name"];
+                    $customer_phone = $customer[0]["phone"];
                 }
             }
             $wallet_saved = 0;
@@ -370,6 +372,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "print_receipt") {
                 $wallet_saved = $wallet->getSaved();
             }
             $order->setCustomerName($customer_name);
+            $order->setCustomerPhone($customer_phone);
             $order->setPointSave($wallet_saved);
             $printer = new PrinterReceipt();
             $filename = $printer->print($order, $details);
@@ -411,10 +414,12 @@ if (isset($_POST["method"]) && $_POST["method"] == "print_receipt") {
             $add_new_arr = get_details($add_new_products, $order_id, 0); // add new product
             $customer_id = $order->getCustomer_id();
             $customer_name = '';
+            $customer_phone = '';
             if(!empty($customer_id)) {
                 $customer = $customerDAO->find_by_id($customer_id);
                 if(!empty($customer)) {
                     $customer_name = $customer[0]["name"];
+                    $customer_phone = $customer[0]["phone"];
                 }
             }
             $wallet_saved = 0;
@@ -423,6 +428,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "print_receipt") {
                 $wallet_saved = $wallet->getSaved();
             }
             $order->setCustomerName($customer_name);
+            $order->setCustomerPhone($customer_phone);
             $order->setPointSave($wallet_saved);
             $printer = new PrinterReceiptExchange();
             $filename = $printer->print($order, $exchange_arr, $curr_arr, $add_new_arr, $return_arr);
@@ -667,8 +673,10 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $order = new Order();
         $order_type = $data->order_type;
         $cusId = $data->customer_id;
+        $shopee_order = 3;
+        $lazada_order = 5;
         $tiki_order = 7;
-        if(empty($cusId) && isset($data->source) && $data->source != $tiki_order) {
+        if(empty($cusId) && isset($data->source) && $data->source != $shopee_order && $data->source != $lazada_order && $data->source != $tiki_order) {
             $customer = new Customer();
             $customer->setName($data->customerName);
             $customer->setPhone($data->customerPhone);
@@ -700,6 +708,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         $order->setDiscount($data->discount ?? null);
         $order->setWallet($data->wallet ?? null);
         $order->setTotal_checkout($data->total_checkout ?? null);
+        $order->setCod($data->cod ?? 0);
         $order->setCustomer_payment($data->customer_payment ?? null);
         $order->setPayment_type($data->payment_type ?? null);
         $order->setRepay($data->repay ?? null);

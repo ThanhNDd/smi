@@ -132,6 +132,10 @@ Common::authen();
             width: 100%;
             margin-bottom: 15px;
         }
+        tr:hover td i.fas.fa-pencil-alt {
+/*            display: inline-block !important;*/
+            visibility: visible !important;
+        }
     </style>
 </head>
 <?php require_once('../../common/header.php'); ?>
@@ -183,6 +187,12 @@ Common::authen();
                     </section>
                 </div>
                 <div class="row col-md-12 mt-2 ml-3">
+                    <!-- <div class="form-inline" style="display: inline-block">
+                        <a href="<?php Common::getPath() ?>src/view/products/inventory/Shopee.php" 
+                            type="button" class="btn btn-danger btn-flat ml-2">
+                            Cập nhật tồn kho shopee
+                        </a>
+                    </div> -->
                     <!-- <button class="btn btn-info expandall" id="expandall">Expand all</button>
                     <button class="btn btn-danger ml-3" id="refactorProductID">Cập nhật Product</button>
                     <button class="btn btn-danger ml-3" id="refactorOrderID">Cập nhật Order</button>
@@ -211,7 +221,7 @@ Common::authen();
                             <!-- <th>Chất liệu</th>
                             <th>Xuất xứ</th> -->
                             <td>Publish</td>
-                            <td>Nguồn</td>
+                            <!-- <td>Nguồn</td> -->
                             <td>Hành động</td>
                         </tr>
                         </thead>
@@ -235,6 +245,7 @@ Common::authen();
 <?php require_once('../../common/footer.php'); ?>
 <script>
     let product_type = "<?php echo (isset($_GET['type']) ? $_GET['type'] : '') ?>";
+    let sorted = "<?php echo (isset($_GET['sorted']) ? $_GET['sorted'] : '') ?>";
     let table;
     let dataUpdateQuantity = [];
     $(document).ready(function () {
@@ -244,8 +255,6 @@ Common::authen();
         } else {
             set_title("Danh sách sản phẩm");
         }
-
-
         
         count_out_of_stock();
 
@@ -574,7 +583,7 @@ Common::authen();
                     width: "150px"
                 },
                 {
-                    "data": "retail",
+                    "data": format_display_price,
                     width: "50px"
                 },
                 {
@@ -586,6 +595,7 @@ Common::authen();
                     "data": format_discount,
                     width: "100px"
                 },
+
                 // {
                 //     "data": format_discount_display,
                 //     width: "100px"
@@ -610,14 +620,14 @@ Common::authen();
                 // },
                 {
                     "data": format_publish,
-                    "className": product_type ? 'hidden' : '',
+                    // "className": product_type ? 'hidden' : '',
                     width: "50px"
                 },
-                {
-                    "data": "system",
-                    "className": product_type ? 'hidden' : '',
-                    width: "50px"
-                },
+                // {
+                //     "data": "system",
+                //     "className": product_type ? 'hidden' : '',
+                //     width: "50px"
+                // },
                 {
                     "data": format_action,
                     "className": "center",
@@ -721,7 +731,7 @@ Common::authen();
                     // $("#profit").val(arr[0].profit);
                     // $("#qty").val(arr[0].quantity);
 
-                    $("#select_gender").val(arr[0].type).trigger("change");
+                    $("#select_gender").val(arr[0].gender).trigger("change");
                     $("#select_cat").val(arr[0].category_id).trigger("change");
                     // $("#select_material").val(arr[0].material).trigger("change");
                     $("#select_origin").val(arr[0].origin).trigger("change");
@@ -1536,6 +1546,16 @@ Common::authen();
         });
     }
 
+    function format_display_price(data) {
+        if(data.displayPrice != data.retail)  {
+            return `<p class="mb-0 font-weight-bold">${data.displayPrice}</p>
+                <p style="text-decoration: line-through;font-style: italic;">${data.retail}</p>`;
+        } else {
+            return `<p class="mb-0 font-weight-bold">${data.displayPrice}</p>`;
+        }
+        
+    }
+
     function format_gender(data) {
         let gender_id = data.type;
         for(let i=0; i<select_types.length; i++) {
@@ -1625,36 +1645,36 @@ Common::authen();
         return origin;
     }
 
-    function format_discount_display(data) {
-        let discount = data.discount;
-        if(!discount || discount === '' || discount === '0') {
-            return '';
-        }
-        let retail = data.retail;
-        let min_price = 0;
-        let max_price = 0;
-        if(retail.indexOf("-") > -1) {
-            min_price = replaceComma(retail.split("-")[0]);
-            max_price = replaceComma(retail.split("-")[1]);
-        } else {
-            retail = replaceComma(retail);
-        }
-        let salePrice = '';
-        if (discount > 100) {
-            if(min_price > 0 || max_price > 0) {
-                salePrice = formatNumber(min_price - discount) +" - "+formatNumber(max_price - discount);
-            } else {
-                salePrice = formatNumber(retail - discount);
-            }
-        } else {
-            if(min_price > 0 || max_price > 0) {
-                salePrice = formatNumber(min_price - (min_price * discount) / 100) +" - "+formatNumber(max_price - (max_price * discount) / 100);
-            } else {
-                salePrice = formatNumber(retail - (retail * discount) / 100);
-            }
-        }
-        return salePrice;
-    }
+    // function format_discount_display(data) {
+    //     let discount = data.discount;
+    //     if(!discount || discount === '' || discount === '0') {
+    //         return '';
+    //     }
+    //     let retail = data.retail;
+    //     let min_price = 0;
+    //     let max_price = 0;
+    //     if(retail.indexOf("-") > -1) {
+    //         min_price = replaceComma(retail.split("-")[0]);
+    //         max_price = replaceComma(retail.split("-")[1]);
+    //     } else {
+    //         retail = replaceComma(retail);
+    //     }
+    //     let salePrice = '';
+    //     if (discount > 100) {
+    //         if(min_price > 0 || max_price > 0) {
+    //             salePrice = formatNumber(min_price - discount) +" - "+formatNumber(max_price - discount);
+    //         } else {
+    //             salePrice = formatNumber(retail - discount);
+    //         }
+    //     } else {
+    //         if(min_price > 0 || max_price > 0) {
+    //             salePrice = formatNumber(min_price - (min_price * discount) / 100) +" - "+formatNumber(max_price - (max_price * discount) / 100);
+    //         } else {
+    //             salePrice = formatNumber(retail - (retail * discount) / 100);
+    //         }
+    //     }
+    //     return salePrice;
+    // }
 
     function format_quantity(data) {
         let totalQty = data.total_quantity;
@@ -1679,102 +1699,282 @@ Common::authen();
     //         '<button type="button" class="btn bg-gradient-info btn-sm mt-1" onclick="update_discount(this, ' + product_id + ')" title="Lưu khuyến mãi"><i class="fas fa-save"></i></button>';
     // }
 
-    function format_discount(data) {
-        let discount = data.discount;
-        if (!discount || discount === "0") {
-            discount = "";
-        } else {
-            if (discount < 100) {
-                discount = discount + "%";
-            } else {
-                discount = formatNumber(discount);
-            }
-        }
-        let retail = data.retail;
-        let profit = data.profit;
+    function format_importing(data) {
         let product_id = data.product_id;
-        // return '<input type="text" onchange="onchange_discount(this, \'' + profit + '\', \'' + retail + '\')" onblur="onchange_discount(this, \'' + profit + '\', \'' + retail + '\')" class="form-control col-md-12 float-left" value="' + discount + '"/>&nbsp;' +
-        //     '<button type="button" class="btn bg-gradient-info btn-sm mt-1" onclick="update_discount(this, ' + product_id + ')" title="Lưu khuyến mãi"><i class="fas fa-save"></i></button>';
-
+        let importing = data.importing;
+        if (!importing || importing === "0") {
+            importing = "";
+        }
         return `<div class="input-group">
-                  <input type="text" class="form-control" onchange="onchange_discount(this, '${profit}', '${retail}')" value="${discount}"
-                  placeholder="Giảm giá">
+                  <input type="text" class="form-control" value="${importing}"
+                  placeholder="Đang nhập">
                   <div class="input-group-append">
-                    <button class="input-group-text btn btn-info" onclick="update_discount(this, ${product_id})">
+                    <button class="input-group-text btn btn-info" onclick="update_importing(this, ${product_id})">
                         <i class="fas fa-save"></i>
                     </button>
                   </div>
-                </div>
-                ${format_discount_display(data)}`;
+                </div>`;
     }
 
-    function onchange_discount(e, profit, retail) {
-        $(e).removeClass("is-invalid");
-        $("#update_discount").prop("disabled", true);
-        let discount = $(e).val();
-        if(!discount) {
-            return;
-        }
-        discount = replaceComma(discount);
-        discount = replacePercent(discount);
-        let min_price = 0;
-        let max_price = 0;
-        if(retail.indexOf("-") > -1) {
-            min_price = replaceComma(retail.split("-")[0]);
-            max_price = replaceComma(retail.split("-")[1]);
-        } else {
-            retail = replaceComma(retail);
-        }
-        let min_profit = 0;
-        let max_profit = 0;
-        if(profit.indexOf("-") > -1) {
-            min_profit = replaceComma(profit.split("-")[0]);
-            max_profit = replaceComma(profit.split("-")[1]);
-        } else {
-            profit = replaceComma(profit);
-        }
-        let salePrice = '';
+    function format_discount(data) {
+        // let discount = data.discount;
+        // if (!discount || discount === "0") {
+        //     discount = "";
+        // } else {
+        //     if (discount < 100) {
+        //         discount = discount + "%";
+        //     } else {
+        //         discount = formatNumber(discount);
+        //     }
+        // }
+        // let retail = data.retail;
+        // let profit = data.profit;
+        // let product_id = data.product_id;
+        // return '<input type="text" onchange="onchange_discount(this, \'' + profit + '\', \'' + retail + '\')" onblur="onchange_discount(this, \'' + profit + '\', \'' + retail + '\')" class="form-control col-md-12 float-left" value="' + discount + '"/>&nbsp;' +
+        //     '<button type="button" class="btn bg-gradient-info btn-sm mt-1" onclick="update_discount(this, ' + product_id + ')" title="Lưu khuyến mãi"><i class="fas fa-save"></i></button>';
 
-        if (!isNaN(discount) && discount >= 0) {
-            if (discount > 100) {
-                if(min_price > 0 || max_price > 0) {
-                    profit = formatNumber(Math.round(min_profit - discount)) +" - "+formatNumber(Math.round(max_profit - discount));
-                    salePrice = formatNumber(min_price - discount) +" - "+formatNumber(max_price - discount);
-                } else {
-                    profit = formatNumber(Math.round(profit - discount));
-                    salePrice = formatNumber(retail - discount);
-                }
-                $(e).val(formatNumber(discount));
-            } else {
+        // console.log("data.retail: ", data.retail);
+        return `<div class="input-group">
+                  <input type="text" class="form-control" placeholder="Giảm giá" id="discount_${data.product_id}"
+                        onchange="onchange_discount(this, ${data.product_id}, '${data.retail}', '${data.price}', 'PRODUCT')">
+                  <div class="input-group-append">
+                    <button class="input-group-text btn btn-info" onclick="update_discount(this, ${data.product_id}, '${data.retail}', '${data.price}','PRODUCT')">
+                        <i class="fas fa-save"></i>
+                    </button>
+                  </div>
+                </div>`;
+    }
 
-                // discount = replacePercent(discount);
-                if(min_price > 0 || max_price > 0) {
-                    // profit = '';
-                    profit = formatNumber(Math.round(min_profit - min_profit * discount / 100)) +" - "+formatNumber(Math.round(max_profit - max_profit * discount / 100));
-                    salePrice = formatNumber(min_price - (min_price * discount) / 100) +" - "+formatNumber(max_price - (max_price * discount) / 100);
-                } else {
-                    profit = formatNumber(Math.round(profit - retail * discount / 100));
-                    salePrice = formatNumber(retail - (retail * discount) / 100);
-                }
-                // $("#update_discount").prop("disabled", "");
-                $(e).val(discount+"%");
+    // function onchange_discount(e, profit, retail) {
+    //     $(e).removeClass("is-invalid");
+    //     $("#update_discount").prop("disabled", true);
+    //     let discount = $(e).val();
+    //     if(!discount) {
+    //         return;
+    //     }
+    //     discount = replaceComma(discount);
+    //     discount = replacePercent(discount);
+    //     let min_price = 0;
+    //     let max_price = 0;
+    //     if(retail.indexOf("-") > -1) {
+    //         min_price = replaceComma(retail.split("-")[0]);
+    //         max_price = replaceComma(retail.split("-")[1]);
+    //     } else {
+    //         retail = replaceComma(retail);
+    //     }
+    //     let min_profit = 0;
+    //     let max_profit = 0;
+    //     if(profit.indexOf("-") > -1) {
+    //         min_profit = replaceComma(profit.split("-")[0]);
+    //         max_profit = replaceComma(profit.split("-")[1]);
+    //     } else {
+    //         profit = replaceComma(profit);
+    //     }
+    //     let salePrice = '';
+
+    //     if (!isNaN(discount) && discount >= 0) {
+    //         if (discount > 100) {
+    //             if(min_price > 0 || max_price > 0) {
+    //                 profit = formatNumber(Math.round(min_profit - discount)) +" - "+formatNumber(Math.round(max_profit - discount));
+    //                 salePrice = formatNumber(min_price - discount) +" - "+formatNumber(max_price - discount);
+    //             } else {
+    //                 profit = formatNumber(Math.round(profit - discount));
+    //                 salePrice = formatNumber(retail - discount);
+    //             }
+    //             $(e).val(formatNumber(discount));
+    //         } else {
+
+    //             // discount = replacePercent(discount);
+    //             if(min_price > 0 || max_price > 0) {
+    //                 // profit = '';
+    //                 profit = formatNumber(Math.round(min_profit - min_profit * discount / 100)) +" - "+formatNumber(Math.round(max_profit - max_profit * discount / 100));
+    //                 salePrice = formatNumber(min_price - (min_price * discount) / 100) +" - "+formatNumber(max_price - (max_price * discount) / 100);
+    //             } else {
+    //                 profit = formatNumber(Math.round(profit - retail * discount / 100));
+    //                 salePrice = formatNumber(retail - (retail * discount) / 100);
+    //             }
+    //             // $("#update_discount").prop("disabled", "");
+    //             $(e).val(discount+"%");
+    //         }
+    //         $("#update_discount").prop("disabled", "");
+    //     } else {
+    //         $(e).addClass("is-invalid");
+    //         $("#update_discount").prop("disabled", true);
+    //     }
+    //     // $(e).parent().parent().next("td").html(formatNumber(salePrice)+'<br><small>'+formatNumber(profit)+'</small>');
+    //     $(e).parent().append(`<div class="w-100 mt-2">${formatNumber(salePrice)}<br><small>${formatNumber(profit)}</small><div>`);
+    // }
+
+
+    
+
+    function validate_discount(e, id, price, cost_price, updateType) {
+        return new Promise((resolve) => {
+            let input = $(`#discount_${id}`);
+            // let input = $(e).parent().parent().find("input");
+            price = price.toString();
+            cost_price = cost_price.toString();
+            let is_valid = true;
+            let saleValue = $(input).val();
+            saleValue = saleValue.toString();
+            saleValue = replaceComma(saleValue);
+            console.log("saleValue: ",saleValue);
+            if (!saleValue) {
+                toastr.error('Nhập chưa đúng!');
+                $(input).addClass("is-invalid");
+                is_valid = false;
+                return false;
             }
-            $("#update_discount").prop("disabled", "");
-        } else {
-            $(e).addClass("is-invalid");
-            $("#update_discount").prop("disabled", true);
-        }
-        // $(e).parent().parent().next("td").html(formatNumber(salePrice)+'<br><small>'+formatNumber(profit)+'</small>');
-        $(e).parent().append(`<div class="w-100 mt-2">${formatNumber(salePrice)}<br><small>${formatNumber(profit)}</small><div>`);
+            let saleType = "";
+            if(saleValue == "0") {
+                saleType = "MONEY";
+                saleValue = 0;
+            } else if(saleValue.indexOf("%") > -1) {
+                saleValue = Number(replacePercent(saleValue));
+                if (isNaN(saleValue) || saleValue < 0 || saleValue > 100) {
+                    toastr.error('Nhập chưa đúng!');
+                    $(input).addClass("is-invalid");
+                    is_valid = false;
+                    return false;
+                }
+                saleType = "PERCENT";
+            } else {
+                saleValue = Number(saleValue);
+                if (isNaN(saleValue) || saleValue < 1000) {
+                    toastr.error('Nhập chưa đúng!');
+                    $(input).addClass("is-invalid");
+                    is_valid = false;
+                    return false;
+                }
+                if(price.toString().indexOf("-") > -1) {
+                    let p = price.split("-");
+                    let min_price = Number(replaceComma(p[0]));
+                    let max_price = Number(replaceComma(p[1]));
+                    if(saleValue > min_price || saleValue > max_price) {
+                        toastr.error('Nhập chưa đúng!');
+                        $(input).addClass("is-invalid");
+                        is_valid = false;
+                        $(e).val(formatNumber(saleValue));
+                        return false;
+                    }
+                } else {
+                    price = Number(replaceComma(price));
+                    if(saleValue > price) {
+                        toastr.error('Nhập chưa đúng!');
+                        $(input).addClass("is-invalid");
+                        is_valid = false;
+                        $(e).val(formatNumber(saleValue));
+                        return false;
+                    }
+                }
+                
+                saleType = "MONEY";
+            }
+            $(input).removeClass("is-invalid");
+            let data = {
+                is_valid: is_valid,
+                saleType: saleType,
+                saleValue: saleValue
+            }
+            resolve(data);
+        });
+        
     }
 
-    function update_discount(e, product_id) {
-        let discount = $(e).parent().parent().find("input").val();
-        discount = replaceComma(discount);
-        discount = replacePercent(discount);
-        if (!discount || discount < 0) {
-            toastr.error('Nhập chưa đúng!');
-            return;
+    async function onchange_discount(e, id, price, cost_price, updateType) {
+        // let saleValue = $(e).val();
+        $(e).parent().find("span").remove();
+       let response = await validate_discount(e, id, price, updateType);
+       if(!response.is_valid) {
+        return false;
+       }
+       let saleType = response.saleType;
+       let saleValue = response.saleValue;
+       if(saleType == "MONEY" && saleValue == 0) {
+        return false;
+       }
+        // console.log(price);
+        if(updateType == "PRODUCT") {
+            if(price.toString().indexOf("-") > -1) {
+                let p = price.split("-");
+                let min_price = Number(replaceComma(p[0]));
+                let max_price = Number(replaceComma(p[1]));
+
+                let costPrice = cost_price.split("-");
+                let min_cost_price = Number(replaceComma(costPrice[0]));
+                let max_cost_price = Number(replaceComma(costPrice[1]));
+
+                let salePrice = "";
+                if(saleType == "PERCENT") {
+                    min_price = min_price - min_price * saleValue / 100;
+                    max_price = max_price - max_price * saleValue / 100;
+                } else {
+                    price = Number(replaceComma(price));
+                    min_price = min_price - saleValue;
+                    max_price = max_price - saleValue;
+                    $(e).val(formatNumber(saleValue));
+                }
+                let min_profit = min_price - min_cost_price;
+                let max_profit = max_price - max_cost_price;    
+                let new_price = `${formatNumber(min_price)} - ${formatNumber(max_price)}`;
+                let new_profit = "";
+                if(IS_ADMIN) {
+                    new_profit = `<br><small><i>(${formatNumber(min_profit)} - ${formatNumber(max_profit)})</i></small>`;
+                }
+                $(e).parent().append(`<span class="mt-1 w-100 text-left">${new_price}${new_profit}</span>`);
+                    
+            } else {
+                price = Number(replaceComma(price));
+                cost_price = Number(replaceComma(cost_price));
+
+                let salePrice = "";
+                if(saleType == "PERCENT") {
+                    salePrice = price - price * saleValue / 100;
+                } else {
+                    salePrice = price - saleValue;
+                    $(e).val(formatNumber(saleValue));
+                }
+                let profit = Number(salePrice) - cost_price;
+                let new_profit = "";
+                if(IS_ADMIN) {
+                    new_profit = `<br><small><i>(${formatNumber(profit)})</i></small>`;
+                }
+                $(e).parent().append(`<span class="mt-1 w-100 text-left">${formatNumber(salePrice)}${new_profit}</span>`);
+            }
+        } else {
+            price = Number(replaceComma(price));
+            cost_price = Number(replaceComma(cost_price));
+
+            let salePrice = "";
+            if(saleType == "PERCENT") {
+                salePrice = price - price * saleValue / 100;
+            } else {
+                salePrice = price - saleValue;
+                $(e).val(formatNumber(saleValue));
+            }
+            let profit = Number(salePrice) - cost_price;
+            let new_profit = "";
+            if(IS_ADMIN) {
+                new_profit = ` <small><i>(${formatNumber(profit)})</i></small>`;
+            }
+            $(e).parent().append(`<span class="mt-1 w-100 text-left">${formatNumber(salePrice)}${new_profit}</span>`);
+        }       
+    }
+
+    // updateType = {"PRODUCT", "VARIANT"} 
+    async function  update_discount(e, id, price, cost_price, updateType) {
+        
+        // let input = $(e).parent().parent().find("input");
+        // let saleValue = $(input).val();
+        let data = await validate_discount(e, id, price, cost_price, updateType);
+        if(!data.is_valid) {
+            return false;
+        }
+        let payload = {
+            id: id,
+            saleValue: `${data.saleValue}`,
+            saleType: `${data.saleType}`,
+            updateType: `${updateType}`
         }
         $.ajax({
             url: '<?php Common::getPath() ?>src/controller/product/ProductController.php',
@@ -1782,12 +1982,24 @@ Common::authen();
             dataType: "json",
             data: {
                 method: "update_discount",
-                product_id: product_id,
-                discount: discount
+                data: payload
             },
             success: function (res) {
-                // console.log(res);
-                toastr.success('Cập nhật thành công!');
+                console.log(res.response);
+                if(res) {
+                    if(res.response.message == "SUCCESS") {
+                        toastr.success('Cập nhật thành công!');
+                        let salePrice = "";
+                        if(res.response.salePrice && res.response.salePrice != 'null') {
+                            salePrice = `${formatNumber(res.response.salePrice)} <i>(-${res.response.percentSale}%)</i>`;
+                        }
+                        $(`#salePrice_${id}`).html(salePrice);
+                        closeSetSalePrice(id);
+                    } else if(res.response.indexOf("ERROR") > -1) {
+                        toastr.error(`Đã xảy ra lỗi! (${res.response})`);
+                    }
+                }
+                
             },
             error: function (data, errorThrown) {
                 console.log(data.responseText);
@@ -1819,7 +2031,8 @@ Common::authen();
             quantity : quantity.trim(),
             operator : operator.trim(),
             sku : sku.trim(),
-            product_type: product_type.toLowerCase() ?? ""
+            product_type: product_type.toLowerCase() ?? "",
+            sorted: sorted ?? ""
         }
         // if(type === 'qty') {
         //     return {
@@ -2084,9 +2297,17 @@ Common::authen();
 
     function format_name(data) {
         if(!IS_ADMIN || data.link == null || data.link == "") {
-            return data.name + `<br /> <small>ID: ${data.product_id}</small>`;
+            return `${data.name}
+                    <br>
+                    <small>ID: <strong>${data.product_id}</strong></small>
+                    <br>
+                    <small>Danh mục: <strong>${format_category(data)}</strong></small>`;
         } else {
-            return "<a href='" + data.link + "' target='_blank'>" + data.name + "</a>" + `<br /> <small>ID: ${data.product_id}</small>`;
+            return `<a href="${data.link}" target="_blank">${data.name}</a>
+                    <br>
+                    <small>ID: <strong>${data.product_id}</strong></small>
+                    <br>
+                    <small>Danh mục: <strong>${format_category(data)}</strong></small>`;
         }
     }
 
@@ -2138,6 +2359,7 @@ Common::authen();
             '<th style="width: 150px;">Mã sản phẩm</th>' +
             '<th style="width: 350px;">Size</th>' +
             '<th style="width: 80px;">Số lượng</th>' +
+            // '<th style="width: 80px;">Đang nhập</th>' +
             '<th style="width: 60px;">Giá bán</th>' +
             '<th style="width: 100px;">Giá sale</th>' +
             '<th style="width: 130px;">Chiều dài</th>' +
@@ -2209,30 +2431,53 @@ Common::authen();
                         '<input type="number" value="'+variations[i][j].quantity+'" class="hidden form-control" width="50px" id="text_qty_'+variations[i][j].sku+'" min="1" max="'+variations[i][j].quantity+'">' +
                         '</td>';
                 }
-                table += '<td id="retail" class="right">' + variations[i][j].retail + '</td>';
-                let sale_price = '';
-                if(discount && discount > 0) {
-                    if(discount < 100) {
-                        sale_price = Number(replaceComma(variations[i][j].retail)) * (100 - Number(discount)) / 100;
-                    } else {
-                        sale_price = Number(replaceComma(variations[i][j].retail)) - Number(discount);
-                    }
+                // if(variations[i][j].importing > 0) {
+                //     table += `<td id="importing" class="center">
+                //                 <i class="fas fa-pencil-alt text-secondary c-pointer edit-quantity invisible"></i>
+                //             </td>`;
+                // } else {
+                //     table += `<td id="importing" class="center">
+                //                 <i class="fas fa-pencil-alt text-secondary c-pointer edit-quantity invisible"></i>
+                //                 </td>`;
+                // }
+                
+                table += '<td id="retail" class="right">' + formatNumber(variations[i][j].retail) + '</td>';
+                // let sale_price = '';
+                // if(discount && discount > 0) {
+                //     if(discount < 100) {
+                //         sale_price = Number(replaceComma(variations[i][j].retail)) * (100 - Number(discount)) / 100;
+                //     } else {
+                //         sale_price = Number(replaceComma(variations[i][j].retail)) - Number(discount);
+                //     }
+                // }
+                let salePrice = "";
+                if(variations[i][j].salePrice > 0) {
+                    salePrice = `${formatNumber(variations[i][j].salePrice)} <i>(-${variations[i][j].percentSale}%)</i>`;
                 }
-                table += '<td id="sale_price" class="right">' + formatNumber(sale_price) + '</td>';
+                table += `<td id="sale_price" class="center">
+                            <span id="salePrice_${variations[i][j].id}">${salePrice}</span>
+                            <i id="editSalePrice_${variations[i][j].id}" class="fas fa-pencil-alt text-secondary c-pointer invisible" onclick="editSalePrice(${variations[i][j].id})"></i>
+                            <i id="closeSetSalePrice_${variations[i][j].id}" class="fas fa-times text-danger c-pointer invisible" onclick="closeSetSalePrice(${variations[i][j].id})"></i>
+                            <div class="input-group d-none" style="width:150px" id="inputGroup_${variations[i][j].id}">
+                              <input type="text" class="form-control" placeholder="Giảm giá" id="discount_${variations[i][j].id}"
+                                value="${ variations[i][j].salePrice > 0 ? formatNumber(variations[i][j].retail - variations[i][j].salePrice) : ''}"
+                                onchange="onchange_discount(this, ${variations[i][j].id}, '${variations[i][j].retail}', '${variations[i][j].costPrice}', 'VARIANT')">
+                              <div class="input-group-append" id="inputGroupAppend_${variations[i][j].id}">
+                                <button class="input-group-text btn btn-info" 
+                                    onclick="update_discount(this, '${variations[i][j].id}', '${variations[i][j].retail}', '${variations[i][j].costPrice}', 'VARIANT')">
+                                    <i class="fas fa-save"></i>
+                                </button>
+                              </div>
+                              <span class="mt-1 w-100 text-left ${variations[i][j].salePrice ? '' : 'd-none'}">
+                                ${formatNumber(variations[i][j].salePrice)} <small><i>(${formatNumber(variations[i][j].profit)})</i></small>    
+                                </span>
+                            </div>
+                         </td>`;
                 table += `<td>${variations[i][j].length__ ? variations[i][j].length__ : ""}</td>`;
                 table += `<td>${variations[i][j].weight ? variations[i][j].weight : ""}</td>`;
                 table += `<td>${variations[i][j].height ? variations[i][j].height : ""}</td>`;
                 table += `<td>${variations[i][j].age ? variations[i][j].age : ""}</td>`;
                 table += `<td>${variations[i][j].dimension ? variations[i][j].dimension : ""}</td>`;
-
-                // '<td><div class="custom-control custom-switch">' +
-                // '<input type="checkbox" class="custom-control-input upd-qty-shopee" id="shopee_'+variations[i].sku+'" '+shopee+' onchange="updatedQty(this, \'shopee\', '+variations[i].sku+')">' +
-                // '<label class="custom-control-label" for="shopee_'+variations[i].sku+'"></label>' +
-                // '</div></td>' +
-                // '<td><div class="custom-control custom-switch">' +
-                // '<input type="checkbox" class="custom-control-input upd-qty-lazada" id="lazada_'+variations[i].sku+'" '+lazada+' onchange="updatedQty(this, \'lazada\', '+variations[i].sku+')">' +
-                // '<label class="custom-control-label" for="lazada_'+variations[i].sku+'"></label>' +
-                // '</div></td>' +
                 table += '</tr>';
             }
         }
@@ -2253,6 +2498,21 @@ Common::authen();
         return table;
     }
 
+    function closeSetSalePrice(id) {
+        $(`#salePrice_${id}`).removeClass("d-none");
+        $(`#editSalePrice_${id}`).removeClass("d-none");
+        $(`#closeSetSalePrice_${id}`).addClass("invisible");
+        $(`#inputGroup_${id}`).addClass("d-none");
+    }   
+
+    function editSalePrice(id) {
+        $(`#salePrice_${id}`).addClass("d-none");
+        $(`#editSalePrice_${id}`).addClass("d-none");
+        $(`#closeSetSalePrice_${id}`).removeClass("invisible");
+        $(`#inputGroup_${id}`).removeClass("d-none");
+    }   
+
+    
     function prinrBarcodeProductCustom() {
         $("button[id^='print_barcode_']").click(function(){
             let dataPrint = [];

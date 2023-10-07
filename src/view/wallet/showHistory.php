@@ -123,11 +123,11 @@ Common::authen();
             $("#table_show_wallet_history tbody").append("<tr>" +
                 "<th scope='row'>"+no+"</th>" +
                 "<td><a href='<?php Common::getPath() ?>src/view/orders/?order_id="+order_id+"' target='_blank'>"+order_id+"</a></td>" +
-                "<td>"+saved+"<sup>đ</sup></td>" +
-                "<td>"+used+"<sup>đ</sup></td>" +
-                "<td>"+repay+"<sup>đ</sup></td>" +
-                "<td>"+remain+"<sup>đ</sup></td>" +
-                "<td>"+formatNumber(available_ballances)+"<sup>đ</sup></td>" +
+                "<td>"+saved+"&#8363;</td>" +
+                "<td>"+used+"&#8363;</td>" +
+                "<td>"+repay+"&#8363;</td>" +
+                "<td>"+remain+"&#8363;</td>" +
+                "<td>"+formatNumber(available_ballances)+"&#8363;</td>" +
                 "<td>"+created_at+"</td>" +
                 "</tr>");
             no++;
@@ -136,7 +136,7 @@ Common::authen();
         $("#text_customer_name").html(customerName);
         $("#text_customer_phone").html(customer_phone+" <a href='<?php Common::getPath() ?>src/view/orders/?customer_phone="+customer_phone+"' target='_blank'><i class=\"fas fa-external-link-alt\"></i></a>");
         $("#total_order").text(no-1);
-        $("#available_ballances").html(formatNumber(final_available_ballances)+"<sup>đ</sup>");
+        $("#available_ballances").html(formatNumber(final_available_ballances)+"&#8363;");
     }
 
     function close_modal_show_history() {

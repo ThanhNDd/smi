@@ -16,7 +16,20 @@ Common::authen();
     <script src="<?php Common::getPath() ?>plugins/typeahead/js/bloodhound.min.js"></script>
     <style>
         .table td, .table th {
-            vertical-align: middle;
+            vertical-align: top;
+        }
+        .price {
+            font-size: 15px;
+            font-weight: bold;
+        }
+        .sale-price {
+            text-decoration: line-through;
+            font-size: 85% !important;
+            line-height: 1;
+        }
+        .percent-sale {
+            vertical-align: top;
+            font-size: 80% !important;
         }
     </style>
 </head>
@@ -114,7 +127,7 @@ Common::authen();
                         </tr>
                         <tr>
                             <td class="right w90">Tổng tiền</td>
-                            <td class="right"><b style="font-size: 20px;" id="totalAmount">0</b> <sup>đ</sup></td>
+                            <td class="right"><b style="font-size: 20px;" id="totalAmount">0</b> </td>
                         </tr>
                         <tr class="point hidden">
                             <td class="right w90">Số dư trong ví</td>
@@ -148,11 +161,11 @@ Common::authen();
                         <tr>
                             <td class="right">Tổng Giảm trừ</td>
                             <td class="right">
-                                <span style="font-size: 20px;" id="totalReduce">0</span> <sup>đ</sup></td>
+                                <span style="font-size: 20px;" id="totalReduce">0</span></td>
                         </tr>
                         <tr>
                             <td class="right">Tổng thanh toán</td>
-                            <td class="right" style="color:red;"><h2><b id="totalCheckout">0</b> <small><sup>đ</sup></small></h2></td>
+                            <td class="right" style="color:red;"><h2><b id="totalCheckout">0</b> <small></small></h2></td>
                         </tr>
                         <tr>
                             <td class="right">Khách thanh toán</td>
@@ -169,9 +182,8 @@ Common::authen();
                         </tr>
                         <tr class="saved-point hidden">
                             <td class="right pl-0" colspan="2">
-                                <p class="mb-1">Quý khách sẽ tích lũy được <span class="text-primary"
-                                                                                 id="total_saved_point">0</span> <sup
-                                            class="text-primary">đ</sup> cho đơn hàng này.</p>
+                                <p class="mb-1" id="total_saved_point"></p>
+                                <input type="hidden" id="total_saved_point_value">
                             </td>
                         </tr>
                         <tr class="repay hidden">
@@ -316,7 +328,8 @@ Common::authen();
             $("#input_customer_phone").addClass("hidden").val("");
             $(this).addClass("hidden");
             $(".saved-point").addClass("hidden");
-            $("#total_saved_point").text("0");
+            $("#total_saved_point").html("");
+            $("#total_saved_point_value").val("");
             $(".point").addClass("hidden");
             $("#totalUsePoint").val("");
             $("#totalBallanceInWallet").text("");
@@ -506,12 +519,17 @@ Common::authen();
     }
 
     function calculate_saved_point() {
-        let total_checkout = Number(replaceComma($("#totalCheckout").text()));
+        let total_checkout = $("#totalCheckout").text();
+        total_checkout = replaceComma(total_checkout);
+        total_checkout = Number(total_checkout);
+        console.log("total_checkout: ", total_checkout);
         if (total_checkout > 0) {
             let discount = Number(replaceComma($("#discount").val()));
             let total_saved_point = Math.round(total_checkout * 5 / 100);
             total_saved_point = formatNumber(total_saved_point - discount);
-            $("#total_saved_point").text(total_saved_point);
+            let msg = `Quý khách sẽ tích lũy được <span class="text-primary">${total_saved_point+_CURRENCE_DONG_SIGN}</span> cho đơn hàng này.`;
+            $("#total_saved_point").html(msg);
+            $("#total_saved_point_value").val(total_saved_point);
             $(".saved-point").removeClass("hidden");
         }
     }
@@ -808,7 +826,7 @@ Common::authen();
                 totalUsePoint = 0;
             }
             totalRemainPoint = totalBallanceInWallet - totalUsePoint;
-            totalSavedPoint = Number(replaceComma($("#total_saved_point").text()));
+            totalSavedPoint = Number(replaceComma($("#total_saved_point_value").val()));
         }
 
 
@@ -839,13 +857,21 @@ Common::authen();
         //order detail information
         let details = [];
         $.each($("#tableProd tbody tr"), function (key, value) {
-            let product_id = $(value).find("input[name=prodId]").val();
-            let variant_id = $(value).find("input[name=variantId]").val();
-            let sku = $(value).find("input[name=sku]").val();
-            let product_name = $(value).find("span.product-name").text();
-            let price = replaceComma($(value).find("span.price").text());
-            let quantity = $(value).find("input[name=qty]").val();
-            let reduce = replaceComma($(value).find("input[name=reduce]").val());
+            let noRow = $(value).attr("data");
+            // let product_id = $(value).find("input[name=prodId]").val();
+            // let variant_id = $(value).find("input[name=variantId]").val();
+            // let sku = $(value).find("input[name=sku]").val();
+            // let product_name = $(value).find("strong.product-name").text();
+            // let price = replaceComma($(value).find("span.price").text());
+            // let quantity = $(value).find("input[name=qty]").val();
+            // let reduce = replaceComma($(value).find("input[name=reduce]").val());
+            let product_id = $(`#prodId_${noRow}`).val();
+            let variant_id = $(`#variantId_${noRow}`).val();
+            let sku = $(`#sku_${noRow}`).val();
+            let product_name = $(`#name_${noRow}`).text();
+            let price = replaceComma($(`#price_${noRow}`).text());
+            let quantity = $(`#qty_${noRow}`).val();
+            let reduce = replaceComma($(`#reduce_${noRow}`).val());
             let reduce_type = 0;
             let reduce_percent = "";
             if (reduce.indexOf("%") > -1) {
@@ -854,10 +880,10 @@ Common::authen();
                 reduce = (reduce * price) / 100;
                 reduce_type = 0;
             } else {
-                reduce_percent = Math.round(reduce * 100 / (price * quantity));
+                reduce_percent = Math.ceil(reduce * 100 / (price * quantity));
                 reduce_type = 1;
             }
-            let profit = replaceComma($(value).find("input[name=profit]").val());
+            let profit = replaceComma($(`#profit_${noRow}`).val());
 
             let product = {};
             product["product_id"] = product_id;
@@ -973,12 +999,12 @@ Common::authen();
         let totalAmount = 0;
         let totalReduce = 0;
         for (let i = 1; i <= noRow; i++) {
-            let price = get_price("price_" + i);
-            let qty = get_qty("qty_" + i);
+            let price = get_price(i);
+            let qty = get_qty(i);
             let intoMoney = qty * price;
             let reduce = 0;
-            if (typeof $("[id=reduce_" + i + "]").val() !== "undefined") {
-                let val = $("[id=reduce_" + i + "]").val();
+            if (typeof $(`#reduce_${i}`).val() !== "undefined") {
+                let val = $(`#reduce_${i}`).val();
                 if (val.indexOf("%") > -1) {
                     val = replacePercent(val);
                     reduce = intoMoney * val / 100;
@@ -1024,9 +1050,9 @@ Common::authen();
 
         let totalCheckout = Number(totalAmount) - Number(totalReduce);
 
-        $("#totalAmount").text(formatNumber(totalAmount));
-        $("#totalReduce").text(formatNumber(totalReduce));
-        $("#totalCheckout").text(formatNumber(totalCheckout));
+        $("#totalAmount").html(formatNumber(totalAmount)+_CURRENCE_DONG_SIGN);
+        $("#totalReduce").html(formatNumber(totalReduce)+_CURRENCE_DONG_SIGN);
+        $("#totalCheckout").html(formatNumber(totalCheckout)+_CURRENCE_DONG_SIGN);
 
         // calculate payment
         reset_repay_form();
@@ -1066,43 +1092,73 @@ Common::authen();
             success: function (products) {
                 // console.log(JSON.stringify(products));
                 if (products.length > 0) {
-                    let discount = products[0].discount;
-                    if (discount == 0) {
-                        discount = "";
-                    } else if (discount > 0 && discount < 100) {
-                        discount = discount + "%";
-                    }
+
                     let noRow = $("#noRow").val();
                     noRow = Number(noRow);
                     noRow++;
                     $("#noRow").val(noRow);
-                    $("#tableProd tbody").append('<tr id="product-' + noRow + '">'
-                        + '<td>' + noRow + '</td>'
-                        + '<td class="hidden"><input type="hidden" name="prodId" id="prodId_' + noRow + '" class="form-control" value="' + products[0].product_id + '"></td>'
-                        + '<td class="hidden"><input type="hidden" name="variantId" id="variantId_' + noRow + '" class="form-control" value="' + products[0].variant_id + '"></td>'
-                        + '<td class="hidden"><input type="hidden" name="sku" id="sku_' + noRow + '" class="form-control" value="' + products[0].sku + '"></td>'
-                        + '<td class="hidden"><input type="hidden" name="profit" id="profit_' + noRow + '" class="form-control" value="' + products[0].profit + '"></td>'
-                        // + '<td>' + products[0].sku + '</td>'
-                        + '<td><img src="' + products[0].image + '" onerror=\'this.onerror=null;this.src="<?php Common::image_error()?>"\' width="50px" style="border-radius: 5px;border: 3px solid white;"></td>'
-                        + `<td>
-                            <strong class="product-name" id="name_${noRow}">${products[0].name}</strong>
+
+                    let productId = products[0].product_id;
+                    let variantId = products[0].variant_id;
+                    let sku = products[0].sku;
+                    let profit = replaceComma(products[0].profit);
+                    let image = products[0].image;
+                    let name = products[0].name;
+                    let color = products[0].color;
+                    let size = products[0].size;
+                    let retail = products[0].retail;
+                    let costPrice = Number(replaceComma(products[0].costPrice));
+                    let percentSale = Number(products[0].percentSale);
+                    let salePrice = Number(replaceComma(products[0].salePrice));
+                    let saleValue = "";
+                    if(salePrice > 0) {
+                        saleValue = formatNumber(Number(replaceComma(retail)) - salePrice);
+                    }
+
+                    // if (salePrice == 0) {
+                    //     salePrice = "";
+                    // } else if (salePrice > 0 && salePrice < 100) {
+                    //     salePrice = salePrice + "%";
+                    // }
+
+                    $("#tableProd tbody").append(`<tr id="product-${noRow}" data="${noRow}">
+                        <td>${noRow}</td>
+                        <td class="hidden"><input type="hidden" name="prodId" id="prodId_${noRow}" class="form-control" value="${productId}"></td>
+                        <td class="hidden"><input type="hidden" name="variantId" id="variantId_${noRow}" class="form-control" value="${variantId}"></td>
+                        <td class="hidden"><input type="hidden" name="sku" id="sku_${noRow}" class="form-control" value="${sku}"></td>
+                        <td class="hidden"><input type="hidden" name="profit" id="profit_${noRow}" class="form-control" currentProfit="${profit}" value="${profit}"></td>
+                        <td class="hidden"><input type="hidden" name="costPrice" id="costPrice_${noRow}" class="form-control"value="${costPrice}"></td>
+                        <td class="hidden"><span class="size" id="size_${noRow}">${size}</span></td>
+                        <td class="hidden"><span class="color" id="color_${noRow}">${color}</span></td>
+                        <td><img src="${image}" onerror='this.onerror=null;this.src="<?php Common::image_error()?>"' width="50px" style="border-radius: 5px;border: 3px solid white;"></td>
+                        <td>
+                            <strong class="product-name" id="name_${noRow}">${name}</strong>
                             <br>
-                            <small>ID: ${products[0].sku}</small>
+                            <small>SKU: ${sku}</small>
                             <br>
-                            <small>Màu: ${products[0].color}</small>
+                            <small>Màu: ${color}</small>
                             <br>
-                            <small>Size: ${products[0].size}</small>
-                        </td>`
-                        + '<td class="hidden"><span class="size" id="size_' + noRow + '">' + products[0].size + '</span></td>'
-                        + '<td class="hidden"><span class="color" id="color_' + noRow + '">' + products[0].color + '</span></td>'
-                        + '<td><span class="price" id="price_' + noRow + '">' + products[0].retail + '</span>&#8363;</td>'
-                        + '<td><input type="number" name="qty" id="qty_' + noRow + '" class="form-control" min="1" value="' + qty + '" onchange="on_change_qty(\'price_' + noRow + '\', \'qty_' + noRow + '\', \'intoMoney_' + noRow + '\', \'reduce_' + noRow + '\')"></td>'
-                        + '<td><input type="text" name="reduce" id="reduce_' + noRow + '" class="form-control" value="' + discount + '" onchange="on_change_reduce(\'price_' + noRow + '\',\'qty_' + noRow + '\', \'intoMoney_' + noRow + '\', \'reduce_' + noRow + '\')"></td>'
-                        + '<td><span class="intoMoney" id="intoMoney_' + noRow + '">' + products[0].retail + '</span>&#8363;</td>'
-                        // + '<td><button type="button" class="btn btn-danger form-control add-new-prod" title="Xóa"  onclick="del_product(this, \'product-' + noRow + '\')"><i class="fa fa-trash" aria-hidden="true"></i> Xóa</button></td>'
-                        + '<td align="center"><i class="fa fa-times c-pointer text-danger" onclick="del_product(this, \'product-' + noRow + '\')"></i></td>'
-                        + '</tr>');
-                    $('[id=qty_' + noRow + ']').trigger("change");
+                            <small>Size: ${size}</small>
+                        </td>
+                        <td>
+                            <span id="salePrice_${noRow}" currentSalePrice="${salePrice}" class="${salePrice > 0 ? 'price' : 'd-none'}">${formatNumber(salePrice) + _CURRENCE_DONG_SIGN}</span>
+                            <span id="price_${noRow}" data="${Number(replaceComma(retail))}" class="${salePrice > 0 ? 'sale-price' : 'price'}">${ retail + _CURRENCE_DONG_SIGN}</span>
+                            <span id="percentSale_${noRow}" currentPercentSale="${percentSale}" class="${percentSale > 0 ? 'percent-sale' : 'd-none'}">(-${percentSale}%)</span>
+                        </td>
+                        <td><input type="number" name="qty" id="qty_${noRow}" class="form-control" min="1" value="${qty}" onchange="onchange_qty(${noRow})"></td>
+                        <td>
+                            <input type="text" id="reduce_${noRow}" value="${saleValue}" onchange="onchange_reduce(${noRow})" class="form-control" name="reduce" placeholder="Giảm giá">
+                            <span id="totalSale_${noRow}"></span>
+                        </td>
+                        <td>
+                            <span class="intoMoney price" id="intoMoney_${noRow}" data="${retail}">${retail + _CURRENCE_DONG_SIGN}</span>
+                            <p id="totalPrice_${noRow}" class="mb-0 ${salePrice > 0 ? 'sale-price' : 'd-none'}" style="text-decoration: line-through;font-size: 85% !important">
+                                ${ formatNumber(Number(replaceComma(retail)) * Number(qty))}${_CURRENCE_DONG_SIGN}
+                            </p>
+                        </td>
+                        <td align="center"><i class="fa fa-times c-pointer text-danger" onclick="del_product(this, 'product-${noRow}')"></i></td>
+                        </tr>`);
+                    $(`#qty_${noRow}`).trigger("change");
                 }
             },
             error: function (data, errorThrown) {
@@ -1166,63 +1222,122 @@ Common::authen();
 
     }
 
-    function on_change_reduce(priceId, qtyId, intoMoneyId, reduceId) {
-        let price = get_price(priceId);
-        let qty = get_qty(qtyId);
-        if (!validateQty(qty, qtyId)) {
+    function onchange_reduce(noRow) {
+        let saleValue = "";
+        let percentSale = "";
+        let salePrice = "";
+        let totalSale = "";
+
+        let price = get_price(noRow);
+        let qty = get_qty(noRow);
+        if (!validateQty(qty, noRow)) {
             disableCheckOutBtn();
             // validate_form();
             return;
         }
-        let reduce = $("[id=" + reduceId + "]").val();
+        let reduce = $(`#reduce_${noRow}`).val();
         reduce = format_money(reduce);
         reduce = replaceComma(reduce);
+        
         if (reduce.indexOf("%") > -1) {
             reduce = replacePercent(reduce);
-            if (reduce < 1 || reduce > 50) {
-                $("[id=" + reduceId + "]").addClass("is-invalid");
+            percentSale = reduce;
+            if (reduce < 1 || reduce > 99) {
+                $(`#reduce_${noRow}`).addClass("is-invalid");
                 disableCheckOutBtn();
                 //  validate_form();
-                return;
+                toastr.error("Đã xảy ra lỗi");
+                return false;
             }
-            $("[id=" + reduceId + "]").removeClass("is-invalid");
+            $(`#reduce_${noRow}`).removeClass("is-invalid");
             reduce = price * qty * reduce / 100;
+            saleValue = reduce;
         } else {
-            if (!validateNumber(reduce, reduceId)) {
+            if (!validateNumber(reduce, `reduce_${noRow}`)) {
                 disableCheckOutBtn();
-                //  validate_form();
-                return;
+                toastr.error("Đã xảy ra lỗi");
+                return false;
             }
-            // if(reduce !== "" && reduce < 1000)
-            // {
-            // 	reduce = reduce+"000";
-            // }
-            $("[id=" + reduceId + "]").val(formatNumber(reduce));
-            if (reduce !== "" && (reduce < 1000 || reduce > (price * qty) / 2)) {
-                $("[id=" + reduceId + "]").addClass("is-invalid");
+            $(`#reduce_${noRow}`).val(formatNumber(reduce));
+            if (reduce !== "" && reduce < 1000) {
+                $(`#reduce_${noRow}`).addClass("is-invalid");
                 disableCheckOutBtn();
-                //  validate_form();
-                return;
+                toastr.error("Đã xảy ra lỗi");
+                return false;
             } else {
-                $("[id=" + reduceId + "]").removeClass("is-invalid");
+                $(`#reduce_${noRow}`).removeClass("is-invalid");
             }
+            saleValue = reduce;
+            percentSale = Math.ceil(reduce * 100 / price);
         }
 
-        // enableCheckOutBtn();
-        //  validate_form();
-        let intoMoney = price * qty - reduce;
-        $("[id=" + intoMoneyId + "]").text(formatNumber(intoMoney));
+        // console.log("reduce: ", reduce);
+        // console.log("salePrice: ", salePrice);
+        // console.log("percentSale: ", percentSale);
+
+        let intoMoney = (price - reduce) * qty ;
+        $(`#intoMoney_${noRow}`).html(formatNumber(intoMoney)+_CURRENCE_DONG_SIGN);
+
+        salePrice = price - reduce;
+        if(qty > 1) {
+            totalSale = `-${formatNumber(saleValue * qty)+_CURRENCE_DONG_SIGN}`;
+        }
+        
+
+        if(saleValue && saleValue > 0) {
+            $(`#totalPrice_${noRow}`).html(formatNumber(price * qty)+_CURRENCE_DONG_SIGN).removeClass("d-none");
+            $(`#reduce_${noRow}`).val(formatNumber(saleValue));
+            $(`#salePrice_${noRow}`).html(`${formatNumber(salePrice)+_CURRENCE_DONG_SIGN}`).removeClass("d-none sale-price").addClass("price");
+            $(`#percentSale_${noRow}`).html(`(-${percentSale}%)`).removeClass("d-none").addClass("percent-sale");
+            $(`#price_${noRow}`).removeClass("price").addClass("sale-price");
+            $(`#totalSale_${noRow}`).addClass("percent-sale ml-2").html(totalSale);
+        } else {
+            $(`#totalPrice_${noRow}`).html("").addClass("d-none");
+            $(`#reduce_${noRow}`).val("");
+            $(`#salePrice_${noRow}`).val("").addClass("d-none");
+            $(`#percentSale_${noRow}`).html("").addClass("d-none");
+            $(`#price_${noRow}`).removeClass("sale-price").addClass("price");
+            $(`#totalSale_${noRow}`).removeClass("percent-sale").html("");
+        }
+        calculate_profit_in_list(noRow);
         calculateTotal();
+    }
+
+    function calculate_profit_in_list(noRow) {
+        // let saleValue = $(`#reduce_${noRow}`).val();
+        // saleValue = Number(replaceComma(saleValue));
+        
+        let price = $(`#price_${noRow}`).attr("data");
+        let costPrice = $(`#costPrice_${noRow}`).val();
+
+        let salePrice = $(`#salePrice_${noRow}`).text();
+        if(salePrice) {
+            salePrice = Math.abs(Number(replaceComma(salePrice)));
+        }
+
+        let qty = $(`#qty_${noRow}`).val();
+        qty = Number(qty);
+
+        // saleValue = Number(replaceComma(saleValue));
+        let newProfit = "";
+        if(salePrice && salePrice > 0) {
+            newProfit = (salePrice - costPrice) * qty;
+        } else {
+            newProfit = (price - costPrice) * qty;
+        }
+
+        console.log("newProfit: ", newProfit);
+        $(`#profit_${noRow}`).val(newProfit);
     }
 
     function validateNumber(value, id) {
         if (isNaN(value)) {
-            $("[id=" + id + "]").addClass("is-invalid");
+            $(`#${id}`).addClass("is-invalid");
             // disableCheckOutBtn();
             //  validate_form();
             return false;
         } else {
-            $("[id=" + id + "]").removeClass("is-invalid");
+            $(`#${id}`).removeClass("is-invalid");
             //$("[id="+id+"]").val(formatNumber(value));
             // enableCheckOutBtn();
             //  validate_form();
@@ -1230,10 +1345,10 @@ Common::authen();
         }
     }
 
-    function on_change_qty(priceId, qtyId, intoMoneyId, reduceId) {
-        let price = get_price(priceId);
-        let qty = get_qty(qtyId);
-        if (!validateQty(qty, qtyId)) {
+    function onchange_qty(noRow) {
+        let price = get_price(noRow);
+        let qty = get_qty(noRow);
+        if (!validateQty(qty, noRow)) {
             disableCheckOutBtn();
             //  validate_form();
             return;
@@ -1241,32 +1356,32 @@ Common::authen();
         // enableCheckOutBtn();
         //  validate_form();
         let intoMoney = price * qty;
-        $("[id=" + intoMoneyId + "]").text(formatNumber(intoMoney));
-        $("[id=" + reduceId + "]").trigger("change");
+        $(`#intoMoney_${noRow}`).text(formatNumber(intoMoney));
+        $(`#reduce_${noRow}`).trigger("change");
         calculateTotal();
+        calculate_profit_in_list(noRow);
     }
 
 
-    function get_qty(qtyId) {
-        let qty = $("[id=" + qtyId + "]").val();
+    function get_qty(noRow) {
+        let qty = $(`#qty_${noRow}`).val();
         qty = qty == "" ? 0 : Number(qty);
         return qty;
     }
 
-    function get_price(priceId) {
-        let price = replaceComma($("[id=" + priceId + "]").text());
-        price = price == "" ? 0 : Number(price);
-        return price;
+    function get_price(noRow) {
+        let price = replaceComma($(`#price_${noRow}`).attr("data"));
+        return price == "" ? 0 : Number(price);
     }
 
-    function validateQty(qty, qtyId) {
+    function validateQty(qty, noRow) {
         if (qty <= 0 || !Number.isInteger(qty)) {
-            $("[id=" + qtyId + "]").addClass("is-invalid");
+            $(`#qty_${noRow}`).addClass("is-invalid");
             // disableCheckOutBtn();
             validate_form();
             return false;
         } else {
-            $("[id=" + qtyId + "]").removeClass("is-invalid");
+            $(`#qty_${noRow}`).removeClass("is-invalid");
             // enableCheckOutBtn();
             validate_form();
             return true;

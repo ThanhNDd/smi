@@ -103,18 +103,18 @@ require_once("common.php");
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="<?php Common::getPath() ?>src/view/products/?type=online" class="nav-link">
+                            <a href="<?php Common::getPath() ?>src/view/products/?type=online&sorted=cat" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Online</p>
                             </a>
                         </li>
                         <?php if(Common::isAdminRole()) { ?>
-                            <!-- <li class="nav-item">
+                            <li class="nav-item">
                                 <a href="<?php Common::getPath()?>src/view/check/" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Kiểm hàng</p>
                                 </a>
-                            </li> -->
+                            </li>
                         <?php } ?>
                     </ul>
                 </li>

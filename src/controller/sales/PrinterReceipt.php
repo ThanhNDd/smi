@@ -149,23 +149,27 @@ class PrinterReceipt
                             <p style="margin: 5px 0;">Đ/c: 227 Phố Huyện - TT.Quốc Oai - Hà Nội</p>
                             <p>Hotline: 0962.926.302</p>
                             <p>Website: www.shopmein.vn</p>
-                            <p>Facebook: Shop Mẹ Ỉn</p>
+                            <p>Facebook: fb.com/shopmein.vn</p>
                             <span>* * * * * * * * * * * *</span>
                             <h4 style="font-size: 15px;margin: 5px;">HÓA ĐƠN THANH TOÁN</h4>
                             <div id="barcodecontainer" style="width:100%">
 								<div id="barcode" >'.date('Ymd', strtotime($order->getOrder_date())).$order->getId().'</div>
 							</div>';
                 if(!empty($order->getCustomerName())) {
-                $header .= '<p style="display: inline-block;float: left;width:100%;text-align:left;margin-bottom: 0;margin-top: 10px;">
+                    $header .= '<p style="display: inline-block;float: left;width:100%;text-align:left;margin-top:10px">
                                 <span>Khách hàng:</span>
-                                <span>'.$order->getCustomer_id().' - '.$order->getCustomerName().'</span>
+                                <span>'.$order->getCustomer_id().' - '.$order->getCustomerName().' - '.$order->getCustomerPhone().'</span>
                             </p>';
                 }
-                $header .= '<p style="display: inline-block; float: left;width:100%;text-align:left">
+                $header .= '<p style="display: inline-block; float: left;width:100%;text-align:left;">
                                 <span>Ngày mua hàng:</span>
                                 <span>'.date('d/m/Y - H:i:s', strtotime($order->getOrder_date())).'</span>
-                            </p>
-                        </div>
+                            </p>';
+                $header .= '<p style="display: inline-block;float: left;width:100%;text-align:left;">
+                                <span>NVBH:</span>
+                                <span>'.$order->getCreatedBy().'</span>
+                            </p>';
+                $header .= '</div>
                     </div>
                     <div class="body center">
                         <table class="center">

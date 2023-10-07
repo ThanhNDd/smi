@@ -18,7 +18,7 @@ Common::authen();
         <div class="form-group">
           <input type="hidden" class="form-control" id="id" value="">
           <div class="row">
-            <div class="col-4">
+            <div class="col-md-4 col-sm-12">
               <label>Số điện thoại <span style="color:red">*</span></label>
               <div class="input-group mb-1">
                 <input type="text" class="form-control" id="phone_number" placeholder="Nhập số điện thoại" autocomplete="chrome-off">
@@ -30,7 +30,7 @@ Common::authen();
                 </div>
               </div>
             </div>
-            <div class="col-4">
+            <div class="col-md-4 col-sm-12" style="display: none">
               <label>Email</label>
               <div class="input-group mb-1">
                 <input type="text" class="form-control" id="email" placeholder="Email" autocomplete="chrome-off">
@@ -42,7 +42,7 @@ Common::authen();
                 </div>
               </div>
             </div>
-            <div class="col-4">
+            <div class="col-md-4 col-sm-12" style="display: none">
               <div class="col-3 float-left">
                 <img src='<?php Common::image_error()?>' width='70px' id='thumbnail' class=" img-circle img-fluid">
               </div>
@@ -62,38 +62,38 @@ Common::authen();
                 </div>
               </div>
             </div>
-            <div class="col-4">
+            <div class="col-md-4 col-sm-12">
               <label>Họ tên <span style="color:red">*</span></label>
               <input type="text" class="form-control" id="name" placeholder="Họ tên"
                      autocomplete="chrome-off">
             </div>
-            <div class="col-4">
+            <div class="col-md-4 col-sm-12">
               <label>Tỉnh / Thành phố <span style="color:red">*</span></label>
               <select class="select-city form-control" id="select_city"></select>
             </div>
-            <div class="col-4">
+            <div class="col-md-4 col-sm-12">
               <label>Quận / Huyện <span style="color:red">*</span></label>
               <select class="select-district form-control" id="select_district"></select>
             </div>
-            <div class="col-4">
+            <div class="col-md-4 col-sm-12">
               <label>Phường xã <span style="color:red">*</span></label>
               <select class="select-village form-control" id="select_village"></select>
             </div>
-            <div class="col-4">
+            <div class="col-md-4 col-sm-12">
               <label>Địa chỉ <span style="color:red">*</span></label>
               <input type="text" class="form-control" id="address"
                      placeholder="Nhập số nhà, thôn xóm ... " autocomplete="chrome-off">
             </div>
-            <div class="col-4">
+            <div class="col-md-4 col-sm-12" style="display: none;">
               <label>Ngày sinh</label>
               <input class="form-control datepicker" id="birthday" data-date-format="dd/mm/yyyy"
                      placeholder="<?php echo date('d/m/Y'); ?>" autocomplete="chrome-off">
             </div>
-            <div class="col-4">
+            <div class="col-md-4 col-sm-12">
               <label>Tên Facebook</label>
               <input type="text" class="form-control" id="facebook" autocomplete="chrome-off" placeholder="Nhập tên facebook">
             </div>
-            <div class="col-4">
+            <div class="col-md-4 col-sm-12">
               <label>Link Facebook</label>
               <input type="text" class="form-control" id="link_fb" autocomplete="chrome-off" placeholder="Nhập link facebook">
             </div>

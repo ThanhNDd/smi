@@ -8,9 +8,12 @@ class Variations
     private $color;
     private $quantity;
     private $price;
-    private $retail;
-    private $profit;
     private $fee;
+    private $costPrice;
+    private $retail;
+    private $salePrice;
+    private $percentSale;
+    private $profit;
     private $percent;
     private $sku;
     private $image;
@@ -123,6 +126,38 @@ class Variations
     /**
      * @return mixed
      */
+    public function getFee()
+    {
+        return $this->fee;
+    }
+
+    /**
+     * @param mixed $fee
+     */
+    public function setFee($fee): void
+    {
+        $this->fee = $fee;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCostPrice()
+    {
+        return $this->costPrice;
+    }
+
+    /**
+     * @param mixed $costPrice
+     */
+    public function setCostPrice($costPrice): void
+    {
+        $this->costPrice = $costPrice;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getRetail()
     {
         return $this->retail;
@@ -134,6 +169,38 @@ class Variations
     public function setRetail($retail): void
     {
         $this->retail = $retail;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSalePrice()
+    {
+        return $this->salePrice;
+    }
+
+    /**
+     * @param mixed $salePrice
+     */
+    public function setSalePrice($salePrice): void
+    {
+        $this->salePrice = $salePrice;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPercentSale()
+    {
+        return $this->percentSale;
+    }
+
+    /**
+     * @param mixed $percentSale
+     */
+    public function setPercentSale($percentSale): void
+    {
+        $this->percentSale = $percentSale;
     }
 
     /**
@@ -152,21 +219,7 @@ class Variations
         $this->profit = $profit;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getFee()
-    {
-        return $this->fee;
-    }
-
-    /**
-     * @param mixed $fee
-     */
-    public function setFee($fee): void
-    {
-        $this->fee = $fee;
-    }
+    
 
     /**
      * @return mixed

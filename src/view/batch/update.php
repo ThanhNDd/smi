@@ -88,41 +88,63 @@ Common::authen();
         <i class="fas fa-backward"></i> Back
     </a>
   </div>
-  <div class="card">
-    <div class="card-body">
-      <form id="import" method="post" enctype="multipart/form-data" class="d-inline-block">
-        <label for="fileToUpload">Select file to upload:</label>
-        <input type="file" name="fileToUpload" id="fileToUpload" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
-        <button class="btn btn-primary" name="submit" id="submit" disabled style="border-radius: 4px !important;font-size: 12px;">
-          <i class="fas fa-upload"></i> Tải lên
-        </button>
-      </form>
-      <button class="btn btn-danger float-right" id="updateAll" style="border-radius: 4px !important;font-size: 12px;">
-        <div class="spinner-border d-none" id="spinnerUpdateAll"></div>
-        Cập nhật
-      </button>
-    </div>
-  </div>
 
-  <div class="alert alert-danger">
-    <strong><i class="fas fa-exclamation-triangle"></i></strong> Chỉ sử dụng cho các đơn J&T
-  </div>
-
-  <div class="table-responsive">          
-    <table class="table table-striped table-hover" id="tabledata">
-      <thead class="thead-light">
-        <tr>
-          <th class="text-center" style="width: 50px;">#</th>
-          <th class="text-center" style="width: 50px;">STT</th>
-          <th class="text-center" style="width: 150px;">Hành động</th>
-          <th class="text-left" style="width: 150px;">Mã đơn hàng</th>
-          <th class="text-left" style="width: 150px;">Mã vận đơn</th>
-          <th class="text-left">Vận phí</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>  
+<!-- <div class="card">
+  <div class="card-body"> -->
+    <!-- <ul class="nav nav-pills">
+      <li class="nav-item">
+        <a class="nav-link active" data-toggle="pill"  href="#ghn">Giao hàng nhanh</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="pill"  href="#jt">J&T Express</a>
+      </li>
+    </ul> -->
+    <!-- <div class="tab-content">
+      <div class="tab-pane active" id="ghn">
+        <br>
+        <h1>Giao  hàng nhanh</h1>
+      </div>
+      <div class="tab-pane fade" id="jt">
+        <br> -->
+        <div class="card">
+          <div class="card-body">
+            <form id="import" method="post" enctype="multipart/form-data" class="d-inline-block">
+              <label for="fileToUpload">Select file to upload:</label>
+              <input type="file" name="fileToUpload" id="fileToUpload" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+              <button class="btn btn-primary" name="submit" id="submit" disabled style="border-radius: 4px !important;font-size: 12px;">
+                <i class="fas fa-upload"></i> Tải lên
+              </button>
+            </form>
+            <button class="btn btn-danger float-right" id="updateAll" style="border-radius: 4px !important;font-size: 12px;">
+              <div class="spinner-border d-none" id="spinnerUpdateAll"></div>
+              Cập nhật
+            </button>
+          </div>
+        </div>
+        <!-- <div class="alert alert-warning">
+          <strong><i class="fas fa-exclamation-triangle"></i></strong> <strong>J&T Express:</strong> Tên file bắt đầu bằng <strong>data-</strong> (VD: data-2023-04-03-2023-04-03-1680517653129.xlsx)
+          <br>
+          <strong><i class="fas fa-exclamation-triangle"></i></strong> <strong>Giao hàng nhanh:</strong> Tên file bắt đầu bằng <strong>GHN_</strong> (VD: GHN_080420230837_3567976.xlsx)
+        </div> -->
+        <div class="table-responsive">          
+          <table class="table table-striped table-hover" id="tabledata">
+            <thead class="thead-light">
+              <tr>
+                <th class="text-center" style="width: 50px;">#</th>
+                <th class="text-center" style="width: 50px;">STT</th>
+                <th class="text-center" style="width: 150px;">Hành động</th>
+                <th class="text-left" style="width: 150px;">Mã đơn hàng</th>
+                <th class="text-left" style="width: 150px;">Mã vận đơn</th>
+                <th class="text-left">Vận phí</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>  
+      </div>
+    <!-- </div>
+  </div> -->
+</div>
 </section>
 
 <?php require_once('../../common/footer.php'); ?>
@@ -172,10 +194,13 @@ Common::authen();
 
     $("#fileToUpload").change(() => {
       let file_data = $("#fileToUpload").prop('files')[0];
-      console.log(file_data.name);
-      
+      console.log(file_data.name.indexOf("GHN_"));
       if(file_data) {
         let filename = file_data.name;
+        // if(filename.indexOf("GHN_") == -1 || filename.indexOf("data-") == -1) {
+        //   toastr.error('Định dạng file không đúng');
+        //   return false;
+        // }
         const lastDot = filename.lastIndexOf('.');
         const ext = filename.substring(lastDot + 1);
         if(ext == 'xls' || ext == 'xlsx') {
@@ -195,7 +220,6 @@ Common::authen();
         let file_data = $("#fileToUpload").prop('files')[0];
         var formData = new FormData(form[0]);
         formData.append('file', file_data);
-
         $.ajax({
             url: "<?php Common::getPath() ?>src/controller/batch/UpdateController.php",
             type: 'POST',
@@ -231,10 +255,13 @@ Common::authen();
     return new Promise((resolve) => {
       let data = [];
       $.each(excelData, (k, v) => {
-        let checked = $(`#checkbox_${v.order_id}`).is(":checked");
-        console.log("Checked: ", checked);
-        if(checked) {
-          data.push(v);
+        console.log(v);
+        if(v.order_id) {
+          let checked = $(`#checkbox_${v.order_id}`).is(":checked");
+          console.log("Checked: ", checked);
+          if(checked) {
+            data.push(v);
+          }
         }
       });
       resolve(data);
@@ -246,6 +273,7 @@ Common::authen();
       let orderSuccess = 0;
       $.each(data, async (k, order) => {
         orderSuccess++;
+        console.log(order);
         await sendData(order).then(async (result) => {
           $(`#order_${order.order_id}`).text("Đã cập nhật").removeClass("btn-success").addClass("btn-secondary").attr("disabled", true);
           $(`#spinner_${order.order_id}`).removeClass("d-none");
@@ -292,25 +320,27 @@ Common::authen();
   async function updateOrder(e, order_id) {
     let order = await getData(order_id);
     console.log(JSON.stringify(order)); 
-    Swal.fire({
-        title: "Xác nhận",
-        text: "Bạn có chắc chắn muốn cập nhật đơn hàng này",
-        type: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Ok'
-    }).then(async (result) => {
-        if (result.value) {
-            await sendData(order).then((result) => {
-              toastr.success('Cập nhật thành công');
-              $(e).text("Đã cập nhật").removeClass("btn-success").addClass("btn-secondary").attr("disabled", true);
-            }).catch(() => {
-              toastr.error('Đã xảy ra lỗi');
-            });
+    if(order) {
+      Swal.fire({
+          title: "Xác nhận",
+          text: "Bạn có chắc chắn muốn cập nhật đơn hàng này",
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Ok'
+      }).then(async (result) => {
+          if (result.value) {
+              await sendData(order).then((result) => {
+                toastr.success('Cập nhật thành công');
+                $(e).text("Đã cập nhật").removeClass("btn-success").addClass("btn-secondary").attr("disabled", true);
+              }).catch(() => {
+                toastr.error('Đã xảy ra lỗi');
+              });
 
-        }
-    });
+          }
+      });
+    }
   }
 
   function sendData(order) {

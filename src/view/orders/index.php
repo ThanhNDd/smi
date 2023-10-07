@@ -149,7 +149,7 @@ Common::authenIsNotAdminRole();
                     </div>
                     <!-- /.col -->
                     <!-- fix for small devices only -->
-                    <div class="clearfix hidden-md-up"></div>
+                    <!-- <div class="clearfix hidden-md-up"></div>
                     <div class="col-12 col-sm-12 col-md-12">
                         <div class="info-box mb-3">
                             <span class="info-box-icon bg-success elevation-1"><i class="fas fa-globe"></i></span>
@@ -167,7 +167,7 @@ Common::authenIsNotAdminRole();
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="clearfix hidden-md-up"></div>
                     <div class="col-12 col-sm-12 col-md-12">
                         <div class="info-box mb-3">
@@ -245,7 +245,6 @@ Common::authenIsNotAdminRole();
 <?php require_once ('../../common/footer.php'); ?>
 <script>
     let table;
-    let CURRENCY_SIGN = "&#8363;";
     $(document).ready(function () {
         // set title for page
         set_title("Danh sách đơn hàng");
@@ -476,22 +475,22 @@ Common::authenIsNotAdminRole();
             dataType: "json",
             data: get_data_search_info_total(type),
             success: function (res) {
-                $(".total_money").html((res.total_checkout ? res.total_checkout : 0) + CURRENCY_SIGN);
+                $(".total_money").html((res.total_checkout ? res.total_checkout : 0) + _CURRENCE_DONG_SIGN);
                 $(".total_orders").html(res.count_total ? res.count_total : 0);
                 $(".total_products").html(res.total_product ? res.total_product : 0);
-                $(".total_on_shop").html((res.total_on_shop ? res.total_on_shop : 0) + CURRENCY_SIGN);
+                $(".total_on_shop").html((res.total_on_shop ? res.total_on_shop : 0) + _CURRENCE_DONG_SIGN);
                 $(".count_on_shop").html(res.count_on_shop ? res.count_on_shop : 0);
                 $(".total_product_on_shop").html(res.total_product_on_shop ? res.total_product_on_shop : 0);
-                $(".total_online").html((res.total_online ? res.total_online : 0) + CURRENCY_SIGN);
+                $(".total_online").html((res.total_online ? res.total_online : 0) + _CURRENCE_DONG_SIGN);
                 $(".count_online").html(res.count_online ? res.count_online : 0);
                 $(".total_product_online").html(res.total_product_online ? res.total_product_online : 0);
-                $(".total_exchange").html((res.total_exchange ? res.total_exchange : 0) + CURRENCY_SIGN);
+                $(".total_exchange").html((res.total_exchange ? res.total_exchange : 0) + _CURRENCE_DONG_SIGN);
                 $(".count_exchange").html(res.count_exchange ? res.count_exchange : 0);
                 $(".total_product_exchange").html(res.total_product_exchange ? res.total_product_exchange : 0);
-                $(".total_cash").html((res.total_cash ? res.total_cash : 0) + CURRENCY_SIGN);
-                $(".total_transfer").html((res.total_transfer ? res.total_transfer : 0) + CURRENCY_SIGN);
+                $(".total_cash").html((res.total_cash ? res.total_cash : 0) + _CURRENCE_DONG_SIGN);
+                $(".total_transfer").html((res.total_transfer ? res.total_transfer : 0) + _CURRENCE_DONG_SIGN);
                 if(IS_ADMIN) {
-                    $(".total_profit").html((res.total_profit ? res.total_profit : 0) + CURRENCY_SIGN);
+                    $(".total_profit").html((res.total_profit ? res.total_profit : 0) + _CURRENCE_DONG_SIGN);
                 }
 
                 $("#percent_profit").html("");
@@ -925,11 +924,11 @@ Common::authenIsNotAdminRole();
                 // '<td>' + details[i].color + '</td>' +
                 // '<td>' + details[i].size + '</td>' +
                 '<td class="center">' + details[i].quantity + '</td>' +
-                '<td class="right">' + details[i].price + CURRENCY_SIGN+'</td>' +
-                '<td class="right">' + details[i].reduce + CURRENCY_SIGN+'</td>' +
-                '<td class="right">' + details[i].intoMoney + CURRENCY_SIGN+'</td>';
+                '<td class="right">' + details[i].price + _CURRENCE_DONG_SIGN+'</td>' +
+                '<td class="right">' + details[i].reduce + _CURRENCE_DONG_SIGN+'</td>' +
+                '<td class="right">' + details[i].intoMoney + _CURRENCE_DONG_SIGN+'</td>';
                 if(IS_ADMIN) {
-                    table += '<td class="right">' + formatNumber(detail_profit) + CURRENCY_SIGN+'</td>';
+                    table += '<td class="right">' + formatNumber(details[i].profit) + _CURRENCE_DONG_SIGN+'</td>';
                 }
                 
                 // '<td class="center"><div class="custom-control custom-switch">' +
@@ -973,6 +972,9 @@ Common::authenIsNotAdminRole();
                     '</div>' +
                     '</div>' +
                     '<div class="col-2 col-sm-2 col-md-2"><small>Số điện thoại</small> <h5>' + data.phone + '</h5></div>';
+                if (data.created_by) {
+                    d +='<div class="col-2 col-sm-2 col-md-2"><small>NVBH</small> <h5>' + data.created_by + '</h5></div>';
+                }
                 if(data.address) {
                     d +='<div class="col-12"><small>Địa chỉ</small> <h5 class="col-12 pl-0">' + data.address + '</h5></div>';
                 }
@@ -991,31 +993,31 @@ Common::authenIsNotAdminRole();
         profit = profit - discount - voucher_value;
 
         d += '<div class="row">' +
-                '<div class="col-2 col-sm-2 col-md-2"><small>Tổng đơn hàng</small> <h5>' + data.total_amount + CURRENCY_SIGN+'</h5></div>' +
-                '<div class="col-2 col-sm-2 col-md-2"><small>CK trên tổng đơn</small> <h5>' + data.discount + CURRENCY_SIGN+'</h5></div>';
+                '<div class="col-2 col-sm-2 col-md-2"><small>Tổng đơn hàng</small> <h5>' + data.total_amount + _CURRENCE_DONG_SIGN+'</h5></div>' +
+                '<div class="col-2 col-sm-2 col-md-2"><small>CK trên tổng đơn</small> <h5>' + data.discount + _CURRENCE_DONG_SIGN+'</h5></div>';
 
         if (data.customer_id && Number(data.customer_id) > 0) {
             profit = profit - Number(replaceComma(data.wallet));
-            d += '<div class="col-2 col-sm-2 col-md-2"><small>Tiền trong Ví</small> <h5>' + data.wallet + CURRENCY_SIGN+'</h5></div>';
+            d += '<div class="col-2 col-sm-2 col-md-2"><small>Tiền trong Ví</small> <h5>' + data.wallet + _CURRENCE_DONG_SIGN+'</h5></div>';
         }
-        d += '<div class="col-2 col-sm-2 col-md-2"><small>Tổng giảm trừ</small> <h5>' + data.total_reduce + CURRENCY_SIGN+'</h5></div>';
+        d += '<div class="col-2 col-sm-2 col-md-2"><small>Tổng giảm trừ</small> <h5>' + data.total_reduce + _CURRENCE_DONG_SIGN+'</h5></div>';
         if(order_type === ONLINE) {
             let shipping_fee = replaceComma(data.shipping_fee);
             if(shipping_fee && shipping_fee > 0) {
-                d += '<div class="col-2 col-sm-2 col-md-2"><small>Phí ship Shop trả</small> <h5>' + formatNumber(shipping_fee) + CURRENCY_SIGN+'</h5></div>';
+                d += '<div class="col-2 col-sm-2 col-md-2"><small>Phí ship Shop trả</small> <h5>' + formatNumber(shipping_fee) + _CURRENCE_DONG_SIGN+'</h5></div>';
                 profit = profit - Number(shipping_fee);
             }
             let total_amount = Number(replaceComma(data.total_amount));
             let shipping = Number(replaceComma(data.shipping));
             if(shipping && shipping > 0) {
-                d += '<div class="col-2 col-sm-2 col-md-2"><small>Phí ship KH trả</small> <h5>' + formatNumber(shipping) + CURRENCY_SIGN+'</h5></div>';
+                d += '<div class="col-2 col-sm-2 col-md-2"><small>Phí ship KH trả</small> <h5>' + formatNumber(shipping) + _CURRENCE_DONG_SIGN+'</h5></div>';
                 profit += shipping;
                 total_amount += shipping;
             } else {
                 d += '<div class="col-2 col-sm-2 col-md-2"><small>Phí ship KH trả</small> <h5>Miễn Ship</h5></div>';
             }
             total_amount -= Number(replaceComma(data.total_reduce));
-            d +='<div class="col-2 col-sm-2 col-md-2"><small>Tổng tiền Khách thanh toán</small> <h5>' + formatNumber(total_amount)+ CURRENCY_SIGN+'</h5></div>';
+            d +='<div class="col-2 col-sm-2 col-md-2"><small>Tổng tiền Khách thanh toán</small> <h5>' + formatNumber(total_amount)+ _CURRENCE_DONG_SIGN+'</h5></div>';
         }
         let total_checkout = data.total_checkout;
         if (payment_exchange_type === '2') {
@@ -1023,9 +1025,9 @@ Common::authenIsNotAdminRole();
                 total_checkout = '-' + total_checkout;
             }
         }
-        d +='<div class="col-2 col-sm-2 col-md-2"><small>Tổng tiền Shop nhận</small> <h5>' + total_checkout + CURRENCY_SIGN+'</h5></div>';
+        d +='<div class="col-2 col-sm-2 col-md-2"><small>Tổng tiền Shop nhận</small> <h5>' + total_checkout + _CURRENCE_DONG_SIGN+'</h5></div>';
         if(IS_ADMIN) {
-            d +='<div class="col-2 col-sm-2 col-md-2" style="display: block;"><small>-</small> <h5>' + formatNumber(profit) + CURRENCY_SIGN+'</h5></div>';
+            d +='<div class="col-2 col-sm-2 col-md-2" style="display: block;"><small>-</small> <h5>' + formatNumber(profit) + _CURRENCE_DONG_SIGN+'</h5></div>';
         }
         d +='</div>' +
             '</div>' +
@@ -1111,15 +1113,15 @@ Common::authenIsNotAdminRole();
         let payment_exchange_type = data.payment_exchange_type;
         switch (payment_exchange_type) {
             case '1':
-                return total_checkout + CURRENCY_SIGN;
+                return total_checkout + _CURRENCE_DONG_SIGN;
             case '2':
                 if(total_checkout.indexOf("-") > -1) {
-                    return total_checkout + CURRENCY_SIGN;
+                    return total_checkout + _CURRENCE_DONG_SIGN;
                 } else {
-                    return '-' + total_checkout + CURRENCY_SIGN;
+                    return '-' + total_checkout + _CURRENCE_DONG_SIGN;
                 }
             default:
-                return total_checkout + CURRENCY_SIGN;
+                return total_checkout + _CURRENCE_DONG_SIGN;
         }
     }
 
