@@ -10,12 +10,16 @@ class ProductDAO
 
     function get_quantity_by_sku($sku) {
         try {
-            $sql = "SELECT quantity FROM `smi_variations` WHERE `sku` = $sku";
+            $sql = "SELECT quantity, retail FROM `smi_variations` WHERE `sku` = $sku";
             $result = mysqli_query($this->conn, $sql);
             if($result) {
               $row = $result->fetch_assoc();
               $quantity = $row['quantity'];
-              return $quantity;
+              $retail = $row['retail'];
+              $response = [];
+              $response["quantity"] = $quantity;
+              $response["retail"] = $retail;
+              return $response;
             } else {
               throw new Exception("error");
             }
@@ -660,7 +664,7 @@ class ProductDAO
         }
     }
 
-    function find_all($status, $operator, $qty, $sku, $product_type, $sorted, $visibility = "SHOW")
+    function find_all($status, $operator, $qty, $sku, $product_type, $sorted, $visibility)
     {
         try {
             $sql = "SELECT A.id as product_id, 
@@ -688,18 +692,30 @@ class ProductDAO
                             A.gender,
                             A.system,
                             A.product_type,
-                            sum(B.quantity) as total_quantity
+                            sum(B.quantity) as total_quantity,
+                            A.created_at,
+                            A.sync_date
                     FROM `smi_products` A
                     LEFT JOIN (SELECT product_id, image, cost_price, sale_price, retail, profit, quantity,
                                case when sale_price is null or sale_price = 0 then retail else sale_price end as fake_sale_price
                                from smi_variations) B ON A.id = B.product_id
-                    where A.status = $status and A.visibility = '".$visibility."'";
+                    where 1=1";
+
+            if($status != "") {
+                $sql .= "  and A.status = $status";
+            }
+            if(!empty($visibility)) {
+                $sql .= "  and A.visibility = '$visibility'";
+            }
             if(!empty($sku)) {
                 $sql .= "  and B.sku = $sku";
             }
             if(!empty($product_type)) {
                 // $sql .= "  and A.product_type = '".$product_type."'";
                 switch($product_type) {
+                    case "sale" :
+                        $sql .= " and B.sale_price is not null and B.sale_price != 0";
+                        break;
                     case "facebook" :
                         $sql .= " and JSON_CONTAINS(A.social_publish, 1, '$.facebook') = 1";
                         break;
@@ -711,6 +727,9 @@ class ProductDAO
                         break;
                     case "online" :
                         $sql .= " and A.product_type = '".$product_type."'";
+                        break;
+                    case "swimming" :
+                        $sql .= " and A.category_id = 9";
                         break;
                 }
                 
@@ -739,14 +758,16 @@ class ProductDAO
                     $sql .= " ,B.product_id having sum(B.quantity) < $qty";
                 }
             }
-            if(!empty($sorted) && $sorted == "cat") {
+            if($sorted == "cat") {
                 $sql .= " ORDER BY  A.category_id, A.created_at DESC";
+            } else if($sorted == "sync_date") {
+                $sql .= " ORDER BY  A.sync_date DESC, A.created_at DESC";
             } else {
                 $sql .= " ORDER BY A.created_at DESC";
             }
             
 
-           // echo $sql."\n";
+           // echo $sql;
 
             $result = mysqli_query($this->conn, $sql);
             $data = array();
@@ -773,7 +794,9 @@ class ProductDAO
                     'gender' => $row["gender"],
                     'system' => $row["system"],
                     'product_type' => $row["product_type"],
-                    'total_quantity' => $row["total_quantity"]
+                    'total_quantity' => $row["total_quantity"],
+                    'created_at' => $row["created_at"],
+                    'sync_date' => $row["sync_date"]
                 );
                 array_push($data, $product);
             }

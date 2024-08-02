@@ -4,6 +4,18 @@ include 'Constant.php';
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 class Common
 {
+    public static function isAdminSystem() {
+        if(isset($_COOKIE["acc"]) && strtolower($_COOKIE["acc"]) == "thanhnd") {
+            return "true";
+        };
+        return "false";
+    }
+
+    public static function isAdminSystemRole()
+    {
+        return filter_var(Common::isAdminSystem(), FILTER_VALIDATE_BOOLEAN);
+    }
+
     public static function isAdmin() {
         if(isset($_COOKIE["is_admin"]) && $_COOKIE["is_admin"] == 1) {
             return "true";

@@ -1091,18 +1091,89 @@ class CheckoutDAO
     function get_info_total_checkout($start_date, $end_date, $order_id, $customer_id, $sku, $type, $status, $bill)
     {
         try {
+            // $sql = "select tmp.id,
+            //           tmp.total_checkout as total_checkout, 
+            //           tmp.total_amount + case when tmp.shipping is null then 0 else sum(tmp.shipping) end - tmp.discount as total_amount, 
+            //           (case when tmp.profit is null then 0 else sum(tmp.profit) end)  + 
+            //           (case when tmp.shipping is null then 0 else sum(tmp.shipping) end) - tmp.discount - tmp.shipping_fee - tmp.wallet as total_profit,
+            //           count(tmp.type) as count_type, 
+            //           tmp.type,
+            //           tmp.source,
+            //           tmp.payment_type,
+            //           count(tmp.product_id) as product
+            //         from (
+            //           SELECT A.id, A.discount, A.shipping_fee, 
+            //             case when A.shipping is NULL then 0 else A.shipping end as shipping,
+            //                 t.p as profit,
+            //                 A.wallet,
+            //                 A.type,  A.payment_type,
+            //                 A.source,
+            //                 A.total_checkout,
+            //                 A.total_amount,
+            //                 D.id as product_id
+            //           FROM smi_orders A
+            //             LEFT JOIN smi_order_detail B ON A.id = B.order_id
+            //             LEFT JOIN smi_customers C ON A.customer_id = C.id
+            //             LEFT JOIN smi_products D ON D.id = B.product_id
+            //                 LEFT JOIN (select B.id,
+            //                 case B.type
+            //                 when 1 then sum(0 - (B.profit * B.quantity) - B.reduce) 
+            //                 when 3 then sum(0 - (B.profit * B.quantity) - B.reduce) 
+            //                 else sum((B.profit * B.quantity) - B.reduce) 
+            //                 end as p
+            //                 from smi_orders A
+            //             LEFT JOIN smi_order_detail B ON A.id = B.order_id
+            //             LEFT JOIN smi_products D ON D.id = B.product_id 
+            //                 where 1=1 ";
+
+       // comment date 2024-03-01    
+            // $sql = "select tmp.id,
+            //           tmp.total_checkout as total_checkout, 
+            //           tmp.total_amount + case when tmp.shipping is null then 0 else sum(tmp.shipping) end - tmp.discount as total_amount, 
+            //           (case when tmp.profit is null then 0 else sum(tmp.profit) end)  + 
+            //           (case when tmp.shipping is null then 0 else sum(tmp.shipping) end) - tmp.discount - tmp.shipping_fee - tmp.wallet as total_profit,
+            //           count(tmp.type) as count_type, 
+            //           tmp.type,
+            //           tmp.source,
+            //           tmp.payment_type,
+            //           count(tmp.product_id) as product
+            //         from (
+            //           SELECT A.id, A.discount, A.shipping_fee, 
+            //             case when A.shipping is NULL then 0 else A.shipping end as shipping,
+            //                 t.p as profit,
+            //                 A.wallet,
+            //                 A.type,  A.payment_type,
+            //                 A.source,
+            //                 A.total_checkout,
+            //                 A.total_amount,
+            //                 D.id as product_id
+            //           FROM smi_orders A
+            //             LEFT JOIN smi_order_detail B ON A.id = B.order_id
+            //             LEFT JOIN smi_customers C ON A.customer_id = C.id
+            //             LEFT JOIN smi_products D ON D.id = B.product_id
+            //                 LEFT JOIN (select B.id,
+            //                 case B.type
+            //                 when 1 then sum(0 - (B.profit * B.quantity))
+            //                 when 3 then sum(0 - (B.profit * B.quantity)) 
+            //                 else sum(B.profit * B.quantity) 
+            //                 end as p
+            //                 from smi_orders A
+            //             LEFT JOIN smi_order_detail B ON A.id = B.order_id
+            //             LEFT JOIN smi_products D ON D.id = B.product_id 
+            //                 where 1=1 ";
+        // end comment date 2024-03-01
             $sql = "select tmp.id,
                       tmp.total_checkout as total_checkout, 
                       tmp.total_amount + case when tmp.shipping is null then 0 else sum(tmp.shipping) end - tmp.discount as total_amount, 
                       (case when tmp.profit is null then 0 else sum(tmp.profit) end)  + 
-                      (case when tmp.shipping is null then 0 else sum(tmp.shipping) end) - tmp.discount - tmp.shipping_fee - tmp.wallet as total_profit,
+                      (case when tmp.shipping is null then 0 else sum(tmp.shipping) end) - tmp.total_reduce - tmp.shipping_fee as total_profit,
                       count(tmp.type) as count_type, 
                       tmp.type,
                       tmp.source,
                       tmp.payment_type,
                       count(tmp.product_id) as product
                     from (
-                      SELECT A.id, A.discount, A.shipping_fee, 
+                      SELECT A.id, A.total_reduce, A.discount, A.shipping_fee, 
                         case when A.shipping is NULL then 0 else A.shipping end as shipping,
                             t.p as profit,
                             A.wallet,
@@ -1117,9 +1188,9 @@ class CheckoutDAO
                         LEFT JOIN smi_products D ON D.id = B.product_id
                             LEFT JOIN (select B.id,
                             case B.type
-                            when 1 then sum(0 - (B.profit * B.quantity) - B.reduce) 
-                            when 3 then sum(0 - (B.profit * B.quantity) - B.reduce) 
-                            else sum((B.profit * B.quantity) - B.reduce) 
+                            when 1 then sum(0 - B.profit)
+                            when 3 then sum(0 - B.profit) 
+                            else sum(B.profit) 
                             end as p
                             from smi_orders A
                         LEFT JOIN smi_order_detail B ON A.id = B.order_id
@@ -1847,6 +1918,10 @@ class CheckoutDAO
             $orderRefer = $order->getOrderRefer();
             $paymentExchangeType = $order->getPaymentExchangeType();
             $source = $order->getSource();
+            $appointment_delivery_date = $order->getAppointmentDeliveryDate();
+            if(empty($appointment_delivery_date)) {
+              $appointment_delivery_date = null;
+            }
             $orderDate = $order->getOrder_date();
             $deliveryDate = $order->getDeliveryDate();
             if(empty($deliveryDate)) {
@@ -1882,16 +1957,17 @@ class CheckoutDAO
                     `order_refer`,
                     `payment_exchange_type`,
                     `source`,
+                    `appointment_delivery_date`,    
                     `order_date`,
                     `delivery_date`,
                     `description`,
                     `created_by`,
                     `created_date`,
                     `updated_date`) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
-            $stmt->bind_param("sddddddddiddiisddsisdiiissss", $shopee_order_id, $total_reduce, $total_reduce_percent, $discount, $wallet, $total_amount,
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+            $stmt->bind_param("sddddddddiddiisddsisdiiisssss", $shopee_order_id, $total_reduce, $total_reduce_percent, $discount, $wallet, $total_amount,
                 $total_checkout, $cod, $customer_payment, $payment_type, $repay, $transfer_to_wallet, $customer_id, $type, $bill, $shipping_fee,
-                $shipping, $shipping_unit, $status, $voucher_code, $voucher_value, $orderRefer, $paymentExchangeType, $source, $orderDate, $deliveryDate, $description, $createdBy);
+                $shipping, $shipping_unit, $status, $voucher_code, $voucher_value, $orderRefer, $paymentExchangeType, $source, $appointment_delivery_date, $orderDate, $deliveryDate, $description, $createdBy);
             if (!$stmt->execute()) {
                 throw new Exception($stmt->error);
             }
@@ -1927,6 +2003,10 @@ class CheckoutDAO
             if(empty($delivery_date)) {
               $delivery_date = null;
             }
+            $appointment_delivery_date = $order->getAppointmentDeliveryDate();
+            if(empty($appointment_delivery_date)) {
+              $appointment_delivery_date = null;
+            }
             $description = $order->getDescription();
             $createdBy = $order->getCreatedBy();
             $id = $order->getId();
@@ -1934,10 +2014,10 @@ class CheckoutDAO
                             `discount` = ?, `total_amount` = ?, `total_checkout` = ?, `COD` = ?, `customer_payment` = ?, `repay` = ?, 
                             `customer_id` = ?, `type` = ?, `bill_of_lading_no` = ?, `shipping_fee` = ?, `shipping` = ?, 
                             `shipping_unit` = ?, `status` = ?, `updated_date` = NOW(), `deleted` = b'0', `payment_type` = ?, 
-                            `order_date` = ?, `source` = ?, `delivery_date` = ?, `description` = ?, `created_by` = ? WHERE `id` = ?");
-            $stmt->bind_param("ddddddddiisddsiisisssi", $total_reduce, $total_reduce_percent, $discount, $total_amount,
+                            `order_date` = ?, `source` = ?, `appointment_delivery_date` = ?, `delivery_date` = ?, `description` = ?, `created_by` = ? WHERE `id` = ?");
+            $stmt->bind_param("ddddddddiisddsiisissssi", $total_reduce, $total_reduce_percent, $discount, $total_amount,
               $total_checkout, $cod, $customer_payment, $repay, $customer_id, $type, $bill, $shipping_fee, $shipping,
-              $shipping_unit, $status, $payment_type, $order_date, $source, $delivery_date, $description, $createdBy, $id);
+              $shipping_unit, $status, $payment_type, $order_date, $source, $appointment_delivery_date, $delivery_date, $description, $createdBy, $id);
             if (!$stmt->execute()) {
                 throw new Exception($stmt->error);
             }

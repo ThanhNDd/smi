@@ -61,7 +61,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "searchOrder") {
                     // $order["link_fb"] = $ord["link_fb"];
                     $order["total_checkout"] = $ord["total_checkout"];
                     $order["order_date"] = $ord["order_date"];
-                    $order["bill_of_lading_no"] = $ord["bill_of_lading_no"];
+                    $order["billCode"] = $ord["bill_of_lading_no"];
                     $order["shopee_order_id"] = $ord["shopee_order_id"];
                     
                     $orderDetails = $ord["details"];
@@ -148,7 +148,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "getData") {
         $rowData["payment_type"] = 1;
         $rowData["shopee_order_id"] = $data["orderId"];
         $rowData["order_date"] = $data["orderDate"];
-        $rowData["bill_of_lading_no"] = $data["billCode"];
+        $rowData["billCode"] = $data["billCode"];
         $rowData["shipping_unit"] = getShippingUnit($data["billCode"]);
         $rowData["totalFee"] = $data["totalFee"];
 
@@ -216,7 +216,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "getData") {
                 $variant["product_id"] = $variation["product_id"];
                 $variant["variant_id"] = $variation["variant_id"];
                 $variant["product_name"] = $variation["name"];
-                $variant["reduce"] = intval(str_replace(",","",$variation["retail"])) - intval($products[$i]["price"]);
+                $variant["reduce"] = intval(str_replace(",","",$variation["retail"])) - intval($products[$i]["price"])  * intval($products[$i]["qty"]);;
                 $variant["reduce_percent"] = null;
                 $variant["reduce_type"] = null;
                 $variant["product_exchange"] = null;
@@ -228,7 +228,7 @@ if (isset($_POST["method"]) && $_POST["method"] == "getData") {
                 $totalQty += intval($products[$i]["qty"]);
                 $description .= ($i+1).". ".$productName.",".$variation["color"].",".$variation["size"]. PHP_EOL;
                 $totalReduceOnProduct += intval($variant["reduce"]);
-                $totalAmount += intval(str_replace(",","",$variation["retail"]));
+                $totalAmount += intval(str_replace(",","",$variation["retail"])) * intval($products[$i]["qty"]);
             }
             array_push($rowData['products'], $variant);
         }
@@ -253,7 +253,7 @@ function getShippingUnit($billCode) {
       $shippingUnit = "SPXEXPRESS";
     } else if(substr($billCode,0, 3) == "SPE") {
       $shippingUnit = "NINJAVAN";
-    } else if(substr($billCode,0, 2) == "GA") {
+    } else if(substr($billCode,0, 2) == "G") {
       $shippingUnit = "GHN";
     } else if(substr($billCode,0, 1) == "8") {
         $shippingUnit = "J&T";

@@ -717,4 +717,5 @@ $quan_huyen = array(
 	"712" => array("maqh"=>"973","name"=>"Huyện Ngọc Hiển","matp"=>"96"),
 	"713" => array("maqh"=>"974","name"=>"Thị Xã Nghi Sơm","matp"=>"38"),
 	"715" => array("maqh"=>"975","name"=>"Huyện Quảng Hoà","matp"=>"04"),
+	"716" => array("maqh"=>"976","name"=>"Thành phố Thủ Đức","matp"=>"79"),
 );

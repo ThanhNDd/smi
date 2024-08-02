@@ -82,7 +82,6 @@ class PrinterReceipt
 					}
 
 					body {
-						margin: 20px 40px 20px 20px !important;
 						font-size: 12px !important;
 					}
                     #barcode {font-weight: normal; font-style: normal; line-height:normal; sans-serif; font-size: 12pt}
@@ -341,8 +340,11 @@ class PrinterReceipt
             }
             $footer .= '<span>* * * * * * * * * * * *</span>
                     <p class="center">Xin cám ơn Quý khách</p>
-                    <p class="center">Hẹn gặp lại</p>
-                </div>
+                    <p class="center">Hẹn gặp lại</p>';
+            $amount = $order->getCustomer_payment() ? $order->getCustomer_payment() : $order->getTotal_checkout();
+            $image_payment_transfer = "https://api.vietqr.io/image/970423-02981570701-CudhffO.jpg?accountName=CHU%20THI%20QUYEN&amount=".$amount."&addInfo=Thanh%20toan%20don%20hang%20".$order->getId();
+            $footer .= '<img src="'.$image_payment_transfer.'" width="150"/>';
+            $footer .= '</div>
             </div>
             <script type="text/javascript">
                 /* <![CDATA[ */

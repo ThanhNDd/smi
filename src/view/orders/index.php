@@ -210,15 +210,18 @@ Common::authenIsNotAdminRole();
                             <span class="info-box-icon bg-success elevation-1"><i class="fas fa-credit-card"></i></span>
                             <div class="info-box-content">
                                 <span class="info-box-text">Chuyển khoản</span>
-                                <span class="info-box-number">
+                                <span class="info-box-number d-inline-block">
                                     <h5 class="total_transfer">&#8363;</h5>
                                 </span>
+                                <button class="btn float-right" id="showProfit">
+                                    <i class="fas fa-eye"></i>
+                                </button>
                             </div>
                             <!-- /.info-box-content -->
                         </div>
                         <!-- /.info-box -->
                     </div>
-                    <div class="col-12 col-sm-12 col-md-12" style="display: block;" id="profit_block">
+                    <div class="col-12 col-sm-12 col-md-12" style="display: none;" id="profit_block">
                         <div class="info-box mb-3">
                             <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-wallet"></i></span>
                             <div class="info-box-content">
@@ -248,6 +251,10 @@ Common::authenIsNotAdminRole();
     $(document).ready(function () {
         // set title for page
         set_title("Danh sách đơn hàng");
+
+        $("#showProfit").click(function(){
+            $("#profit_block").toggle("slow","linear");
+          });
 
         let currentDate = new Date();
         let day = currentDate.getDate();
@@ -750,6 +757,89 @@ Common::authenIsNotAdminRole();
             });
         });
 
+        $('#example tbody').on('click', '.edit-payment-type', function () {
+            console.log("edit-payment-type click")
+            // show_loading();
+            let tr = $(this).closest('tr');
+            let row = table.row(tr);
+            let status = row.data().status;
+            let selectbox = `<div class="select-payment-type-update">
+                                <select class="form-control p-2 payment-type-update">
+                                    <option value="0">Tiền mặt</option>
+                                    <option value="1">Chuyển khoản</option>
+                                </select>
+                                <div class="btn-group w-100">
+                                    <button type="button" class="btn btn-info save-payment-type-update">
+                                        <i class="fa fa-save"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-danger cancel-payment-type-update">
+                                        <i class="fa fa-times-circle"></i>
+                                    </button>
+                                </div>
+                            </div>`;
+            $(this).closest('.text-payment-type').addClass("hidden").parent().append(selectbox);
+        });
+
+        $('#example tbody').on('click', '.cancel-payment-type-update', function () {
+            show_loading();
+            let tr = $(this).closest('tr');
+            let row = table.row(tr);
+            $(this).closest('.select-payment-type-update').prev(".text-payment-type").removeClass("hidden");
+            $(this).closest('.select-payment-type-update').remove();
+        });
+
+        $('#example tbody').on('click', '.save-payment-type-update', function () {
+            // show_loading();
+            let tr = $(this).closest('tr');
+            let row = table.row(tr);
+            let order_id = row.data().order_id;
+            let payment_type = $(this).parent().prev('select').val();
+            console.log("payment_type: ", payment_type);
+            update_payment_type(order_id, payment_type);
+        });
+
+
+    }
+
+    function update_payment_type(order_id, payment_type) {
+        $.ajax({
+            url: '<?php Common::getPath() ?>src/controller/orders/OrderController.php',
+            type: "POST",
+            dataType: "json",
+            data: {
+                method: "update_payment_type",
+                order_id: order_id,
+                payment_type: Number(payment_type)
+            },
+            success: function (res) {
+                console.log("res: ", res);
+                table.ajax.reload();
+                $(".show_loading_update_status").addClass("hidden");
+                $(".fa-save").removeClass("hidden");
+                $(".order_status_update").prop("disabled", true);
+                $("#order_checked_for_update").text('');
+                $("#check_all_order").prop("checked", '');
+                $(".print_order").prop("disabled", true);
+                $("#print_order_checked").text('');
+                order_checked = [];
+                order_checked_for_print = [];
+                data_print = [];
+                toastr.success('Cập nhật trạng thái thành công.');
+                // count_status();
+                // count_all_status();
+            },
+            error: function (data, errorThrown) {
+                console.log(data.responseText);
+                console.log(errorThrown);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Đã xảy ra lỗi',
+                    text: "Vui lòng liên hệ quản trị hệ thống để khắc phục"
+                });
+                $(".show_loading_update_status").addClass("hidden");
+                $(".fa-save").removeClass("hidden");
+            }
+        });
 
     }
 
@@ -980,6 +1070,9 @@ Common::authenIsNotAdminRole();
                 }
             } else {
                 d += '<div class="col-2 col-sm-2 col-md-2"><small>Khách hàng</small> <h5>Khách lẻ</h5></div>';
+                if (data.created_by) {
+                    d +='<div class="col-2 col-sm-2 col-md-2"><small>NVBH</small> <h5>' + data.created_by + '</h5></div>';
+                }
             }
             if (data.voucher_code != null && data.voucher_code !== "") {
                 voucher_value = Number((intoMoney * 10) / 100);
@@ -990,14 +1083,16 @@ Common::authenIsNotAdminRole();
             }
             d += '</div>';
         let discount = Number(replaceComma(data.discount));
-        profit = profit - discount - voucher_value;
+        // profit = profit - discount - voucher_value;
+
+        profit = profit - Number(replaceComma(data.total_reduce));
 
         d += '<div class="row">' +
                 '<div class="col-2 col-sm-2 col-md-2"><small>Tổng đơn hàng</small> <h5>' + data.total_amount + _CURRENCE_DONG_SIGN+'</h5></div>' +
                 '<div class="col-2 col-sm-2 col-md-2"><small>CK trên tổng đơn</small> <h5>' + data.discount + _CURRENCE_DONG_SIGN+'</h5></div>';
 
         if (data.customer_id && Number(data.customer_id) > 0) {
-            profit = profit - Number(replaceComma(data.wallet));
+            // profit = profit - Number(replaceComma(data.wallet));
             d += '<div class="col-2 col-sm-2 col-md-2"><small>Tiền trong Ví</small> <h5>' + data.wallet + _CURRENCE_DONG_SIGN+'</h5></div>';
         }
         d += '<div class="col-2 col-sm-2 col-md-2"><small>Tổng giảm trừ</small> <h5>' + data.total_reduce + _CURRENCE_DONG_SIGN+'</h5></div>';
@@ -1153,17 +1248,37 @@ Common::authenIsNotAdminRole();
         }
     }
 
+    // function format_payment(data) {
+    //     let type = data.payment_type;
+    //     switch (type) {
+    //         case '0' :
+    //             return '<span class="badge badge-info" style="font-weight: normal;">Tiền mặt</span>';
+    //         case '1':
+    //             return '<span class="badge badge-success" style="font-weight: normal;">Chuyển khoản</span>';
+    //         case '2':
+    //             return '<span class="badge badge-warning" style="font-weight: normal;">Nợ</span>';
+    //         case '3':
+    //             return '<span class="badge badge-primary" style="font-weight: normal;">COD</span>';
+    //         default:
+    //             return '';
+    //     }
+    // }
+
     function format_payment(data) {
         let type = data.payment_type;
         switch (type) {
             case '0' :
-                return '<span class="badge badge-info" style="font-weight: normal;">Tiền mặt</span>';
+                return `<div class="text-payment-type text-center">
+                            <span class="badge badge-info c-pointer edit-payment-type" style="font-weight: normal;">Tiền mặt <i class="fa fa-edit"></i></span>
+                        </div>`;
+                // return '<span class="badge badge-info c-pointer edit-payment-type" style="font-weight: normal;">Tiền mặt <i class="fa fa-edit"></i></span>';
             case '1':
-                return '<span class="badge badge-success" style="font-weight: normal;">Chuyển khoản</span>';
+                return `<div class="text-payment-type text-center">
+                            <span class="badge badge-success c-pointer edit-payment-type" style="font-weight: normal;">Chuyển khoản <i class="fa fa-edit"></i></span>
+                        </div>`;
+                // return '<span class="badge badge-success c-pointer edit-payment-type" style="font-weight: normal;">Chuyển khoản <i class="fa fa-edit"></i></span>';
             case '2':
-                return '<span class="badge badge-warning" style="font-weight: normal;">Nợ</span>';
-            case '3':
-                return '<span class="badge badge-primary" style="font-weight: normal;">COD</span>';
+                return '<span class="badge badge-warning c-pointer edit-payment-type" style="font-weight: normal;">Nợ <i class="fa fa-edit"></i></span>';
             default:
                 return '';
         }

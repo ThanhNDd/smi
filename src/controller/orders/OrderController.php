@@ -218,6 +218,11 @@ if (isset($_POST["method"]) && $_POST["method"] == "update_status") {
         $status = $_POST["status"];
         $appointment_delivery_date = isset($_POST["appointment_delivery_date"]) ? $_POST["appointment_delivery_date"] : null;
         $checkoutDAO->update_status($order_id, $status, $appointment_delivery_date);
+        if($status == 5) {
+          // cập nhật trạng thái là chuyển hoàn
+          // Cập nhật lại số lượng sản phẩm
+          $checkoutDAO->update_qty_by_order_id($order_id);
+        }
 
         // update Order Logs
         switch ($status) {

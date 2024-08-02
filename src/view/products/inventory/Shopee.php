@@ -65,9 +65,11 @@ Common::authen();
     function upload() {
         $("#submit").click(function(e) {
             e.preventDefault();    
-            // $("#uploadIcon").addClass("d-none");
-            // $("#spinnerIcon").removeClass("d-none");
-            // $("#submit").attr("disabled", true);
+            $("#uploadIcon").addClass("d-none");
+            $("#spinnerIcon").removeClass("d-none");
+            // $("#fileToUpload").attr("disabled", true);
+            $("#submit").attr("disabled", true);
+
 
             var form = $("#import");
             let file_data = $("#fileToUpload").prop('files')[0];
@@ -82,27 +84,34 @@ Common::authen();
                 contentType: false,
                 processData: false,
                 success: (response) => {
-                  
-                    // toastr.success(`Cập nhật thành công ${response}`);
+                    console.log(response);
                     response = JSON.parse(response);
                     console.log(response);  
                     if(response) {
                         window.open(response, "_blank");
+                    } else {
+                        $("#uploadIcon").removeClass("d-none");
+                        $("#spinnerIcon").addClass("d-none");
+                        $("#fileToUpload").val("");
+                        $("#submit").removeAttr("disabled");
+                        toastr.error(`Đã xảy ra lỗi`);
                     }
-                  // let updated_success = response.updated_sku + " / " + response.total_sku;
-                  // let updated_fail = JSON.stringify(response.sku_update_failed);
-                  // $("#sku_updated_success").html(updated_success);
-                  // $("#sku_updated_fail").html(updated_fail);
-                  // $("#message_updated").removeClass("d-none");
-                }
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    $("#uploadIcon").removeClass("d-none");
+                    $("#spinnerIcon").addClass("d-none");
+                    $("#fileToUpload").val("");
+                    $("#submit").removeAttr("disabled");
+                    toastr.error(`Đã xảy ra lỗi`);
+                },
               })
-            // .done(function() {
-            //     $("#fileToUpload").val("");
-            //     $("#uploadIcon").removeClass("d-none");
-            //     $("#spinnerIcon").addClass("d-none");
-            //     $("#submit").attr("disabled", true);
-            //     toastr.success(`Cập nhật thành công`);
-            //   });
+            .done(function() {
+                $("#uploadIcon").removeClass("d-none");
+                $("#spinnerIcon").addClass("d-none");
+                $("#fileToUpload").val("");
+                $("#submit").removeAttr("disabled");
+                toastr.success(`Cập nhật thành công`);
+            })
         });
     }
 </script>

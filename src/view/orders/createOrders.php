@@ -243,7 +243,7 @@ Common::authen();
             create_customer();
 
             $('.delivery-date').datetimepicker({
-                format: 'YYYY/MM/DD hh:mm:ss',
+                format: 'YYYY-MM-DD hh:mm:ss',
                 minDate: $("#orderDate").val(),
                 icons: {
                     time: 'far fa-clock',
@@ -810,8 +810,8 @@ Common::authen();
             $("#customer_name").val("");
             $("#customer_phone").val("");
             $("#order_status").val("0").trigger("change");
-            $("#shipping_fee").val("");
-            $("#shipping").val("0").trigger("change");
+            $("#shipping_fee").val("0");
+            $("#shipping").val("25000").trigger("change");
             $("#discount").val("");
             $("#total_amount").text("0");
             $("#total_checkout").text("0");

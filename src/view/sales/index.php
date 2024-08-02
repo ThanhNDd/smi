@@ -31,6 +31,10 @@ Common::authen();
             vertical-align: top;
             font-size: 80% !important;
         }
+        .carousel-inner img {
+    width: 100%;
+    height: 100%;
+  }
     </style>
 </head>
 <?php require_once('../../common/header.php'); ?>
@@ -136,12 +140,11 @@ Common::authen();
                                        id="totalUsePoint">
 <!--                                <p class="mt-1 mb-0 text-danger overflow-total-checkout hidden">Số tiền tích lũy sử dụng-->
 <!--                                    không được vượt quá 50% tổng tiền thanh toán</p>-->
-                                <p class="mt-1">Quý khách có <span class="text-primary" id="totalBallanceInWallet">0</span> <sup
-                                            class="text-primary">đ</sup> trong ví</p>
+                                <p class="mt-1">Quý khách có <span class="text-primary" id="totalBallanceInWallet">0</span> trong ví</p>
                             </td>
                         </tr>
                         <tr>
-                            <td class="right">Khuyến mãi</td>
+                            <td class="right">Chiết khấu</td>
                             <td class="right w110">
                                 <input type="text" class="form-control text-right" name="discount" id="discount"
                                        placeholder="Số tiền"
@@ -184,6 +187,7 @@ Common::authen();
                             <td class="right pl-0" colspan="2">
                                 <p class="mb-1" id="total_saved_point"></p>
                                 <input type="hidden" id="total_saved_point_value">
+                                <!-- <p class="mb-1" id="total_saved_point_2"></p> -->
                             </td>
                         </tr>
                         <tr class="repay hidden">
@@ -223,9 +227,48 @@ Common::authen();
 <?php require_once '../customer/createCustomer.php'; ?>
 <?php require_once '../wallet/showHistory.php'; ?>
 <?php require_once('../../common/footer.php'); ?>
+<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> -->
 <script type="text/javascript">
     $(document).ready(function () {
         set_title("Bán hàng");
+
+        // setTimeout(function() {  
+        // console.info("Open Server-sent events");
+        // if(typeof(EventSource) !== "undefined") {
+        //     console.info("Yes! Server-sent events support!");
+        //     let countError = "";
+        //     let orderId = 1;
+        //     const url = "<?php Common::getPath() ?>src/controller/webhook/SSEController.php";
+        //     var source = new EventSource(url);
+        //     source.onmessage = function(event) {
+        //         console.log(event);
+        //         console.log(new Date()+" - "+event.data);
+        //         if(event.data == orderId) {
+        //             console.log("close");
+        //             Swal.fire({
+        //                 title: "Thanh toán thành công",
+        //                 type: "success",
+        //                 text: `Shop đã nhận được khoản thanh toán cho đơn hàng #${orderId}`,
+        //                 allowOutsideClick: false,
+        //                 allowEscapeKey:false
+        //             }).then((result) => {
+        //                 if (result.value) {
+        //                     window.location.reload();
+        //                 }
+        //             });
+        //             source.close();
+        //         } else {
+        //             countError++;
+        //             console.log("countError: ", countError);
+        //         }
+        //     };
+        // } else {
+        //     console.error("Sorry! No server-sent events support..");
+        // }
+    // }, 10000);// 10s
+
         $("#productId").change(function () {
             let prodId = $(this).val();
             if (prodId.indexOf('SP') > -1) {
@@ -236,7 +279,7 @@ Common::authen();
             $(this).val("");
         });
 
-        $("#discount").on('keyup', function (event) {
+        $("#discount").on('change', function (event) {
             let discount = $(this).val();
             onchange_discount(discount, event);
             event.preventDefault();
@@ -246,16 +289,19 @@ Common::authen();
             onchange_voucher(voucher, event);
         });
 
-        $("#payment").on('keyup', function () {
-            let payment = $(this).val();
-            payment = format_money(payment);
-            payment = replaceComma(payment);
-            payment = formatNumber(payment);
-            $(this).val(payment);
-        });
+        // $("#payment").on('change ', function () {
+        //     let payment = $(this).val();
+        //     payment = format_money(payment);
+        //     payment = replaceComma(payment);
+        //     payment = formatNumber(payment);
+        //     $(this).val(payment);
+        // });
         $("#payment").on('change', function () {
             let payment = $(this).val();
-            payment = replaceComma(payment);
+            // payment = format_money(payment);
+            // payment = replaceComma(payment);
+            // payment = formatNumber(payment);
+            // $(this).val(formatNumber(payment));
             paymentChange(payment);
         });
 
@@ -348,15 +394,15 @@ Common::authen();
             show_history(customer_id, customer_name, customer_phone);
         });
 
-        $("#totalUsePoint").on('keyup',function () {
+        $("#totalUsePoint").on('change',function () {
             let value = format_money($(this).val());
             if (isNaN(value)) {
                 $(this).addClass("is-invalid");
-                disableCheckOutBtn();
+                // disableCheckOutBtn();
                 return;
             } else {
                 $(this).removeClass("is-invalid");
-                enableCheckOutBtn();
+                // enableCheckOutBtn();
             }
             $(this).val(formatNumber(value));
             calculateTotal();
@@ -486,7 +532,7 @@ Common::authen();
             },
             success: function (res) {
                 console.log(res);
-                $("#totalBallanceInWallet").text(formatNumber(res));
+                $("#totalBallanceInWallet").html(formatNumber(res)+_CURRENCE_DONG_SIGN);
                 setTimeout(function () {
                     calculate_total_point();
                 }, 200);
@@ -518,20 +564,62 @@ Common::authen();
         calculateTotal();
     }
 
+    // function calculate_saved_point_1() {
+    //     let totalAmount = Number(replaceComma($("#totalAmount").text()));
+    //     let totalReduce = Number(replaceComma($("#totalReduce").text()));
+    //     let discount = Number(replaceComma($("#discount").val()));
+
+    //     // let total_checkout = $("#totalCheckout").text();
+    //     // total_checkout = replaceComma(total_checkout);
+    //     // total_checkout = Number(total_checkout);
+    //     let total_checkout = totalAmount - totalReduce + discount;
+    //     console.log("total_checkout: ", total_checkout);
+    //     if (total_checkout > 0) {
+    //         let total_saved_point = Math.round(total_checkout * 5 / 100);
+    //         console.log(`total_saved_point 11111: ${total_saved_point}`);
+    //         total_saved_point = formatNumber(total_saved_point - discount);
+    //         // total_saved_point = formatNumber(total_saved_point);
+    //         console.log(`total_saved_point 2222: ${total_saved_point}`);
+    //         let msg = `Quý khách sẽ tích lũy được <span class="text-primary">${total_saved_point+_CURRENCE_DONG_SIGN}</span> cho đơn hàng này.`;
+    //         $("#total_saved_point").html(msg);
+    //         $("#total_saved_point_value").val(total_saved_point);
+    //         $(".saved-point").removeClass("hidden");
+    //     }
+    // }
+
     function calculate_saved_point() {
-        let total_checkout = $("#totalCheckout").text();
-        total_checkout = replaceComma(total_checkout);
-        total_checkout = Number(total_checkout);
-        console.log("total_checkout: ", total_checkout);
-        if (total_checkout > 0) {
+        let total_saved_point = 0;
+        $.each($("#tableProd tbody tr"), function (key, value) {
+            let noRow = $(value).attr("data");
+            let product_id = $(`#prodId_${noRow}`).val();
+            let variant_id = $(`#variantId_${noRow}`).val();
+            let sku = $(`#sku_${noRow}`).val();
+            let price = replaceComma($(`#price_${noRow}`).text());
+            let salePrice = replaceComma($(`#salePrice_${noRow}`).val());
+            let intoMoney = replaceComma($(`#intoMoney_${noRow}`).text());
+            console.log("intoMoney: ", intoMoney);
             let discount = Number(replaceComma($("#discount").val()));
-            let total_saved_point = Math.round(total_checkout * 5 / 100);
-            total_saved_point = formatNumber(total_saved_point - discount);
-            let msg = `Quý khách sẽ tích lũy được <span class="text-primary">${total_saved_point+_CURRENCE_DONG_SIGN}</span> cho đơn hàng này.`;
-            $("#total_saved_point").html(msg);
-            $("#total_saved_point_value").val(total_saved_point);
-            $(".saved-point").removeClass("hidden");
-        }
+            console.log("discount: ", discount);
+            let checkedPoint = $(`#switch_${noRow}`).is(":checked");
+            console.log("checkePoint: ", checkedPoint);
+            if(checkedPoint) {
+                let savedPoint = Math.round(intoMoney * 5 / 100);
+                console.log(`savedPoint ${sku}: ${savedPoint}`);
+                total_saved_point += Number(savedPoint);
+            }   
+        });
+        console.log(`total_saved_point: ${total_saved_point}`);
+
+        // let totalAmount = Number(replaceComma($("#totalAmount").text()));
+        // let totalReduce = Number(replaceComma($("#totalReduce").text()));
+        let discount = Number(replaceComma($("#discount").val()));
+        // let total_checkout = totalAmount - totalReduce + discount;
+        total_saved_point = formatNumber(total_saved_point - discount);
+        // total_saved_point = formatNumber(total_saved_point);
+        let msg = `Quý khách sẽ tích lũy được <span class="text-primary">${total_saved_point+_CURRENCE_DONG_SIGN}</span> cho đơn hàng này.`;
+        $("#total_saved_point").html(msg);
+        $("#total_saved_point_value").val(total_saved_point);
+        $(".saved-point").removeClass("hidden");
     }
 
     function validate_form() {
@@ -737,7 +825,7 @@ Common::authen();
             // }
         } else {
             if (!validateNumber(discount, 'discount')) {
-                disableCheckOutBtn();
+                // disableCheckOutBtn();
                 // validate_form();
                 return false;
             }
@@ -762,9 +850,11 @@ Common::authen();
 
     function paymentChange(payment) {
         if(!payment) {
-            return;
+            reset_repay_form();
+            disableCheckOutBtn();
+            return false;
         }
-        payment = format_money(payment);
+        // payment = format_money(payment);
         payment = replaceComma(payment);
         if (!validateNumber(payment, 'payment')) {
             // disableCheckOutBtn();
@@ -793,6 +883,7 @@ Common::authen();
     function reset_repay_form() {
         $("#repay").val("");
         $("#tranferToWallet").val("");
+        $(".repay").addClass("hidden");
     }
 
     function processDataCheckout() {
@@ -934,15 +1025,118 @@ Common::authen();
                         printReceipt();
                     }
                 }, 500);
+
+
+
+                let amount = customer_payment ? customer_payment : total_checkout;
+                let VCB = `HKPOD${orderId}VCB${amount}`;
+                let TPBank = `HKPOD${orderId}TP${amount}`;
+                let VIB = `HKPOD${orderId}VIB${amount}`;
+
+                const TK_TP_QUYEN = `https://api.vietqr.io/image/970423-02981570701-KMaR8PH.jpg?accountName=CHU%20THI%20QUYEN&amount=${amount}&addInfo=${TPBank}`;
+                const TK_VIB = `https://api.vietqr.io/image/970441-006082018-KMaR8PH.jpg?accountName=NGUYEN%20DUY%20THANH&amount=${amount}&addInfo=${VIB}`;
+                const TK_TP_THANH = `https://api.vietqr.io/image/970423-02326064001-CudhffO.jpg?accountName=NGUYEN%20DUY%20THANH&amount=${amount}&addInfo=${TPBank}`;
+                const TK_VCB = `https://api.vietqr.io/image/970436-0451000374835-9I3y28K.jpg?accountName=NGUYEN%20DUY%20THANH&amount=${amount}&addInfo=${VCB}`;
+                
+
                 Swal.fire({
-                    type: 'success',
-                    title: 'Thành công!',
-                    text: 'Đơn hàng #' + orderId + ' đã được tạo thành công!'
+                    title: "Thành công",
+                    text: `Đơn hàng #${orderId} đã được tạo thành công!`,
+                    type: "success",
+                    html: `<p class="m-0">Đơn hàng #${orderId} đã được tạo thành công!</p>
+                        <div id="demo" class="carousel slide" data-ride="carousel" data-interval="false">
+                          <div class="carousel-inner">
+                            <div class="carousel-item active">
+                              <img src="${TK_VCB}" alt="Los Angeles" width="1100" height="500">
+                            </div>
+                            <div class="carousel-item">
+                              <img src="${TK_VIB}" alt="Chicago" width="1100" height="500">
+                            </div>
+                            <div class="carousel-item">
+                              <img src="${TK_TP_THANH}" alt="New York" width="1100" height="500">
+                            </div>
+                            <div class="carousel-item">
+                              <img src="${TK_TP_QUYEN}" alt="New York" width="1100" height="500">
+                            </div>
+                          </div>
+                          <a class="carousel-control-prev" href="#demo" data-slide="prev">
+                            <span class="carousel-control-prev-icon"></span>
+                          </a>
+                          <a class="carousel-control-next" href="#demo" data-slide="next">
+                            <span class="carousel-control-next-icon"></span>
+                          </a>
+                        </div>`,
+                    allowOutsideClick: false,
+                    allowEscapeKey:false
                 }).then((result) => {
                     if (result.value) {
                         window.location.reload();
                     }
                 });
+
+                setTimeout(function() {
+                    console.info("Open Server-sent events");
+                    if(typeof(EventSource) !== "undefined") {
+                        console.info("Yes! Server-sent events support!");
+                        let countError = "";
+                        const url = "<?php Common::getPath() ?>src/controller/webhook/SSEController.php";
+                        var source = new EventSource(url);
+                        source.onmessage = function(event) {
+                            console.log(event);
+                            console.log(event.data);
+                            if(event.data == orderId) {
+                                Swal.fire({
+                                    title: "Thanh toán thành công",
+                                    type: "success",
+                                    text: `Shop đã nhận được khoản thanh toán cho đơn hàng #${orderId}`,
+                                    allowOutsideClick: false,
+                                    allowEscapeKey:false
+                                }).then((result) => {
+                                    if (result.value) {
+                                        window.location.reload();
+                                    }
+                                });
+                                console.log("close Server-sent events");
+                                source.close();
+                            } else {
+                                countError++;
+                                console.log("countError: ", countError);
+                                if(countError > 100) {
+                                    console.log("close Server-sent events");
+                                    source.close();
+                                }
+                            }
+                        };
+                    } else {
+                        console.error("Sorry! No server-sent events support..");
+                    }
+                }, 10000);// 10s
+                
+                let time = 1000*60*15; //5 minute
+                setTimeout(function() {
+                    let timerInterval;
+                    Swal.fire({
+                      title: "Thông báo!",
+                      html: "Đơn hàng sẽ được đóng lại sau <b></b> giây.",
+                      timer: 5000,
+                      timerProgressBar: true,
+                      didOpen: () => {
+                        Swal.showLoading(); 
+                        const timer = Swal.getPopup().querySelector("b");
+                        timerInterval = setInterval(() => {
+                          timer.textContent = `${(Swal.getTimerLeft() / 1000).toFixed()}`;
+                        }, 100);
+                      },
+                      willClose: () => {
+                        clearInterval(timerInterval);
+                      }
+                    }).then((result) => {
+                      if (result.dismiss === Swal.DismissReason.timer) {
+                        window.location.reload();
+                      }
+                    });
+                },time);
+                    
             },
             error: function (data, errorThrown) {
                 console.log(data.responseText);
@@ -951,10 +1145,6 @@ Common::authen();
                     type: 'error',
                     title: 'Đã xảy ra lỗi',
                     text: "Bạn hãy thử tạo lại đơn hàng hoặc liên hệ quản trị viên hệ thống!"
-                }).then((result) => {
-                    if (result.value) {
-                        //resetData();
-                    }
                 });
                 $("#create-order .overlay").addClass("hidden");
             }
@@ -1078,6 +1268,7 @@ Common::authen();
             $(".repay").addClass("hidden");
         }
         calculate_saved_point();
+        // calculate_saved_point_2();
     }
 
     function find_product(sku, qty) {
@@ -1097,6 +1288,8 @@ Common::authen();
                     noRow = Number(noRow);
                     noRow++;
                     $("#noRow").val(noRow);
+
+                    let customer_id = $("#customer_id").val();
 
                     let productId = products[0].product_id;
                     let variantId = products[0].variant_id;
@@ -1141,9 +1334,7 @@ Common::authen();
                             <small>Size: ${size}</small>
                         </td>
                         <td>
-                            <span id="salePrice_${noRow}" currentSalePrice="${salePrice}" class="${salePrice > 0 ? 'price' : 'd-none'}">${formatNumber(salePrice) + _CURRENCE_DONG_SIGN}</span>
                             <span id="price_${noRow}" data="${Number(replaceComma(retail))}" class="${salePrice > 0 ? 'sale-price' : 'price'}">${ retail + _CURRENCE_DONG_SIGN}</span>
-                            <span id="percentSale_${noRow}" currentPercentSale="${percentSale}" class="${percentSale > 0 ? 'percent-sale' : 'd-none'}">(-${percentSale}%)</span>
                         </td>
                         <td><input type="number" name="qty" id="qty_${noRow}" class="form-control" min="1" value="${qty}" onchange="onchange_qty(${noRow})"></td>
                         <td>
@@ -1155,10 +1346,22 @@ Common::authen();
                             <p id="totalPrice_${noRow}" class="mb-0 ${salePrice > 0 ? 'sale-price' : 'd-none'}" style="text-decoration: line-through;font-size: 85% !important">
                                 ${ formatNumber(Number(replaceComma(retail)) * Number(qty))}${_CURRENCE_DONG_SIGN}
                             </p>
+                            <span id="percentSale_${noRow}" currentPercentSale="${percentSale}" class="${percentSale > 0 ? 'percent-sale' : 'd-none'}">(-${percentSale}%)</span>
                         </td>
-                        <td align="center"><i class="fa fa-times c-pointer text-danger" onclick="del_product(this, 'product-${noRow}')"></i></td>
+                        <td align="center">
+                            <i class="fa fa-trash c-pointer text-danger" 
+                                onclick="del_product(this, 'product-${noRow}')" 
+                                style="margin-left: -25px;margin-bottom: 10px;"
+                                data-toggle="tooltip" data-placement="right" title="Xóa"></i>
+                            <div class="custom-control custom-switch" 
+                                data-toggle="tooltip" data-placement="bottom" title="Tích điểm">
+                              <input type="checkbox" class="custom-control-input" onchange="onchange_checked_point(${noRow})" id="switch_${noRow}" name="savedPoint" ${salePrice > 0 ? 'disabled' : 'checked'}>
+                              <label class="custom-control-label c-pointer" for="switch_${noRow}"></label>
+                            </div>
+                        </td>
                         </tr>`);
                     $(`#qty_${noRow}`).trigger("change");
+                    // $('[data-toggle="tooltip"]').tooltip();
                 }
             },
             error: function (data, errorThrown) {
@@ -1171,6 +1374,10 @@ Common::authen();
                 })
             }
         });
+    }
+
+    function  onchange_checked_point(noRow) {
+        calculate_saved_point();
     }
 
     function del_product(e, p) {
@@ -1231,7 +1438,7 @@ Common::authen();
         let price = get_price(noRow);
         let qty = get_qty(noRow);
         if (!validateQty(qty, noRow)) {
-            disableCheckOutBtn();
+            // disableCheckOutBtn();
             // validate_form();
             return;
         }
@@ -1244,7 +1451,7 @@ Common::authen();
             percentSale = reduce;
             if (reduce < 1 || reduce > 99) {
                 $(`#reduce_${noRow}`).addClass("is-invalid");
-                disableCheckOutBtn();
+                // disableCheckOutBtn();
                 //  validate_form();
                 toastr.error("Đã xảy ra lỗi");
                 return false;
@@ -1254,14 +1461,14 @@ Common::authen();
             saleValue = reduce;
         } else {
             if (!validateNumber(reduce, `reduce_${noRow}`)) {
-                disableCheckOutBtn();
+                // disableCheckOutBtn();
                 toastr.error("Đã xảy ra lỗi");
                 return false;
             }
             $(`#reduce_${noRow}`).val(formatNumber(reduce));
             if (reduce !== "" && reduce < 1000) {
                 $(`#reduce_${noRow}`).addClass("is-invalid");
-                disableCheckOutBtn();
+                // disableCheckOutBtn();
                 toastr.error("Đã xảy ra lỗi");
                 return false;
             } else {
@@ -1287,9 +1494,11 @@ Common::authen();
         if(saleValue && saleValue > 0) {
             $(`#totalPrice_${noRow}`).html(formatNumber(price * qty)+_CURRENCE_DONG_SIGN).removeClass("d-none");
             $(`#reduce_${noRow}`).val(formatNumber(saleValue));
-            $(`#salePrice_${noRow}`).html(`${formatNumber(salePrice)+_CURRENCE_DONG_SIGN}`).removeClass("d-none sale-price").addClass("price");
+            // $(`#salePrice_${noRow}`).html(`${formatNumber(salePrice)+_CURRENCE_DONG_SIGN}`).removeClass("d-none sale-price").addClass("price");
+            $(`#salePrice_${noRow}`).html(`${formatNumber(salePrice)+_CURRENCE_DONG_SIGN}`).removeClass("d-none").addClass("price");
             $(`#percentSale_${noRow}`).html(`(-${percentSale}%)`).removeClass("d-none").addClass("percent-sale");
-            $(`#price_${noRow}`).removeClass("price").addClass("sale-price");
+            // $(`#price_${noRow}`).removeClass("price").addClass("sale-price");
+            // $(`#price_${noRow}`).removeClass("price");
             $(`#totalSale_${noRow}`).addClass("percent-sale ml-2").html(totalSale);
         } else {
             $(`#totalPrice_${noRow}`).html("").addClass("d-none");
@@ -1349,9 +1558,9 @@ Common::authen();
         let price = get_price(noRow);
         let qty = get_qty(noRow);
         if (!validateQty(qty, noRow)) {
-            disableCheckOutBtn();
+            // disableCheckOutBtn();
             //  validate_form();
-            return;
+            return false;
         }
         // enableCheckOutBtn();
         //  validate_form();

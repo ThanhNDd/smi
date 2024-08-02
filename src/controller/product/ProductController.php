@@ -12,6 +12,21 @@ $db = new DBConnect();
 $dao = new ProductDAO($db);
 // $dao->setConn($db->getConn());
 
+if (isset($_POST["method"]) && $_POST["method"] == "exp_products") {
+  try {
+    // $productIds = $_POST["productIds"];
+    // $exportType = $_POST["exportType"];
+    // var_dump($productIds);
+    // echo json_encode($productIds);
+    echo json_encode("success exp_products");
+  } catch (Exception $ex) {
+    // $db->rollback();
+    echo $ex->getMessage();
+  }
+  // $db->commit();
+}
+
+
 if (isset($_POST["method"]) && $_POST["method"] == "update_quantity") {
     try {
         Common::authen_get_data();
@@ -266,13 +281,14 @@ if (isset($_GET["method"]) && $_GET["method"] == "findall") {
         $sku = isset($_GET["sku"]) ? $_GET["sku"] : '';
         $product_type = isset($_GET["product_type"]) ? $_GET["product_type"] : '';
         $sorted = isset($_GET["sorted"]) ? $_GET["sorted"] : '';
+        $visibility  = isset($_GET["visibility"]) ? $_GET["visibility"] : 'SHOW';
 
-//        var_dump($status."\n");
+       // var_dump($status."\n");
 //        var_dump($operator."\n");
 //        var_dump($quantity."\n");
 //        var_dump($sku."\n");
 
-        $lists = $dao->find_all($status, $operator, $quantity, $sku, $product_type, $sorted);
+        $lists = $dao->find_all($status, $operator, $quantity, $sku, $product_type, $sorted, $visibility);
         echo json_encode($lists);
     } catch (Exception $e) {
         echo $e->getMessage();
@@ -329,24 +345,49 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
         } catch (Exception $e) {
             throw new Exception("Delete variation failed!!");
         }
-        $number = 0;
         $variations = $data->variations;
+        // $number = count($variations);
+        $sku = 0;
         for ($i = 0; $i < count($variations); $i++) {
-            if($number < 10) {
-                $new_sku = (int) $prodId."00".$number;
-            } else if($number >= 10 && $number < 100) {
-                $new_sku = (int) $prodId."0".$number;
-            } else {
-                $new_sku = (int) $prodId.$number;
+            if(!empty($variations[$i]->sku)) {
+                $sku = $variations[$i]->sku;
             }
-            $number++;
+        }
+        if($sku < 10) {
+            $sku = (int) $prodId."00".$sku;
+        } else if($sku >= 10 && $sku < 100) {
+            $sku = (int) $prodId."0".$sku;
+        } 
+        // else {
+        //     $sku = (int) $prodId.$number;
+        // }
+        for ($i = 0; $i < count($variations); $i++) {
+            if(empty($variations[$i]->sku)) {
+                $sku++;
+                $new_sku = $sku;
+            } else {
+                $new_sku = $variations[$i]->sku;
+            }
 
+            // if(empty($variations[$i]->sku)) {
+            //     $number++;
+            //     if($number < 10) {
+            //         $sku = (int) $prodId."00".$number;
+            //     } else if($number >= 10 && $number < 100) {
+            //         $sku = (int) $prodId."0".$number;
+            //     } else {
+            //         $sku = (int) $prodId.$number;
+            //     }
+            // } else {
+            //     $sku = $variations[$i]->sku;
+            // }
+            
             $variation = new Variations();
             $variation->setProductId($prodId);
             $variation->setSize($variations[$i]->size);
             $variation->setColor($variations[$i]->color);
             $variation->setQuantity($variations[$i]->qty);
-            $variation->setSku(empty($variations[$i]->sku) ? $new_sku : $variations[$i]->sku);
+            $variation->setSku($new_sku);
             $variation->setPrice($variations[$i]->price);
             $variation->setFee($variations[$i]->fee);
             $variation->setCostPrice($variations[$i]->costPrice);
@@ -362,6 +403,8 @@ if (isset($_POST["method"]) && $_POST["method"] == "add_new") {
             $variation->setDimension($variations[$i]->dimension);
             $variation->setImage($variations[$i]->image);
             $dao->save_variation($variation);
+
+            
         }
         $response_array['success'] = $prodId;
         echo json_encode($response_array);

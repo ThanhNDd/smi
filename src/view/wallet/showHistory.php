@@ -91,6 +91,7 @@ Common::authen();
                 },
                 success: function (res) {
                     hide_loading();
+                    // $("#table_show_wallet_history tbody").html("");
                     let data = res.data;
                     set_data(data, customerId, customerName, customer_phone);
                     setTimeout(function () {
@@ -141,6 +142,7 @@ Common::authen();
 
     function close_modal_show_history() {
         $('.close-modal-show-history').click(function () {
+            $("#table_show_wallet_history").DataTable().destroy();
             close_modal("#show_wallet_history");
         });
     }

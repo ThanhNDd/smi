@@ -187,12 +187,12 @@ Common::authen();
                     </section>
                 </div>
                 <div class="row col-md-12 mt-2 ml-3">
-                    <!-- <div class="form-inline" style="display: inline-block">
+                    <div class="form-inline" style="display: inline-block">
                         <a href="<?php Common::getPath() ?>src/view/products/inventory/Shopee.php" 
-                            type="button" class="btn btn-danger btn-flat ml-2">
+                            type="button" class="btn btn-info btn-flat">
                             Cập nhật tồn kho shopee
                         </a>
-                    </div> -->
+                    </div>
                     <!-- <button class="btn btn-info expandall" id="expandall">Expand all</button>
                     <button class="btn btn-danger ml-3" id="refactorProductID">Cập nhật Product</button>
                     <button class="btn btn-danger ml-3" id="refactorOrderID">Cập nhật Order</button>
@@ -222,6 +222,7 @@ Common::authen();
                             <th>Xuất xứ</th> -->
                             <td>Publish</td>
                             <!-- <td>Nguồn</td> -->
+                            <td>Ngày tháng</td>
                             <td>Hành động</td>
                         </tr>
                         </thead>
@@ -623,18 +624,17 @@ Common::authen();
                     // "className": product_type ? 'hidden' : '',
                     width: "50px"
                 },
-                // {
-                //     "data": "system",
-                //     "className": product_type ? 'hidden' : '',
-                //     width: "50px"
-                // },
+                {
+                    "data": "created_at",
+                    width: "50px"
+                },
                 {
                     "data": format_action,
                     "className": "center",
                     width: "50px"
                 }
             ],
-            "lengthMenu": [[200, 500], [200, 500]]
+            "lengthMenu": [[100, 200, 500], [100, 200, 500]]
         });
         
         // $("#expandall").click(function () {
@@ -1267,6 +1267,53 @@ Common::authen();
             show_more_images(images);
         });
 
+        $('#product_datatable tbody').on('click', '.edit-category', function () {
+            let table =  $('#product_datatable').DataTable();
+            let tr = $(this).closest('tr');
+            let td = tr.find("td");
+            let row = table.row(tr);
+            let product_id = row.data().product_id;
+            let category_id = row.data().category_id;
+            console.log("select_cats: ", JSON.stringify(select_cats));
+            $(`#edit_category_form_${product_id}`).removeClass("d-none").addClass("d-inline-block");
+            $(`#show_category_text_${product_id}`).addClass("d-none").removeClass("d-inline-block");
+            custom_select2(`#select_cat_${product_id}`, select_cats);
+            setTimeout(() => {
+                $(`#select_cat_${product_id}`).val(category_id).trigger('change');
+            },100);
+            
+        });
+
+    }
+
+    function format_name(data) {
+        if(!IS_ADMIN || data.link == null || data.link == "") {
+            return `${data.name}
+                    <br>
+                    <small>ID: <strong>${data.product_id}</strong></small>
+                    <br>
+                    <small>Danh mục: <strong>${format_category(data)}</strong></small>`;
+        } else {
+            return `
+                        <a href="${data.link}" target="_blank">${data.name}</a>
+                        <br>
+                        <small>ID: <strong>${data.product_id}</strong></small>
+                        <br>
+                        <div id="show_category_text_${data.product_id}">
+                            <small>Danh mục: <strong>${format_category(data)}</strong> <i class="fas fa-pencil-alt c-pointer edit-category"></i></small>
+                        </div>
+                        <div class="form-group d-none " id="edit_category_form_${data.product_id}">
+                            <div class="d-inline-block w-100">
+                                <label for="select_cat_${data.product_id}">Danh mục:</label>
+                                <select class="select-cat form-control ml-2 col-sm-10" id="select_cat_${data.product_id}" data-placeholder="Chọn danh mục" style="width: 100%;"></select>
+                            </div>
+                            <div class="d-inline-block w-100 mt-2">
+                                <button type="button" class="btn btn-danger float-left">Close</button>
+                                <button type="button" class="btn btn-primary float-right" id="updateCategory_${data.product_id}">Cập nhật</button>
+                            </div>
+                        </div>
+                   `;
+        }
     }
 
     async function show_more_images(images) {
@@ -2295,21 +2342,7 @@ Common::authen();
         }
     }
 
-    function format_name(data) {
-        if(!IS_ADMIN || data.link == null || data.link == "") {
-            return `${data.name}
-                    <br>
-                    <small>ID: <strong>${data.product_id}</strong></small>
-                    <br>
-                    <small>Danh mục: <strong>${format_category(data)}</strong></small>`;
-        } else {
-            return `<a href="${data.link}" target="_blank">${data.name}</a>
-                    <br>
-                    <small>ID: <strong>${data.product_id}</strong></small>
-                    <br>
-                    <small>Danh mục: <strong>${format_category(data)}</strong></small>`;
-        }
-    }
+    
 
     function format_image(data) {
         if(data.variant_image) {
@@ -2469,7 +2502,7 @@ Common::authen();
                                 </button>
                               </div>
                               <span class="mt-1 w-100 text-left ${variations[i][j].salePrice ? '' : 'd-none'}">
-                                ${formatNumber(variations[i][j].salePrice)} <small><i>(${formatNumber(variations[i][j].profit)})</i></small>    
+                                ${variations[i][j].salePrice > 0 ? formatNumber(variations[i][j].salePrice) : ''} <small><i class="${IS_ADMIN ? '' : 'd-none'}">(${formatNumber(variations[i][j].profit)})</i></small>    
                                 </span>
                             </div>
                          </td>`;

@@ -3,7 +3,7 @@ require_once("../../common/common.php");
 include("../../common/DBConnection.php");
 include("../../model/Customer/Customer.php");
 include("../../dao/CustomerDAO.php");
-include("../../common/cities/Zone.php");
+// include("../../common/cities/Zone.php");
 
 $db = new DBConnect();
 

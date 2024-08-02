@@ -85,6 +85,18 @@ require_once("common.php");
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="<?php Common::getPath() ?>src/view/products/?type=sale&sorted=cat" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Sale</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?php Common::getPath() ?>src/view/products/?type=swimming&sorted=cat" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Đồ bơi</p>
+                            </a>
+                        </li>
+                        <!-- <li class="nav-item">
                             <a href="<?php Common::getPath() ?>src/view/products/?type=facebook" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Facebook</p>
@@ -101,7 +113,7 @@ require_once("common.php");
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Website</p>
                             </a>
-                        </li>
+                        </li> -->
                         <li class="nav-item">
                             <a href="<?php Common::getPath() ?>src/view/products/?type=online&sorted=cat" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
@@ -183,6 +195,25 @@ require_once("common.php");
                     </li>
                   </ul>
                 </li>
+                <?php if(Common::isAdminSystemRole()) { ?>
+                <li class="nav-item has-treeview menu-open">
+                  <a href="#" class="nav-link active">
+                    <i class="nav-icon fas fa-tachometer-alt"></i>
+                    <p>
+                       Hệ thống
+                      <i class="right fas fa-angle-left"></i>
+                    </p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                      <a href="<?php Common::getPath() ?>src/view/system/" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Xuất dữ liệu</p>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                <?php } ?>
             </ul>
         </nav>
         <!-- /.sidebar-menu -->
